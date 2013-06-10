@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+var program = require("commander"),
+	steal = require("../node/steal");
+
+program.version("0.0.1")
+	.parse(process.argv);
+
+steal("../build/build.js", function(){
+
+	steal.build(program.args[0],{to: 'app'});
+
+});

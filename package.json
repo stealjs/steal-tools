@@ -7,12 +7,19 @@
     "email" : "contact@bitovi.com",
     "web" : "http://bitovi.com/"
   },
+	"dependencies": {
+		"commander": ">= 1.1.1"
+	},
   "devDependencies" : {
     "grunt" : "> 0.3.11",
     "grunt-closure-tools" : "> 0.6.2",
     "grunt-beautify" : "*",
     "node-promise" : ">= 0.5.4"
   },
+	"bin": {
+		"steal": "bin/steal",
+		"steal-build": "bin/steal-build"
+	},
   "main": "node/steal",
   "homepage" : "http://javascriptmvc.com/docs.html#!stealjs",
   "repository" : {
