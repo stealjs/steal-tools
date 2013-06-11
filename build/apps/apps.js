@@ -240,7 +240,7 @@ steal('steal',
 						
 						// convert using steal's root because that might have been configured
 						var pathOpts = steal.idToUri( resource.options.id );
-						var source = resource.options.text ||  readFile( steal.idToUri( resource.options.id ) );
+						var source = resource.options.text || readFile( pathOpts.path );
 					}
 					resource.options.text = resource.options.text || source
 					
