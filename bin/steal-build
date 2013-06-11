@@ -9,7 +9,10 @@ if(!program.args.length) {
 	program.help();
 }
 
-steal("../build/build.js", function(){
+steal("../build/build.js",
+	"../build/js/js.js",
+	"../build/css/css.js",
+	"../build/apps/apps.js", function(){
 
 	steal.build(program.args[0],{to: 'app'});
 
