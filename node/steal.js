@@ -24,6 +24,7 @@ var root = fs.realpathSync(__dirname + '/../../');
 	}
 
 	require('../steal.js');
-	//	load("steal/rhino/file.js");
+	require('./file.js');
+
 	module.exports = win.steal;
 })(global);

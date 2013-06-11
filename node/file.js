@@ -1,10 +1,12 @@
-var steal = require('./steal');
+//var steal = require('./steal');
 var fs = require('fs');
 
 var extend = function (d, s) {
 	for (var p in s) d[p] = s[p];
 	return d;
 };
+
+console.log(steal);
 
 extend(steal.URI.prototype, {
 	mkdir: function () {
@@ -101,7 +103,7 @@ extend(steal.URI.prototype, {
 		}
 
 		return myFolders.join("/")
-	}
+	},
 });
 
 module.exports = steal;
