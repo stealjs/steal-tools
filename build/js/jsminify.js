@@ -172,12 +172,10 @@ steal('steal','steal/parse',function(steal, parse){
 
 				tmpFile.save(src);
 
-				var outBaos = new java.io.ByteArrayOutputStream(),
-					output = new java.io.PrintStream(outBaos),
-					options = {
+				var options = {
 						err: '',
-						output: output
-					};
+						output: true // This will be a string on the way out.
+  				};
 				if ( quiet ) {
 					runCommand("java", "-jar", "steal/build/js/compiler.jar", "--compilation_level", "SIMPLE_OPTIMIZATIONS", 
 						"--warning_level", "QUIET", "--js", filename, options);
@@ -228,7 +226,7 @@ steal('steal','steal/parse',function(steal, parse){
 					}
 				}
 				tmpFile.remove();
-				return ""+outBaos.toString();
+				return options.output;
 			};
 		},
 		yui: function() {
