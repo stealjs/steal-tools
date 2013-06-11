@@ -1,3 +1,7 @@
+var fs = require('fs'),
+	jsdom = require('jsdom'),
+	path = require('path');
+
 steal('steal',function(s){
 	// Methods for walking through steal and its dependencies
 	
@@ -125,7 +129,7 @@ steal('steal',function(s){
 	 * `open` opens a page by:
 	 * 
 	 *   - temporarily deleting the rhino steal
-	 *   - opening the page with Envjs
+	 *   - opening the page with jsdom
 	 *   - setting back rhino steal, saving envjs's steal as steal._steal;
 	 * 
 	 * @param {String} url The html page to open.
@@ -164,31 +168,17 @@ steal('steal',function(s){
 		// remove the current steal
 		delete window.steal;
 		
-		// clean up window in case this is the second time Envjs has opened the page
-		for(var n in window){
-			// TODO make this part of steal namespace
-			if(n !== "STEALPRINT"){
-				delete window[n];
-			}
-		}
 		// move params
 		if ( typeof stealData == 'object') {
 			window.steal = stealData;
 		}else{
 			cb = stealData;
 		}
-		// get envjs
-		load('steal/rhino/env.js'); //reload every time
-		
-		
 	
 		// what gets called by steal.done
 		// rootSteal the 'master' steal
 		var doneCb = function(rootSteal){
 			// get the 'base' steal (what was stolen)
-			
-			// clear timers
-			Envjs.clear();
 			
 			// callback with the following
 			cb({
@@ -250,70 +240,53 @@ steal('steal',function(s){
 				firstSteal : s.build.open.firstSteal(rootSteal)
 			})
 		};
-		
-		Envjs(url, {
-			scriptTypes: {
-				"text/javascript": true,
-				"text/envjs": true,
-				"": true
-			},
-			fireLoad: true,
-			logLevel: 2,
-			afterScriptLoad: {
-				// prevent $(document).ready from being called even though load is fired
-				"jquery.1.7.1.js": function( script ) {
-					window.jQuery && jQuery.holdReady(true);
-				},
-				"jquery.1.8.1.js": function( script ) {
-					window.jQuery && jQuery.holdReady(true);
-				},
-				"steal.js": function(script){
-					if(stealData.skipAll){
-						window.steal.config({
-							types: {
-								"js" : function(options, success){
-									var text;
-									if(options.text){
-										text = options.text;
-									}else{
-										text = readFile(options.id);
-									}
-									// check if steal is in this file
-									var stealInFile = /steal\(/.test(text);
-									if(stealInFile){
-										// if so, load it
-										eval(text)
-									} else {
-										// skip this file
-									}
-									success()
-								},
-								"fn": function (options, success) {
-									// skip all functions
-									success();
+
+		var html = fs.readFileSync(url).toString();
+		jsdom.env({
+			html: html,
+			done: function(errors, win){
+				if(stealData.skipAll){
+					window.steal.config({
+						types: {
+							"js" : function(options, success){
+								var text;
+								if(options.text){
+									text = options.text;
+								}else{
+									text = readFile(options.id);
 								}
+								// check if steal is in this file
+								var stealInFile = /steal\(/.test(text);
+								if(stealInFile){
+									// if so, load it
+									eval(text)
+								} else {
+									// skip this file
+								}
+								success()
+							},
+							"fn": function (options, success) {
+								// skip all functions
+								success();
 							}
-						})
-					}
-					// a flag to tell steal we're in "build" mode
-					// this is used to completely ignore files with the "ignore" flag set
-					window.steal.isBuilding = true;
-					// if there's timers (like in less) we'll never reach next line 
-					// unless we bind to done here and kill timers
-					window.steal.one('done', doneCb);
-					newSteal = window.steal;
+						}
+					})
 				}
-			},
-			dontPrintUserAgent: true
+				// a flag to tell steal we're in "build" mode
+				// this is used to completely ignore files with the "ignore" flag set
+				window.steal.isBuilding = true;
+				// if there's timers (like in less) we'll never reach next line 
+				// unless we bind to done here and kill timers
+				window.steal.one('done', doneCb);
+				newSteal = window.steal;
+			}
 		});
-		
+	
 		// set back steal
 		
 		window.steal = oldSteal;
 		// TODO: is this needed anymore
 		window.steal._steal = newSteal;
-
-		Envjs.wait();
 	};
 	steal.build.open.firstSteal =function(rootSteal){
 		var stel;
