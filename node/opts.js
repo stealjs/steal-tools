@@ -5,6 +5,8 @@ var steal = require('./steal');
  */
 module.exports = opts;
 
+var isArray = Array.isArray;
+
 /**
  * Converts args or a string into options
  * @param {Object} args

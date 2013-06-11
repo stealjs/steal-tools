@@ -104,4 +104,10 @@ extend(steal.URI.prototype, {
 	},
 });
 
+steal.print = function(){
+	if(typeof STEALPRINT == "undefined" || STEALPRINT !== false){
+		console.log.apply(console, arguments);
+	}
+};
+
 module.exports = steal;
