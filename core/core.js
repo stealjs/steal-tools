@@ -78,10 +78,10 @@
 			return stealManager(false, config.cloneContext())
 		}
 		/**
-		 * @function config
+		 * @function steal.config
 		 * 
-		 * `steal.config( configOptions )` configures the behavior
-		 * of steal. For example:
+		 * @signature `steal.config( configOptions )`
+		 * Configures the behavior of steal. For example:
 		 * 
 		 *     steal.config({
 		 *       map: {
@@ -109,12 +109,13 @@
 		 * This sets the [steal.config.map map], [steal.config.paths paths],
 		 * [steal.config.shim shim], and [steal.config.ext ext].
 		 * 
-		 * `steal.config(optionName)` returns a configuration option value. Example:
+		 * @signature `steal.config(optionName)`
+		 * Returns a configuration option value. Example:
 		 * 
 		 *     steal.config("env") //-> "development"
 		 * 
-		 * `steal.config(optionName, optionVal)` configures a 
-		 * specific option value. Example:
+		 * @signature `steal.config(optionName, optionVal)`
+		 * Configures a specific option value. Example:
 		 * 
 		 *     steal.config("env","production")
 		 * 
@@ -176,6 +177,52 @@
 		 *     </script>
 		 *     <script src='../steal/steal.production.js,myapp'>
 		 *     </script>
+		 * 
+		 * ## Locating StealJS and other libraries outside the root folder.
+		 * 
+		 * Its common desire to want steal and other projects in
+		 * some shared folder and the application code somewhere 
+		 * else.  For example:
+		 * 
+		 *     shared/
+		 *         steal/
+		 *         can/
+		 *         stealconfig.js
+		 *     apps/
+		 *         myapp/
+		 *           myapp.js
+		 * 
+		 * This is possible by changing [steal.config.root] to
+		 * point `apps` and  
+		 * [steal.config.paths] to point to the shared 
+		 * location.  For example, the following in stealconfig.js
+		 * will work for the case above:
+		 * 
+		 *     paths: {
+		 *       "can/": "../shared/can/",
+		 *       "steal/" : "../shared/steal/",
+		 *     },
+		 *     root: steal.config('root').join('../apps')
+		 * 
+		 * ## Signatures
+		 * 
+		 * ### `steal.config()`
+		 * 
+		 * Returns all configured properties. For example:
+		 * 
+		 *     steal.config().root //-> URI
+		 * 
+		 * ### `steal.config(propertyName)`
+		 * 
+		 * Returns a single configured property value. For example:
+		 * 
+		 *     steal.config("root") //-> URI
+		 * 
+		 * ### `steal.config(properties)`
+		 * 
+		 * Configures multiple properties at once. For example:
+		 * 
+		 *     steal.config({root: "path/to/root"})
 		 * 
 		 */
 		st.config = function(){
