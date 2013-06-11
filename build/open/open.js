@@ -291,8 +291,8 @@ steal('steal',function(s){
 				window.steal.isBuilding = true;
 				// if there's timers (like in less) we'll never reach next line 
 				// unless we bind to done here and kill timers
-				window.steal.one('done', doneCb);
 				newSteal = window.steal;
+				window.steal.one('done', doneCb);
 			}
 		});
 	

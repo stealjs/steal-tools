@@ -17,8 +17,8 @@ steal('steal','steal/parse',function(steal, parse){
 	 * @return {String} the source code minus code indended to be removed.
 	 */
 	js.clean = function( text ) {
-		var parsedTxt = String(java.lang.String(text)
-			.replaceAll("(?s)\/\/!steal-remove-start(.*?)\/\/!steal-remove-end", ""));
+		var repRegExp = new RegExp("\/\/!steal-remove-start((?:.|\n)*?)\/\/!steal-remove-end", "g");
+		var parsedTxt = text.replace(repRegExp, "");
 		
 		// the next part is slow, try to skip if possible
 		// if theres not a standalone steal.dev, skip
