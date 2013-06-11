@@ -1,4 +1,4 @@
-var steal = require('steal');
+var steal = require('./steal');
 
 /*
  * Exports `opts` 

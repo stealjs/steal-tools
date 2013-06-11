@@ -6,8 +6,6 @@ var extend = function (d, s) {
 	return d;
 };
 
-console.log(steal);
-
 extend(steal.URI.prototype, {
 	mkdir: function () {
 		fs.mkdirSync('' + this);

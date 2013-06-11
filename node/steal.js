@@ -9,22 +9,21 @@ var root = fs.realpathSync(__dirname + '/../../');
 	// we will have to check the file to see if it is "stealing" anything
 	// if it is .. run, but we also need to convert the fn type to not actually call anything
 	// this will create a shell
-	win.steal = {
-		types: {
-			"js": function (options, success) {
-				if (options.text) {
-					eval(text);
-				} else {
-					require(path.join(root, options.src.path || options.src));
-				}
-				success();
-			},
-			win: win
-		}
-	}
+	win.steal = win.steal || {};
+
+	win.steal.types = {
+		"js": function (options, success) {
+			if (options.text) {
+				eval(text);
+			} else {
+				require(path.join(root, options.src.path || options.src));
+			}
+			success();
+		},
+		win: win
+	};
 
 	require('../steal.js');
-	require('./file.js');
 
 	module.exports = win.steal;
 })(global);
