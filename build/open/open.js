@@ -1,5 +1,5 @@
 var fs = require('fs'),
-	jsdom = require('jsdom'),
+	jsdom = require('jsdom').jsdom,
 	path = require('path');
 
 steal('steal',function(s){
@@ -178,9 +178,6 @@ steal('steal',function(s){
 		var oldSteal = s,
 			// new steal is the steal opened
 			newSteal;
-			
-		// remove the current steal
-		delete window.steal;
 		
 		// move params
 		if ( typeof stealData == 'object') {
@@ -256,52 +253,50 @@ steal('steal',function(s){
 		};
 
 		var html = fs.readFileSync(url).toString();
-		jsdom.env({
-			html: html,
-			done: function(errors, win){
-				if(stealData.skipAll){
-					window.steal.config({
-						types: {
-							"js" : function(options, success){
-								var text;
-								if(options.text){
-									text = options.text;
-								}else{
-									text = readFile(options.id);
-								}
-								// check if steal is in this file
-								var stealInFile = /steal\(/.test(text);
-								if(stealInFile){
-									// if so, load it
-									eval(text)
-								} else {
-									// skip this file
-								}
-								success()
-							},
-							"fn": function (options, success) {
-								// skip all functions
-								success();
+		var onload = function(){
+			if(stealData.skipAll){
+				jsWin.steal.config({
+					types: {
+						"js" : function(options, success){
+							var text;
+							if(options.text){
+								text = options.text;
+							}else{
+								text = readFile(options.id);
 							}
+							// check if steal is in this file
+							var stealInFile = /steal\(/.test(text);
+							if(stealInFile){
+								// if so, load it
+								eval(text)
+							} else {
+								// skip this file
+							}
+							success()
+						},
+						"fn": function (options, success) {
+							// skip all functions
+							success();
 						}
-					})
-				}
-				// a flag to tell steal we're in "build" mode
-				// this is used to completely ignore files with the "ignore" flag set
-				window.steal.isBuilding = true;
-				// if there's timers (like in less) we'll never reach next line 
-				// unless we bind to done here and kill timers
-				newSteal = window.steal;
-				window.steal.one('done', doneCb);
+					}
+				})
 			}
+			// a flag to tell steal we're in "build" mode
+			// this is used to completely ignore files with the "ignore" flag set
+			jsWin.steal.isBuilding = true;
+			// if there's timers (like in less) we'll never reach next line 
+			// unless we bind to done here and kill timers
+			jsWin.steal.one('done', doneCb);
+			newSteal = jsWin.steal;
+		};
+
+		var jsDoc = jsdom(html, null, {
+			url: process.cwd()
 		});
-	
-		// set back steal
-		
-		window.steal = oldSteal;
-		// TODO: is this needed anymore
-		window.steal._steal = newSteal;
+		var jsWin = jsDoc.createWindow();
+		jsWin.addEventListener('load', onload);
 	};
+
 	steal.build.open.firstSteal =function(rootSteal){
 		var stel;
 		for(var i =0; i < rootSteal.dependencies.length; i++){
