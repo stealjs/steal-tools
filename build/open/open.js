@@ -316,6 +316,8 @@ steal('steal',function(s){
 		var jsWin = jsDoc.createWindow();
 		jsWin.XMLHttpRequest = ShimXHR;
 		jsWin.addEventListener('load', onload);
+
+		window.steal = oldSteal;
 	};
 
 	steal.build.open.firstSteal =function(rootSteal){
