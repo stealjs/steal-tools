@@ -1,6 +1,23 @@
 var fs = require('fs'),
 	jsdom = require('jsdom').jsdom,
-	path = require('path');
+	path = require('path'),
+	XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
+/*
+ * We have to shim XHR in order to make sure we
+ * use the file:// protocol.
+ */
+var ShimXHR = function(){
+	XMLHttpRequest.apply(this, arguments);
+
+	var oldOpen = this.open;
+	this.open = function(method, url){
+		url = "file://" + process.cwd() + "/" + url;
+		arguments[1] = url;
+		return oldOpen.apply(this, arguments);
+	};
+};
+
 
 steal('steal',function(s){
 	// Methods for walking through steal and its dependencies
@@ -254,10 +271,13 @@ steal('steal',function(s){
 
 		var html = fs.readFileSync(url).toString();
 		var onload = function(){
+			var pageSteal = jsWin.steal;
+
 			if(stealData.skipAll){
-				jsWin.steal.config({
+				pageSteal.config({
 					types: {
 						"js" : function(options, success){
+							console.log("open.js", "Looking for:");
 							var text;
 							if(options.text){
 								text = options.text;
@@ -283,17 +303,18 @@ steal('steal',function(s){
 			}
 			// a flag to tell steal we're in "build" mode
 			// this is used to completely ignore files with the "ignore" flag set
-			jsWin.steal.isBuilding = true;
+			pageSteal.isBuilding = true;
 			// if there's timers (like in less) we'll never reach next line 
 			// unless we bind to done here and kill timers
-			jsWin.steal.one('done', doneCb);
-			newSteal = jsWin.steal;
+			pageSteal.one('done', doneCb);
+			newSteal = pageSteal;
 		};
 
 		var jsDoc = jsdom(html, null, {
-			url: process.cwd()
+			url: process.cwd() + "/app.html", // We have to lie about the URL to get jsdom to work
 		});
 		var jsWin = jsDoc.createWindow();
+		jsWin.XMLHttpRequest = ShimXHR;
 		jsWin.addEventListener('load', onload);
 	};
 

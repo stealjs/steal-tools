@@ -10,7 +10,8 @@
 	"dependencies": {
 		"commander": ">= 1.1.1",
 		"jsdom": ">= 0.6.5",
-		"execsync-ng": ">= 0.0.6"
+		"execsync-ng": ">= 0.0.6",
+		"xmlhttprequest": "1.5.0"
 	},
   "devDependencies" : {
     "grunt" : "0.4.1",

@@ -183,7 +183,11 @@ ConfigManager.defaults.types = {
 					}
 				}
 			} else {
-				script.onload = callback;
+				if(script.addEventListener) {
+					script.addEventListener('load', callback);
+				} else {
+					script.onload = callback;
+				}
 				// error handling doesn't work on firefox on the filesystem
 				if ( h.support.error && error && src.protocol !== "file" ) {
 					script.onerror = error;
