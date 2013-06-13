@@ -1,12 +1,22 @@
 #!/usr/bin/env node
-var program = require("commander"),
-	steal = require("../node/index.js");
+var path = require("path"),
+	program = require("commander"),
+	steal = require("../node/index.js"),
+	package = require("../package.json");
 
-program.version("0.0.1")
+program.version(package.version)
+	.option("-t, --to [folder]", "Name of the application folder")
 	.parse(process.argv);
 
+// If no arguments are provided, show the help and exit.
 if(!program.args.length) {
 	program.help();
+}
+
+var inFile = program.args[0],
+	toDirectory = program.to;
+if(!toDirectory) {
+	toDirectory = path.dirname(inFile);
 }
 
 steal("../build/build.js",
@@ -14,6 +24,6 @@ steal("../build/build.js",
 	"../build/css/css.js",
 	"../build/apps/apps.js", function(){
 
-	steal.build(program.args[0],{to: 'app'});
+	steal.build(program.args[0],{to: toDirectory});
 
 });

@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-var program = require("commander");
+var program = require("commander"),
+	package = require("../package.json");
 
-program.version("0.0.1")
+program.version(package.version)
 	.command("build", "Build your steal project")
 	//.command("install", "Install dependencies")
 	.parse(process.argv);
