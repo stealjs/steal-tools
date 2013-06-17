@@ -1,13 +1,9 @@
-(function (win) {
-	// we are going to need to swap this out while loading the scripts
-	// it's possible a new version of steal will need to be loaded / replace the old one
-	// we will have to check the file to see if it is "stealing" anything
-	// if it is .. run, but we also need to convert the fn type to not actually call anything
-	// this will create a shell
-	win.steal = win.steal || {};
-	win.steal.types = require('./types');
+global.steal = {
+	types: require("./types")
+};
 
-	require('../steal.js');
-	
-	module.exports = win.steal;
-})(global);
+/*
+ * We need to keep steal attached to global
+ * because all of the old code expects it there.
+ */
+module.exports = global.steal = require("stealjs");
