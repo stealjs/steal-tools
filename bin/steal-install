@@ -1,0 +1,51 @@
+#!/usr/bin/env node
+var fs = require("fs"),
+	mkpath = require("./mkpath"),
+	path = require("path"),
+	program = require("commander"),
+	package = require("../package.json");
+
+program.version(package.version)
+	.parse(process.argv);
+
+var files = {
+	"stealjs/steal.js": path.resolve(__dirname, "../node_modules/stealjs/steal.js"),
+	"stealconfig.js": path.resolve(__dirname, "../node_modules/stealjs/stealconfig.js")
+};
+
+function wrapped(fn){
+	return function(err){
+		if(err) {
+			console.error(err);
+			return;
+		}
+
+		fn.apply(this, [].slice.call(arguments, 1));
+	};
+}
+
+function saveFile(location, destination){
+	fs.readFile(location, 'utf8', wrapped(function(data){
+		var completePath = path.resolve(process.cwd(), destination),
+			dirPath = path.dirname(completePath);
+
+		mkpath(dirPath, function(){
+			fs.writeFile(completePath, data, wrapped(function(){
+				console.log("Created", destination);
+				delete files[destination];
+				seeIfComplete();
+			}));
+		});
+	}));
+}
+
+function seeIfComplete(){
+	if(!Object.keys(files).length) {
+		// All files have been saved.
+		process.exit();
+	}
+}
+
+for(var f in files) {
+	saveFile(files[f], f);
+}

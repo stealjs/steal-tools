@@ -5,5 +5,5 @@ var program = require("commander"),
 
 program.version(package.version)
 	.command("build", "Build your steal project")
-	//.command("install", "Install dependencies")
+	.command("install", "Install dependencies")
 	.parse(process.argv);
