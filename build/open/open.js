@@ -1,5 +1,5 @@
 var fs = require('fs'),
-	jsdom = require('jsdom').jsdom,
+	jsdom = require('jsdom'),
 	path = require('path'),
 	XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
@@ -18,6 +18,31 @@ var ShimXHR = function(){
 	};
 };
 
+/*
+ * Overload JSDOM's resource loader. When loading steal.js we're going to
+ * intercept those calls and give them our own local copy of steal.js.
+ * This way we don't have to worry about paths.
+ */
+var localSteal = fs.readFileSync(path.resolve(__dirname, "../../node_modules/stealjs/steal.js"),
+	"utf8");
+var oldLoad = jsdom.defaultLevel.resourceLoader.load;
+jsdom.defaultLevel.resourceLoader.load = function(element, href, callback){
+	if(element && element.nodeName === "SCRIPT") {
+		var isSteal = href && href.indexOf("steal.js") !== -1;
+
+		if(isSteal) {
+			var full = this.resolve(element._ownerDocument, href);
+			var fn = this.enqueue(element, callback, full);
+			setTimeout(function(){
+				fn(null, localSteal);
+			}, 0);
+			return;
+		}
+	}
+
+	// If we get this far we're not loading steal, use JSDOM's method.
+	return oldLoad.apply(this, arguments);
+};
 
 steal('steal',function(s){
 	// Methods for walking through steal and its dependencies
@@ -197,9 +222,7 @@ steal('steal',function(s){
 			newSteal;
 		
 		// move params
-		if ( typeof stealData == 'object') {
-			window.steal = stealData;
-		}else{
+		if ( typeof stealData != 'object') {
 			cb = stealData;
 		}
 	
@@ -309,11 +332,13 @@ steal('steal',function(s){
 			pageSteal.one('done', doneCb);
 			newSteal = pageSteal;
 		};
-
-		var jsDoc = jsdom(html, null, {
-			url: process.cwd() + "/app.html", // We have to lie about the URL to get jsdom to work
+	
+		var baseUrl = path.resolve(process.cwd(), "app.html");
+		var jsDoc = jsdom.jsdom(html, null, {
+			url: baseUrl, // We have to lie about the URL to get jsdom to work
 		});
 		var jsWin = jsDoc.createWindow();
+		jsWin.steal = typeof stealData == "object" ? stealData : undefined;
 		jsWin.XMLHttpRequest = ShimXHR;
 		jsWin.addEventListener('load', onload);
 

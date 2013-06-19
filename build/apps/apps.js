@@ -138,7 +138,7 @@ steal('steal',
 		_open : function(appName, options, callback){
 			//= Configure what we are going to load from APP name
 			// if we have html, get  the app-name
-			var html = 'steal/rhino/blank.html',
+			var html = 'steal/node/blank.html',
 				data = {env: 'development'};
 			if(appName.indexOf('.html') > 2){
 				html = appName;
@@ -295,7 +295,9 @@ steal('steal',
 			function visit( f ) {
 				if ( f.order === undefined ) {
 					f.dependencyFileNames.forEach(function(fileName){
-						visit( options.files[fileName] )
+						if(!f.appNames || !f.appNames.length || f.appNames[0].toString() !== fileName.toString()) {
+							visit( options.files[fileName] );
+						}
 					})
 					f.order = (order++);
 				}
