@@ -376,18 +376,13 @@ steal('steal',function(s){
 			base = "" + window.location,
 			url = src.match(/([^\?#]*)/)[1];
 
-
-		
-		url = Envjs.uri(url, base);
-		
-		if ( url.match(/^file\:/) ) {
-			url = url.replace("file:/", "");
-			text = readFile("/" + url);
-		}
-
 		if ( url.match(/^http\:/) ) {
 			text = readUrl(url);
+		} else {
+			url = path.resolve(process.cwd(), url);
+			text = readFile(url);	
 		}
+
 		return text;
 	};
 })
