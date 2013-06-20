@@ -228,21 +228,29 @@ steal('steal',
 		 * 
 		 */
 		addDependencies: function( resource, options, appName ) {
+			if(resource.options.id && appName
+				&& resource.options.id.toString() == appName.toString()) {
+				delete options.files[resource.options.id.toString()];
+			}
+
 			//print("  "+resource.options.id+":"+appName)
 			var id = resource.options.id,
-				buildType = resource.options.buildType, 
-				file = maker(options.files, id || appName, function(){
+				buildType = resource.options.buildType,
+				prop = id || appName, 
+				file = maker(options.files, prop, function(){
 					//clean and minifify everything right away ...
-					var source = '';
+					var pathOpts, source = '';
+
 					if( id && resource.options.buildType != 'fn' ) {
 						// some might not have source yet
-						steal.print("  + "+id );
+						steal.print("  + "+prop );
 						
 						// convert using steal's root because that might have been configured
-						var pathOpts = steal.idToUri( resource.options.id );
-						var source = resource.options.text || readFile( pathOpts.path );
+						pathOpts = steal.idToUri( prop );
+						source = resource.options.text || readFile( pathOpts.path );
 					}
-					resource.options.text = resource.options.text || source
+					
+					resource.options.text = resource.options.text || source;
 					
 					// this becomes data
 					return {
