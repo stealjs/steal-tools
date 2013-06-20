@@ -1,35 +1,36 @@
-var steal = require('../../../node/index.js');
+var assert = require('assert'),
+	steal = require('../../../node');
 
-/**
- * Tests compressing a very basic page and one that is using steal
- */
-steal('steal', 'steal/test/test.js', function( s ) {
-	s.test.module("steal/build/open")
-	
-	s.test.test("opens a basic page", function(){
-		steal("steal", "steal/build",function(s2){
-			
-			s2.build.open('steal/build/open/test/basic.html',function(opener){
-				s.test.ok(opener,"got opener");
+describe("Open", function(){
+	var build;
+
+	before(function(done){
+		steal("steal/build", function(b){
+			build = b;
+			done();
+		});
+	});
+
+	it("Build is fetched", function(){
+		assert.notEqual(build, null);
+		assert.equal(typeof build, "function");
+	});
+
+	it("Tests compressing a very basic page and one that is using steal", function(done){
+		build.open("build/open/test/basic.html",function(opener){
+			assert.notEqual(opener, null);
+			assert.equal(typeof opener, "object");
+			assert.equal(typeof opener.each, "function");
+
+			assert.doesNotThrow(function(){
 				var items = [];
 				opener.each(function( options ){
 					items.push(options.src);
 				});
 			});
-			
+
+			done();
 		});
 	});
-	s.test.test("cleans up globals", function(){
-
-		steal("steal", "steal/build",function(s2){
-			s2.build.open('steal/build/open/test/basic.html',function(opener){
-				s.test.equals(window.appFiles.length, 1)
-			});
-			s2.build.open('steal/build/open/test/basic.html',function(opener){
-				s.test.equals(window.appFiles.length, 1, 'namespace cleaned itself up')
-			});
-			
-		});
-	});
-
+	
 });

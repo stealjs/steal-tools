@@ -60,9 +60,16 @@ module.exports = function (grunt) {
 					'steal.production.js': ['steal.js']
 				}
 			}
+		},
+		mochaTest: {
+			test: {
+				src: ["build/open/test/open_test.js"]
+			}
 		}
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-mocha-test');
 	grunt.registerTask('default', ['build', 'uglify']);
+	grunt.registerTask('test', 'mochaTest');
 };
