@@ -40,6 +40,25 @@ module.exports = function (grunt) {
 		});
 	});
 
+	grunt.registerTask("test", function(){
+		var done = this.async();
+
+		var testFiles = ["build/open/test/open_test.js"];
+
+
+		var Mocha = require('mocha');
+		//Add the interface
+		Mocha.interfaces["qunit-mocha-ui"] = require("qunit-mocha-ui");
+		//Tell mocha to use the interface.
+		var mocha = new Mocha({ui:"qunit-mocha-ui", reporter:"spec"});
+		//Add your test files
+		testFiles.forEach(mocha.addFile.bind(mocha));
+		//Run your tests
+		mocha.run(function(failures){
+			process.exit(failures);
+		});
+	});
+
 	grunt.initConfig({
 		pkg : '<json:package.json>',
 		meta : {
@@ -60,16 +79,9 @@ module.exports = function (grunt) {
 					'steal.production.js': ['steal.js']
 				}
 			}
-		},
-		mochaTest: {
-			test: {
-				src: ["build/open/test/open_test.js"]
-			}
 		}
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-mocha-test');
 	grunt.registerTask('default', ['build', 'uglify']);
-	grunt.registerTask('test', 'mochaTest');
 };

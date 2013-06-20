@@ -1,36 +1,35 @@
-var assert = require('assert'),
-	steal = require('../../../node');
+var steal = require('../../../node');
 
-describe("Open", function(){
-	var build;
+suite("Open");
 
-	before(function(done){
-		steal("steal/build", function(b){
-			build = b;
-			done();
+var build;
+before(function(done){
+	steal("steal/build", function(b){
+		build = b;
+		done();
+	});
+});
+
+test("Build is fetched", function(){
+	expect(2);
+	notEqual(typeof build, undefined);
+	equal(typeof build, "function");
+});
+
+test("Tests compressing a very basic page and one that is using steal", function(done){
+	expect(4);
+
+	build.open("build/open/test/basic.html",function(opener){
+		notEqual(opener, null);
+		equal(typeof opener, "object");
+		equal(typeof opener.each, "function");
+		
+		var items = [];
+		opener.each(function( options ){
+			items.push(options.src);
 		});
+		ok(true); // We got this far, each didn't throw.
+
+		done();
 	});
-
-	it("Build is fetched", function(){
-		assert.notEqual(build, null);
-		assert.equal(typeof build, "function");
-	});
-
-	it("Tests compressing a very basic page and one that is using steal", function(done){
-		build.open("build/open/test/basic.html",function(opener){
-			assert.notEqual(opener, null);
-			assert.equal(typeof opener, "object");
-			assert.equal(typeof opener.each, "function");
-
-			assert.doesNotThrow(function(){
-				var items = [];
-				opener.each(function( options ){
-					items.push(options.src);
-				});
-			});
-
-			done();
-		});
-	});
-	
 });
