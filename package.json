@@ -1,40 +1,41 @@
 {
-  "name" : "StealJS",
-  "description" : "Gets JavaScript.",
-  "version" : "3.3.0pre",
-  "author" : {
-    "name" : "Bitovi",
-    "email" : "contact@bitovi.com",
-    "web" : "http://bitovi.com/"
-  },
+	"name" : "StealJS",
+	"description" : "Gets JavaScript.",
+	"version" : "3.3.0pre",
+	"author" : {
+		"name" : "Bitovi",
+		"email" : "contact@bitovi.com",
+		"web" : "http://bitovi.com/"
+	},
 	"dependencies": {
 		"commander": ">= 1.1.1",
 		"jsdom": ">= 0.6.5",
 		"execsync-ng": ">= 0.0.6",
 		"xmlhttprequest": "1.5.0",
-		"stealjs": "git+ssh://git@github.com:bitovi/steal.js.git#master"
+		"stealjs": "git+ssh://git@github.com:bitovi/steal.js.git#master",
+		"rimraf": ">= 2.1.4"
 	},
-  "devDependencies" : {
-    "grunt" : "0.4.1",
-    "grunt-closure-tools" : "> 0.6.2",
-    "grunt-contrib-uglify": "0.2.1",
-    "node-promise" : ">= 0.5.4",
-    "grunt-contrib-connect": "0.1.2"
-  },
+	"devDependencies" : {
+		"grunt" : "0.4.1",
+		"grunt-closure-tools" : "> 0.6.2",
+		"grunt-contrib-uglify": "0.2.1",
+		"node-promise" : ">= 0.5.4",
+		"grunt-contrib-connect": "0.1.2"
+	},
 	"bin": {
 		"steal": "bin/steal",
 		"steal-build": "bin/steal-build"
 	},
-  "main": "node/steal",
-  "homepage" : "http://javascriptmvc.com/docs.html#!stealjs",
-  "repository" : {
-    "type" : "git",
-    "url" : "git://github.com/bitovi/steal.git"
-  },
-  "licenses" : [
-    {
-      "type" : "MIT",
-      "url" : "http://opensource.org/licenses/mit-license.php"
-    }
-  ]
+	"main": "node/steal",
+	"homepage" : "http://javascriptmvc.com/docs.html#!stealjs",
+	"repository" : {
+		"type" : "git",
+		"url" : "git://github.com/bitovi/steal.git"
+	},
+	"licenses" : [
+		{
+			"type" : "MIT",
+			"url" : "http://opensource.org/licenses/mit-license.php"
+		}
+	]
 }

@@ -1,81 +1,70 @@
+var fs     = require('fs'),
+	rimraf = require('rimraf');
+
 // this is test helpers for steal
 steal('steal', function(steal){
-	
+
 var assertions = [],
 	module = "";
 steal.test =  {
 	//clears every property fromt he window, returns steal (might return old stuff)
 	clear: function() {
-		var win = this.getWindow(),
-			steal = steal;
-		for(var n in win){
-			if(n != "_S" && n != "STEALPRINT"){
-				//this[n] = null;
-				delete win[n];
-			}
-		}
-		this.testNamespace();
-		return steal;
+		return;
 	},
 	// compares the file character counts, which is much faster than the string comparison
 	compareFiles: function(expected, actual, msg){
-		var actualJS = readFile(actual),
-			expectedJS = readFile(expected);
+		var actualJS = fs.readFileSync(actual),
+			expectedJS = fs.readFileSync(expected);
 		this.equals(actualJS.length, expectedJS.length, msg);
 	},
 	getWindow: function() {
 		return (function(){return this}).call(null,0)
 	},
 	expect: function(num){
-		var checkReady = function(){
-			if(assertions.length >= num)
-				return true;
-	        return false;
-	    }
-	    while(!checkReady()){
-	        java.lang.Thread.currentThread().sleep(300);
-	    }
+		var self = this,
+			checkReady = function(){
+				if(assertions.length >= num)
+					return true;
+				return false;
+			}
+		while(!checkReady()){
+			setTimeout(function(){
+				self.expect(num);
+			}, 300);
+		}
 	},
 	wait: function( name ) {
-		var checkExists = function(name){
-	        var parts = name.split(".");
-	        var cur = this;
-	        for(var i =0; i < parts.length; i++){
-	            if(! cur[parts[i]] ){
-	                return false;
-	            }else
-	                cur = cur[parts[i]];
-	        }
-	        return true;
-	    }
-	    while(!checkExists(name)){
-	        java.lang.Thread.currentThread().sleep(300);
-	    }
+		var self = this,
+			checkExists = function(name){
+				var parts = name.split(".");
+				var cur = this;
+				for(var i =0; i < parts.length; i++){
+					if(! cur[parts[i]] ){
+						return false;
+					}else
+						cur = cur[parts[i]];
+				}
+				return true;
+			}
+		if(!checkExists(name)){
+			setTimeout(function(){
+				self.wait(name);
+			}, 300);
+		}
 	},
 	sleep: function( duration ){
-        java.lang.Thread.currentThread().sleep(duration);		
+		throw('Sleep is not available in the Node.js. Rewrite the code to use the setTimeout instead');
 	},
 	print: function() {
 		var win =this.getWindow();
-		for(var n in win) print(n);
+		for(var n in win) console.log(n);
 	},
 	deleteDir: function( dir ) {
-		dir = new java.io.File(dir)
-		if (dir.isDirectory()) {
-	        var children = dir.list();
-	        for (var i=0; i<children.length; i++) {
-	            var success = this.deleteDir(new java.io.File(dir, children[i]));
-	            if (!success) return false;
-	            
-	        }
-	    }
-	
-	    // The directory is now empty so delete it
-	    return dir['delete']();
+		rimraf.sync(dir);
 	},
 	remove: function() {
 		for(var i=0; i < arguments.length; i++){
-			this.deleteDir(new java.io.File(arguments[i]) )
+			this.deleteDir(arguments[i])
 		}
 	},
 	testNamespace: function() {
@@ -102,6 +91,7 @@ steal.test =  {
 		}
 	},
 	open: function( src , fireLoad ) {
+		return
 		load("steal/rhino/env.js");
 		if(typeof Envjs == 'undefined'){
 			print("I DON'T GET IT")
@@ -136,13 +126,13 @@ steal.test =  {
 		
 	},
 	test : function(name, test){
-		assertions = []
+		assertions = [];
 		test(steal.test);
-		print("  -- "+name+" "+assertions.length)
+		console.log("  -- "+name+" "+assertions.length)
 	},
 	module : function(name ){
 		module = name;
-		print("==========  "+name+"  =========")
+		console.log("==========  "+name+"  =========")
 	}
 }
 	return steal;
