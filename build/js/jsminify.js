@@ -169,6 +169,12 @@ steal('steal','steal/parse',function(steal, parse){
 				var rnd = Math.floor(Math.random() * 1000000 + 1),
 					filename = "tmp" + rnd + ".js",
 					tmpFile = new steal.URI(filename);
+debugger;
+
+				var compilerPath = "steal/build/js/compiler.jar";
+				if(process.cwd().split("/")[process.cwd().split("/").length - 1] == "steal") {
+					compilerPath = compilerPath.split("/").slice(1).join("/");
+				}
 
 				tmpFile.save(src);
 
@@ -177,10 +183,10 @@ steal('steal','steal/parse',function(steal, parse){
 						output: true // This will be a string on the way out.
   				};
 				if ( quiet ) {
-					runCommand("java", "-jar", "steal/build/js/compiler.jar", "--compilation_level", "SIMPLE_OPTIMIZATIONS", 
+					runCommand("java", "-jar", compilerPath, "--compilation_level", "SIMPLE_OPTIMIZATIONS", 
 						"--warning_level", "QUIET", "--js", filename, options);
 				} else {
-					runCommand("java", "-jar", "steal/build/js/compiler.jar", "--compilation_level", "SIMPLE_OPTIMIZATIONS", 
+					runCommand("java", "-jar", compilerPath, "--compilation_level", "SIMPLE_OPTIMIZATIONS", 
 						"--js", filename, options);
 				}
 				// print(options.err);
@@ -259,5 +265,7 @@ steal('steal','steal/parse',function(steal, parse){
 			};
 		}
 	};
+
+	return js;
 	
-})
+});

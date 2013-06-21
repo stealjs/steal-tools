@@ -58,7 +58,7 @@ steal('steal',
 		 * Changing the depth to 2 will only create `app1_app2_app3`.
 		 * 
 		 */
-		var apps = steal.build.apps = function( moduleIds, buildOptions ) {
+		var apps = steal.build.apps = function( moduleIds, buildOptions, callback ) {
 			
 			buildOptions = steal.opts(buildOptions || {}, {
 				//folder to build to, defaults to the folder the page is in
@@ -91,7 +91,11 @@ steal('steal',
 			// opens each app and add its dependencies to options
 			steal.build.apps.open(moduleIds, options, function(options){
 				apps.makePackages(options, buildOptions);
-			})
+
+				if(callback){
+					callback();
+				}
+			});
 			
 		};
 		

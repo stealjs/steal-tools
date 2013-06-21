@@ -43,7 +43,10 @@ module.exports = function (grunt) {
 	grunt.registerTask("test", function(){
 		var done = this.async();
 
-		var testFiles = ["build/open/test/open_test.js"];
+		var testFiles = [
+			"build/open/test/open_test.js",
+			"build/js/js_test.js"
+		];
 
 
 		var Mocha = require('mocha');
