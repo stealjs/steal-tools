@@ -30,7 +30,7 @@ steal('steal',
 	 * Builds an app, and pulls out packages
 	 * 
 	 */
-	steal.build.packages = function(app, buildOptions){
+	steal.build.packages = function(app, buildOptions, callback){
 		
 		// options for packaging
 		var options = {
@@ -251,6 +251,10 @@ steal('steal',
 				if(pack.css){
 					s.print("         "+destCSS);
 					s.URI(destCSS).save( filterCode(pack.css.code, 'css') );
+				}
+
+				if(callback) {
+					callback();
 				}
 			});
 		});

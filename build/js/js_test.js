@@ -126,8 +126,6 @@ test("test using uglify", function(){
 	},
 	"package/css.css",{stealOwnModules: true, compressor: "uglify"});
 
-	debugger;
-	
 	equal(
 		res.js,
 		// tell what this file has

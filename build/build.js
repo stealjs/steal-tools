@@ -136,7 +136,7 @@ steal('steal',function( steal ) {
 	 * 
 	 * 
 	 */
-	steal.build = function( moduleId, options ) {
+	steal.build = function( moduleId, options, callback ) {
 
 		var dependencies = {}, dep;
 
@@ -161,7 +161,7 @@ steal('steal',function( steal ) {
 		}
 
 		steal.print("Building to " + options.to);
-		steal.build.packages(moduleId, options);
+		steal.build.packages(moduleId, options, callback);
 
 	};
 
