@@ -149,17 +149,18 @@ steal('steal','steal/parse',function(steal, parse){
 
 				origFile.save(src);
 
-
-				var outBaos = new java.io.ByteArrayOutputStream(),
-					output = new java.io.PrintStream(outBaos);
+				var options = {
+					err: '',
+					output: true
+				};
 					
-				runCommand("node", "steal/build/js/uglify/bin/uglifyjs", origFileName,
-					{ output: output }
+				runCommand("node", getCompilerPath("steal/build/js/uglify/bin/uglifyjs"), origFileName,
+					options
 				);
 			
 				origFile.remove();
 
-				return outBaos.toString();
+				return options.output;
 			};
 		},
 		localClosure: function() {
@@ -170,17 +171,13 @@ steal('steal','steal/parse',function(steal, parse){
 					filename = "tmp" + rnd + ".js",
 					tmpFile = new steal.URI(filename);
 
-				var compilerPath = "steal/build/js/compiler.jar";
-				if(process.cwd().split("/")[process.cwd().split("/").length - 1] == "steal") {
-					compilerPath = compilerPath.split("/").slice(1).join("/");
-				}
-
 				tmpFile.save(src);
 
 				var options = {
 						err: '',
 						output: true // This will be a string on the way out.
   				};
+				var compilerPath = getCompilerPath("steal/build/js/compiler.jar");
 				if ( quiet ) {
 					runCommand("java", "-jar", compilerPath, "--compilation_level", "SIMPLE_OPTIMIZATIONS", 
 						"--warning_level", "QUIET", "--js", filename, options);
@@ -264,6 +261,14 @@ steal('steal','steal/parse',function(steal, parse){
 			};
 		}
 	};
+
+	function getCompilerPath(path){
+		var compilerPath = path, parts = process.cwd().split("/");
+		if(parts[parts.length - 1] == "steal") {
+			compilerPath = compilerPath.split("/").slice(1).join("/");
+		}
+		return compilerPath;
+	}
 
 	return js;
 	
