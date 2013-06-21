@@ -41,12 +41,25 @@ module.exports = function (grunt) {
 	});
 
 	grunt.registerTask("test", function(){
-		var done = this.async();
+		var done = this.async(),
+			flags = Object.keys(this.flags);
 
-		var testFiles = [
-			"build/open/test/open_test.js",
-			"build/js/js_test.js"
-		];
+		var testFiles = {
+			open: ["build/open/test/open_test.js"],
+			js: ["build/js/js_test.js"],
+			css: ["build/css/test/css_test.js"]
+		};
+
+		var allFiles = (function(){
+			var items = flags.length ? flags : Object.keys(testFiles);
+			var files = [];
+
+			items.forEach(function(i){
+				files = files.concat(testFiles[i]);
+			});
+
+			return files;
+		})();
 
 
 		var Mocha = require('mocha');
@@ -55,7 +68,7 @@ module.exports = function (grunt) {
 		//Tell mocha to use the interface.
 		var mocha = new Mocha({ui:"qunit-mocha-ui", reporter:"spec"});
 		//Add your test files
-		testFiles.forEach(mocha.addFile.bind(mocha));
+		allFiles.forEach(mocha.addFile.bind(mocha));
 		//Run your tests
 		mocha.run(function(failures){
 			process.exit(failures);
