@@ -13,8 +13,6 @@ before(function(done){
  * Tests compressing a very basic page and one that is using steal
  */
 
-debugger;
-
 test("makePackage", function(){
 	expect(2);
 

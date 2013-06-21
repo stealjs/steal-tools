@@ -169,7 +169,6 @@ steal('steal','steal/parse',function(steal, parse){
 				var rnd = Math.floor(Math.random() * 1000000 + 1),
 					filename = "tmp" + rnd + ".js",
 					tmpFile = new steal.URI(filename);
-debugger;
 
 				var compilerPath = "steal/build/js/compiler.jar";
 				if(process.cwd().split("/")[process.cwd().split("/").length - 1] == "steal") {
