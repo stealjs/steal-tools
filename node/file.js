@@ -1,5 +1,7 @@
 //var steal = require('./steal');
-var fs = require('fs');
+var fs = require('fs'),
+	mkpath = require('./mkpath').sync,
+	path = require("path");
 
 var extend = function (d, s) {
 	for (var p in s) d[p] = s[p];
@@ -12,7 +14,7 @@ extend(steal.URI.prototype, {
 		return this;
 	},
 	mkdirs: function () {
-		// TODO
+		mkpath('' + this);
 		return this;
 	},
 	exists: function () {
@@ -109,5 +111,15 @@ steal.print = function(){
 		console.log.apply(console, arguments);
 	}
 };
+
+Object.defineProperty(steal, "parentDir", {
+	get: function(){
+		var cwd = process.cwd(), parts = cwd.split("/");
+		if(parts[parts.length - 1] === "steal") {
+			return path.resolve(cwd, "..");
+		}
+		return cwd;
+	}
+});
 
 module.exports = steal;

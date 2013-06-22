@@ -1,11 +1,14 @@
 var steal = require('../../../node'),
-	rimraf = require("rimraf").sync;
+	path = require("path"),
+	rimraf = require("rimraf").sync,
+	jsdom = require("jsdom").jsdom;
+
+global.STEALPRINT = false;
 
 suite("Apps");
 
-process.chdir("..");
-
-var setupMultiBuild = function(after) {
+var build;
+before(function(done) {
 		/**
 		 * Setup for multi-build packaging tests
 		 *
@@ -61,147 +64,92 @@ var setupMultiBuild = function(after) {
 		 *
 		 */
 
-		steal("steal/build","steal/build/apps", function(build, apps){
+		steal("steal/build","steal/build/apps", function(b, apps){
+			// the following isn't all that's required
+			//s2.config('root','');
+			build = b;
+		
+			var buildOptions = {
+					compressor: "uglify" // uglify is much faster
+			};
 
-debugger;
-
-	// the following isn't all that's required
-	//s2.config('root','');
-	
-				var buildOptions = {
-						// compressor: "uglify" // uglify is much faster
-				};
-
-				// @todo: Work out why STEALPRINT doesn't prevent print() statements
-				//        during build
-				// STEALPRINT = false;
-
-				apps(["steal/build/apps/test/multibuild/app_x",
-					"steal/build/apps/test/multibuild/app_y",
-					"steal/build/apps/test/multibuild/app_z"], buildOptions, function(){
-
-					// Execute callback
-					after();
-
-					// Tear down
-					rimraf("steal/build/apps/test/multibuild/app_x/production.js");
-					rimraf("steal/build/apps/test/multibuild/app_y/production.js");
-					rimraf("steal/build/apps/test/multibuild/app_z/production.js");
-					rimraf("steal/build/apps/test/multibuild/app_x/production.css");
-					rimraf("steal/build/apps/test/multibuild/app_y/production.css");
-					rimraf("steal/build/apps/test/multibuild/app_z/production.css");
-					rimraf("packages/0.js");
-					rimraf("packages/1.js");
-					rimraf("packages/2.js");
-					rimraf("packages/0.css");
-					rimraf("packages/1.css");
-					rimraf("packages/2.css");
-				});
+			steal.build.apps(["build/apps/test/multibuild/app_x",
+				"build/apps/test/multibuild/app_y",
+				"build/apps/test/multibuild/app_z"], buildOptions, done);
 		});
-};
+});
 
-test("multibuild creates JS/CSS packages with the right contents", function(done){
-		setupMultiBuild(function(){
-				var contents;
-				contents = readFile("packages/app_x-app_y-app_z.js");
+after(function(){
+	// Tear down
+	rimraf("build/apps/test/multibuild/app_x/production.js");
+	rimraf("build/apps/test/multibuild/app_y/production.js");
+	rimraf("build/apps/test/multibuild/app_z/production.js");
+	rimraf("build/apps/test/multibuild/app_x/production.css");
+	rimraf("build/apps/test/multibuild/app_y/production.css");
+	rimraf("build/apps/test/multibuild/app_z/production.css");
+	rimraf("packages/0.js");
+	rimraf("packages/1.js");
+	rimraf("packages/2.js");
+	rimraf("packages/0.css");
+	rimraf("packages/1.css");
+	rimraf("packages/2.css");
+});
 
-				equals(/init_nested_plugin_xyz/.test(contents), true,
-								"content of nested_plugin_xyz.js should be packaged");
+test("multibuild creates JS/CSS packages with the right contents", function(){
+	expect(14);
 
-				contents = readFile("packages/app_x-app_y.js");
-				equals(/init_plugin_xy/.test(contents), true,
-								"content of plugin_xy.js should be packaged");
+	var contents;
+	contents = readFile("packages/app_x-app_y-app_z.js");
+	equal(/init_nested_plugin_xyz/.test(contents), true,
+					"content of nested_plugin_xyz.js should be packaged");
 
-				contents = readFile("packages/app_y-app_z.js");
-				equals(/init_plugin_yz/.test(contents), true,
-								"content of plugin_yz.js should be packaged");
+	contents = readFile("packages/app_x-app_y.js");
+	equal(/init_plugin_xy/.test(contents), true,
+					"content of plugin_xy.js should be packaged");
 
-				contents = readFile("steal/build/apps/test/multibuild/app_x/production.js");
-				equals(/init_app_x/.test(contents), true,
-								"content of app_x.js should be packaged");
+	contents = readFile("packages/app_y-app_z.js");
+	equal(/init_plugin_yz/.test(contents), true,
+					"content of plugin_yz.js should be packaged");
 
-				contents = readFile("steal/build/apps/test/multibuild/app_y/production.js");
-				equals(/init_app_y/.test(contents), true,
-								"content of app_y.js should be packaged");
+	contents = readFile("build/apps/test/multibuild/app_x/production.js");
+	equal(/init_app_x/.test(contents), true,
+					"content of app_x.js should be packaged");
 
-				contents = readFile("steal/build/apps/test/multibuild/app_z/production.js");
-				equals(/init_app_z/.test(contents), true,
-								"content of app_z.js should be packaged");
-				equals(/init_plugin_z/.test(contents), true,
-								"content of plugin_z.js should be packaged");
-								
-								
-				contents = readFile("packages/app_x-app_y-app_z.css");
-				equals(/#nested_plugin_xyz_styles/.test(contents), true,
-								"content of nested_plugin_xyz.css should be packaged");
+	contents = readFile("build/apps/test/multibuild/app_y/production.js");
+	equal(/init_app_y/.test(contents), true,
+					"content of app_y.js should be packaged");
 
-				contents = readFile("packages/app_x-app_y.css");
-				equals(/#plugin_xy_styles/.test(contents), true,
-								"content of plugin_xy.css should be packaged");
+	contents = readFile("build/apps/test/multibuild/app_z/production.js");
+	equal(/init_app_z/.test(contents), true,
+					"content of app_z.js should be packaged");
+	equal(/init_plugin_z/.test(contents), true,
+					"content of plugin_z.js should be packaged");
+					
+					
+	contents = readFile("packages/app_x-app_y-app_z.css");
+	equal(/#nested_plugin_xyz_styles/.test(contents), true,
+					"content of nested_plugin_xyz.css should be packaged");
 
-				contents = readFile("packages/app_y-app_z.css");
-				equals(/#plugin_yz_styles/.test(contents), true,
-								"content of plugin_yz.css should be packaged");
+	contents = readFile("packages/app_x-app_y.css");
+	equal(/#plugin_xy_styles/.test(contents), true,
+					"content of plugin_xy.css should be packaged");
 
-				contents = readFile("steal/build/apps/test/multibuild/app_x/production.css");
-				equals(/#app_x_styles/.test(contents), true,
-								"content of app_x.css should be packaged");
+	contents = readFile("packages/app_y-app_z.css");
+	equal(/#plugin_yz_styles/.test(contents), true,
+					"content of plugin_yz.css should be packaged");
 
-				contents = readFile("steal/build/apps/test/multibuild/app_y/production.css");
-				equals(/#app_y_styles/.test(contents), true,
-								"content of app_y.css should be packaged");
+	contents = readFile("build/apps/test/multibuild/app_x/production.css");
+	equal(/#app_x_styles/.test(contents), true,
+					"content of app_x.css should be packaged");
 
-				contents = readFile("steal/build/apps/test/multibuild/app_z/production.css");
-				equals(/#app_z_styles/.test(contents), true,
-								"content of app_z.css should be packaged");
-				equals(/#plugin_z_styles/.test(contents), true,
-								"content of plugin_z.css should be packaged");
-								
-				var linkTags;
+	contents = readFile("build/apps/test/multibuild/app_y/production.css");
+	equal(/#app_y_styles/.test(contents), true,
+					"content of app_y.css should be packaged");
 
-				open("steal/build/apps/test/multibuild/app_x/app_x.prod.html");
-				linkTags = document.getElementsByTagName("link");
-				equals(/packages\/app_x-app_y-app_z\.css/.test(linkTags[0].href), true,
-								"loaded direct dependencies stylesheet");
-				equals(/packages\/app_x-app_y\.css/.test(linkTags[1].href), true,
-								"loaded indirect dependencies stylesheet");
-				equals(/multibuild\/app_x\/production\.css/.test(linkTags[2].href), true,
-								"loaded app dependencies stylesheet");
-				equals(linkTags.length, 3,
-								"3 stylesheets are loaded");
-								
-				equals(modulesLoaded[0], "nested_plugin_xyz",
-								"nested_plugin_xyz should have loaded");
-				equals(modulesLoaded[1], "plugin_xy",
-								"plugin_xy should have loaded");
-				equals(modulesLoaded[2], "app_x",
-								"app_x should have loaded");
+	contents = readFile("build/apps/test/multibuild/app_z/production.css");
+	equal(/#app_z_styles/.test(contents), true,
+					"content of app_z.css should be packaged");
+	equal(/#plugin_z_styles/.test(contents), true,
+					"content of plugin_z.css should be packaged");
 
-
-				open("steal/build/apps/test/multibuild/app_y/app_y.prod.html");
-				linkTags = document.getElementsByTagName("link");
-				equals(linkTags.length, 4,
-								"4 stylesheets are loaded");
-				equals(modulesLoaded[0], "nested_plugin_xyz",
-								"nested_plugin_xyz should have loaded (just once, even though it's included twice')");
-				equals(modulesLoaded[1], "plugin_yz",
-								"plugin_xy should have loaded");
-				equals(modulesLoaded[2], "plugin_xy",
-								"plugin_yz should have loaded");
-				equals(modulesLoaded[3], "app_y",
-								"app_y should have loaded");
-
-				open("steal/build/apps/test/multibuild/app_z/app_z.prod.html");
-				linkTags = document.getElementsByTagName("link");
-				equals(linkTags.length, 3,
-								"3 stylesheets are loaded");
-				equals(modulesLoaded[0], "nested_plugin_xyz",
-								"nested_plugin_xyz should have loaded");
-				equals(modulesLoaded[1], "plugin_yz",
-								"plugin_yz should have loaded");
-				equals(modulesLoaded[2], "plugin_z",
-								"plugin_z should have loaded");
-				equals(modulesLoaded[3], "app_z",
-								"app_z should have loaded");
-		});
 });

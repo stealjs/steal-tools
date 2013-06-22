@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var fs = require("fs"),
-	mkpath = require("./mkpath"),
+	mkpath = require("../node/mkpath"),
 	path = require("path"),
 	program = require("commander"),
 	package = require("../package.json");

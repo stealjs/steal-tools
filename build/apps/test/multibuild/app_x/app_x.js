@@ -1,6 +1,6 @@
 steal(
     './app_x.css',
-    'steal/build/apps/test/multibuild/plugins/plugin_xy/plugin_xy.js',
+    '../plugins/plugin_xy/plugin_xy.js',
 
     function(){
 

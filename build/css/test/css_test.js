@@ -10,7 +10,7 @@ before(function(done){
 	});
 });
 
-suite("css");
+suite("Css");
 
 /**
  * Tests compressing a very basic page and one that is using steal

@@ -47,7 +47,9 @@ module.exports = function (grunt) {
 		var testFiles = {
 			open: ["build/open/test/open_test.js"],
 			js: ["build/js/js_test.js"],
-			css: ["build/css/test/css_test.js"]
+			css: ["build/css/test/css_test.js"],
+			apps: ["build/apps/test/apps_test.js"],
+			/*packages: ["build/packages/test/packages_test.js"]*/
 		};
 
 		var allFiles = (function(){

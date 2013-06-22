@@ -287,9 +287,10 @@ steal('steal',function(s){
 				// the 
 				steal: newSteal,
 				url: url,
-				rootSteal : rootSteal,
-				firstSteal : s.build.open.firstSteal(rootSteal)
-			})
+				rootSteal: rootSteal,
+				firstSteal: s.build.open.firstSteal(rootSteal),
+				doc: jsWin.document
+			});
 		};
 
 		var html = fs.readFileSync(url).toString();

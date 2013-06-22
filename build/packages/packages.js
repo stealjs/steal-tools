@@ -260,6 +260,8 @@ steal('steal',
 		});
 	};
 
-	steal.extend(packages,share)
+	steal.extend(packages,share);
 	var p = packages;
+
+	return packages;
 });

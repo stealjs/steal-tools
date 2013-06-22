@@ -1,3 +1,4 @@
+.DS_Store
 .tmp*
 dist
 test/myapp/production.js
@@ -6,3 +7,5 @@ build/apps/test/multibuild/*/*.production.js
 build/apps/test/multibuild/*/*.production.css
 less/test/production.js
 less/test/production.css
+/packages/
+build/packages/test/packages_test/production.js

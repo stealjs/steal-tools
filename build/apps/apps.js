@@ -1,3 +1,4 @@
+var path = require("path");
 
 if(!steal.build){
 	steal.build = {};	
@@ -142,7 +143,7 @@ steal('steal',
 		_open : function(appName, options, callback){
 			//= Configure what we are going to load from APP name
 			// if we have html, get  the app-name
-			var html = 'steal/node/blank.html',
+			var html = path.resolve(steal.parentDir, 'steal/node/blank.html'),
 				data = {env: 'development'};
 			if(appName.indexOf('.html') > 2){
 				html = appName;
