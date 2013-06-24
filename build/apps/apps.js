@@ -187,7 +187,7 @@ steal('steal',
 					} else {
 						var firstDependency = opener.rootSteal;
 					}
-					var appFile = apps.addDependencies(firstDependency, options, appName );
+					var appFile = apps.addDependencies(firstDependency, options, options.multipleOpens ? appName: "APP" );
 					options.appFiles.push(  appFile  );
 					options.steal = opener.steal;
 					steal.print(" ")
@@ -307,6 +307,8 @@ steal('steal',
 
 			function visit( f ) {
 				if ( f.order === undefined ) {
+					//prevent infinate loops
+					f.order = null;
 					f.dependencyFileNames.forEach(function(fileName){
 						if(!f.appNames || !f.appNames.length || f.appNames[0].toString() !== fileName.toString()) {
 							visit( options.files[fileName] );
