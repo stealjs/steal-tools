@@ -1,8 +1,10 @@
 var steal = require("../../../node"),
+	fs = require("fs"),
 	jsdom = require("jsdom").jsdom,
-	path = require("path");
+	path = require("path"),
+	rimraf = require("rimraf").sync;
 
-global.STEALPRINT = true;
+global.STEALPRINT = false;
 
 before(function(done){
 	steal('steal/build', 'steal/build/packages', function(){
@@ -35,6 +37,9 @@ test("appA is undefined", function(done){
 	});
 });
 
+/*
+ * appA attaches the value `true` to window.appA
+ */
 test("appA is true", function(done){
 	expect(2);
 	
@@ -42,21 +47,12 @@ test("appA is true", function(done){
 		var window = opener.doc.defaultView;
 
 		equal(window.location.hash, "#a");
-		console.log(typeof window.appA);
 		equal(window.appA, true);
 		done();
 	});
+});
 
-	return;
-	s.test.open('steal/build/packages/test/packages_test/prod.html')
-	s.test.ok(typeof window.appA === "undefined","appA is undefined");
-	s.test.clear();
-	s.test.open('steal/build/packages/test/packages_test/prod.html#a')
-	s.test.equals(window.appA, true);
-
-			
-	
-	// TODO change this test to actually open the app in packages mode instead of hardcoding the files
+test("All files are created", function(done){
 	var filesToRemove = [
 		'production.js',
 		'packages/app_a.js',
@@ -66,13 +62,15 @@ test("appA is true", function(done){
 		'packages/app_a-app_b.js',
 		'packages/app_a-app_b-app_c-app_d.js'
 	];
+	expect(filesToRemove.length);
 	
-	var path;
+	var p;
 	for(var i=0;i<filesToRemove.length; i++){
-		path = 'steal/build/packages/test/packages_test/'+filesToRemove[i];
-		// print('checking '+path)
-		s.test.ok(s.File(path).exists());
-		s.test.remove(path);
+		p = 'build/packages/test/packages_test/'+filesToRemove[i];
+		p = path.resolve(process.cwd(), p);
+		ok(fs.existsSync(p));
+		rimraf(p);
 	}
-
+	
+	done();
 });
