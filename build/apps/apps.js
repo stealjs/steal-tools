@@ -160,24 +160,22 @@ steal('steal',
 			if(options.newPage === false && options.steal){
 				steal.print("  stealing " + ( data.startId ) );
 				// move steal back
-				var curSteal = window.steal,
-					newSteal = window.steal= options.steal;
-				// listen to when this is done
-				window.steal.one("end", function(rootSteal){
+				var pageSteal = options.steal;
+
+				
+				pageSteal.one("end", function(rootSteal){
 
 					options.appFiles.push(  apps.addDependencies(rootSteal.dependencies[0], options, appName )  );
 					
 					// set back steal
-					window.steal = curSteal;
 					callback(options, {
-						steal : newSteal,
+						steal : pageSteal,
 						rootSteal: rootSteal,
 						firstSteal: steal.build.open.firstSteal(rootSteal)
 					});
-				})
-				
-				// steal file
-				window.steal({id: data.startId});
+				});
+
+				pageSteal({id: data.startId});
 			} else {
 				steal.print("  opening " + ( appName || html) );
 				steal.build.open(html, data, function(opener){
