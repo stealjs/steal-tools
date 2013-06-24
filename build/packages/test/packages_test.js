@@ -2,10 +2,10 @@ var steal = require("../../../node"),
 	jsdom = require("jsdom").jsdom,
 	path = require("path");
 
-global.STEALPRINT = false;
+global.STEALPRINT = true;
 
 before(function(done){
-	steal('steal/build/packages', function(){
+	steal('steal/build', 'steal/build/packages', function(){
 		var options = {
 			compressor: "uglify",
 			to: "build/packages/test/packages_test",
@@ -19,18 +19,6 @@ before(function(done){
 	});
 });
 
-// Create a jsdom window given a file
-function getWindowFromFile(file){
-	var full = path.resolve(process.cwd(), file.split("#")[0]);
-	var html = readFile(full);
-	var jsDoc = jsdom(html, null, {
-		url: path.resolve(process.cwd(), file)
-	});
-	var jsWin = jsDoc.createWindow();
-	return jsWin;
-}
-
-
 /**
  * Tests compressing a very basic page and one that is using steal
  */
@@ -39,27 +27,25 @@ suite("Packages")
 test("appA is undefined", function(done){
 	expect(1);
 
-	var jsWin = getWindowFromFile('build/packages/test/packages_test/prod.html');
-	jsWin.addEventListener("load", function(){
-		var window = jsWin;
+	steal.build.open('build/packages/test/packages_test/prod.html', function(opener){
+		var window = opener.doc.defaultView;
 
-		ok(typeof window.appA === "undefined", "appA is undefined");
+		equal(typeof window.appA, "undefined");
 		done();
 	});
 });
 
 test("appA is true", function(done){
 	expect(2);
-
-	var jsWin = getWindowFromFile('build/packages/test/packages_test/prod.html#a');
-	jsWin.addEventListener("load", function(){
-		var window = jsWin;
+	
+	steal.build.open('build/packages/test/packages_test/prod.html#a', function(opener){
+		var window = opener.doc.defaultView;
 
 		equal(window.location.hash, "#a");
+		console.log(typeof window.appA);
 		equal(window.appA, true);
 		done();
 	});
-
 
 	return;
 	s.test.open('steal/build/packages/test/packages_test/prod.html')

@@ -293,7 +293,8 @@ steal('steal',function(s){
 			});
 		};
 
-		var html = fs.readFileSync(url).toString();
+		var hash = url.split("#")[1] || null;
+		var html = fs.readFileSync(url.split("#")[0]).toString();
 		var onload = function(){
 			var pageSteal = jsWin.steal;
 
@@ -336,7 +337,7 @@ steal('steal',function(s){
 	
 		var baseUrl = path.resolve(process.cwd(), "app.html");
 		var jsDoc = jsdom.jsdom(html, null, {
-			url: baseUrl, // We have to lie about the URL to get jsdom to work
+			url: baseUrl + (hash ? "#" + hash : ""), // We have to lie about the URL to get jsdom to work
 		});
 		var jsWin = jsDoc.createWindow();
 		jsWin.steal = typeof stealData == "object" ? stealData : undefined;

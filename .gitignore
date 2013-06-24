@@ -9,3 +9,4 @@ less/test/production.js
 less/test/production.css
 /packages/
 build/packages/test/packages_test/production.js
+build/packages/test/packages_test/scripts/production.js

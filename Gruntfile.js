@@ -49,7 +49,7 @@ module.exports = function (grunt) {
 			js: ["build/js/js_test.js"],
 			css: ["build/css/test/css_test.js"],
 			apps: ["build/apps/test/apps_test.js"],
-			/*packages: ["build/packages/test/packages_test.js"]*/
+			packages: ["build/packages/test/packages_test.js"]
 		};
 
 		var allFiles = (function(){
