@@ -1,7 +1,7 @@
 {
-	"name" : "StealJS",
+	"name" : "steal",
 	"description" : "Gets JavaScript.",
-	"version" : "3.3.0pre",
+	"version" : "3.3.1pre",
 	"author" : {
 		"name" : "Bitovi",
 		"email" : "contact@bitovi.com",
@@ -27,7 +27,8 @@
 	},
 	"bin": {
 		"steal": "bin/steal",
-		"steal-build": "bin/steal-build"
+		"steal-build": "bin/steal-build",
+		"steal-install": "bin/steal-install"
 	},
 	"main": "node/steal",
 	"homepage" : "http://javascriptmvc.com/docs.html#!stealjs",
