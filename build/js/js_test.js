@@ -1,4 +1,4 @@
-var steal = require("../../node");
+var steal = require("stealjs");
 
 suite("Js");
 

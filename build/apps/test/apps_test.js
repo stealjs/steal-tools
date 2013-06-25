@@ -1,4 +1,4 @@
-var steal = require('../../../node'),
+var steal = require("stealjs"),
 	path = require("path"),
 	rimraf = require("rimraf").sync,
 	jsdom = require("jsdom").jsdom;

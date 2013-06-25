@@ -1,4 +1,4 @@
-var steal = require("../../../node"),
+var steal = require("stealjs"),
 	fs = require("fs"),
 	jsdom = require("jsdom").jsdom,
 	path = require("path"),

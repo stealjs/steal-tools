@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 var path = require("path"),
 	program = require("commander"),
-	steal = require("../node/index"),
+	steal = require("stealjs"),
 	package = require("../package.json");
 
 program.version(package.version)
@@ -20,7 +20,7 @@ if(!toDirectory) {
 	toDirectory = path.dirname(inFile);
 }
 
-steal("../build/build.js", function(build){
+steal("steal/build", function(build){
 
 	build(inFile, { to: toDirectory });
 

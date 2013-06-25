@@ -30,7 +30,7 @@
 		"steal-build": "bin/steal-build",
 		"steal-install": "bin/steal-install"
 	},
-	"main": "node/steal",
+	"main": "index",
 	"homepage" : "http://javascriptmvc.com/docs.html#!stealjs",
 	"repository" : {
 		"type" : "git",
