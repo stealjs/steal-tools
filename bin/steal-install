@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var fs = require("fs"),
-	mkpath = require("../node/mkpath"),
+	mkpath = require("mkpath"),
 	path = require("path"),
 	program = require("commander"),
 	package = require("../package.json");
@@ -9,7 +9,8 @@ program.version(package.version)
 	.parse(process.argv);
 
 var files = {
-	"stealjs/steal.js": path.resolve(__dirname, "../node_modules/stealjs/steal.js"),
+  "stealjs/steal.js": path.resolve(__dirname, "../node_modules/stealjs/steal.js"),
+  "stealjs/dev/dev.js": path.resolve(__dirname, "../node_modules/stealjs/dev/dev.js"),
 	"stealconfig.js": path.resolve(__dirname, "../node_modules/stealjs/stealconfig.js")
 };
 
@@ -24,28 +25,27 @@ function wrapped(fn){
 	};
 }
 
-function saveFile(location, destination){
+function saveFile(location, destination, callback){
 	fs.readFile(location, 'utf8', wrapped(function(data){
 		var completePath = path.resolve(process.cwd(), destination),
-			dirPath = path.dirname(completePath);
+        dirPath = path.dirname(completePath);
 
 		mkpath(dirPath, function(){
 			fs.writeFile(completePath, data, wrapped(function(){
 				console.log("Created", destination);
 				delete files[destination];
-				seeIfComplete();
+				callback();
 			}));
 		});
 	}));
 }
 
-function seeIfComplete(){
-	if(!Object.keys(files).length) {
-		// All files have been saved.
-		process.exit();
-	}
-}
+function doNext(){
+  var f = Object.keys(files)[0];
+  if(!f) {
+    process.exit();
+  }
 
-for(var f in files) {
-	saveFile(files[f], f);
+  saveFile(files[f], f, doNext);
 }
+doNext();
