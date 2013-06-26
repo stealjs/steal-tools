@@ -1,6 +1,6 @@
 var path = require("path");
 
-steal('steal','steal/parse',function(steal, parse){
+steal('steal','parse',function(steal, parse){
 	/**
 	 * @add steal.build.js
 	 */

@@ -167,4 +167,4 @@ steal('steal',function( steal ) {
 
 	return steal.build;
 
-}).then('steal/build/open', 'steal/build/packages');
+}).then('build/open', 'build/packages');

@@ -1,10 +1,15 @@
-var steal = require("stealjs");
+var path = require("path"),
+	steal = require("stealjs");
+
+steal.config({
+	baseUrl: path.resolve(__dirname, "../../..")
+});
 
 suite("Open");
 
 var build;
 before(function(done){
-	steal("steal/build", function(b){
+	steal("build", function(b){
 		build = b;
 		done();
 	});

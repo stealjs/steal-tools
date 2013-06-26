@@ -1,9 +1,14 @@
-var steal = require("stealjs");
+var path = require("path"),
+	steal = require("stealjs");
+
+steal.config({
+	baseUrl: path.resolve(__dirname, "../..")
+});
 
 suite("Js");
 
 before(function(done){
-	steal("steal/build/js", done);
+	steal("build/js", done);
 });
 
 /**

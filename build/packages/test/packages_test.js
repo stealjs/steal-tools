@@ -4,10 +4,14 @@ var steal = require("stealjs"),
 	path = require("path"),
 	rimraf = require("rimraf").sync;
 
+steal.config({
+	baseUrl: path.resolve(__dirname, "../../..")
+});
+
 global.STEALPRINT = false;
 
 before(function(done){
-	steal('steal/build', 'steal/build/packages', function(){
+	steal('build', 'build/packages', function(){
 		var options = {
 			compressor: "uglify",
 			to: "build/packages/test/packages_test",

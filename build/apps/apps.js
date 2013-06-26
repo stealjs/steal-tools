@@ -6,10 +6,10 @@ if(!steal.build){
 	steal.build = {};	
 }
 steal('steal',
-	'steal/build/share',
-	'steal/build/js',
-	'steal/build/css',
-	'steal/build/open',
+	'build/share',
+	'build/js',
+	'build/css',
+	'build/open',
 	function( steal, shareUtil ) {
 	
 		

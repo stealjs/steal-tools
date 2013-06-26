@@ -3,6 +3,10 @@ var steal = require("stealjs"),
 	rimraf = require("rimraf").sync,
 	jsdom = require("jsdom").jsdom;
 
+steal.config({
+	baseUrl: path.resolve(__dirname, "../../..")
+});
+
 global.STEALPRINT = false;
 
 suite("Apps");
@@ -64,7 +68,7 @@ before(function(done) {
 		 *
 		 */
 
-		steal("steal/build","steal/build/apps", function(b, apps){
+		steal("build","build/apps", function(b, apps){
 			// the following isn't all that's required
 			//s2.config('root','');
 			build = b;

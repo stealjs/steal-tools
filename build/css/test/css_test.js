@@ -1,11 +1,16 @@
-var steal = require("stealjs"),
+var path = require("path"),
+	steal = require("stealjs"),
 	rimraf = require("rimraf").sync;
+
+steal.config({
+	baseUrl: path.resolve(__dirname, "../../..")
+});
 
 global.STEALPRINT = false;
 
 var build;
 before(function(done){
-	steal("steal/build", function(b){
+	steal("build", function(b){
 		build = b; done();
 	});
 });
