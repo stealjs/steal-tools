@@ -9,8 +9,13 @@ program.version(package.version)
 	.parse(process.argv);
 
 var files = {
-  "stealjs/steal.js": path.resolve(__dirname, "../node_modules/stealjs/steal.js"),
-  "stealjs/dev/dev.js": path.resolve(__dirname, "../node_modules/stealjs/dev/dev.js"),
+  "steal/steal.js": path.resolve(__dirname, "../node_modules/stealjs/steal.js"),
+	"steal/steal.production.js": path.resolve(__dirname, "../node_modules/stealjs/steal.production.js"),
+  "steal/dev/dev.js": path.resolve(__dirname, "../node_modules/stealjs/dev/dev.js"),
+	"steal/less/less.js": path.resolve(__dirname, "../node_modules/stealjs/less/less.js"),
+	"steal/less/less_engine.js": path.resolve(__dirname, "../node_modules/stealjs/less/less_engine.js"),
+	"steal/coffee/coffee.js": path.resolve(__dirname, "../node_modules/stealjs/coffee/coffee.js"),
+	"steal/coffee/coffee-script.js": path.resolve(__dirname, "../node_modules/stealjs/coffee/coffee-script.js"),
 	"stealconfig.js": path.resolve(__dirname, "../node_modules/stealjs/stealconfig.js")
 };
 
