@@ -12,7 +12,7 @@
 		"jsdom": ">= 0.6.5",
 		"execsync-ng": ">= 0.0.6",
 		"xmlhttprequest": "1.5.0",
-		"stealjs": "git+ssh://git@github.com:bitovi/steal.js.git#master",
+		"stealjs": "3.3.1pre",
 		"rimraf": ">= 2.1.4",
     "mkpath": "~ 0.1.0"
 	},
