@@ -1,3 +1,5 @@
+var path = require("path");
+
 steal('steal','steal/parse',function(steal, parse){
 	/**
 	 * @add steal.build.js
@@ -154,7 +156,7 @@ steal('steal','steal/parse',function(steal, parse){
 					output: true
 				};
 					
-				runCommand("node", getCompilerPath("steal/build/js/uglify/bin/uglifyjs"), origFileName,
+				runCommand("node", getCompilerPath("build/js/uglify/bin/uglifyjs"), origFileName,
 					options
 				);
 			
@@ -177,7 +179,7 @@ steal('steal','steal/parse',function(steal, parse){
 						err: '',
 						output: true // This will be a string on the way out.
   				};
-				var compilerPath = getCompilerPath("steal/build/js/compiler.jar");
+				var compilerPath = getCompilerPath("build/js/compiler.jar");
 				if ( quiet ) {
 					runCommand("java", "-jar", compilerPath, "--compilation_level", "SIMPLE_OPTIMIZATIONS", 
 						"--warning_level", "QUIET", "--js", filename, options);
@@ -262,12 +264,8 @@ steal('steal','steal/parse',function(steal, parse){
 		}
 	};
 
-	function getCompilerPath(path){
-		var compilerPath = path, parts = process.cwd().split("/");
-		if(parts[parts.length - 1] == "steal") {
-			compilerPath = compilerPath.split("/").slice(1).join("/");
-		}
-		return compilerPath;
+	function getCompilerPath(p){
+		return path.resolve(__dirname, "../..", p);
 	}
 
 	return js;
