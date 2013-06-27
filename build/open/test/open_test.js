@@ -28,12 +28,8 @@ test("Tests compressing a very basic page and one that is using steal", function
 		notEqual(opener, null);
 		equal(typeof opener, "object");
 		equal(typeof opener.each, "function");
-		
-		var items = [];
-		opener.each(function( options ){
-			items.push(options.src);
-		});
-		ok(true); // We got this far, each didn't throw.
+		notEqual(opener.rootSteal, steal);		
+
 
 		done();
 	});
