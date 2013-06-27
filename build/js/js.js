@@ -107,7 +107,7 @@ steal('steal','build/css',function( steal ) {
 	 *     }
 	 * 
 	 */
-	js.makePackage = function(moduleOptions, dependencies, cssPackage, buildOptions){
+	js.makePackage = function(moduleOptions, dependencies, cssPackage, buildOptions, callback){
 		// put it somewhere ...
 		// add to dependencies ...
 		// seperate out css and js

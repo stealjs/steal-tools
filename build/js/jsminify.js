@@ -1,4 +1,5 @@
-var path = require("path");
+var path = require("path"),
+	exec = require("child_process").exec;
 
 steal('steal','parse',function(steal, parse){
 	/**
@@ -156,14 +157,19 @@ steal('steal','parse',function(steal, parse){
 					err: '',
 					output: true
 				};
-					
-				runCommand("node", getCompilerPath("build/js/uglify/bin/uglifyjs"), origFileName,
-					options
-				);
-			
-				origFile.remove();
 
-				return options.output;
+				var command = [
+					"node", 
+					getCompilerPath("build/js/uglify/bin/uglifyjs"), 
+					origFileName
+				].join(" ");
+
+				exec(command, function(err, stdout, stderr){
+					if(err) console.error(err);
+
+					origFile.remove();
+					callback(stdout);
+				});
 			};
 		},
 		localClosure: function() {
@@ -176,62 +182,68 @@ steal('steal','parse',function(steal, parse){
 
 				tmpFile.save(src);
 
-				var options = {
-						err: '',
-						output: true // This will be a string on the way out.
-  				};
 				var compilerPath = getCompilerPath("build/js/compiler.jar");
+				var command = [
+					"java",
+					"-jar",
+					compilerPath,
+					"--compilation_level",
+					"SIMPLE_OPTIMIZATIONS"
+				];
+
 				if ( quiet ) {
-					runCommand("java", "-jar", compilerPath, "--compilation_level", "SIMPLE_OPTIMIZATIONS", 
-						"--warning_level", "QUIET", "--js", filename, options);
-				} else {
-					runCommand("java", "-jar", compilerPath, "--compilation_level", "SIMPLE_OPTIMIZATIONS", 
-						"--js", filename, options);
+					command.push("--warning_level", "QUIET");
 				}
-				// print(options.err);
-				// if there's an error, go through the lines and find the right location
-				if( /ERROR/.test(options.err) ){
-					if (!currentLineMap) {
-						throw options
-					}
-					else {
-						var errMatch;
-						while (errMatch = /\:(\d+)\:\s(.*)/g.exec(options.err)) {
-							
-							var lineNbr = parseInt(errMatch[1], 10), 
-								realLine,
-								error = errMatch[2];
+				command.push("--js", filename);
+
+				exec(command.join(" "), function(err, stdout, stderr){
+					if(err) console.err(err);
+
+					// print(options.err);
+					// if there's an error, go through the lines and find the right location
+					if( /ERROR/.test(stderr) ){
+						if (!currentLineMap) {
+							throw new Error()
+						}
+						else {
+							var errMatch;
+							while (errMatch = /\:(\d+)\:\s(.*)/g.exec(stderr)) {
 								
-							var lastNum, lastId; 
-							print(lineNbr);
-							for( var lineNum in currentLineMap ) {
-								if( lineNbr < parseInt( lineNum) ){
-									break;
+								var lineNbr = parseInt(errMatch[1], 10), 
+									realLine,
+									error = errMatch[2];
+									
+								var lastNum, lastId; 
+								print(lineNbr);
+								for( var lineNum in currentLineMap ) {
+									if( lineNbr < parseInt( lineNum) ){
+										break;
+									}
+									// print("checked "+lineNum+" "+currentLineMap[lineNum])
+									lastNum = parseInt(lineNum);
+									lastId = currentLineMap[lineNum];
 								}
-								// print("checked "+lineNum+" "+currentLineMap[lineNum])
-								lastNum = parseInt(lineNum);
-								lastId = currentLineMap[lineNum];
+								
+								realLine = lineNbr - lastNum;
+								
+								steal.print('ERROR in ' + lastId + ' at line ' + realLine + ': ' + error + '\n');
+								
+								
+								var text = readFile(lastId), 
+									split = text.split(/\n/), 
+									start = realLine - 2, 
+									end = realLine + 2;
+								if (start < 0) 
+									start = 0;
+								if (end > split.length - 1) 
+									end = split.length - 1;
+								steal.print(split.slice(start, end).join('\n') + '\n')
 							}
-							
-							realLine = lineNbr - lastNum;
-							
-							steal.print('ERROR in ' + lastId + ' at line ' + realLine + ': ' + error + '\n');
-							
-							
-							var text = readFile(lastId), 
-								split = text.split(/\n/), 
-								start = realLine - 2, 
-								end = realLine + 2;
-							if (start < 0) 
-								start = 0;
-							if (end > split.length - 1) 
-								end = split.length - 1;
-							steal.print(split.slice(start, end).join('\n') + '\n')
 						}
 					}
-				}
-				tmpFile.remove();
-				return options.output;
+					tmpFile.remove();
+					callback(stdout);
+				});
 			};
 		},
 		yui: function() {

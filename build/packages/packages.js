@@ -24,6 +24,8 @@ steal('steal',
 	 *
 	 * @signature `steal.build.packages(app[, buildOptions])`
 	 * @param {Object} app
+	 * @param {Object} buildOptions
+	 * @param {Function} callback
 	 *
 	 * @body
 	 * 
@@ -142,7 +144,8 @@ steal('steal',
 				} else {
 					s.print("  no packages\n")
 				}
-				
+			
+				var sharesRemaining = shares.length;	
 				shares.forEach(function(sharing){
 					// is it a 'end' package
 					var isPackage = sharing.appNames.length == 1,
@@ -203,7 +206,6 @@ steal('steal',
 				// handle depth
 				
 				
-				
 				shares.forEach(function(sharing){
 					var isPackage = sharing.appNames.length == 1,
 						sharePackageName = appNamesToMake(sharing.appNames);
@@ -236,26 +238,27 @@ steal('steal',
 				
 				var pack = build.js.makePackage(
 					masterFiles.map(function(f){return f.stealOpts}),
-					{}, destCSS, buildOptions);
-				// prepend maps and makes ...
-				// make makes
-				var makeCode = [],
-					mapCode;
-				for(name in makes) {
-					makeCode.push("steal.make(",
-						s.toJSON(makes[name]),
-						");")
-				}
-				mapCode = "steal.packages("+s.toJSON(maps)+");"
-				s.URI(destJS).save( filterCode(mapCode+makeCode.join('\n')+"\n"+pack.js, 'js') );
-				if(pack.css){
-					s.print("         "+destCSS);
-					s.URI(destCSS).save( filterCode(pack.css.code, 'css') );
-				}
+					{}, destCSS, buildOptions, function(){
+				
+					// prepend maps and makes ...
+					// make makes
+					var makeCode = [],
+						mapCode;
+					for(name in makes) {
+						makeCode.push("steal.make(",
+							s.toJSON(makes[name]),
+							");")
+					}
+					mapCode = "steal.packages("+s.toJSON(maps)+");"
+					s.URI(destJS).save( filterCode(mapCode+makeCode.join('\n')+"\n"+pack.js, 'js') );
+					if(pack.css){
+						s.print("         "+destCSS);
+						s.URI(destCSS).save( filterCode(pack.css.code, 'css') );
+					}
 
-				if(callback) {
-					callback();
-				}
+					sharesRemaining--;
+					if(sharesRemaining === 0 && callback) callback();
+				});
 			});
 		});
 	};

@@ -93,11 +93,11 @@ steal('steal',
 			}
 			// opens each app and add its dependencies to options
 			steal.build.apps.open(moduleIds, options, function(options){
-				apps.makePackages(options, buildOptions);
-
-				if(callback){
-					callback();
-				}
+				apps.makePackages(options, buildOptions, function(){
+					if(callback){
+						callback();
+					}
+				});
 			});
 			
 		};
@@ -450,6 +450,7 @@ steal('steal',
 		 * 
 		 * @param {Object} options
 		 * @param {Object} buildOptions
+		 * @param {Function} callback
 		 *
 		 * @body
 		 * Creates packages that can be downloaded.
@@ -475,7 +476,7 @@ steal('steal',
 		 * So, we need to know all the packages and app needs, and all the things in that package.
 		 * 
 		 */
-		makePackages: function(options, buildOptions) {
+		makePackages: function(options, buildOptions, callback) {
 			
 			steal.print("Making packages")
 			
@@ -527,6 +528,12 @@ steal('steal',
 			};
 				
 			shareUtil.flatten(shares, buildOptions.depth);
+
+			var sharesRemaining = shares.length;
+			if(!shares.length){
+				callback();
+				return;
+			}
 
 			//while there are files left to be packaged, get the most shared and largest package
 			shares.forEach(function(sharing){
@@ -582,16 +589,19 @@ steal('steal',
 				}
 				
 				//the source of the package
-				var pack = steal.build.js.makePackage(filesForPackaging, dependencies,packageName+ ".css", options.exclude)
+				var pack = steal.build.js.makePackage(filesForPackaging, dependencies,packageName+ ".css", options.exclude, function(){
+					//save the file
+					steal.print("saving " + steal.config('root').join(packageName+".js"));
+					steal.config('root').join(packageName+".js").save( pack.js );
 
-				//save the file
-				steal.print("saving " + steal.config('root').join(packageName+".js"));
-				steal.config('root').join(packageName+".js").save( pack.js );
+					if(pack.css){
+						steal.print("saving " + steal.config('root').join(packageName+".css"));
+						steal.config('root').join(packageName+".css").save( pack.css.code );
+					}
 
-				if(pack.css){
-					steal.print("saving " + steal.config('root').join(packageName+".css"));
-					steal.config('root').join(packageName+".css").save( pack.css.code );
-				}
+					sharesRemaining--;
+					if(sharesRemaining === 0) callback();
+				});
 				
 			})
 
