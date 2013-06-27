@@ -75,6 +75,7 @@ steal('steal','parse',function(steal, parse){
 	 * 
 	 *         {0: "foo.js", 100: "bar.js"}
 	 * 
+   * @param {Function} [callback] the callback function to be called upon complete.
 	 * @return {String|Function} if `source` is provided, the minified
 	 * source is returned.  Otherwise a `minifier(source, quiet, currentLineMap)` function is returned
 	 * where:
@@ -83,7 +84,7 @@ steal('steal','parse',function(steal, parse){
 	 *   - quiet - if minification should be done without reporting errors
 	 *   - currentLineMap - a line map to resolve paths in grouped source 
 	 */
-	js.minify = function(source, options){
+	js.minify = function(source, options, callback){
 		// return source;
 		// get the compressor
 		options = options || {};
@@ -91,7 +92,7 @@ steal('steal','parse',function(steal, parse){
 		
 		if(source){
 			// return source+""; //""+compressor( source, true, options.currentLineMap )
-			return ""+compressor( source, true, options.currentLineMap )
+			return ""+compressor( source, true, options.currentLineMap, callback )
 		} else {
 			return  compressor
 		}
@@ -144,7 +145,7 @@ steal('steal','parse',function(steal, parse){
 		},
 		uglify: function() {
 			steal.print("steal.compress - Using Uglify");
-			return function( src, quiet ) {
+			return function( src, quiet, nada, callback ) {
 				var rnd = Math.floor(Math.random() * 1000000 + 1),
 					origFileName = "tmp" + rnd + ".js",
 					origFile = new steal.URI(origFileName);
@@ -168,7 +169,7 @@ steal('steal','parse',function(steal, parse){
 		localClosure: function() {
 			//was unable to use SS import method, so create a temp file
 			//steal.print("steal.compress - Using Google Closure app");
-			return function( src, quiet, currentLineMap ) {
+			return function( src, quiet, currentLineMap, callback ) {
 				var rnd = Math.floor(Math.random() * 1000000 + 1),
 					filename = "tmp" + rnd + ".js",
 					tmpFile = new steal.URI(filename);

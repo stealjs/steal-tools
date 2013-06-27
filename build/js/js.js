@@ -125,25 +125,41 @@ steal('steal','build/css',function( steal ) {
 		// if even one file has compress: false, we can't compress the whole package at once
 		var canCompressPackage = true;
 		moduleOptions.forEach(function(file){
-			if(file.minify === false){
+			if(file.minify === false && !file.hasCompressed){
 				canCompressPackage = false;
 			}
 		});
-		if(!canCompressPackage){
+		if(!canCompressPackage && moduleOptions.length){
+			var modulesRemaining = moduleOptions.length;
+
 			moduleOptions.forEach(function(file){
+				file.hasCompressed = true;
+
 				if(file.buildType == 'js'){
 					var source = steal.build.js.clean(file.text);
 					if(file.minify !== false){
 						try{
-							source = steal.build.js.minify(source);
+							steal.build.js.minify(source, function(s){
+								file.text = s;
+
+								modulesRemaining--;
+								if(modulesRemaining === 0) {
+									js.makePackage(moduleOptions, dependencies, cssPackage, buildOptions);
+								}
+							});
 						} catch(error){
 							print("ERROR minifying "+file.id+"\n"+error.err)
 						}
 						
 					}
-					file.text = source;
-				}
+
+					return;
+				} 
+				
+				modulesRemaining--;
 			});
+
+			return;
 		}
 		
 		moduleOptions.forEach(function(file){
@@ -242,14 +258,26 @@ steal('steal','build/css',function( steal ) {
 		
 		if(canCompressPackage){
 			jsCode = steal.build.js.clean(jsCode);
-			jsCode = steal.build.js.minify(jsCode,{currentLineMap: lineMap, compressor: buildOptions.compressor});
+			jsCode = steal.build.js.minify(jsCode,{
+				currentLineMap: lineMap,
+				compressor: buildOptions.compressor
+			}, function() {
+				var csspackage = steal.build.css.makePackage(csses, cssPackage);
+				
+				callback({
+					js: jsCode,
+					css: csspackage
+				});
+			});
+
+			return;
 		}
 		
 		var csspackage = steal.build.css.makePackage(csses, cssPackage);
 		
-		return {
+		callback({
 			js: jsCode,
 			css: csspackage
-		}
+		});
 	}
 }).then('./jsminify');
