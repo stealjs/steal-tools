@@ -1,6 +1,7 @@
-var path = require("path"),
-	steal = require("stealjs"),
-	rimraf = require("rimraf").sync;
+var path = require("path")
+  , readFile = require("../../../node/utils").readFile
+  , rimraf = require("rimraf").sync
+  , steal = require("stealjs");
 
 steal.config({
 	baseUrl: path.resolve(__dirname, "../../..")
@@ -22,6 +23,8 @@ suite("Css");
  */
 test("css", function(done){
 	expect(0);
+
+debugger;
 
 	build('build/css/test/page.html', {to: 'build/css/test', compressor: 'uglify'}, function(){
 		var prod = readFile('build/css/test/production.css').replace(/\r|\n|\s/g,""),

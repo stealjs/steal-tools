@@ -78,10 +78,12 @@ steal('steal',
 						return appNamesToName[expanded] = to + "/packages/"+expanded.replace(/\//g,'_') ;
 					}
 				},
-				filterCode = function(code, type) {
-					return buildOptions.minify
-						? build[type].minify(code)
-						: code;
+				filterCode = function(code, type, cb) {
+					if(buildOptions.minify) {
+						build[type].minify(code, null, cb);
+					} else {
+						setTimeout(function(){ cb(code); }, 0);
+					}
 				};
 			
 			// make the packages folder
@@ -145,7 +147,6 @@ steal('steal',
 					s.print("  no packages\n")
 				}
 			
-				var sharesRemaining = shares.length;	
 				shares.forEach(function(sharing){
 					// is it a 'end' package
 					var isPackage = sharing.appNames.length == 1,
@@ -236,9 +237,9 @@ steal('steal',
 					destCSS = ''+steal.URI(buildOptions.to).join('production.css');
 				s.print("Building "+destJS);
 				
-				var pack = build.js.makePackage(
+				build.js.makePackage(
 					masterFiles.map(function(f){return f.stealOpts}),
-					{}, destCSS, buildOptions, function(){
+					{}, destCSS, buildOptions, function(pack){
 				
 					// prepend maps and makes ...
 					// make makes
@@ -249,15 +250,22 @@ steal('steal',
 							s.toJSON(makes[name]),
 							");")
 					}
-					mapCode = "steal.packages("+s.toJSON(maps)+");"
-					s.URI(destJS).save( filterCode(mapCode+makeCode.join('\n')+"\n"+pack.js, 'js') );
-					if(pack.css){
-						s.print("         "+destCSS);
-						s.URI(destCSS).save( filterCode(pack.css.code, 'css') );
-					}
+					mapCode = "steal.packages("+s.toJSON(maps)+");";
 
-					sharesRemaining--;
-					if(sharesRemaining === 0 && callback) callback();
+					filterCode(mapCode+makeCode.join('\n')+"\n"+pack.js, 'js', function(filteredJs){
+
+						s.URI(destJS).save( filteredJs );
+						if(pack.css){
+							s.print("         "+destCSS);
+
+							filterCode(pack.css.code, 'css', function(filteredCss){
+								s.URI(destCSS).save( filteredCss );
+								callback();
+							});
+						} else {
+							callback();
+						}
+					});
 				});
 			});
 		});

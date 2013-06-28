@@ -1,3 +1,5 @@
+var readFile = require("../node/utils").readFile;
+
 // lets you know if your JS sucks and will try to clean it for you
 // using with jslint: js steal/cleanjs path/to/file -jslint
 

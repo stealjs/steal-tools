@@ -1,5 +1,7 @@
-var path = require("path"),
-	exec = require("child_process").exec;
+var path = require("path")
+	, exec = require("child_process").exec
+  , readFile = require("../../node/utils").readFile
+  , runCommand = require("../../node/utils").runCommand;
 
 steal('steal','parse',function(steal, parse){
 	/**

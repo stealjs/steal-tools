@@ -1,3 +1,5 @@
+var readFile = require("../../node/utils").readFile;
+
 // usage: 
 // js steal\scripts\pluginify.js funcunit/functional -out funcunit/dist/funcunit.js
 // js steal\scripts\pluginify.js jquery/controller

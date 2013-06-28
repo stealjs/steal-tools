@@ -1,4 +1,5 @@
-var path = require("path");
+var path = require("path")
+  , readFile = require("../../node/utils").readFile;
 
 var BLANK_HTML = path.resolve(__dirname, "../../node/blank.html");
 
