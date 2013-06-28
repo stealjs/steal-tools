@@ -20,10 +20,6 @@ if(!toDirectory) {
 	toDirectory = path.dirname(inFile);
 }
 
-steal.config({
-	baseUrl: require("path").resolve(__dirname, "..")
-});
-
 steal("build", function(build){
 
 	build(inFile, { to: toDirectory });

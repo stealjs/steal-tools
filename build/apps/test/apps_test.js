@@ -4,10 +4,6 @@ var steal = require("stealjs")
   , rimraf = require("rimraf").sync
   , jsdom = require("jsdom").jsdom;
 
-steal.config({
-	baseUrl: path.resolve(__dirname, "../../..")
-});
-
 global.STEALPRINT = false;
 
 suite("Apps");

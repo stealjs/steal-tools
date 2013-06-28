@@ -1,6 +1,8 @@
 //used to build a page's script
 /*global steal : false, Envjs : false, jQuery : false*/
 
+var mattArr = [];
+
 steal('steal',function( steal ) {
 	var window = (function() {
 		return this;
@@ -165,6 +167,13 @@ steal('steal',function( steal ) {
 
 	};
 
+	mattArr.push("inside");
+
+	debugger;
+
 	return steal.build;
 
 }).then('build/open', 'build/packages');
+
+debugger;
+mattArr.push("outside");

@@ -3,10 +3,6 @@ var path = require("path")
   , rimraf = require("rimraf").sync
   , steal = require("stealjs");
 
-steal.config({
-	baseUrl: path.resolve(__dirname, "../../..")
-});
-
 global.STEALPRINT = false;
 
 var build;

@@ -4,10 +4,6 @@ var steal = require("stealjs"),
 	path = require("path"),
 	rimraf = require("rimraf").sync;
 
-steal.config({
-	baseUrl: path.resolve(__dirname, "../../..")
-});
-
 global.STEALPRINT = false;
 
 before(function(done){
