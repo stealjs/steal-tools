@@ -1,6 +1,7 @@
-var path = require("path"),
-	steal = require("stealjs"),
-	rimraf = require("rimraf").sync;
+var path = require("path")
+  , readFile = require("../../../node/utils").readFile
+  , rimraf = require("rimraf").sync
+  , steal = require("stealjs");
 
 steal.config({
 	baseUrl: path.resolve(__dirname, "../../..")

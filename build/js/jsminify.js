@@ -1,4 +1,6 @@
-var path = require("path");
+var path = require("path")
+  , readFile = require("../../node/utils").readFile
+  , runCommand = require("../../node/utils").runCommand;
 
 steal('steal','parse',function(steal, parse){
 	/**

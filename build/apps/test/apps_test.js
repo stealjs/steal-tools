@@ -1,7 +1,8 @@
-var steal = require("stealjs"),
-	path = require("path"),
-	rimraf = require("rimraf").sync,
-	jsdom = require("jsdom").jsdom;
+var steal = require("stealjs")
+  , path = require("path")
+  , readFile = require("../../../node/utils").readFile
+  , rimraf = require("rimraf").sync
+  , jsdom = require("jsdom").jsdom;
 
 steal.config({
 	baseUrl: path.resolve(__dirname, "../../..")

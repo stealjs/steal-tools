@@ -1,7 +1,8 @@
-var fs = require('fs'),
-	jsdom = require('jsdom'),
-	path = require('path'),
-	XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+var fs = require('fs')
+  , jsdom = require('jsdom')
+	, path = require('path')
+  , readFile = require('../../node/utils')
+  , XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 /*
  * We have to shim XHR in order to make sure we
