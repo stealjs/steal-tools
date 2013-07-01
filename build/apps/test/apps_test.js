@@ -78,7 +78,6 @@ before(function(done) {
 					compressor: "uglify" // uglify is much faster
 			};
 
-debugger;
 			steal.build.apps(["build/apps/test/multibuild/app_x",
 				"build/apps/test/multibuild/app_y",
 				"build/apps/test/multibuild/app_z"], buildOptions, done);

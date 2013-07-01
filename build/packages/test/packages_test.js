@@ -11,8 +11,6 @@ steal.config({
 global.STEALPRINT = false;
 
 before(function(done){
-this.timeout(99999999);
-
 	steal('build', 'build/packages', function(){
 		var options = {
 			compressor: "uglify",
@@ -20,7 +18,6 @@ this.timeout(99999999);
 			minify: true,
 			depth: 3
 		};
-	debugger;
 
 		steal.build.packages("build/packages/test/packages_test/scripts/build.html", options, function(){
 			done();
