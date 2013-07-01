@@ -24,8 +24,6 @@ suite("Css");
 test("css", function(done){
 	expect(0);
 
-debugger;
-
 	build('build/css/test/page.html', {to: 'build/css/test', compressor: 'uglify'}, function(){
 		var prod = readFile('build/css/test/production.css').replace(/\r|\n|\s/g,""),
 			expected = readFile('build/css/test/productionCompare.css').replace(/\r|\n|\s/g,"");

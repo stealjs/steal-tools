@@ -12,7 +12,11 @@ if(!steal.build){
 }
 steal('steal',
 	'build/share',
-	'build/open','build/apps','rhino/json.js',function(s, share){
+	'./do_all.js',
+	'build/open',
+	'build/apps',
+	'rhino/json.js',
+	function(s, share, doAll){
 
 	var apps = steal.build.apps,
 		build = steal.build, 
@@ -80,7 +84,7 @@ steal('steal',
 				},
 				filterCode = function(code, type, cb) {
 					if(buildOptions.minify) {
-						build[type].minify(code, null, cb);
+						build[type].minify(code, { compressor: buildOptions.compressor }, cb);
 					} else {
 						setTimeout(function(){ cb(code); }, 0);
 					}
@@ -146,127 +150,167 @@ steal('steal',
 				} else {
 					s.print("  no packages\n")
 				}
-			
-				shares.forEach(function(sharing){
+
+				if(shares.length) {
+					buildPackages(0, function(){
+						doAll(handleDepth, doBuild);
+					});
+				} else {
+					doAll(handleDepth, doBuild);
+				}
+
+				function buildPackages(shareIndex, cb){		
+					// Check if we have completed the operation.
+					if(shareIndex == shares.length) {
+						return cb();
+					}
+
+					var sharing = shares[shareIndex];
+						
 					// is it a 'end' package
 					var isPackage = sharing.appNames.length == 1,
 						packageName = appNamesToMake(sharing.appNames);
 	
 					// create package
-					var pack = build.js.makePackage(sharing.files.map(function(f){
-						return f.stealOpts;
-					}), {}, packageName+".css", buildOptions),
-						hasCSS = pack.css,
-						has = [];
+					build.js.makePackage(sharing.files.map(function(f){
+							return f.stealOpts;
+						}), {}, packageName+".css", buildOptions, function(pack){
+						
+						var hasCSS = pack.css
+							, has = [];
 					
 					
-					// 
-					if(isPackage){
-						s.print("  Package: "+packageName+ (hasCSS ? " js/css" : "" ) )
-					} else {
-						s.print("  Shared Package: "+packageName+ (hasCSS ? " js/css" : "" ))
-					}
-					
-					sharing.files.forEach(function(f){
-						s.print("  + "+f.stealOpts.id)
-						if(f.stealOpts.buildType == 'js'){
-							has.push(f.stealOpts.id+'')
-						}
-					})
-					s.print(" ")
-					
-					s.URI(packageName+".js").save( filterCode(pack.js, 'js') );
-					
-					// make this steal instance
-					makes[packageName+".js"] = {
-						id: packageName+".js",
-						needs :[],
-						has : has
-					}
-					// if we have css
-					if(hasCSS){
-						// write
-						// tell the js it needs this css
-						makes[packageName+".js"].needs.push(packageName+".css")
-						// make the css
-						makes[packageName+".css"] = {
-							id: packageName+".css",
-							has: pack.css.srcs
-						};
-						s.URI(packageName+".css").save( filterCode(pack.css.code, 'css') );
-						sharing.hasCSS = true;
-					}
-					
-					
-					// add to maps
-					if(isPackage){
-						// this should be the real file
-						maps[""+s.id(sharing.appNames[0])] = packageName+".js";
-					}
-				})
-				// handle depth
-				
-				
-				shares.forEach(function(sharing){
-					var isPackage = sharing.appNames.length == 1,
-						sharePackageName = appNamesToMake(sharing.appNames);
-					
-					if(!isPackage){
-						// add this as a needs to master
-						sharing.appNames.forEach(function(appName){
-							var packageName = appNamesToMake([appName])
-							makes[packageName+".js"].needs
-								.push(sharePackageName+".js")
-							
-							// add css
-							if(sharing.hasCSS){
-								makes[packageName+".js"].needs
-									.push(sharePackageName+".css")
-							}
-							// also needs css!
-							
-						})
-					}
-				});
-				// write production with makes
-				// and maps
-				
-				// sort masterFiles
-				buildOptions.to = buildOptions.to || ""+s.URI(app).dir();
-				var destJS = ''+steal.URI(buildOptions.to).join('production.js'),
-					destCSS = ''+steal.URI(buildOptions.to).join('production.css');
-				s.print("Building "+destJS);
-				
-				build.js.makePackage(
-					masterFiles.map(function(f){return f.stealOpts}),
-					{}, destCSS, buildOptions, function(pack){
-				
-					// prepend maps and makes ...
-					// make makes
-					var makeCode = [],
-						mapCode;
-					for(name in makes) {
-						makeCode.push("steal.make(",
-							s.toJSON(makes[name]),
-							");")
-					}
-					mapCode = "steal.packages("+s.toJSON(maps)+");";
-
-					filterCode(mapCode+makeCode.join('\n')+"\n"+pack.js, 'js', function(filteredJs){
-
-						s.URI(destJS).save( filteredJs );
-						if(pack.css){
-							s.print("         "+destCSS);
-
-							filterCode(pack.css.code, 'css', function(filteredCss){
-								s.URI(destCSS).save( filteredCss );
-								callback();
-							});
+						// 
+						if(isPackage){
+							s.print("  Package: "+packageName+ (hasCSS ? " js/css" : "" ) )
 						} else {
-							callback();
+							s.print("  Shared Package: "+packageName+ (hasCSS ? " js/css" : "" ))
+						}
+						
+						sharing.files.forEach(function(f){
+							s.print("  + "+f.stealOpts.id)
+							if(f.stealOpts.buildType == 'js'){
+								has.push(f.stealOpts.id+'')
+							}
+						})
+						s.print(" ")
+
+						filterCode(pack.js, 'js', function(filteredJs){
+							s.URI(packageName+".js").save( filteredJs );
+							
+							// make this steal instance
+							makes[packageName+".js"] = {
+								id: packageName+".js",
+								needs :[],
+								has : has
+							}
+							// if we have css
+							if(hasCSS){
+								// write
+								// tell the js it needs this css
+								makes[packageName+".js"].needs.push(packageName+".css")
+								// make the css
+								makes[packageName+".css"] = {
+									id: packageName+".css",
+									has: pack.css.srcs
+								};
+
+								filterCode(pack.css.code, 'css', function(filteredCss){
+									s.URI(packageName+".css").save( filteredCss );
+									sharing.hasCSS = true;
+									doAll(addToMaps, complete);
+								});
+							} else {
+								doAll(addToMaps, complete);
+							}
+
+							function addToMaps(){
+								// add to maps
+								if(isPackage){
+									// this should be the real file
+									maps[""+s.id(sharing.appNames[0])] = packageName+".js";
+								}
+							}
+
+							// Called internally when all operations are complete.
+							function complete(){
+								shareIndex++;
+								buildPackages(shareIndex, cb);
+							}
+						});
+					});
+
+				}
+		
+				// handle depth
+				function handleDepth(){
+				
+					shares.forEach(function(sharing){
+						var isPackage = sharing.appNames.length == 1,
+							sharePackageName = appNamesToMake(sharing.appNames);
+						
+						if(!isPackage){
+							// add this as a needs to master
+							sharing.appNames.forEach(function(appName){
+								var packageName = appNamesToMake([appName])
+								makes[packageName+".js"].needs
+									.push(sharePackageName+".js")
+								
+								// add css
+								if(sharing.hasCSS){
+									makes[packageName+".js"].needs
+										.push(sharePackageName+".css")
+								}
+								// also needs css!
+								
+							})
 						}
 					});
-				});
+
+				}
+
+
+				// write production with makes
+				// and maps
+				function doBuild() {
+				
+					// sort masterFiles
+					buildOptions.to = buildOptions.to || ""+s.URI(app).dir();
+					var destJS = ''+steal.URI(buildOptions.to).join('production.js'),
+						destCSS = ''+steal.URI(buildOptions.to).join('production.css');
+					s.print("Building "+destJS);
+					
+					build.js.makePackage(
+						masterFiles.map(function(f){return f.stealOpts}),
+						{}, destCSS, buildOptions, function(pack){
+					
+						// prepend maps and makes ...
+						// make makes
+						var makeCode = [],
+							mapCode;
+						for(name in makes) {
+							makeCode.push("steal.make(",
+								s.toJSON(makes[name]),
+								");")
+						}
+						mapCode = "steal.packages("+s.toJSON(maps)+");";
+
+						filterCode(mapCode+makeCode.join('\n')+"\n"+pack.js, 'js', function(filteredJs){
+
+							s.URI(destJS).save( filteredJs );
+							if(pack.css){
+								s.print("         "+destCSS);
+
+								filterCode(pack.css.code, 'css', function(filteredCss){
+									s.URI(destCSS).save( filteredCss );
+									callback();
+								});
+							} else {
+								callback();
+							}
+						});
+					});
+				}
 			});
 		});
 	};

@@ -590,7 +590,9 @@ steal('steal',
 				}
 				
 				//the source of the package
-				var pack = steal.build.js.makePackage(filesForPackaging, dependencies,packageName+ ".css", options.exclude, function(){
+				steal.build.js.makePackage(filesForPackaging,
+					dependencies,packageName+ ".css", buildOptions, function(pack){
+					
 					//save the file
 					steal.print("saving " + steal.config('root').join(packageName+".js"));
 					steal.config('root').join(packageName+".js").save( pack.js );
