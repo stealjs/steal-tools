@@ -12,3 +12,4 @@ build/packages/test/packages_test/production.js
 build/packages/test/packages_test/scripts/production.js
 build/packages/test/packages_test/scripts/packages
 build/packages/test/packages_test/packages/
+build/css/test/production.js

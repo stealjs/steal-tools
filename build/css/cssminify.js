@@ -234,10 +234,18 @@ steal('steal',function( steal ) {
 	 * Minifies CSS
 	 * @param {String} source
 	 * @param {Object} options - not used
+	 * @param {Function} callback
 	 */
-    steal.build.css.minify = function( source, options ) {
+    steal.build.css.minify = function( source, options, callback ) {
         //remove comments & minify
-        return YAHOO.compressor.cssmin(source);
+				var css = YAHOO.compressor.cssmin(source);
+				
+				// This function can be called async or sync
+				if(callback) {
+					callback(css);
+				} else {
+					return css;
+				}
     }
     /**
      * @function steal.build.css.clean

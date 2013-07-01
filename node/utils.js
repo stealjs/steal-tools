@@ -1,5 +1,4 @@
-var fs = require('fs'),
-	execSync = require('execsync-ng');
+var fs = require('fs');
 
 /*
  * Reference to `slice`
@@ -11,36 +10,4 @@ var slice = Array.prototype.slice;
  */
 exports.readFile = function(){
 	return fs.readFileSync.apply(fs, arguments).toString();
-};
-
-/**
- * @function runCommand
- *
- * Stubs Rhino's runCommand function
- *
- * @param {String} [command] The command to run.
- *
- * @param {Object} [options] An options object.
- */
-exports.runCommand = function(){
-	var args = slice.call(arguments),
-		options = args.pop(),
-		commandString = "";
-
-	if(typeof options === "string") {
-		args.push(options);
-		options = null;
-	} else {
-		if(options.args) {
-			args.push.apply(args, options.args);
-		}
-	}
-
-	commandString = args.join(" ");
-
-	// Execute the command.
-	var result = execSync.exec(commandString);
-	if(options.output) {
-		options.output = result.stdout;
-	}
 };
