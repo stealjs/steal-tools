@@ -152,9 +152,7 @@ steal('steal',
 				}
 
 				if(shares.length) {
-					buildPackages(0, function(){
-						doAll(handleDepth, doBuild);
-					});
+					buildPackages(0, doAll.after(handleDepth, doBuild));
 				} else {
 					doAll(handleDepth, doBuild);
 				}
