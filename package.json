@@ -1,7 +1,7 @@
 {
 	"name" : "steal",
 	"description" : "Gets JavaScript.",
-	"version" : "3.3.9-pre",
+	"version" : "3.3.10-pre",
 	"author" : {
 		"name" : "Bitovi",
 		"email" : "contact@bitovi.com",
@@ -11,7 +11,7 @@
 		"commander": ">= 1.1.1",
 		"jsdom": ">= 0.6.5",
 		"xmlhttprequest": "1.5.0",
-		"stealjs": "3.3.10-pre",
+		"stealjs": "3.3.11-pre",
     "mkpath": "~ 0.1.0"
 	},
 	"devDependencies" : {

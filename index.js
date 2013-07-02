@@ -1,5 +1,14 @@
-// For now we only only load the steal.js loader.
-// In the future we will export steal.build, steal.build.packages
-// and others to be used as an external api.
+var path = require("path");
 
-module.exports = require("stealjs");
+var steal = module.exports = require("stealjs");
+
+// Steal everything we are going to export.
+steal("build", function(build){
+
+	steal.build = build;
+
+	steal.config({
+		moduleRoot: path.resolve(__dirname, "../..")
+	});
+
+});
