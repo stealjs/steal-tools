@@ -45,7 +45,7 @@ jsdom.defaultLevel.resourceLoader.load = function(element, href, callback){
 	return oldLoad.apply(this, arguments);
 };
 
-steal('steal',function(s){
+steal('steal', function(s){
 	// Methods for walking through steal and its dependencies
 	
 	// which steals have been touched in this cycle

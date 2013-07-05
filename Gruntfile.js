@@ -45,6 +45,7 @@ module.exports = function (grunt) {
 			flags = Object.keys(this.flags);
 
 		var testFiles = {
+			build: ["build/test/build_test.js"],
 			open: ["build/open/test/open_test.js"],
 			js: ["build/js/js_test.js"],
 			css: ["build/css/test/css_test.js"],

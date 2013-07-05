@@ -1,3 +1,5 @@
+var readFile = require("../../node/utils").readFile;
+
 // open all apps
 // go through and mark everything in 'core' as packaged
 
@@ -13,6 +15,7 @@ if(!steal.build){
 steal('steal',
 	'build/share',
 	'./do_all.js',
+	'node/utils.js',
 	'build/open',
 	'build/apps',
 	'rhino/json.js',
@@ -45,7 +48,7 @@ steal('steal',
 			// each app's first file
 			appFiles : [],
 			// don't minify at first (will be faster)
-			minify : false
+			minify : false,
 		};
 		buildOptions = buildOptions || {};
 		buildOptions.depth = buildOptions.depth || Infinity;
@@ -285,15 +288,16 @@ steal('steal',
 						// prepend maps and makes ...
 						// make makes
 						var makeCode = [],
-							mapCode;
+							mapCode, stealCode;
 						for(name in makes) {
 							makeCode.push("steal.make(",
 								s.toJSON(makes[name]),
 								");")
 						}
 						mapCode = "steal.packages("+s.toJSON(maps)+");";
+						stealCode = buildOptions.packageSteal ? readFile("steal/steal.js") : "";
 
-						filterCode(mapCode+makeCode.join('\n')+"\n"+pack.js, 'js', function(filteredJs){
+						filterCode(stealCode+mapCode+makeCode.join('\n')+"\n"+pack.js, 'js', function(filteredJs){
 
 							s.URI(destJS).save( filteredJs );
 							if(pack.css){

@@ -6,7 +6,8 @@ var path = require("path"),
 
 program.version(package.version)
 	.usage("[options] <file ...>")
-	.option("-t, --to [folder]", "Name of the application folder")
+	.option("-o, --out [folder]", "Name of the application folder")
+	.option("--include-steal", "Package steal with the build")
 	.parse(process.argv);
 
 // If no arguments are provided, show the help and exit.
@@ -15,13 +16,16 @@ if(!program.args.length) {
 }
 
 var inFile = program.args[0],
-	toDirectory = program.to;
-if(!toDirectory) {
-	toDirectory = path.dirname(inFile);
+	outDirectory = program.out;
+if(!outDirectory) {
+	outDirectory = path.dirname(inFile);
 }
 
 steal("build", function(build){
 
-	build(inFile, { to: toDirectory });
+	build(inFile, {
+		to: outDirectory,
+		packageSteal: !!program.includeSteal
+	});
 
 });
