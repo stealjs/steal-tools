@@ -41,5 +41,8 @@
 			"type" : "MIT",
 			"url" : "http://opensource.org/licenses/mit-license.php"
 		}
-	]
+	],
+	"scripts": {
+		"test": "grunt test --verbose"
+	}
 }
