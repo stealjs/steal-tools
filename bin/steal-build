@@ -8,6 +8,7 @@ program.version(package.version)
 	.usage("[options] <file ...>")
 	.option("-o, --out [folder]", "Name of the application folder")
 	.option("-d, --depth <n>", "Package depth", parseInt)
+	.option("-c, --compressor [name]", "JavaScript compressor to use")
 	.option("--include-steal", "Package steal with the build")
 	.parse(process.argv);
 
@@ -29,6 +30,7 @@ steal("build", function(build){
 	build(inFile, {
 		to: outDirectory,
 		depth: program.depth,
+		compressor: program.compressor,
 		packageSteal: !!program.includeSteal
 	});
 
