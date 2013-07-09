@@ -7,6 +7,7 @@ var path = require("path"),
 program.version(package.version)
 	.usage("[options] <file ...>")
 	.option("-o, --out [folder]", "Name of the application folder")
+	.option("-d, --depth <n>", "Package depth", parseInt)
 	.option("--include-steal", "Package steal with the build")
 	.parse(process.argv);
 
@@ -21,10 +22,13 @@ if(!outDirectory) {
 	outDirectory = path.dirname(inFile);
 }
 
+debugger;
+
 steal("build", function(build){
 
 	build(inFile, {
 		to: outDirectory,
+		depth: program.depth,
 		packageSteal: !!program.includeSteal
 	});
 
