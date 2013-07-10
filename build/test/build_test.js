@@ -20,9 +20,6 @@ before(function(done){
 test("Steal is packaged with the build.", function(done){
 	expect(2);
 
-this.timeout(99999);
-debugger;
-
 	// We have to temporary make a steal/steal.js
 	createStealJs();
 

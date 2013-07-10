@@ -23,8 +23,6 @@ if(!outDirectory) {
 	outDirectory = path.dirname(inFile);
 }
 
-debugger;
-
 steal("build", function(build){
 
 	build(inFile, {
