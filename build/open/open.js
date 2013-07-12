@@ -2,6 +2,7 @@ var fs = require('fs')
   , jsdom = require('jsdom')
 	, path = require('path')
   , readFile = require('../../node/utils')
+  , Range = require('../../node/range')
   , XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 /*
@@ -40,6 +41,12 @@ jsdom.defaultLevel.resourceLoader.load = function(element, href, callback){
 			return;
 		}
 	}
+
+	var onerror = element.onerror;
+	element.onerror = function(err, src){
+		steal.print("Unable to load:", href, err.error+"");
+		onerror.apply(this, arguments);
+	};
 
 	// If we get this far we're not loading steal, use JSDOM's method.
 	return oldLoad.apply(this, arguments);
@@ -299,6 +306,23 @@ steal('steal', function(s){
 		var onload = function(){
 			var pageSteal = jsWin.steal;
 
+			// Overload the fn type to catch errors.
+			var fnType = pageSteal.config("types")["fn"];
+			var fun = fnType.require;
+			pageSteal.config({
+				types: {
+					"fn": function(options){
+						try {
+							return fun.apply(this, arguments);
+						} catch(err){
+							steal.print("ERROR CALLING", options.id+"", ":", err);
+							throw err;
+						}
+					}
+				}
+			});
+			
+
 			if(stealData.skipAll){
 				pageSteal.config({
 					types: {
@@ -330,6 +354,7 @@ steal('steal', function(s){
 			// a flag to tell steal we're in "build" mode
 			// this is used to completely ignore files with the "ignore" flag set
 			pageSteal.isBuilding = true;
+			pageSteal.print = s.print;
 			// if there's timers (like in less) we'll never reach next line 
 			// unless we bind to done here and kill timers
 			pageSteal.one('done', doneCb);
@@ -343,6 +368,9 @@ steal('steal', function(s){
 		var jsWin = jsDoc.createWindow();
 		jsWin.steal = typeof stealData == "object" ? stealData : undefined;
 		jsWin.XMLHttpRequest = ShimXHR;
+		jsWin.Range = Range;
+
+		jsDoc.createRange = function() { return new jsWin.Range(); };
 		jsWin.addEventListener('load', onload);
 
 		window.steal = oldSteal;
