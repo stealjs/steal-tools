@@ -312,12 +312,16 @@ steal('steal', function(s){
 			pageSteal.config({
 				types: {
 					"fn": function(options){
-						try {
-							return fun.apply(this, arguments);
-						} catch(err){
-							steal.print("ERROR CALLING", options.id+"", ":", err);
-							throw err;
-						}
+						var self = this, args = arguments;
+
+						setTimeout(function(){
+							try {
+								return fun.apply(self, args);
+							} catch(err){
+								steal.print("ERROR CALLING", options.id+"", ":", err);
+								throw err;
+							}
+						}, 0);
 					}
 				}
 			});
