@@ -90,7 +90,7 @@ steal('steal','parse',function(steal, parse){
 		// return source;
 		// get the compressor
 		options = options || {};
-		var compressor = js.minifiers[options.compressor || "localClosure"]()
+		var compressor = js.minifiers[options.compressor || "uglify"]()
 		
 		if(source){
 			// return source+""; //""+compressor( source, true, options.currentLineMap )
