@@ -98,7 +98,11 @@ steal('steal','parse',function(steal, parse){
 		} else {
 			return  compressor
 		}
-	}
+	};
+
+	js.minify.execOptions = {
+		maxBuffer: 5000*1024
+	};
 
 	//various minifiers
 	js.minifiers = {
@@ -165,8 +169,8 @@ steal('steal','parse',function(steal, parse){
 					origFileName
 				].join(" ");
 
-				exec(command, function(err, stdout, stderr){
-					if(err) console.error(err);
+				exec(command, js.minify.execOptions, function(err, stdout, stderr){
+					if(err) steal.print(err);
 
 					origFile.remove();
 					callback(stdout);
@@ -197,8 +201,8 @@ steal('steal','parse',function(steal, parse){
 				}
 				command.push("--js", filename);
 
-				exec(command.join(" "), function(err, stdout, stderr){
-					if(err) console.err(err);
+				exec(command.join(" "), js.minify.execOptions, function(err, stdout, stderr){
+					if(err) steal.print(err);
 
 					// print(options.err);
 					// if there's an error, go through the lines and find the right location
