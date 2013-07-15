@@ -4,6 +4,9 @@ var path = require("path"),
 suite("Js");
 
 before(function(done){
+debugger;
+	this.timeout = 99999;
+
 	steal("build/js", done);
 });
 
@@ -35,7 +38,7 @@ test("makePackage", function(done){
 	{
 		"package/1.js" : ["jquery/jquery.js"]
 	},
-	"package/css.css",{stealOwnModules: true}, function(res){
+	"package/css.css",{compressor: "localClosure", stealOwnModules: true}, function(res){
 		equal(
 			res.js,
 			// tell what this file has
@@ -81,7 +84,7 @@ test("makePackage with excludes", function(done){
 	{
 		"package/1.js" : ["jquery/jquery.js"]
 	},
-	"package/css.css", { exclude: ['b/b.js'] }, function(res){
+	"package/css.css", { compressor: "localClosure", exclude: ['b/b.js'] }, function(res){
 	
 		equal(
 			res.js,
@@ -130,8 +133,7 @@ test("test using uglify", function(done){
 	},
 	"package/css.css",{stealOwnModules: true, compressor: "uglify"}, function(res){
 
-		equal(
-			res.js,
+		var expected =
 			// tell what this file has
 			'steal.has("a.js","b.js"),'+
 			// steal any packages this package depends on
@@ -142,10 +144,11 @@ test("test using uglify", function(done){
 			// clear pending for future steals
 			'steal.pushPending(),'+
 			// the files and executed contexts
-			'a,steal.executed("a.js"),b,steal.executed("b.js"),'+
+			'steal.executed("a.js"),steal.executed("b.js"),'+
 			// pop the previous pending state into being so when this file completes, it's depeendencies will be executed
-			'steal.popPending()',
-			"js works");
+			'steal.popPending();';
+
+		equal( res.js, expected, "js works");
 			
 		equal(res.css.code,"c");
 		done();

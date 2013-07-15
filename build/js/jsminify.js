@@ -1,8 +1,14 @@
-var path = require("path")
-	, exec = require("child_process").exec
-  , readFile = require("../../node/utils").readFile;
+var readFile = require("../../node/utils").readFile;
 
-steal('steal','parse',function(steal, parse){
+steal('parse',
+	'path',
+	'child_process',
+	'uglify-js',
+	
+	function(parse, path, childProcess, UglifyJS){
+	var exec = childProcess.exec
+	  , uglify = UglifyJS.minify;
+
 	/**
 	 * @add steal.build.js
 	 */
@@ -152,29 +158,11 @@ steal('steal','parse',function(steal, parse){
 		uglify: function() {
 			steal.print("steal.compress - Using Uglify");
 			return function( src, quiet, nada, callback ) {
-				var rnd = Math.floor(Math.random() * 1000000 + 1),
-					origFileName = "tmp" + rnd + ".js",
-					origFile = new steal.URI(origFileName);
+				setTimeout(function(){
+					var result = uglify(src, { fromString: true });
 
-				origFile.save(src);
-
-				var options = {
-					err: '',
-					output: true
-				};
-
-				var command = [
-					"node", 
-					getCompilerPath("build/js/uglify/bin/uglifyjs"), 
-					origFileName
-				].join(" ");
-
-				exec(command, js.minify.execOptions, function(err, stdout, stderr){
-					if(err) steal.print(err);
-
-					origFile.remove();
-					callback(stdout);
-				});
+					callback(result.code);
+				}, 0);
 			};
 		},
 		localClosure: function() {
