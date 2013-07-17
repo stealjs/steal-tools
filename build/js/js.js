@@ -280,4 +280,6 @@ steal('steal','build/css',function( steal ) {
 			css: csspackage
 		});
 	}
+
+	return js;
 }).then('./jsminify');
