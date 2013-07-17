@@ -4,10 +4,9 @@ var path = require("path"),
 suite("Js");
 
 before(function(done){
-debugger;
-	this.timeout = 99999;
-
-	steal("build/js", done);
+	steal("build/js", function(){
+		done();
+	});
 });
 
 /**

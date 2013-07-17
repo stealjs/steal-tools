@@ -1,5 +1,3 @@
-debugger;
-
 steal("install/install_steal.js", function(installSteal){
 
 	/*

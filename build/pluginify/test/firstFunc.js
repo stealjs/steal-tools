@@ -1,8 +1,5 @@
-function(abc){
-	(function(){});
-	"abc(){};";
-	/* steal */
-	// steal
-	
-	boom	
+function(){
+
+	return {};
+
 }

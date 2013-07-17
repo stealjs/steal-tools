@@ -159,7 +159,11 @@ steal('parse',
 			steal.print("steal.compress - Using Uglify");
 			return function( src, quiet, nada, callback ) {
 				setTimeout(function(){
-					var result = uglify(src, { fromString: true });
+					try {
+						var result = uglify(src, { fromString: true });
+					} catch(err){
+						throw err;
+					}
 
 					callback(result.code);
 				}, 0);
