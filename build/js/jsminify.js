@@ -1,6 +1,6 @@
 var readFile = require("../../node/utils").readFile;
 
-steal('parse',
+steal('steal/parse',
 	'path',
 	'child_process',
 	'uglify-js',

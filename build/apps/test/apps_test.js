@@ -65,7 +65,7 @@ before(function(done) {
 		 *
 		 */
 
-		steal("build","build/apps", function(b, apps){
+		steal("steal/build","steal/build/apps", function(b, apps){
 			// the following isn't all that's required
 			//s2.config('root','');
 			build = b;
@@ -74,14 +74,21 @@ before(function(done) {
 					compressor: "uglify" // uglify is much faster
 			};
 
+			var oldRoot = steal.config("root");
+			steal.config("root", path.resolve(__dirname, "../../.."));
+
 			steal.build.apps(["build/apps/test/multibuild/app_x",
 				"build/apps/test/multibuild/app_y",
-				"build/apps/test/multibuild/app_z"], buildOptions, done);
+				"build/apps/test/multibuild/app_z"], buildOptions, function(){
+					steal.config("root", oldRoot);
+					done();
+				});
 		});
 });
 
 after(function(){
 	// Tear down
+console.log("tearing down!");
 	rimraf("build/apps/test/multibuild/app_x/production.js");
 	rimraf("build/apps/test/multibuild/app_y/production.js");
 	rimraf("build/apps/test/multibuild/app_z/production.js");

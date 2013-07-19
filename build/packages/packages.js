@@ -13,12 +13,12 @@ if(!steal.build){
 	steal.build = {};	
 }
 steal('steal',
-	'build/share',
+	'steal/build/share',
 	'./do_all.js',
-	'node/utils.js',
-	'build/open',
-	'build/apps',
-	'rhino/json.js',
+	'steal/node/utils.js',
+	'steal/build/open',
+	'steal/build/apps',
+	'steal/rhino/json.js',
 	function(s, share, doAll){
 
 	var apps = steal.build.apps,

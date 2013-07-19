@@ -7,10 +7,10 @@ if(!steal.build){
 	steal.build = {};	
 }
 steal('steal',
-	'build/share',
-	'build/js',
-	'build/css',
-	'build/open',
+	'steal/build/share',
+	'steal/build/js',
+	'steal/build/css',
+	'steal/build/open',
 	function( steal, shareUtil ) {
 	
 		
@@ -250,9 +250,9 @@ steal('steal',
 					if( id && resource.options.buildType != 'fn' ) {
 						// some might not have source yet
 						steal.print("  + "+prop );
-						
+					
 						// convert using steal's root because that might have been configured
-						pathOpts = steal.idToUri( prop );
+						pathOpts = steal.URI(steal.idToUri( prop, true ));
 						source = resource.options.text || readFile( pathOpts.path );
 					}
 					

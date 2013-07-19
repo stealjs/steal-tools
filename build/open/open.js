@@ -1,7 +1,7 @@
 var fs = require('fs')
   , jsdom = require('jsdom')
 	, path = require('path')
-  , readFile = require('../../node/utils')
+  , readFile = require('../../node/utils').readFile
   , Range = require('../../node/range')
   , XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
@@ -18,38 +18,6 @@ var ShimXHR = function(){
 		arguments[1] = url;
 		return oldOpen.apply(this, arguments);
 	};
-};
-
-/*
- * Overload JSDOM's resource loader. When loading steal.js we're going to
- * intercept those calls and give them our own local copy of steal.js.
- * This way we don't have to worry about paths.
- */
-var localSteal = fs.readFileSync(path.resolve(__dirname, "../../node_modules/stealjs/steal.js"),
-	"utf8");
-var oldLoad = jsdom.defaultLevel.resourceLoader.load;
-jsdom.defaultLevel.resourceLoader.load = function(element, href, callback){
-	if(element && element.nodeName === "SCRIPT") {
-		var isSteal = href && href.indexOf("steal.js") !== -1;
-
-		if(isSteal) {
-			var full = this.resolve(element._ownerDocument, href);
-			var fn = this.enqueue(element, callback, full);
-			setTimeout(function(){
-				fn(null, localSteal);
-			}, 0);
-			return;
-		}
-	}
-
-	var onerror = element.onerror;
-	element.onerror = function(err, src){
-		steal.print("Unable to load:", href, err.error+"");
-		onerror.apply(this, arguments);
-	};
-
-	// If we get this far we're not loading steal, use JSDOM's method.
-	return oldLoad.apply(this, arguments);
 };
 
 steal('steal', function(s){
@@ -240,65 +208,68 @@ steal('steal', function(s){
 			// get the 'base' steal (what was stolen)
 			
 			// callback with the following
-			cb({
-				/**
-				 * @hide
-				 * Goes through each steal and gives its content.
-				 * How will this work with packages?
-				 * 
-				 * @param {Function} [filter] the tag to get
-				 * @param {Boolean} [depth] the tag to get
-				 * @param {Object} func a function to call back with the element and its content
-				 */
-				each: function( filter, depth, func ) {
-					// reset touched
-					touched = {};
-					// move params
-					if ( !func ) {
-						
-						if( depth === undefined ) {
-							depth = false;
-							func = filter;
-							filter = function(){return true;};
-						} else if( typeof filter == 'boolean'){
-							func = depth;
-							depth = filter
-							filter = function(){return true;};
-						} else if(arguments.length == 2 && typeof filter == 'function' && typeof depth == 'boolean'){
-							func = filter;
-							filter = function(){return true;};
-						} else {  // filter given, no depth
-							func = depth;
-							depth = false;
+			// we need to run this in the next event loop.
+			setTimeout(function(){
+				cb({
+					/**
+					 * @hide
+					 * Goes through each steal and gives its content.
+					 * How will this work with packages?
+					 * 
+					 * @param {Function} [filter] the tag to get
+					 * @param {Boolean} [depth] the tag to get
+					 * @param {Object} func a function to call back with the element and its content
+					 */
+					each: function( filter, depth, func ) {
+						// reset touched
+						touched = {};
+						// move params
+						if ( !func ) {
 							
-						}
-					};
-					
-					// make this filter by type
-					if(typeof filter == 'string'){
-						var resource = filter;
-						filter = function(stl){
-							return stl.options.buildType === resource;
-						}
-					}
-					var items = [];
-					// iterate 
-					iterate(rootSteal, function(resource){
+							if( depth === undefined ) {
+								depth = false;
+								func = filter;
+								filter = function(){return true;};
+							} else if( typeof filter == 'boolean'){
+								func = depth;
+								depth = filter
+								filter = function(){return true;};
+							} else if(arguments.length == 2 && typeof filter == 'function' && typeof depth == 'boolean'){
+								func = filter;
+								filter = function(){return true;};
+							} else {  // filter given, no depth
+								func = depth;
+								depth = false;
+								
+							}
+						};
 						
-						if( filter(resource) ) {
-							resource.options.text = resource.options.text || loadScriptText(resource);
-							func(resource.options, resource );
-							items.push(resource.options);
+						// make this filter by type
+						if(typeof filter == 'string'){
+							var resource = filter;
+							filter = function(stl){
+								return stl.options.buildType === resource;
+							}
 						}
-					}, depth, includeFns );
-				},
-				// the 
-				steal: newSteal,
-				url: url,
-				rootSteal: rootSteal,
-				firstSteal: s.build.open.firstSteal(rootSteal),
-				doc: jsWin.document
-			});
+						var items = [];
+						// iterate 
+						iterate(rootSteal, function(resource){
+							
+							if( filter(resource) ) {
+								resource.options.text = resource.options.text || loadScriptText(resource);
+								func(resource.options, resource );
+								items.push(resource.options);
+							}
+						}, depth, includeFns );
+					},
+					// the 
+					steal: newSteal,
+					url: url,
+					rootSteal: rootSteal,
+					firstSteal: s.build.open.firstSteal(rootSteal),
+					doc: jsWin.document
+				});
+			}, 0);
 		};
 
 		var hash = url.split("#")[1] || null;
@@ -331,7 +302,6 @@ steal('steal', function(s){
 				pageSteal.config({
 					types: {
 						"js" : function(options, success){
-							console.log("open.js", "Looking for:");
 							var text;
 							if(options.text){
 								text = options.text;
@@ -380,7 +350,7 @@ steal('steal', function(s){
 		window.steal = oldSteal;
 	};
 
-	steal.build.open.firstSteal =function(rootSteal){
+	s.build.open.firstSteal =function(rootSteal){
 		var stel;
 		for(var i =0; i < rootSteal.dependencies.length; i++){
 			stel = rootSteal.dependencies[i];

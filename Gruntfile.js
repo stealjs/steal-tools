@@ -1,6 +1,11 @@
 
 module.exports = function (grunt) {
 
+global.steal = {
+	nodeRequire: require,
+	root: require("path").resolve(__dirname, "..")
+};
+
 	grunt.registerTask("test", function(){
 		var done = this.async(),
 			flags = Object.keys(this.flags);

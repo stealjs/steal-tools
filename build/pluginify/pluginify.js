@@ -5,7 +5,7 @@ steal("underscore",
 	"path",
 	"./parse.js",
 	"./open.js",
-	"build/js",
+	"steal/build/js",
 	function(_, fs, path, parse, opener, js){
 
 	var noop = function(){};

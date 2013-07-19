@@ -1,4 +1,4 @@
-steal("parse/tokens.js"/*,
+steal("steal/parse/tokens.js"/*,
 	  "steal/parse/regex_identifier.js"*/,
 	  function(){
 

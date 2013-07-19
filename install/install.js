@@ -1,4 +1,4 @@
-steal("install/install_steal.js", function(installSteal){
+steal("steal/install/install_steal.js", function(installSteal){
 
 	/*
 	 * In the future install will be able to pull from

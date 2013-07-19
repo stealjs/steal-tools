@@ -7,7 +7,7 @@ global.STEALPRINT = false;
 
 var build;
 before(function(done){
-	steal("build", function(b){
+	steal("steal/build", function(b){
 		build = b; done();
 	});
 });

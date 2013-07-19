@@ -4,7 +4,7 @@ var path = require("path"),
 suite("Js");
 
 before(function(done){
-	steal("build/js", function(){
+	steal("steal/build/js", function(){
 		done();
 	});
 });

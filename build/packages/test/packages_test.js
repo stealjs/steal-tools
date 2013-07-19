@@ -7,7 +7,8 @@ var steal = require("stealjs"),
 global.STEALPRINT = false;
 
 before(function(done){
-	steal('build', 'build/packages', function(){
+	steal('steal/build',
+	'steal/build/packages', function(){
 		var options = {
 			compressor: "uglify",
 			to: "build/packages/test/packages_test",

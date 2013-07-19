@@ -1,5 +1,12 @@
-var path = require("path"),
-	fs = require("fs"),
+var path = require("path");
+
+global.steal = {
+	nodeRequire: require,
+	root: path.resolve(__dirname, "../../..")
+};
+
+
+var fs = require("fs"),
 	steal = require("stealjs"),
 	readFile = require("../../node/utils.js").readFile,
 	mkpath = require("mkpath").sync,
@@ -11,7 +18,7 @@ suite("Open");
 
 var build;
 before(function(done){
-	steal("build", function(b){
+	steal("steal/build", function(b){
 		build = b;
 		done();
 	});

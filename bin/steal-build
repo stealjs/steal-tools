@@ -1,6 +1,12 @@
 #!/usr/bin/env node
-var path = require("path"),
-	program = require("commander"),
+var path = require("path");
+
+global.steal = {
+	nodeRequire: require,
+	root: path.resolve(__dirname, "../..")
+};
+
+var program = require("commander"),
 	steal = require("stealjs"),
 	package = require("../package.json");
 
@@ -25,7 +31,7 @@ if(!outDirectory) {
 	outDirectory = path.dirname(inFile);
 }
 
-steal("build", "build/pluginify",
+steal("steal/build", "steal/build/pluginify",
 	function(build, pluginify){
 
 	var fun = program.standalone ? pluginify : build;

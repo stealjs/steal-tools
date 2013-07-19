@@ -8,8 +8,8 @@ suite("Pluginify");
 
 var build, pluginify;
 before(function(done){
-	steal("build",
-	"build/pluginify", function(b,p){
+	steal("steal/build",
+	"steal/build/pluginify", function(b,p){
 		build = b;
 		pluginify = p;
 		done();
