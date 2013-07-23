@@ -16,8 +16,8 @@ global.steal = {
 			js: ["build/js/js_test.js"],
 			css: ["build/css/test/css_test.js"],
 			apps: ["build/apps/test/apps_test.js"],
-			packages: ["build/packages/test/packages_test.js"]
-			/*pluginify: ["build/pluginify/test/pluginify_test.js"]*/
+			packages: ["build/packages/test/packages_test.js"],
+			pluginify: ["build/pluginify/test/pluginify_test.js"]
 		};
 
 		var allFiles = (function(){
