@@ -9,11 +9,10 @@ var steal = require("stealjs")
   , rimraf = require("rimraf").sync
   , jsdom = require("jsdom").jsdom;
 
-global.STEALPRINT = true;
+global.STEALPRINT = false;
 
 suite("Apps");
 
-var build;
 before(function(done) {
 		/**
 		 * Setup for multi-build packaging tests
@@ -70,25 +69,14 @@ before(function(done) {
 		 *
 		 */
 
-		this.timeout(99999);
-		debugger;
-
-		steal("steal/build","steal/build/apps", function(b, apps){
-			// the following isn't all that's required
-			build = b;
-		
+		steal("steal/build","steal/build/apps", function(build, apps){
 			var buildOptions = {
-				compressor: "uglify", // uglify is much faster
 				root: steal.config("root")+""
 			};
 
-			var oldRoot = steal.config("root")+"";
-			steal.config("root", path.resolve(__dirname, "../../.."));
-
-			apps(["build/apps/test/multibuild/app_x",
-				"build/apps/test/multibuild/app_y",
-				"build/apps/test/multibuild/app_z"], buildOptions, function(){
-					steal.config("root", oldRoot);
+			apps(["steal/build/apps/test/multibuild/app_x",
+				"steal/build/apps/test/multibuild/app_y",
+				"steal/build/apps/test/multibuild/app_z"], buildOptions, function(){
 					done();
 				});
 		});
@@ -96,7 +84,6 @@ before(function(done) {
 
 after(function(){
 	// Tear down
-	/*console.log("tearing down!");
 	rimraf("build/apps/test/multibuild/app_x/production.js");
 	rimraf("build/apps/test/multibuild/app_y/production.js");
 	rimraf("build/apps/test/multibuild/app_z/production.js");
@@ -108,7 +95,7 @@ after(function(){
 	rimraf("packages/2.js");
 	rimraf("packages/0.css");
 	rimraf("packages/1.css");
-	rimraf("packages/2.css");*/
+	rimraf("packages/2.css");
 });
 
 test("multibuild creates JS/CSS packages with the right contents", function(){

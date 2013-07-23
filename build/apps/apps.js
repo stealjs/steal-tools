@@ -255,7 +255,11 @@ steal('steal',
 					
 						// convert using steal's root because that might have been configured
 						pathOpts = steal.URI(steal.idToUri( prop, true ));
-						source = resource.options.text || readFile( pathOpts.path );
+						var resourcePath = options.root
+							? steal.URI(options.root).join(pathOpts)
+							: pathOpts;
+
+						source = resource.options.text || readFile( resourcePath+"" );
 					}
 					
 					resource.options.text = resource.options.text || source;
