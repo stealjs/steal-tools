@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+global.steal = {
+	root: require("path").resolve(__dirname, "../.."),
+	nodeRequire: require
+};
+
 var program = require("commander")
  , package = require("../package.json")
  , steal = require("stealjs")

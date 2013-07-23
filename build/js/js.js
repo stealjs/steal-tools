@@ -1,7 +1,7 @@
 if(!steal.build){
 	steal.build = {};	
 }
-steal('steal','steal/build/css',function( st ) {
+steal('steal','steal/build/css',function( st, css ) {
 	/**
 	 * @class steal.build.js
 	 * @parent steal.build
@@ -257,12 +257,12 @@ steal('steal','steal/build/css',function( st ) {
 		var jsCode = code.join(";\n") + ";\nsteal.popPending();\n";
 		
 		if(canCompressPackage){
-			jsCode = steal.build.js.clean(jsCode);
-			steal.build.js.minify(jsCode,{
+			jsCode = js.clean(jsCode);
+			js.minify(jsCode,{
 				currentLineMap: lineMap,
 				compressor: buildOptions.compressor
 			}, function(jsCode) {
-				var csspackage = steal.build.css.makePackage(csses, cssPackage);
+				var csspackage = css.makePackage(csses, cssPackage);
 				
 				callback({
 					js: jsCode,
@@ -273,7 +273,7 @@ steal('steal','steal/build/css',function( st ) {
 			return;
 		}
 		
-		var csspackage = steal.build.css.makePackage(csses, cssPackage);
+		var csspackage = css.makePackage(csses, cssPackage);
 		
 		callback({
 			js: jsCode,

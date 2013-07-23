@@ -1,3 +1,8 @@
+global.steal = {
+	nodeRequire: require,
+	root: __dirname + "/../../../.."
+};
+
 var path = require("path")
   , readFile = require("../../../node/utils").readFile
   , rimraf = require("rimraf").sync
@@ -6,10 +11,8 @@ var path = require("path")
 global.STEALPRINT = false;
 
 var build;
-before(function(done){
-	steal("steal/build", function(b){
-		build = b; done();
-	});
+steal("steal/build", function(b){
+	build = b;
 });
 
 suite("Css");
@@ -18,7 +21,7 @@ suite("Css");
  * Tests compressing a very basic page and one that is using steal
  */
 test("css", function(done){
-	expect(0);
+	expect(1);
 
 	build('build/css/test/page.html', {to: 'build/css/test', compressor: 'uglify'}, function(){
 		var prod = readFile('build/css/test/production.css').replace(/\r|\n|\s/g,""),

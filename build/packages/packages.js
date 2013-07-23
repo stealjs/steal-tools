@@ -21,8 +21,10 @@ steal('steal',
 	'steal/rhino/json.js',
 	function(s, share, doAll){
 
-	var apps = steal.build.apps,
-		build = steal.build, 
+	var apps = s.build.apps,
+		build = s.build,
+		buildTypes = steal.build,
+		js = steal.build.js,
 		packages =
 	
 	/**
@@ -39,7 +41,7 @@ steal('steal',
 	 * Builds an app, and pulls out packages
 	 * 
 	 */
-	steal.build.packages = function(app, buildOptions, callback){
+	s.build.packages = function(app, buildOptions, callback){
 		
 		// options for packaging
 		var options = {
@@ -87,7 +89,7 @@ steal('steal',
 				},
 				filterCode = function(code, type, cb) {
 					if(buildOptions.minify) {
-						build[type].minify(code, { compressor: buildOptions.compressor }, cb);
+						buildTypes[type].minify(code, { compressor: buildOptions.compressor }, cb);
 					} else {
 						setTimeout(function(){ cb(code); }, 0);
 					}
@@ -173,7 +175,7 @@ steal('steal',
 						packageName = appNamesToMake(sharing.appNames);
 	
 					// create package
-					build.js.makePackage(sharing.files.map(function(f){
+					js.makePackage(sharing.files.map(function(f){
 							return f.stealOpts;
 						}), {}, packageName+".css", buildOptions, function(pack){
 						
@@ -281,7 +283,7 @@ steal('steal',
 						destCSS = ''+steal.URI(buildOptions.to).join('production.css');
 					s.print("Building "+destJS);
 					
-					build.js.makePackage(
+					js.makePackage(
 						masterFiles.map(function(f){return f.stealOpts}),
 						{}, destCSS, buildOptions, function(pack){
 					
@@ -291,10 +293,10 @@ steal('steal',
 							mapCode, stealCode;
 						for(name in makes) {
 							makeCode.push("steal.make(",
-								s.toJSON(makes[name]),
+								JSON.stringify(makes[name]),
 								");")
 						}
-						mapCode = "steal.packages("+s.toJSON(maps)+");";
+						mapCode = "steal.packages("+JSON.stringify(maps)+");";
 						stealCode = buildOptions.packageSteal ? readFile("steal/steal.js") : "";
 
 						filterCode(stealCode+mapCode+makeCode.join('\n')+"\n"+pack.js, 'js', function(filteredJs){
@@ -317,7 +319,7 @@ steal('steal',
 		});
 	};
 
-	steal.extend(packages,share);
+	s.extend(packages,share);
 	var p = packages;
 
 	return packages;

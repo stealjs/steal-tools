@@ -1,3 +1,8 @@
+global.steal = {
+	root: require("path").resolve(__dirname, "../../../.."),
+	nodeRequire: require
+};
+
 var steal = require("stealjs"),
 	fs = require("fs"),
 	jsdom = require("jsdom").jsdom,
@@ -7,8 +12,7 @@ var steal = require("stealjs"),
 global.STEALPRINT = false;
 
 before(function(done){
-	steal('steal/build',
-	'steal/build/packages', function(){
+	steal('steal/build', function(build){
 		var options = {
 			compressor: "uglify",
 			to: "build/packages/test/packages_test",
@@ -16,7 +20,7 @@ before(function(done){
 			depth: 3
 		};
 
-		steal.build.packages("build/packages/test/packages_test/scripts/build.html", options, function(){
+		build.packages("build/packages/test/packages_test/scripts/build.html", options, function(){
 			done();
 		});
 	});

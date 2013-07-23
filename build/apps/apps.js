@@ -11,7 +11,7 @@ steal('steal',
 	'steal/build/js',
 	'steal/build/css',
 	'steal/build/open',
-	function( steal, shareUtil ) {
+	function( steal, shareUtil, js ) {
 	
 		
 		/**
@@ -90,7 +90,8 @@ steal('steal',
 				appFiles : [],
 				files : {},
 				// tells it to only do app file
-				multipleOpens: true
+				multipleOpens: true,
+				root: buildOptions.root
 			}
 			// opens each app and add its dependencies to options
 			steal.build.apps.open(moduleIds, options, function(options){
@@ -154,8 +155,9 @@ steal('steal',
 			} else {
 				appName = steal.id(appName);
 				data = {
-					startId: appName
-				}
+					startId: appName,
+					root: options ? options.root : undefined
+				};
 			}
 			
 			
@@ -590,7 +592,7 @@ steal('steal',
 				}
 				
 				//the source of the package
-				steal.build.js.makePackage(filesForPackaging,
+				js.makePackage(filesForPackaging,
 					dependencies,packageName+ ".css", buildOptions, function(pack){
 					
 					//save the file

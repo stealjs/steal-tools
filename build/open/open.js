@@ -21,6 +21,10 @@ var ShimXHR = function(){
 };
 
 steal('steal', function(s){
+	if(!steal.build) {
+		steal.build = {};
+	}
+
 	// Methods for walking through steal and its dependencies
 	
 	// which steals have been touched in this cycle
@@ -191,6 +195,7 @@ steal('steal', function(s){
 	 * 
 	 */
 	//
+	steal.build.open =
 	s.build.open = function( url, stealData, cb, includeFns ) {
 		// save and remove the old steal
 		var oldSteal = s,
@@ -335,7 +340,14 @@ steal('steal', function(s){
 			newSteal = pageSteal;
 		};
 	
-		var baseUrl = path.resolve(process.cwd(), "app.html");
+		var baseUrl;
+		if(stealData && stealData.root){
+			baseUrl = path.resolve(stealData.root, "app.html");
+			delete stealData.root;
+		} else {
+			baseUrl = path.resolve(process.cwd(), "app.html");
+		}
+
 		var jsDoc = jsdom.jsdom(html, null, {
 			url: baseUrl + (hash ? "#" + hash : ""), // We have to lie about the URL to get jsdom to work
 		});

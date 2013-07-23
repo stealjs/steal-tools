@@ -1,7 +1,7 @@
 if(!steal.build){
 	steal.build = {};	
 }
-steal('steal',function( steal ) {
+steal('steal',function( st ) {
 	/**
 	 * @class steal.build.css
 	 * @parent steal.build
@@ -66,4 +66,6 @@ steal('steal',function( steal ) {
         var e = Math.floor(Math.log(bytes)/Math.log(1024));
         return (bytes/Math.pow(1024,Math.floor(e))).toFixed(1)+' '+s[e];
     };
+
+	return css;
 },'steal/build/css/cssminify.js');
