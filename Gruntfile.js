@@ -11,8 +11,11 @@ global.steal = {
 			flags = Object.keys(this.flags);
 
 		var testFiles = {
-			build: ["build/test/build_test.js",
-						  "build/test/api.js"],
+			build: [
+				"build/test/build_test.js",
+				"build/test/api.js",
+				"build/test/api2.js"
+			],
 			open: ["build/open/test/open_test.js"],
 			js: ["build/js/js_test.js"],
 			css: ["build/css/test/css_test.js"],

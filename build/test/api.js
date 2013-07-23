@@ -15,10 +15,6 @@ test("All API functions are exported.", function(){
 
 
 test("Is able to build an app.", function(done){
-this.timeout(999999);
-debugger;
-
-
 	// We have to temporary make a steal/steal.js
 	createStealJs();
 

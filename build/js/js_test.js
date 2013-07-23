@@ -3,8 +3,10 @@ var path = require("path"),
 
 suite("Js");
 
+var js;
 before(function(done){
-	steal("steal/build/js", function(){
+	steal("steal/build/js", function(j){
+		js = j;
 		done();
 	});
 });
@@ -16,7 +18,7 @@ before(function(done){
 test("makePackage", function(done){
 	expect(2);
 
-	steal.build.js.makePackage(
+	js.makePackage(
 	[
 		{
 			buildType : "js",
@@ -62,7 +64,7 @@ test("makePackage", function(done){
 });
 
 test("makePackage with excludes", function(done){
-	steal.build.js.makePackage(
+	js.makePackage(
 	[
 		{
 			buildType : "js",
@@ -109,7 +111,7 @@ test("makePackage with excludes", function(done){
 test("test using uglify", function(done){
 	expect(2);
 
-	steal.build.js.makePackage(
+	js.makePackage(
 	[
 		{
 			buildType : "js",
