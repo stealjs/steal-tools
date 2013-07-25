@@ -402,4 +402,6 @@ steal('steal', function(s){
 
 		return text;
 	};
+
+	return s.build.open;
 })

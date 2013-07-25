@@ -4,15 +4,25 @@ steal("underscore",
 	"fs",
 	"path",
 	"./parse.js",
+	"steal/build/open",
 	"./open.js",
 	"steal/build/js",
-	function(_, fs, path, parse, opener, js){
+	function(_, fs, path, parse, open, opener, js){
+	
+	var BLANK_HTML = path.resolve(__dirname, "../../node/blank.html");
 
 	var noop = function(){};
 
 	function clone(o){
 		return JSON.parse(JSON.stringify(o));
 	}
+
+	var ignores = [
+		'steal/dev/dev.js',
+		'stealconfig.js',
+		/\.less$/,
+		/\.css$/
+	];
 
 	/**
 	 *
@@ -25,15 +35,24 @@ steal("underscore",
 			? options.minify : true;
 
 		if(!options.steal) {
-			options.steal = pluginify.loadConfig();
-			var shim = clone(options.steal.shim);
+			var config = pluginify.loadConfig();
+			var shim = clone(config.shim);
 		}
 
-		opener(ids, options.steal || {}, function (error, rootSteals, opener) {
+		var stealData = _.extend({}, options.steal, {
+			startId: ids
+		});
+
+		var getSteals = opener.steals;
+		var thingToBuild = /\.html$/i.test(ids) ? ids : BLANK_HTML;
+		open(thingToBuild, stealData, function (opener) {
+			var steals = getSteals(opener.rootSteal, options);
+
 			// Call pluginifySteals and extend the options with the opener Steal
-			pluginify.pluginifySteals(rootSteals, _.extend({
+			pluginify.pluginifySteals(steals, _.extend({
 				opener: opener,
-				shim: shim
+				shim: shim,
+				ignore: ignores.concat(options.ignore||[])
 			}, options), callback || noop);
 		});
 	}
@@ -87,17 +106,36 @@ steal("underscore",
 			var nameMap = {};
 			var contents = [];
 
+			var pageSteal = options.opener.steal;
 			_.each(options.shim, function(variable, id) {
 				var val = variable.exports
 					? variable.exports : variable;
-				nameMap[options.opener.id(id)] = val;
+				nameMap[pageSteal.id(id)] = val;
 			});
+
+			var extractContent = function(stl){
+				var filename = path.resolve('' + pageSteal.config('root'),
+					stl.options.src+"");
+
+				return readFile(filename);
+			};
 
 			// Go through all dependencies
 			opener.visit(steals, function (stl, id, visited, index) {
 				// If the steal has its content loaded (done by the opener) and we don't have a registered
 				// variable name for that module
+				if(stl.options.type !== "fn" && !nameMap[id] && !pluginify.ignores(id, options.ignore || [])){
+					if(!stl.options.text){
+						var text = extractContent(stl);
+						stl.options.text = text;
+					}
+					stl.options.parsed = opener.parseContent(stl.options.text);
+				}
+
+
 				if (stl.options.text && !nameMap[id] && !pluginify.ignores(id, options.ignore || [])) {
+					steal.print("\ \ +", id);
+
 					// Create a variable name containing the visited array length
 					var variableName = '__m' + index;
 					// Set the variable name for the current id
@@ -112,16 +150,20 @@ steal("underscore",
 					// The last dependency is the module itself, we don't need that
 					dependencies.pop();
 
+					// Create the dependency as strings, so undefineds work.
+					var depStrs = dependencies.map(function(d){ return d || "undefined"; });
+
 					// Render the template for this module
 					var part = _.template(options.moduleTemplate, {
 						moduleName: id,
 						variableName: variableName,
 						parsed: stl.options.parsed,
-						dependencies: dependencies
+						dependencies: depStrs
 					});
 
 					contents.push(part);
 				}
+
 			});
 
 			if(!contents.length) {

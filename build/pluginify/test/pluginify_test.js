@@ -19,11 +19,14 @@ before(function(done){
 test("Pluginify a thing", function(done){
 	expect(1);
 
-	pluginify("build/pluginify/test/app",{
+	process.chdir("build/pluginify/test");
+
+	pluginify("app/app.html",{
 		nojquery: true,
 		nocanjs: true,
-		out: "build/pluginify/test/app/app.plugin.js"
+		out: "app/app.plugin.js"
 	}, function(){
+		process.chdir("../../..");
 		var data = readFile("build/pluginify/test/app/app.plugin.js");
 
 		// Get the letter uglify assigned.
