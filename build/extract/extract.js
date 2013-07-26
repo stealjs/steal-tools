@@ -1,4 +1,8 @@
-steal('steal', 'steal/parse', 'steal/build', 'steal/build/pluginify', function(s, parse) {
+steal('steal',
+	'steal-tools/parse',
+	'steal-tools/build',
+	'steal-tools/build/pluginify', function(s, parse) {
+
 	var inexcludes = function(excludes, src) {
 			for (var i = 0; i < excludes.length; i++) {
 				if ((excludes[i].substr(-1) === "/" && src.indexOf(excludes[i]) === 0)
@@ -19,7 +23,7 @@ steal('steal', 'steal/parse', 'steal/build', 'steal/build/pluginify', function(s
 		 * of steals
 		 */
 		getDependencies = function(file, excludes, options, callback) {
-			s.build.open("steal/rhino/blank.html", {
+			s.build.open("steal/node/blank.html", {
 				startId : file,
 				skipAll: true
 			}, function(opener){

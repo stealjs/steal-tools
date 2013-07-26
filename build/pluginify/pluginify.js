@@ -1,13 +1,13 @@
-var readFile = require("../../node/utils").readFile;
-
 steal("underscore",
 	"fs",
 	"path",
 	"./parse.js",
-	"steal/build/open",
+	"steal-tools/build/open",
 	"./open.js",
-	"steal/build/js",
+	"steal-tools/build/js",
 	function(_, fs, path, parse, open, opener, js){
+
+	var readFile = require("../../node/utils").readFile;
 	
 	var BLANK_HTML = path.resolve(__dirname, "../../node/blank.html");
 

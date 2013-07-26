@@ -12,7 +12,7 @@ var steal = require("stealjs"),
 global.STEALPRINT = false;
 
 before(function(done){
-	steal('steal/build', function(build){
+	steal('steal-tools/build', function(build){
 		var options = {
 			compressor: "uglify",
 			to: "build/packages/test/packages_test",
@@ -34,6 +34,7 @@ suite("Packages")
 test("appA is undefined", function(done){
 	expect(1);
 
+	//steal.config("root", path.resolve(
 	steal.build.open('build/packages/test/packages_test/prod.html', function(opener){
 		var window = opener.doc.defaultView;
 
@@ -47,7 +48,7 @@ test("appA is undefined", function(done){
  */
 test("appA is true", function(done){
 	expect(2);
-	
+
 	steal.build.open('build/packages/test/packages_test/prod.html#a', function(opener){
 		var window = opener.doc.defaultView;
 

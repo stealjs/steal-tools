@@ -2,7 +2,7 @@ steal(function(){
 	// Test: See if 'dep_all.js' is on the page
 
 	if (window.location.hash == '#a') {
-		steal('steal/build/packages/test/packages_test/app_a.js', function(){
+		steal('build/packages/test/packages_test/app_a.js', function(){
 			// alert('Package A was stolen.')
 
 			// Test: See if 'app_a.js' is on the page

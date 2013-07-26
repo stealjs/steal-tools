@@ -11,7 +11,7 @@ var path = require("path")
 global.STEALPRINT = false;
 
 var build;
-steal("steal/build", function(b){
+steal("steal-tools/build", function(b){
 	build = b;
 });
 

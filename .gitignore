@@ -5,6 +5,7 @@ test/myapp/production.js
 node_modules
 build/apps/test/multibuild/*/*.production.js
 build/apps/test/multibuild/*/*.production.css
+build/apps/test/multibuild/packages/
 less/test/production.js
 less/test/production.css
 /packages/

@@ -1,7 +1,7 @@
 {
-	"name" : "steal",
-	"description" : "Gets JavaScript.",
-	"version" : "3.3.19-pre",
+	"name" : "steal-tools",
+	"description" : "Development tools for Steal applications.",
+	"version" : "0.0.1",
 	"author" : {
 		"name" : "Bitovi",
 		"email" : "contact@bitovi.com",
@@ -33,7 +33,7 @@
 	"homepage" : "http://javascriptmvc.com/docs.html#!stealjs",
 	"repository" : {
 		"type" : "git",
-		"url" : "git://github.com/bitovi/steal.git"
+		"url" : "git://github.com/bitovi/steal-tools.git"
 	},
 	"licenses" : [
 		{

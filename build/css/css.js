@@ -68,4 +68,4 @@ steal('steal',function( st ) {
     };
 
 	return css;
-},'steal/build/css/cssminify.js');
+},'steal-tools/build/css/cssminify.js');

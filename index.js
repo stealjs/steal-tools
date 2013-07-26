@@ -8,8 +8,8 @@ global.steal = {
 var steal = module.exports = require("stealjs");
 
 // Steal everything we are going to export.
-steal("steal/build",
-	"steal/install",
+steal("steal-tools/build",
+	"steal-tools/install",
 	function(){
 
 	// Export all of the things that are part of the public API.

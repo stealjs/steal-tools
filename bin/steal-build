@@ -31,7 +31,8 @@ if(!outDirectory) {
 	outDirectory = path.dirname(inFile);
 }
 
-steal("steal/build", "steal/build/pluginify",
+steal("steal-tools/build",
+	"steal-tools/build/pluginify",
 	function(build, pluginify){
 
 	var fun = program.standalone ? pluginify : build;

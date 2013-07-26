@@ -68,15 +68,20 @@ before(function(done) {
 		 *   (plugin_z, because it is only imported in one app module)
 		 *
 		 */
+		steal("steal-tools/build",
+			"steal-tools/build/apps", function(build, apps){
 
-		steal("steal/build","steal/build/apps", function(build, apps){
 			var buildOptions = {
-				root: steal.config("root")+""
+				root: path.resolve(__dirname, "multibuild")
 			};
 
-			apps(["steal/build/apps/test/multibuild/app_x",
-				"steal/build/apps/test/multibuild/app_y",
-				"steal/build/apps/test/multibuild/app_z"], buildOptions, function(){
+			var oldRoot = steal.config("root");
+			steal.config("root", buildOptions.root);
+			
+			apps(["app_x",
+				"app_y",
+				"app_z"], buildOptions, function(){
+					steal.config("root", oldRoot+"");
 					done();
 				});
 		});
@@ -90,27 +95,27 @@ after(function(){
 	rimraf("build/apps/test/multibuild/app_x/production.css");
 	rimraf("build/apps/test/multibuild/app_y/production.css");
 	rimraf("build/apps/test/multibuild/app_z/production.css");
-	rimraf("packages/0.js");
-	rimraf("packages/1.js");
-	rimraf("packages/2.js");
-	rimraf("packages/0.css");
-	rimraf("packages/1.css");
-	rimraf("packages/2.css");
+	rimraf("build/apps/test/multibuild/packages/0.js");
+	rimraf("build/apps/test/multibuild/packages/1.js");
+	rimraf("build/apps/test/multibuild/packages/2.js");
+	rimraf("build/apps/test/multibuild/packages/0.css");
+	rimraf("build/apps/test/multibuild/packages/1.css");
+	rimraf("build/apps/test/multibuild/packages/2.css");
 });
 
 test("multibuild creates JS/CSS packages with the right contents", function(){
 	expect(14);
 
 	var contents;
-	contents = readFile("packages/app_x-app_y-app_z.js");
+	contents = readFile("build/apps/test/multibuild/packages/app_x-app_y-app_z.js");
 	equal(/init_nested_plugin_xyz/.test(contents), true,
 					"content of nested_plugin_xyz.js should be packaged");
 
-	contents = readFile("packages/app_x-app_y.js");
+	contents = readFile("build/apps/test/multibuild/packages/app_x-app_y.js");
 	equal(/init_plugin_xy/.test(contents), true,
 					"content of plugin_xy.js should be packaged");
 
-	contents = readFile("packages/app_y-app_z.js");
+	contents = readFile("build/apps/test/multibuild/packages/app_y-app_z.js");
 	equal(/init_plugin_yz/.test(contents), true,
 					"content of plugin_yz.js should be packaged");
 
@@ -129,15 +134,15 @@ test("multibuild creates JS/CSS packages with the right contents", function(){
 					"content of plugin_z.js should be packaged");
 					
 					
-	contents = readFile("packages/app_x-app_y-app_z.css");
+	contents = readFile("build/apps/test/multibuild/packages/app_x-app_y-app_z.css");
 	equal(/#nested_plugin_xyz_styles/.test(contents), true,
 					"content of nested_plugin_xyz.css should be packaged");
 
-	contents = readFile("packages/app_x-app_y.css");
+	contents = readFile("build/apps/test/multibuild/packages/app_x-app_y.css");
 	equal(/#plugin_xy_styles/.test(contents), true,
 					"content of plugin_xy.css should be packaged");
 
-	contents = readFile("packages/app_y-app_z.css");
+	contents = readFile("build/apps/test/multibuild/packages/app_y-app_z.css");
 	equal(/#plugin_yz_styles/.test(contents), true,
 					"content of plugin_yz.css should be packaged");
 

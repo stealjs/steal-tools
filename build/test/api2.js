@@ -15,7 +15,7 @@ suite("API Tests using StealJS");
 test("Build is fetched by stealjs", function(){
 	expect(2);
 
-	steal("steal/build", function(build){
+	steal("steal-tools/build", function(build){
 		equal(typeof build, "function", "Build is a function.");
 		equal(typeof build.open, "function", "Open is a function.");
 	});

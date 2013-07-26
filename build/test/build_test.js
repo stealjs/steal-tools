@@ -18,7 +18,7 @@ suite("Open");
 
 var build;
 before(function(done){
-	steal("steal/build", function(b){
+	steal("steal-tools/build", function(b){
 		build = b;
 		done();
 	});

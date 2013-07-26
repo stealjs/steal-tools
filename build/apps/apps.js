@@ -7,10 +7,10 @@ if(!steal.build){
 	steal.build = {};	
 }
 steal('steal',
-	'steal/build/share',
-	'steal/build/js',
-	'steal/build/css',
-	'steal/build/open',
+	'steal-tools/build/share',
+	'steal-tools/build/js',
+	'steal-tools/build/css',
+	'steal-tools/build/open',
 	function( steal, shareUtil, js ) {
 	
 		

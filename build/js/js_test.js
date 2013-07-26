@@ -5,7 +5,7 @@ suite("Js");
 
 var js;
 before(function(done){
-	steal("steal/build/js", function(j){
+	steal("steal-tools/build/js", function(j){
 		js = j;
 		done();
 	});

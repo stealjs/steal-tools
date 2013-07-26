@@ -282,9 +282,13 @@ steal('steal', function(s){
 		var onload = function(){
 			var pageSteal = jsWin.steal;
 
+			var getType = function(n){
+				var type = pageSteal.config("types")[n];
+				return type.require;
+			};
+
 			// Overload the fn type to catch errors.
-			var fnType = pageSteal.config("types")["fn"];
-			var fun = fnType.require;
+			var fun = getType("fn");
 			pageSteal.config({
 				types: {
 					"fn": function(options){
