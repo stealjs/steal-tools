@@ -6,7 +6,7 @@ global.steal = {
 var path = require("path")
   , readFile = require("../../../node/utils").readFile
   , rimraf = require("rimraf").sync
-  , steal = require("stealjs");
+  , steal = require("steal");
 
 global.STEALPRINT = false;
 
@@ -22,6 +22,8 @@ suite("Css");
  */
 test("css", function(done){
 	expect(1);
+this.timeout(99999);
+debugger;
 
 	build('build/css/test/page.html', {to: 'build/css/test', compressor: 'uglify'}, function(){
 		var prod = readFile('build/css/test/production.css').replace(/\r|\n|\s/g,""),

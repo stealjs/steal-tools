@@ -3,7 +3,7 @@ global.steal = {
 	nodeRequire: require
 };
 
-var steal = require("stealjs"),
+var steal = require("steal"),
 	fs = require("fs"),
 	jsdom = require("jsdom").jsdom,
 	path = require("path"),

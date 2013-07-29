@@ -1,5 +1,5 @@
 var path = require("path"),
-	steal = require("stealjs");
+	steal = require("steal");
 
 suite("Js");
 

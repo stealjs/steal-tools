@@ -3,7 +3,7 @@ global.steal = {
 	nodeRequire: require
 };
 
-var steal = require("stealjs")
+var steal = require("steal")
   , path = require("path")
   , readFile = require("../../../node/utils").readFile
   , rimraf = require("rimraf").sync

@@ -20,14 +20,14 @@ steal("fs", "mkpath", "path", function(fs, mkpath, path){
 
 
 	var files = {
-		"steal/steal.js": path.resolve(__dirname, "../node_modules/stealjs/steal.js"),
-		"steal/steal.production.js": path.resolve(__dirname, "../node_modules/stealjs/steal.production.js"),
-		"steal/dev/dev.js": path.resolve(__dirname, "../node_modules/stealjs/dev/dev.js"),
-		"steal/less/less.js": path.resolve(__dirname, "../node_modules/stealjs/less/less.js"),
-		"steal/less/less_engine.js": path.resolve(__dirname, "../node_modules/stealjs/less/less_engine.js"),
-		"steal/coffee/coffee.js": path.resolve(__dirname, "../node_modules/stealjs/coffee/coffee.js"),
-		"steal/coffee/coffee-script.js": path.resolve(__dirname, "../node_modules/stealjs/coffee/coffee-script.js"),
-		"stealconfig.js": path.resolve(__dirname, "../node_modules/stealjs/stealconfig.js")
+		"steal/steal.js": path.resolve(__dirname, "../node_modules/steal/steal.js"),
+		"steal/steal.production.js": path.resolve(__dirname, "../node_modules/steal/steal.production.js"),
+		"steal/dev/dev.js": path.resolve(__dirname, "../node_modules/steal/dev/dev.js"),
+		"steal/less/less.js": path.resolve(__dirname, "../node_modules/steal/less/less.js"),
+		"steal/less/less_engine.js": path.resolve(__dirname, "../node_modules/steal/less/less_engine.js"),
+		"steal/coffee/coffee.js": path.resolve(__dirname, "../node_modules/steal/coffee/coffee.js"),
+		"steal/coffee/coffee-script.js": path.resolve(__dirname, "../node_modules/steal/coffee/coffee-script.js"),
+		"stealconfig.js": path.resolve(__dirname, "../node_modules/steal/stealconfig.js")
 	};
 
 	function wrapped(fn){

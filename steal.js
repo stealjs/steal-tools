@@ -1,1 +1,1 @@
-node_modules/stealjs/steal.js
+node_modules/steal/steal.js

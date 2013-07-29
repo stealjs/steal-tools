@@ -7,7 +7,7 @@ global.steal = {
 
 
 var fs = require("fs"),
-	steal = require("stealjs"),
+	steal = require("steal"),
 	readFile = require("../../node/utils.js").readFile,
 	mkpath = require("mkpath").sync,
 	rimraf = require("rimraf").sync;

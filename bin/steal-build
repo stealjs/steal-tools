@@ -7,7 +7,7 @@ global.steal = {
 };
 
 var program = require("commander"),
-	steal = require("stealjs"),
+	steal = require("steal"),
 	package = require("../package.json");
 
 program.version(package.version)

@@ -1,4 +1,4 @@
-var steal = require("stealjs")
+var steal = require("steal")
   , rimraf = require("rimraf").sync
   , readFile = require("../../../node/utils").readFile;
 

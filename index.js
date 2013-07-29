@@ -5,7 +5,7 @@ global.steal = {
 	root: path.resolve(__dirname, "..")
 };
 
-var steal = module.exports = require("stealjs");
+var steal = module.exports = require("steal");
 
 // Steal everything we are going to export.
 steal("steal-tools/build",
