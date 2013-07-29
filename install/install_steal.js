@@ -11,6 +11,7 @@ steal("fs", "mkpath", "path", function(fs, mkpath, path){
 			var f = Object.keys(files)[0];
 			if(!f) {
 				callback && callback();
+				return;
 			}
 
 			saveFile(files[f], f, doNext);
@@ -48,7 +49,7 @@ steal("fs", "mkpath", "path", function(fs, mkpath, path){
 
 			mkpath(dirPath, function(){
 				fs.writeFile(completePath, data, wrapped(function(){
-					console.log("Created", destination);
+					steal.print("Created", destination);
 					delete files[destination];
 					callback();
 				}));
