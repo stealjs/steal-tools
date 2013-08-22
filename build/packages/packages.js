@@ -51,6 +51,8 @@ steal('steal',
 			appFiles : [],
 			// don't minify at first (will be faster)
 			minify : false,
+			// Allow modifying the location of steal.js
+			stealDir: buildOptions.stealDir
 		};
 		buildOptions = buildOptions || {};
 		buildOptions.depth = buildOptions.depth || Infinity;
