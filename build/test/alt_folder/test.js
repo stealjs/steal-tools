@@ -25,7 +25,6 @@ before(function(done){
 
 test("Build from an alternative directory structure.", function(done){
 	expect(1);
-this.timeout(99999);
 
 	var cwd = process.cwd();
 	process.chdir(__dirname);
@@ -34,7 +33,6 @@ this.timeout(99999);
 		stealDir: 'lib/steal',
 		to: 'rel'
 	};
-debugger;
 
 	build("cookbook/cookbook.js", options, function(){
 		var productionjs = readFile("rel/production.js");
