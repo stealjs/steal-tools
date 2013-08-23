@@ -206,6 +206,17 @@ steal('steal', function(s){
 		if ( typeof stealData != 'object') {
 			cb = stealData;
 		}
+
+		// Set the function to retrieve the page html.
+		var getHtml;
+		if(typeof url === 'function') {
+			getHtml = url;
+			url = '';
+		} else {
+			getHtml = function(hash){
+				return fs.readFileSync(url.split("#")[0]).toString();
+			};
+		}
 	
 		// what gets called by steal.done
 		// rootSteal the 'master' steal
@@ -278,7 +289,7 @@ steal('steal', function(s){
 		};
 
 		var hash = url.split("#")[1] || null;
-		var html = fs.readFileSync(url.split("#")[0]).toString();
+		var html = getHtml(hash);
 		var onload = function(){
 			var pageSteal = jsWin.steal;
 
@@ -289,6 +300,7 @@ steal('steal', function(s){
 
 			// Overload the fn type to catch errors.
 			var fun = getType("fn");
+			var jsFun = getType("js");
 			pageSteal.config({
 				types: {
 					"fn": function(options){
@@ -302,38 +314,16 @@ steal('steal', function(s){
 								throw err;
 							}
 						}, 0);
+					},
+					"js": function(options){
+						if(options.id+"" === "stealconfig.js"){
+							options.text = readFile(options.src+"");
+						}
+						return jsFun.apply(this, arguments);
 					}
 				}
 			});
 			
-
-			if(stealData.skipAll){
-				pageSteal.config({
-					types: {
-						"js" : function(options, success){
-							var text;
-							if(options.text){
-								text = options.text;
-							}else{
-								text = readFile(options.id);
-							}
-							// check if steal is in this file
-							var stealInFile = /steal\(/.test(text);
-							if(stealInFile){
-								// if so, load it
-								eval(text)
-							} else {
-								// skip this file
-							}
-							success()
-						},
-						"fn": function (options, success) {
-							// skip all functions
-							success();
-						}
-					}
-				})
-			}
 			// a flag to tell steal we're in "build" mode
 			// this is used to completely ignore files with the "ignore" flag set
 			pageSteal.isBuilding = true;
