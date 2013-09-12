@@ -14,7 +14,8 @@ global.steal = {
 			build: [
 				"build/test/build_test.js",
 				"build/test/api.js",
-				"build/test/api2.js"
+				"build/test/api2.js",
+				"build/test/alt_folder/test.js"
 			],
 			open: ["build/open/test/open_test.js"],
 			js: ["build/js/js_test.js"],

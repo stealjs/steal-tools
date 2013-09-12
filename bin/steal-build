@@ -18,6 +18,7 @@ program.version(package.version)
 	.option("--no-minify", "Do not minify the output file")
 	.option("--include-steal", "Package steal with the build")
 	.option("-s, --standalone", "Build as standalone, without needing steal.")
+  .option("--steal-dir", "Location of the steal directory.")
 	.parse(process.argv);
 
 // If no arguments are provided, show the help and exit.
@@ -42,7 +43,8 @@ steal("steal-tools/build",
 		depth: program.depth,
 		compressor: program.compressor,
 		minify: program.minify,
-		packageSteal: !!program.includeSteal
+		packageSteal: !!program.includeSteal,
+		stealDir: program.stealDir
 	});
 
 });

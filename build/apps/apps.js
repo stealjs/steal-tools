@@ -147,7 +147,7 @@ steal('steal',
 		_open : function(appName, options, callback){
 			//= Configure what we are going to load from APP name
 			// if we have html, get  the app-name
-			var html = BLANK_HTML,
+			var html = this.defaultPage(options),
 				data = {env: 'development'};
 			if(appName.indexOf('.html') > 2){
 				html = appName;
@@ -614,6 +614,16 @@ steal('steal',
 				
 			})
 
+		},
+
+		defaultPage: function(options){
+			var stealDir = options.stealDir || 'steal/';
+			var stealLocation = path.join(stealDir, 'steal.js');
+			return function(){
+				var data = readFile(BLANK_HTML);
+				var content = data.replace('__!!__', stealLocation);
+				return content;
+			};
 		}
 	})
 	

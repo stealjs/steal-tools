@@ -15,3 +15,5 @@ build/packages/test/packages_test/scripts/packages
 build/packages/test/packages_test/packages/
 build/css/test/production.js
 build/test/production.js
+build/test/alt_folder/cookbook/production.js
+build/test/alt_folder/rel/
