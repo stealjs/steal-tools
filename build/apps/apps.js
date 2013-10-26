@@ -254,7 +254,8 @@ steal('steal',
 						steal.print("  + "+prop );
 					
 						// convert using steal's root because that might have been configured
-						pathOpts = steal.URI(steal.idToUri( prop, true ));
+            var src = (resource.options.src+"") || prop;
+						pathOpts = steal.URI(steal.idToUri( src, true ));
 						var resourcePath = options.root
 							? steal.URI(options.root).join(pathOpts)
 							: pathOpts;
