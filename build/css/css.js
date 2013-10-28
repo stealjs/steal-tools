@@ -18,6 +18,8 @@ steal('steal',function( st ) {
 	 * @param {{Object}} where
 	 */
 	css.makePackage = function(steals, where){
+        var parser,cssString;
+
 		if(!steals || !steals.length){
 			return null;
 		}
@@ -29,10 +31,23 @@ steal('steal',function( st ) {
 			codez.push(convert(stealOpts.text, stealOpts.id, directory))
 			srcs.push(stealOpts.rootSrc+'')
 		});
+
+        cssString = codez.join('\n');
+
+        if(steal.config('ext')['less']){
+            parser = new less.Parser();
+            parser.parse(cssString, function (e, tree) {
+                if (e) {
+                    console.log(e);
+                } else {
+                    cssString = tree.toCSS();
+                }
+            });
+        }
 		
 		return {
 			srcs: srcs,
-			code : css.minify(codez.join('\n'))
+			code : css.minify(cssString)
 		}
 	}
 	//used to convert css referencs in one file so they will make sense from prodLocation

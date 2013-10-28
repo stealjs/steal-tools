@@ -205,6 +205,8 @@ steal('steal','steal-tools/build/css',function( st, css ) {
 				jses.push(file)
 			} else if(file.buildType == 'css'){
 				csses.push(file)
+			} else if(file.buildType == 'less'){
+				csses.push(file)
 			}
 		})
 		// add to dependencies
@@ -227,8 +229,6 @@ steal('steal','steal-tools/build/css',function( st, css ) {
 		}
 		// make 'loading'
 		var code = ["steal.has('"+loadingCalls.join("','")+"');"];
-		
-		
 		
 		// add dependencies
 		code.push.apply(code,dependencyCalls);
