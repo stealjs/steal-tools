@@ -1,7 +1,7 @@
 if(!steal.build){
 	steal.build = {};	
 }
-steal('steal',function( st ) {
+steal('steal', 'less', function(st, less){
 	/**
 	 * @class steal.build.css
 	 * @parent steal.build

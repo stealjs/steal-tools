@@ -46,8 +46,8 @@ steal('steal-tools/parse',
 		try{
 			p = parse(parsedTxt);
 		} catch(e){
-			print("Parsing problem");
-			print(e);
+			steal.print("Parsing problem");
+			steal.print(e);
 			return parsedTxt;
 		}
 

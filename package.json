@@ -1,47 +1,48 @@
 {
-	"name" : "steal-tools",
-	"description" : "Development tools for Steal applications.",
-	"version" : "0.0.3",
-	"author" : {
-		"name" : "Bitovi",
-		"email" : "contact@bitovi.com",
-		"web" : "http://bitovi.com/"
-	},
-	"dependencies": {
-		"commander": ">= 1.1.1",
-		"jsdom": ">= 0.6.5",
-		"xmlhttprequest": "1.5.0",
-		"steal": "3.3.20-pre",
-		"mkpath": "~ 0.1.0",
-		"uglify-js": "~ 2.3.6",
-		"underscore": "1.5.1",
-		"esprima": "1.0.3"
-	},
-	"devDependencies" : {
-		"grunt" : "0.4.1",
-		"mocha": "~1.9.0",
-		"grunt-mocha-test": "0.4.0",
-		"qunit-mocha-ui": "0.0.1",
-		"rimraf": ">= 2.1.4"
-	},
-	"bin": {
-		"steal": "bin/steal",
-		"steal-build": "bin/steal-build",
-		"steal-install": "bin/steal-install"
-	},
-	"main": "index",
-	"homepage" : "http://javascriptmvc.com/docs.html#!stealjs",
-	"repository" : {
-		"type" : "git",
-		"url" : "git://github.com/bitovi/steal-tools.git"
-	},
-	"licenses" : [
-		{
-			"type" : "MIT",
-			"url" : "http://opensource.org/licenses/mit-license.php"
-		}
-	],
-	"scripts": {
-		"test": "grunt test --verbose"
-	}
+  "name": "steal-tools",
+  "description": "Development tools for Steal applications.",
+  "version": "0.0.3",
+  "author": {
+    "name": "Bitovi",
+    "email": "contact@bitovi.com",
+    "web": "http://bitovi.com/"
+  },
+  "dependencies": {
+    "commander": ">= 1.1.1",
+    "jsdom": ">= 0.6.5",
+    "xmlhttprequest": "1.5.0",
+    "steal": "3.3.20-pre",
+    "mkpath": "~ 0.1.0",
+    "uglify-js": "~ 2.3.6",
+    "underscore": "1.5.1",
+    "esprima": "1.0.3",
+    "less": "~1.5.0"
+  },
+  "devDependencies": {
+    "grunt": "0.4.1",
+    "mocha": "~1.9.0",
+    "grunt-mocha-test": "0.4.0",
+    "qunit-mocha-ui": "0.0.1",
+    "rimraf": ">= 2.1.4"
+  },
+  "bin": {
+    "steal": "bin/steal",
+    "steal-build": "bin/steal-build",
+    "steal-install": "bin/steal-install"
+  },
+  "main": "index",
+  "homepage": "http://javascriptmvc.com/docs.html#!stealjs",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bitovi/steal-tools.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "scripts": {
+    "test": "grunt test --verbose"
+  }
 }
