@@ -32,18 +32,22 @@ steal('steal', 'less', function(st, less){
 			srcs.push(stealOpts.rootSrc+'')
 		});
 
-        cssString = codez.join('\n');
+		cssString = codez.join('\n');
 
-        if(steal.config('ext')['less']){
-            parser = new less.Parser();
-            parser.parse(cssString, function (e, tree) {
-                if (e) {
-                    console.log(e);
-                } else {
-                    cssString = tree.toCSS();
-                }
-            });
-        }
+		var hasLess = steals.some(function(steal) {
+			return steal && steal.type === 'less';
+		});
+
+		if(hasLess){
+			parser = new less.Parser();
+			parser.parse(cssString, function (e, tree) {
+				if (e) {
+					console.log(e);
+				} else {
+					cssString = tree.toCSS();
+				}
+			});
+		}
 		
 		return {
 			srcs: srcs,
