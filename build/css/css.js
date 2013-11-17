@@ -1,7 +1,7 @@
 if(!steal.build){
 	steal.build = {};	
 }
-steal('steal',function( st ) {
+steal('steal', 'less', function(st, less){
 	/**
 	 * @class steal.build.css
 	 * @parent steal.build
@@ -18,6 +18,8 @@ steal('steal',function( st ) {
 	 * @param {{Object}} where
 	 */
 	css.makePackage = function(steals, where){
+        var parser,cssString;
+
 		if(!steals || !steals.length){
 			return null;
 		}
@@ -29,10 +31,27 @@ steal('steal',function( st ) {
 			codez.push(convert(stealOpts.text, stealOpts.id, directory))
 			srcs.push(stealOpts.rootSrc+'')
 		});
+
+		cssString = codez.join('\n');
+
+		var hasLess = steals.some(function(steal) {
+			return steal && steal.type === 'less';
+		});
+
+		if(hasLess){
+			parser = new less.Parser();
+			parser.parse(cssString, function (e, tree) {
+				if (e) {
+					console.log(e);
+				} else {
+					cssString = tree.toCSS();
+				}
+			});
+		}
 		
 		return {
 			srcs: srcs,
-			code : css.minify(codez.join('\n'))
+			code : css.minify(cssString)
 		}
 	}
 	//used to convert css referencs in one file so they will make sense from prodLocation

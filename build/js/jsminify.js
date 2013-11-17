@@ -46,8 +46,8 @@ steal('steal-tools/parse',
 		try{
 			p = parse(parsedTxt);
 		} catch(e){
-			print("Parsing problem");
-			print(e);
+			steal.print("Parsing problem");
+			steal.print(e);
 			return parsedTxt;
 		}
 
@@ -236,6 +236,20 @@ steal('steal-tools/parse',
 									end = split.length - 1;
 								steal.print(split.slice(start, end).join('\n') + '\n')
 							}
+							
+							realLine = lineNbr - lastNum;
+							
+							steal.print('ERROR in ' + lastId + ' at line ' + realLine + ': ' + error + '\n');
+							
+							var text = readFile(lastId),
+								split = text.split(/\n/), 
+								start = realLine - 2, 
+								end = realLine + 2;
+							if (start < 0) 
+								start = 0;
+							if (end > split.length - 1) 
+								end = split.length - 1;
+							steal.print(split.slice(start, end).join('\n') + '\n')
 						}
 					}
 					tmpFile.remove();
