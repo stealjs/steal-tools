@@ -26,7 +26,6 @@ test("Tests compressing a very basic page and one that is using steal", function
 		equal(typeof opener.each, "function");
 		notEqual(opener.rootSteal, steal);		
 
-
 		done();
 	});
 });

@@ -349,6 +349,7 @@ steal('steal', function(s){
 		jsWin.steal = typeof stealData == "object" ? stealData : undefined;
 		jsWin.XMLHttpRequest = ShimXHR;
 		jsWin.Range = Range;
+    jsWin.SVGAngle = true;
 
 		jsDoc.createRange = function() { return new jsWin.Range(); };
 		jsWin.addEventListener('load', onload);

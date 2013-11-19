@@ -11,7 +11,8 @@ steal("steal-tools/install",
 	"child_process",
 	"fs",
 	"rimraf",
-	function(install, cp, fs, rr){
+	"path",
+	function(install, cp, fs, rr, path){
 
 	var exec = cp.exec
 	  , exists = fs.existsSync;
@@ -61,7 +62,10 @@ steal("steal-tools/install",
 	suite("Install");
 
 	withAppTest("Install steal into a directory using cmd-line app.", function(done){
-		exec("steal-install", function(err, stdout, stderr){
+		var stealInstall = path.resolve(steal.config("root")+"",
+			"steal-tools", "bin", "steal-install");
+
+		exec("node " + stealInstall, function(err, stdout, stderr){
 			equal(err, null, "Did not return an error.");
 			equal(stderr.length, 0, "There is no stderr");
 			ok(stdout.length > 0, "There is a stdout.");
