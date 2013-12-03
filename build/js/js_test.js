@@ -17,6 +17,7 @@ before(function(done){
 
 test("makePackage", function(done){
 	expect(2);
+	this.timeout(5000);
 
 	js.makePackage(
 	[
@@ -40,9 +41,8 @@ test("makePackage", function(done){
 		"package/1.js" : ["jquery/jquery.js"]
 	},
 	"package/css.css",{compressor: "localClosure", stealOwnModules: true}, function(res){
-		equal(
-			res.js,
-			// tell what this file has
+  	var expected =
+    	// tell what this file has
 			'steal.has("a.js","b.js");'+
 			// steal any packages this package depends on
 			'steal({id:"package/1.js",waits:!0,has:["jquery/jquery.js"]});'+
@@ -54,16 +54,18 @@ test("makePackage", function(done){
 			// the files and executed contexts
 			'a;steal.executed("a.js");b;steal.executed("b.js");'+
 			// pop the previous pending state into being so when this file completes, it's depeendencies will be executed
-			'steal.popPending();'+
-			'\n',
-			"js works");
-			
-		equal(res.css.code,"c");
+			'steal.popPending();'
+			'\n';
+
+		equal(res.js.trim(), expected.trim(), "js works");
+		equal(res.css.code, "c");
 		done();
 	});
 });
 
 test("makePackage with excludes", function(done){
+	this.timeout(99999);
+
 	js.makePackage(
 	[
 		{
