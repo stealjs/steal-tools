@@ -17,7 +17,7 @@ before(function(done){
 
 test("makePackage", function(done){
 	expect(2);
-	this.timeout(5000);
+	this.timeout(10000);
 
 	js.makePackage(
 	[
@@ -64,7 +64,7 @@ test("makePackage", function(done){
 });
 
 test("makePackage with excludes", function(done){
-	this.timeout(99999);
+	this.timeout(10000);
 
 	js.makePackage(
 	[
