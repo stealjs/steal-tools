@@ -5,12 +5,12 @@ steal("underscore",
 	"steal-tools/build/open",
 	"./open.js",
 	"steal-tools/build/js",
-	function(_, fs, path, parse, open, opener, js){
+	"steal-tools/node/utils.js",
+	"steal-tools/build/css",
+	function(_, fs, path, parse, open, opener, js, utils, css){
 
-	var readFile = require("../../node/utils").readFile;
-	
+	var readFile = utils.readFile;
 	var BLANK_HTML = path.resolve(__dirname, "../../node/blank.html");
-
 	var noop = function(){};
 
 	function clone(o){
@@ -19,9 +19,7 @@ steal("underscore",
 
 	var ignores = [
 		'steal/dev/dev.js',
-		'stealconfig.js',
-		/\.less$/,
-		/\.css$/
+		'stealconfig.js'
 	];
 
 	/**
@@ -45,6 +43,7 @@ steal("underscore",
 
 		var getSteals = opener.steals;
 		var thingToBuild = /\.html$/i.test(ids) ? ids : BLANK_HTML;
+
 		open(thingToBuild, stealData, function (opener) {
 			var steals = getSteals(opener.rootSteal, options);
 
@@ -105,6 +104,10 @@ steal("underscore",
 			// Stores mappings from module ids to pluginified variable names
 			var nameMap = {};
 			var contents = [];
+			var cssSteals = [];
+
+			// This is the out filename for the compiled JavaScript
+			var out = options.out || options.to;
 
 			var pageSteal = options.opener.steal;
 			_.each(options.shim, function(variable, id) {
@@ -122,9 +125,16 @@ steal("underscore",
 
 			// Go through all dependencies
 			opener.visit(steals, function (stl, id, visited, index) {
+				// If this is a css steal, add it to the css array.
+				if(~[stl.options.type, stl.options.buildType].indexOf('css')) {
+					return cssSteals.push(stl.options);
+				}
+
 				// If the steal has its content loaded (done by the opener) and we don't have a registered
 				// variable name for that module
-				if(stl.options.type !== "fn" && !nameMap[id] && !pluginify.ignores(id, options.ignore || [])){
+				if(stl.options.type !== "fn" && !nameMap[id]
+					&& !pluginify.ignores(id, options.ignore || [])){
+
 					if(!stl.options.text){
 						var text = extractContent(stl);
 						stl.options.text = text;
@@ -170,6 +180,11 @@ steal("underscore",
 				throw new Error('No files to pluginify');
 			}
 
+			// CSS
+			var makeCss = !cssSteals.length ? null : function(callback){
+				css.makePackage(cssSteals, null, callback);
+			};
+
 			var exportModules = [];
 			if (options.exports) {
 				// Get all the modules to export
@@ -188,18 +203,23 @@ steal("underscore",
 				exports: exportModules
 			});
 
-			var out = options.out || options.to;
 			if(out) {
-				var save = pluginify.save;
-				out = pluginify.outFileName(out);
+				// Save out the built JavaScript
+				var finalize = pluginify.finalize;
+				var jsout = pluginify.outFileName(out, "js");
+				var minifier = options.minify ? js.minify.bind(null, javascript, {}) : null;
 
-				var fun = options.minify
-					? js.minify.bind(null, javascript, {})
-					: function(cb) { cb(javascript); };
-
-				fun(function(data){
-					save(data, out);
-					callback();
+				// Save out the JavaScript and then CSS, if there is any.
+				finalize(javascript, jsout, minifier, function(){
+					if(makeCss) {
+						makeCss(function(cssobj){
+							var dir = path.dirname(jsout);
+							var cssout = pluginify.outFileName(dir, "css");
+							finalize(cssobj.code, cssout, null, callback);
+						});
+					} else {
+						callback();
+					}
 				});
 
 			} else {
@@ -220,14 +240,40 @@ steal("underscore",
 		/*
 		 * Normalizes files/directories into usable
 		 * out file names.
+		 * @param {String} inFileName filename to normalize
+		 * @param {String} ext The file extension.
 		 */
-		outFileName: function(inFileName){
+		outFileName: function(inFileName, ext){
+			// If the file doesn't exist, immediately return it.
+			if(!fs.existsSync(inFileName)) {
+				return inFileName;
+			}
+
 			var stats = fs.statSync(inFileName);
 			if(stats.isDirectory()) {
-				return path.resolve(inFileName + "/", "production.js")
+				return path.resolve(inFileName + "/", "production." + ext);
 			}
 
 			return inFileName;
+		},
+
+		/*
+		 * Finalizes the build, saving the file to their destination
+		 * and optionally minifying the source
+
+		 * @param {String} data The data to save
+		 * @param {String} filename The filename to save out to.
+		 * @param {Function} minifier A minifier function, if desired
+		 * @param {Function} callback Function to call when complete
+		 */
+		finalize: function(data, filename, minifier, callback){
+			var save = pluginify.save;
+			var fun = minifier || function(cb) { cb(data); };
+
+			fun(function(data){
+				save(data, filename);
+				callback();
+			});
 		},
 
 		save: function(data, out){
@@ -238,8 +284,6 @@ steal("underscore",
 		getFunction: parse
 	});
 
-	steal.build.pluginify = pluginify;
-
-	return pluginify;
+	return steal.build.pluginify = pluginify;
 
 });

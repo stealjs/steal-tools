@@ -29,15 +29,34 @@ test("Pluginify a thing", function(done){
 		process.chdir("../../..");
 		var data = readFile("build/pluginify/test/app/app.plugin.js");
 
-		// Get the letter uglify assigned.
-		var letter = /typeof\ ([a-z])/.exec(data)[1];
+		// Get the letters uglify assigned.
+		var matches = /\(([a-z]),([a-z])\)/.exec(data);
+		var l1 = matches[1];
+		var l2 = matches[2];
 
 		var expects =
-			'!function(){var ' + letter + 
+			'!function(' + l2 + '){var ' + l1 + 
 			'=function(){return{thisModule:"exists"}}();' +
-			'!function(' + letter + '){window.APP_ON="object"==typeof ' +
-			letter + '}(' + letter +')}();';
+			'!function(' + l2 + '){window.APP_ON="object"==typeof ' +
+			l2 + '}(' + l1 + ',' + l2 +')}();';
 		equal(data, expects, "Minified output is correct");
+		done();
+	});
+});
+
+test("Pluginify a thing with css", function(done){
+	process.chdir("build/pluginify/test");
+
+	pluginify("app/app.html",{
+		nojquery: true,
+		nocanjs: true,
+		out: "app/app.plugin.js"
+	}, function(){
+		process.chdir("../../..");
+		var data = readFile("build/pluginify/test/app/production.css");
+
+		var expects = "h1{color:#008000}";
+		equal(data, expects, "Minified css is correct.");
 		done();
 	});
 });
@@ -50,9 +69,3 @@ test("getFunctions", function(){
 	
 	equal(firstFunc, readFile('build/pluginify/test/firstFunc.js'));
 });
-
-function rm(){
-	Array.prototype.slice.call(arguments).forEach(function(file){
-		rimraf(file);
-	});
-}

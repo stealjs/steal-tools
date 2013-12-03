@@ -278,7 +278,6 @@ steal('steal',
 				// write production with makes
 				// and maps
 				function doBuild() {
-				
 					// sort masterFiles
 					buildOptions.to = buildOptions.to || ""+s.URI(app).dir();
 					var destJS = ''+steal.URI(buildOptions.to).join('production.js'),

@@ -14,7 +14,7 @@ var fs = require("fs"),
 
 STEALPRINT = false;
 
-suite("Open");
+suite("Build");
 
 var build;
 before(function(done){

@@ -16,8 +16,9 @@ steal('steal', 'less', function(st, less){
 	 *
 	 * @param {{}} steals
 	 * @param {{Object}} where
+   * @param {{Function}} callback
 	 */
-	css.makePackage = function(steals, where){
+	css.makePackage = function(steals, where, callback){
         var parser,cssString;
 
 		if(!steals || !steals.length){
@@ -45,14 +46,19 @@ steal('steal', 'less', function(st, less){
 					console.log(e);
 				} else {
 					cssString = tree.toCSS();
+          callback({
+            srcs: srcs,
+            code: css.minify(cssString)
+          });
 				}
 			});
+      return;
 		}
 		
-		return {
+		callback({
 			srcs: srcs,
 			code : css.minify(cssString)
-		}
+		});
 	}
 	//used to convert css referencs in one file so they will make sense from prodLocation
 	var convert = function( css, cssLocation, prodLocation ) {

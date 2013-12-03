@@ -144,11 +144,11 @@ steal('steal','steal-tools/build/css',function( st, css ) {
 
 								modulesRemaining--;
 								if(modulesRemaining === 0) {
-									js.makePackage(moduleOptions, dependencies, cssPackage, buildOptions);
+									js.makePackage(moduleOptions, dependencies, cssPackage, buildOptions, callback);
 								}
 							});
 						} catch(error){
-							print("ERROR minifying "+file.id+"\n"+error.err)
+							steal.print("ERROR minifying "+file.id+"\n"+error.err)
 						}
 						
 					}
@@ -232,7 +232,7 @@ steal('steal','steal-tools/build/css',function( st, css ) {
 		
 		// add dependencies
 		code.push.apply(code,dependencyCalls);
-		
+
 		if(buildOptions.stealOwnModules){
 			// this makes production.js wait for these moduleOptions to complete
 			// this was removing the rootSteal and causing problems
@@ -262,23 +262,30 @@ steal('steal','steal-tools/build/css',function( st, css ) {
 				currentLineMap: lineMap,
 				compressor: buildOptions.compressor
 			}, function(jsCode) {
-				var csspackage = css.makePackage(csses, cssPackage);
-				
-				callback({
-					js: jsCode,
-					css: csspackage
-				});
+				if(csses.length) {
+					return css.makePackage(csses, cssPackage, function(csspackage){
+						callback({
+							js: jsCode,
+							css: csspackage
+						});
+					});
+				} 
+
+				callback({ js: jsCode });
 			});
 
 			return;
 		}
 		
-		var csspackage = css.makePackage(csses, cssPackage);
-		
-		callback({
-			js: jsCode,
-			css: csspackage
-		});
+		if(csses.length) {
+			css.makePackage(csses, cssPackage, function(csspackage){
+				callback({
+					js: jsCode,
+					css: csspackage
+				});
+			});
+		}
+		callback({ js: jsCode });
 	}
 
 	return js;
