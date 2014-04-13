@@ -256,7 +256,7 @@ steal('steal','steal-tools/build/css',function( st, css ) {
 		
 		var jsCode = code.join(";\n") + ";\nsteal.popPending();\n";
 		
-		if(canCompressPackage){
+		if(canCompressPackage && buildOptions.minify !== false){
 			jsCode = js.clean(jsCode);
 			js.minify(jsCode,{
 				currentLineMap: lineMap,

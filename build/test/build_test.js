@@ -49,6 +49,31 @@ test("Steal is packaged with the build.", function(done){
 
 });
 
+test("File isn't minified with --no-minify flag.", function(done){
+	expect(1);
+
+	// We have to temporarily create a steal/steal.js
+	createStealJs();
+	rimraf("build/test/production.js");
+
+	var options = {
+		minify: false
+	};
+
+	build("build/test/app.js", options, function(){
+		rimraf("steal");
+
+		var productionjs = readFile("build/test/production.js");
+
+		// See if our console.log has been transformed into an express as uglify likes to do.
+		var hasTransformed = productionjs.indexOf('console.log("This was stolen");') === -1;
+
+		equal(hasTransformed, false, "Statement remains in tact.");
+		done();
+	});
+
+});
+
 function createStealJs(){
 	mkpath(path.resolve(process.cwd(), "steal"));
 	var stealjs = readFile("steal.js");
