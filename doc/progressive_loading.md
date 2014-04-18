@@ -87,8 +87,18 @@ From your main folder, run:
 
     > steal-tools build main=app config=site/config
 
-Notice that the path to config must be relative to your cwd.
+Notice that the path to config must be relative to your cwd. This will create a 
+`site/bundles` directory with the following contents:
 
+    site/bundles/
+      app.js
+      homepage.js
+      signup.js
+      login.js
+
+If you want to limit the number of scripts any bundle might load, configure that like:
+
+    > steal-tools build main=app config=site/config bundleDepth=3
 
 ## See it live
 
