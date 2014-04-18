@@ -399,4 +399,4 @@ steal('steal', function(s){
 	};
 
 	return s.build.open;
-})
+});

@@ -20,3 +20,4 @@ build/test/alt_folder/rel/
 build/pluginify/test/app/production.css
 build/pluginify/test/app/production.js
 build/pluginify/test/app/app.plugin.js
+test/bundle/bundles/

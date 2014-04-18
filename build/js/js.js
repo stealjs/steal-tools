@@ -286,7 +286,7 @@ steal('steal','steal-tools/build/css',function( st, css ) {
 			});
 		}
 		callback({ js: jsCode });
-	}
+	};
 
 	return js;
 }).then('./jsminify');

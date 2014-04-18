@@ -321,7 +321,7 @@ steal('steal',
 					//prevent infinate loops
 					f.order = null;
 					f.dependencyFileNames.forEach(function(fileName){
-						if(!f.appNames || !f.appNames.length || f.appNames[0].toString() !== fileName.toString()) {
+						if(!f.appNames || !ff.appNames.length || f.appNames[0].toString() !== fileName.toString()) {
 							visit( options.files[fileName] );
 						}
 					})
@@ -548,21 +548,21 @@ steal('steal',
 
 			//while there are files left to be packaged, get the most shared and largest package
 			shares.forEach(function(sharing){
-				steal.print('\npackaging shared by ' + sharing.appNames.join(", "))
+				steal.print('\npackaging shared by ' + sharing.appNames.join(", "));
 
 				
 				var appsName = sharing.appNames[0],
 				//  the name of the file we are making.  
 				//    If there is only one app it's an app's production.js
 				//    If there are multiple apps, it's a package
-					packageName = makePackageName(sharing.appNames)
+					packageName = makePackageName(sharing.appNames);
 				
 				// if there's multiple apps (it's a package), add this to appsPackages for each app
 				if( sharing.appNames.length > 1) {
 					sharing.appNames.forEach(function(appName){
 						appsPackages[appName].push(packageName+".js") // we might need to do this 
 						// if there is css
-					})
+					});
 				}
 				
 				
@@ -616,7 +616,7 @@ steal('steal',
 					if(sharesRemaining === 0) callback();
 				});
 				
-			})
+			});
 
 		},
 
@@ -629,7 +629,7 @@ steal('steal',
 				return content;
 			};
 		}
-	})
+	});
 	
 	// sets prop on root if it doesn't exist
 	// root - the object
@@ -644,7 +644,7 @@ steal('steal',
 		}
 		cb && cb( root[prop] )
 		return root[prop];
-	}
+	};
 	
 	var makePackageName = function(appModuleIds){
 		if( appModuleIds.length == 1 ){
@@ -662,7 +662,7 @@ steal('steal',
 		} else {
 			return appNamesToMake(appModuleIds)
 		}							
-	}
+	};
 	var appNamesToName = {},
 		usedNames = {}
 	var appNamesToMake = function(appNames){
@@ -689,4 +689,4 @@ steal('steal',
 		}
 	};
 	return steal.build.apps;
-})
+});
