@@ -1,19 +1,62 @@
-@page stealtools Steal Tools
-@parent javascriptmvc 3
-
 Steal Tools is a collection of command-line utilities
-that make building, packaging, and sharing [Steal](http://github.com/bitovi/steal) applications easy. Lets see what it can do:
-  
-### JS/CSS concatenation and minification ([steal-build])
+that make building, packaging, and sharing ES6, CommonJS, AMD, and [Steal](http://github.com/bitovi/steal)
+applications easy.
 
-[steal-build] combines and minifies an application (or application's) resources
-into a small number of minified packages for faster downloading. Features:
 
- - Minifies JS, Less, CoffeeScript, and client-side templates.
- - Build shared dependencies across [steal.build.apps multiple apps].
- - Package modules for [steal.build.packages progressive loading].
- - Create modules that work [steal.build.pluginify without steal] as standalone.
+## Install
 
-@codestart text
-steal build path/to/myapp.js
-@codeend
+```
+npm install steal-tools
+```
+
+## Use
+
+After creating an application that works in the browser, you can build it and then
+setup a page for production.
+
+### Build
+
+
+From the command line:
+
+```
+steal-tools build main=moduleName config=path/to/config.js
+```
+
+In node:
+
+```js
+var stealTools = require('steal-tools');
+stealTools.build({
+  main: "moduleName",
+  config: "pathTo/config.js"
+})
+```
+
+Grunt:
+
+```js
+grunt.loadNpmTasks( "steal-tools" );
+
+grunt.initConfig({
+  stealTools: {
+    main: "moduleName",
+    config: "pathTo/config.js"
+  }
+});
+```
+
+
+## Contributing
+
+### Install
+
+1.  Clone the steal-tools repo.
+2.  Run `npm install`
+3.  Install mocha globally `npm install -g mocha`
+
+### Test
+
+Run `mocha test/test.js`
+
+
