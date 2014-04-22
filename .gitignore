@@ -3,6 +3,7 @@
 dist
 test/myapp/production.js
 node_modules
+bower_components
 build/apps/test/multibuild/*/*.production.js
 build/apps/test/multibuild/*/*.production.css
 build/apps/test/multibuild/packages/

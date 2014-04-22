@@ -9,6 +9,8 @@ are on. A bare bones example might have a file structure like:
     bower_components/
       steal/
         steal.js
+      jquery/
+        jquery.js
     node_modules/
       steal-tools/
     site/
@@ -79,13 +81,13 @@ The following will load `steal.js`, `config.js` and `app.js`
     <div id="main"></div>
     <script src="../bower_components/steal/steal.js"
             data-main="app"
-            data-config="./config"></script>
+            data-config="./config.js"></script>
 
 ## Build your site
 
 From your main folder, run:
 
-    > steal-tools build main=app config=site/config
+    > steal-tools build main=app config=site/config.js
 
 Notice that the path to config must be relative to your cwd. This will create a 
 `site/bundles` directory with the following contents:

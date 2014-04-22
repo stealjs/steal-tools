@@ -12,7 +12,7 @@ describe('dependency graph', function(){
     it('should work', function(done){
 		
 		dependencyGraph({
-			configPath: __dirname+"/stealconfig.js",
+			config: __dirname+"/stealconfig.js",
 			startId: "basics"
 		}).then(function(data){
 			
@@ -57,7 +57,7 @@ describe("bundle", function(){
 	it("should work", function(done){
 		
 		bundle({
-			configPath: __dirname+"/bundle/stealconfig.js",
+			config: __dirname+"/bundle/stealconfig.js",
 			startId: "bundle.js"
 		}).then(function(data){
 			
@@ -119,7 +119,7 @@ describe("order", function(){
 var find = function(browser, property, callback, done){
 	var start = new Date();
 	var check = function(){
-		if(browser.window[property]) {
+		if(browser.window && browser.window[property]) {
 			callback(browser.window[property]);
 		} else if(new Date() - start < 2000){
 			setTimeout(check, 20);
@@ -135,7 +135,7 @@ describe("mutli build", function(){
 	it("should work", function(done){
 		
 		multiBuild({
-			configPath: __dirname+"/bundle/stealconfig.js",
+			config: __dirname+"/bundle/stealconfig.js",
 			startId: "bundle.js"
 		}).then(function(data){
 			var finished = function(e){
@@ -143,15 +143,17 @@ describe("mutli build", function(){
 				server.close();
 			};
 			var server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
-			
-			Browser.visit("http://localhost:8081/test/bundle/bundle.html#a")
-				.then(function(browser){
+			var browser = new Browser();
+			browser.visit("http://localhost:8081/test/bundle/bundle.html#a")
+				.then(function(){
+					
 					find(browser,"appA", function(appA){
 						assert(true, "got A");
 						assert.equal(appA.name, "a", "got the module");
 						assert.equal(appA.ab.name, "a_b", "a got ab");
 						finished();
 					}, finished)
+
 					
 				},finished);
 			
