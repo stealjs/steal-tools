@@ -6,7 +6,9 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	multiBuild = require("../lib/build/multi"),
 	Browser = require("zombie"),
 	connect = require("connect"),
-	path = require('path');
+	path = require('path'),
+	rmdir = require('rimraf');
+
 
 describe('dependency graph', function(){
     it('should work', function(done){
@@ -130,38 +132,103 @@ var find = function(browser, property, callback, done){
 	check();
 };
 
+var open = function(url, callback, done){
+	var server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
+			var browser = new Browser();
+			browser.visit("http://localhost:8081/"+url)
+				.then(function(){
+					callback(browser, function(){
+						server.close();
+						done();
+					})
+				}).catch(function(e){
+					server.close();
+					done(e)
+				});
+}
+
+
 describe("mutli build", function(){
 	
 	it("should work", function(done){
 		
-		multiBuild({
-			config: __dirname+"/bundle/stealconfig.js",
-			startId: "bundle.js"
-		}).then(function(data){
-			var finished = function(e){
-				done(e);
-				server.close();
-			};
-			var server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
-			var browser = new Browser();
-			browser.visit("http://localhost:8081/test/bundle/bundle.html#a")
-				.then(function(){
-					
-					find(browser,"appA", function(appA){
-						assert(true, "got A");
-						assert.equal(appA.name, "a", "got the module");
-						assert.equal(appA.ab.name, "a_b", "a got ab");
-						finished();
-					}, finished)
-
-					
-				},finished);
+		rmdir(__dirname+"/bundle/bundles", function(error){
+			if(error){
+				done(error)
+			}
 			
-		}).catch(function(e){
-			done(e);
+			multiBuild({
+				config: __dirname+"/bundle/stealconfig.js",
+				main: "bundle"
+			}).then(function(data){
+	
+				open("test/bundle/bundle.html#a",function(browser, close){
+					find(browser,"appA", function(appA){
+							assert(true, "got A");
+							assert.equal(appA.name, "a", "got the module");
+							assert.equal(appA.ab.name, "a_b", "a got ab");
+							close();
+					}, close)
+				}, done)
+				
+				
+			}).catch(function(e){
+				done(e);
+			});
+			
+			
+			
 		});
 		
+		
 	});
+	
+});
+
+describe("plugins", function(){
+	it("work on the client", function(done){
+		
+		open("test/plugins/site.html", function(browser, close){
+			
+			find(browser,"PLUGTEXT", function(plugText){
+					assert.equal(plugText, "client-Holler", "client can do plugins");
+					close();
+			}, close);
+			
+		}, done);
+		
+	});
+	
+	it("work built", function(done){
+		// remove the bundles dir
+		rmdir(__dirname+"/plugins/bundles", function(error){
+			
+			if(error){
+				done(error)
+			}
+			// build the project that 
+			// uses a plugin
+			multiBuild({
+				config: __dirname+"/plugins/config.js",
+				main: "main"
+			}).then(function(data){
+				// open the prod page and make sure
+				// the plugin processed the input correctly
+				open("test/plugins/prod.html", function(browser, close){
+			
+					find(browser,"PLUGTEXT", function(plugText){
+							assert.equal(plugText, "server-Holler", "server can do plugins");
+							close();
+					}, close);
+					
+				}, done);
+				
+			}).catch(function(e){
+				done(e);
+			});
+		});
+		
+	})
 	
 });
 
