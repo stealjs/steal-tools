@@ -168,8 +168,8 @@ describe("mutli build", function(){
 							assert.equal(appA.name, "a", "got the module");
 							assert.equal(appA.ab.name, "a_b", "a got ab");
 							close();
-					}, close)
-				}, done)
+					}, close);
+				}, done);
 				
 				
 			}).catch(function(e){
@@ -228,7 +228,38 @@ describe("plugins", function(){
 			});
 		});
 		
-	})
+	});
+	
+	it("work with css buildType", function(done){
+		
+		rmdir(__dirname+"/build_types/bundles", function(error){
+			
+			if(error){
+				done(error)
+			}
+			// build the project that 
+			// uses a plugin
+			multiBuild({
+				config: __dirname+"/build_types/config.js",
+				main: "main"
+			}).then(function(data){
+
+				// open the prod page and make sure
+				// the plugin processed the input correctly
+				open("test/build_types/prod.html", function(browser, close){
+			
+					find(browser,"STYLE_CONTENT", function(styleContent){
+						assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
+						close();
+					}, close);
+					
+				}, done);
+				
+			}).catch(function(e){
+				done(e);
+			});
+		});
+	});
 	
 });
 
