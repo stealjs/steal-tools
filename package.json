@@ -1,7 +1,7 @@
 {
   "name": "steal-tools",
   "description": "Development tools for Steal applications.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": {
     "name": "Bitovi",
     "email": "contact@bitovi.com",
@@ -28,11 +28,6 @@
     "connect": "^2.14.4",
     "bower": "1.2.8",
     "rimraf": "2.1"
-  },
-  "bin": {
-    "steal": "bin/steal",
-    "steal-build": "bin/steal-build",
-    "steal-install": "bin/steal-install"
   },
   "main": "index",
   "homepage": "git://github.com/bitovi/steal-tools.git",
