@@ -7,7 +7,9 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	Browser = require("zombie"),
 	connect = require("connect"),
 	path = require('path'),
-	rmdir = require('rimraf');
+	rmdir = require('rimraf'),
+	pluginify = require("../lib/build/pluginifier"),
+	fs = require('fs');
 
 
 describe('dependency graph', function(){
@@ -260,6 +262,44 @@ describe("plugins", function(){
 			});
 		});
 	});
+	
+});
+
+
+describe("pluginify", function(){
+	
+	it("basics should work", function(done){
+		
+		pluginify({
+			system : {
+				config: __dirname+"/stealconfig.js",
+				main: "pluginify/pluginify"
+			},
+			exports: {}
+		}).then(function(pluginify){
+			
+			
+			fs.writeFile(__dirname+"/pluginify/out.js", pluginify(), function(err) {
+			    // open the prod page and make sure
+				// the plugin processed the input correctly
+				open("test/pluginify/index.html", function(browser, close){
+			
+					find(browser,"RESULT", function(result){
+						assert(result.module.es6module, "have dependeny");
+						close();
+					}, close);
+					
+				}, done);
+			}); 
+			
+			
+		}).catch(function(e){
+			console.log(e.stack)
+		});
+		
+		
+	});
+	
 	
 });
 
