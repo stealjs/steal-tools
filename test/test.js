@@ -299,6 +299,28 @@ describe("pluginify", function(){
 		
 		
 	});
+
+	it("ignores files told to ignore", function(done){
+
+		pluginify({
+			system: {
+				config: __dirname + "/stealconfig.js",
+				main: "pluginify/pluginify"
+			},
+			exports: {},
+			ignore: ["basics/amdmodule"]
+		}).then(function(pluginify){
+
+			// Get the resulting string.
+			var result = pluginify();
+
+			// Regex test to see if the basics/amdmodule is included
+			var includesIgnoredThings = /\*basics\/amdmodule\*/.test(result);
+
+			assert.equal(includesIgnoredThings, false, "It excluded the modules told to.");
+		}).then(done);
+
+	});
 	
 	
 });
