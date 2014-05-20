@@ -322,12 +322,13 @@ describe("pluginify", function(){
 				config: __dirname + "/stealconfig.js",
 				main: "pluginify/pluginify"
 			},
-			exports: {},
-			ignore: ["basics/amdmodule"]
+			exports: {}
 		}).then(function(pluginify){
 
-			// Get the resulting string.
-			var result = pluginify();
+			// Get the resulting string, ignoring amdmodule
+			var result = pluginify(null, {
+				ignore: ["basics/amdmodule"]
+			});
 
 			// Regex test to see if the basics/amdmodule is included
 			var includesIgnoredThings = /\*basics\/amdmodule\*/.test(result);
