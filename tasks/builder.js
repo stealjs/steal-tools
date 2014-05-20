@@ -1,5 +1,6 @@
 var fs = require("fs");
 var path = require("path");
+var builder = require("../lib/build/builder");
 var pluginify = require("../index").pluginify;
 
 module.exports = function (grunt) {
@@ -8,42 +9,49 @@ module.exports = function (grunt) {
 	grunt.registerMultiTask("builder", "Pluginify using the download builder configuration", function () {
 		var done = this.async();
 		var options = this.options();
-		var builder = options.builder;
-		var modules = builder.modules;
+		var file = this.files[0];
+		options.main = file.src[0].substr(0, file.src[0].length - 3);
 
-		var pluginifyOptions = options.pluginify;
+		builder(options, function(){
+			console.log("All done");
+			done();
+		});
 
-		this.files.forEach(function(f){
-			var src = f.src[0];
-			var folderPath = fs.realpathSync(src);
-		
+		// Process all of the modules one at a time
+		/*function processModules() {
+			var moduleId = keys.shift();
+			// We've finished the last module
+			if(!moduleId) {
+				done();
+			}
 
-			// Build each module
-			/*_.each(modules, function(module, name){
-				console.log("Module is:", name);
+			var module = modules[moduleId];
 
-			});*/
+			console.log("Building", module.name);
 
-			var name = "can/component";
-			var module = modules[name];
+			var src = file.src[0];
+			var folderPath = path.resolve(fs.realpathSync(src));
 
+			// Pluginify the module
 			pluginify({
 				system: {
 					config: folderPath + "/stealconfig.js",
-					main: "can/component/component"
+					main: "component/component"
 				},
 				exports: {}
 			}).then(function(pluginify){
-				console.log("Pluginify?", pluginify());
-
-				// Get the resulting string.
-				//var result = pluginify();
-
-
+				var content = pluginify();
+				
+				var filename = path.resolve(file.dest, module.name.toLowerCase() + ".js");
+				//grunt.file.write(filename, content);
+				
+				processModules();
 			});
-		});
 
+		}*/
 
+		//processModules(file);
+		
 	});
 
 };
