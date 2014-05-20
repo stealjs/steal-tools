@@ -54,6 +54,21 @@ describe('dependency graph', function(){
 		});
 		
     });
+
+		it("Should allow extra config options to be passed in", function(done){
+			
+			dependencyGraph({
+				config: __dirname + "/stealconfig.js",
+				startId: "basics",
+				extra: "stuff"
+			}).then(function(data){
+				var steal = data.steal;
+				var extra = steal.config("extra");
+
+				assert.equal(extra, "stuff", "Extra config options added");
+			}).then(done);
+
+		});
 });
 
 describe("bundle", function(){
