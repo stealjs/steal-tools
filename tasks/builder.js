@@ -5,7 +5,7 @@ var pluginify = require("../index").pluginify;
 
 module.exports = function (grunt) {
 
-	function saveFile(item, filename, ignores) {
+	function saveFile(item, filename, ignores, dev) {
 		console.log("Saving...", filename);
 
 		// Get the content for this one.
@@ -17,7 +17,8 @@ module.exports = function (grunt) {
 
 		var pluginify = item.pluginify;
 		var content = pluginify(moduleName, {
-			ignore: ignores || []
+			ignore: ignores || [],
+			keepDevTags: !!dev
 		});
 
 		grunt.file.write(filename, content);
@@ -33,6 +34,8 @@ module.exports = function (grunt) {
 		keys.forEach(function(name){
 			var configuration = configurations[name];
 			var library = configuration.library;
+			var libraryModule = "can/" + library;
+			libraryModule = libraryModule.substr(0, libraryModule.indexOf(".js"));
 
 			if(configuration.hidden) {
 				return;
@@ -42,19 +45,19 @@ module.exports = function (grunt) {
 			var filename = path.join(dest, (options.prefix || "") +
 															 name.toLowerCase() + ".js");
 
-			// TODO include ignores
-			saveFile(configuration, filename);
+			// Save out the default build
+			saveFile(configuration, filename, [libraryModule]);
 
 			// Save a dev version if needed
 			if(options.dev) {
 				filename = path.join(dest, (options.prefix || "") + name.toLowerCase() +
 														 ".dev.js");
-				saveFile(configuration, filename);
+				saveFile(configuration, filename, [libraryModule], null, true);
 			}
 		});
 	}
 
-	function savePlugins(options, file, plugins) {
+	function savePlugins(options, file, plugins, ignores) {
 		var main = options.main;
 		var keys = Object.keys(plugins);
 		var dest = file.dest;
@@ -68,7 +71,7 @@ module.exports = function (grunt) {
 			}
 
 			var filename = path.join(dest, plugin.name.toLowerCase() + ".js");
-			saveFile(plugin, filename, [main]);
+			saveFile(plugin, filename, ignores);
 		});
 	}
 
@@ -84,10 +87,15 @@ module.exports = function (grunt) {
 			var plugins = builder.getPlugins(info.modules);
 
 			// Save out the configuration files
-			//saveConfigurations(options, file, configurations);
+			saveConfigurations(options, file, configurations);
+
+			// Get the core modules so that we can ignore them.
+			var defaultConfiguration = configurations[Object.keys(configurations)[0]];
+			var graph = defaultConfiguration.pluginify.graph;
+			var ignores = pluginify.getAllIgnores([options.main], graph);
 
 			// Save out the plugin files
-			savePlugins(options, file, plugins);
+			savePlugins(options, file, plugins, ignores);
 
 			done();
 		});
