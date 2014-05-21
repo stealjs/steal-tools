@@ -2,6 +2,7 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	comparify = require("comparify"),
 	bundle = require("../lib/graph/make_graph_with_bundles"),
 	orderGraph = require("../lib/graph/order"),
+	mapDeps = require("../lib/graph/map_dependencies"),
 	assert = require('assert'),
 	multiBuild = require("../lib/build/multi"),
 	Browser = require("zombie"),
@@ -68,6 +69,28 @@ describe('dependency graph', function(){
 				assert.equal(extra, "stuff", "Extra config options added");
 			}).then(done);
 
+		});
+
+		describe("Utility functions", function(){
+			it("Map should work", function(done){
+				dependencyGraph({
+					config: __dirname + "/stealconfig.js",
+					startId: "basics"
+				}).then(function(data){
+					var graph = data.graph;
+
+					var modules = mapDeps(graph, 'basics/basics', function(name){
+						return name;
+					});
+
+					comparify(modules, [
+						"basics/basics", "basics/module/module",
+						"basics/es6module", "basics/amdmodule"
+					], true);
+
+				}).then(done);
+
+			});
 		});
 });
 
