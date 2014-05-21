@@ -4,12 +4,29 @@ var builder = require("../lib/build/builder");
 var pluginify = require("../index").pluginify;
 
 module.exports = function (grunt) {
-	var _ = grunt.util._;
+
+	function saveFile(item, filename, ignores) {
+		console.log("Saving...", filename);
+
+		// Get the content for this one.
+		var moduleName = item.moduleName || null;
+		if(moduleName) {
+			var parts = moduleName.split("/");
+			moduleName += "/" + parts[parts.length - 1];
+		}
+
+		var pluginify = item.pluginify;
+		var content = pluginify(moduleName, {
+			ignore: ignores || []
+		});
+
+		grunt.file.write(filename, content);
+	}
 
 	/**
 	 * Save out configurations to their final resting place
 	 */
-	function saveConfigurations(options, file, configurations, callback) {
+	function saveConfigurations(options, file, configurations) {
 		var keys = Object.keys(configurations);
 		var dest = file.dest;
 
@@ -25,16 +42,33 @@ module.exports = function (grunt) {
 			var filename = path.join(dest, (options.prefix || "") +
 															 name.toLowerCase() + ".js");
 
-			console.log("Saving...", filename);
+			// TODO include ignores
+			saveFile(configuration, filename);
 
-			// Get the content for this one.
-			var pluginify = configuration.pluginify;
-			/*var content = pluginify(null, {
-				ignore: library ? [ library ] : []											 
-			});*/
-		 	var content = pluginify();
+			// Save a dev version if needed
+			if(options.dev) {
+				filename = path.join(dest, (options.prefix || "") + name.toLowerCase() +
+														 ".dev.js");
+				saveFile(configuration, filename);
+			}
+		});
+	}
 
-			grunt.file.write(filename, content);
+	function savePlugins(options, file, plugins) {
+		var main = options.main;
+		var keys = Object.keys(plugins);
+		var dest = file.dest;
+
+		keys.forEach(function(name){
+			var plugin = plugins[name];
+			plugin.moduleName = name;
+
+			if(plugin.hidden) {
+				return;
+			}
+
+			var filename = path.join(dest, plugin.name.toLowerCase() + ".js");
+			saveFile(plugin, filename, [main]);
 		});
 	}
 
@@ -50,11 +84,10 @@ module.exports = function (grunt) {
 			var plugins = builder.getPlugins(info.modules);
 
 			// Save out the configuration files
-			saveConfigurations(options, file, configurations, function(){
+			//saveConfigurations(options, file, configurations);
 
-				// TODO Save out the plugin files
-
-			});
+			// Save out the plugin files
+			savePlugins(options, file, plugins);
 
 			done();
 		});
