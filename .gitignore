@@ -23,3 +23,4 @@ build/pluginify/test/app/production.js
 build/pluginify/test/app/app.plugin.js
 test/bundle/bundles/
 test/pluginify/out.js
+test/dep_plugins/bundles
