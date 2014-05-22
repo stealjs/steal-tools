@@ -301,7 +301,7 @@ describe("plugins", function(){
 		});
 	});
 	
-	/*it("can build less", function(done){
+	it.ok("can build less", function(done){
 		rmdir(__dirname+"/dep_plugins/bundles", function(error){
 			
 			if(error){
@@ -330,7 +330,7 @@ describe("plugins", function(){
 				done(e);
 			});
 		});
-	})*/
+	})
 });
 
 

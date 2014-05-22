@@ -13,7 +13,7 @@
     "transpile": "git://github.com/bitovi/transpile.git#master",
     "uglify-js": "2.4.13",
     "lodash": "2.4.1",
-    "clean-css" : "2.1.8"
+    "clean-css": "2.1.8"
   },
   "devDependencies": {
     "mocha": "1.18.2",
@@ -27,7 +27,8 @@
     "zombie": "1.4.1",
     "connect": "^2.14.4",
     "bower": "1.2.8",
-    "rimraf": "2.1"
+    "rimraf": "2.1",
+    "less": "^1.7.0"
   },
   "main": "index",
   "homepage": "git://github.com/bitovi/steal-tools.git",
