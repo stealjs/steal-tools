@@ -301,6 +301,36 @@ describe("plugins", function(){
 		});
 	});
 	
+	/*it("can build less", function(done){
+		rmdir(__dirname+"/dep_plugins/bundles", function(error){
+			
+			if(error){
+				done(error)
+			}
+			// build the project that 
+			// uses a plugin
+			multiBuild({
+				config: __dirname+"/dep_plugins/config.js",
+				main: "main"
+			}).then(function(data){
+
+				// open the prod page and make sure
+				// the plugin processed the input correctly
+				open("test/dep_plugins/prod.html", function(browser, close){
+			
+					find(browser,"STYLE_CONTENT", function(styleContent){
+						console.log(styleContent)
+						assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
+						close();
+					}, close);
+					
+				}, done);
+				
+			}).catch(function(e){
+				done(e);
+			});
+		});
+	})*/
 });
 
 
