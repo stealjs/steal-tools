@@ -166,7 +166,7 @@ var find = function(browser, property, callback, done){
 		} else if(new Date() - start < 2000){
 			setTimeout(check, 20);
 		} else {
-			done("failed to find "+propety);
+			done("failed to find "+property);
 		}
 	};
 	check();
@@ -268,6 +268,40 @@ describe("plugins", function(){
 			});
 		});
 		
+	});
+
+	it("work built using steal", function(done){
+		// remove the bundles dir
+		rmdir(__dirname+"/plugins/bundles", function(error){
+			
+			if(error){
+				done(error)
+			}
+
+			// build the project that 
+			// uses a plugin
+			multiBuild({
+				config: __dirname+"/plugins/config.js",
+				main: "main-steal",
+				paths: {
+					"plug/plug": "plug.js"
+				}
+			}).then(function(data){
+				// open the prod page and make sure
+				// the plugin processed the input correctly
+				open("test/plugins/prod-steal.html", function(browser, close){
+			
+					find(browser,"PLUGTEXT", function(plugText){
+							assert.equal(plugText, "server-Holler", "server can do plugins");
+							close();
+					}, close);
+					
+				}, done);
+				
+			}).catch(function(e){
+				done(e);
+			});
+		});
 	});
 	
 	it("work with css buildType", function(done){
