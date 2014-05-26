@@ -347,7 +347,6 @@ describe("plugins", function(){
 				config: __dirname+"/dep_plugins/config.js",
 				main: "main"
 			}).then(function(data){
-
 				// open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/dep_plugins/prod.html", function(browser, close){
@@ -363,7 +362,7 @@ describe("plugins", function(){
 				done(e);
 			});
 		});
-	})
+	});
 });
 
 
