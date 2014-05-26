@@ -1,2 +1,6 @@
 /*main.css!steal/css*/
-#test-element{width:50px;background-color:#ff0}
+#test-element {
+	width: 50px;
+	background-color: yellow;
+}
+
