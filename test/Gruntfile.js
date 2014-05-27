@@ -9,6 +9,21 @@ module.exports = function(grunt){
 					main: "bundle"
 				}
 			}
+		},
+
+		pluginify: {
+			all: {
+				options: {
+					system: {
+						config: __dirname + "/stealconfig.js",
+						main: "basics/basics"
+					},
+					ignore: []
+				},
+				files: [{
+					dest: __dirname + "/pbasics.js"
+				}]
+			}
 		}
 	});
 
