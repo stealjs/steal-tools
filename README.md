@@ -33,13 +33,15 @@ Using npm:
 
 In your build script, add:
 
-    var stealTools = require('steal-tools');
-    stealTools.build({
-      config: "path/to/ROOT/stealconfig.js",
-      main: "main"
-    }).then(function(){
-      console.log("build is successful")
-    })
+```js
+var stealTools = require('steal-tools');
+stealTools.build({
+  config: "path/to/ROOT/stealconfig.js",
+  main: "main"
+}).then(function(){
+  console.log("build is successful")
+})
+```
 
 Notice that the `config` option includes the path to the configuration file.  Your script
 might want to use `__dirname`.  `stealTools.build` returns a deferred when the build is complete.
@@ -52,8 +54,9 @@ This will produce a `ROOT/bundles/main.js`.
 
 In `index.html`, switch to production by adding `data-env='production'` to the steal `<script>` tag:
 
-    <script src='./bower_components/steal/steal.js'
-            data-config='stealconfig.js'
-            data-main='main'
-            data-env-'production'></script>
-
+```html
+<script src='./bower_components/steal/steal.js'
+        data-config='stealconfig.js'
+        data-main='main'
+        data-env-'production'></script>
+```
