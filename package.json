@@ -8,12 +8,13 @@
     "web": "http://bitovi.com/"
   },
   "dependencies": {
+    "clean-css": "2.1.8",
+    "lodash": "2.4.1",
     "steal": "git://github.com/bitovi/steal.git#systemjs",
     "traceur": "0.0.32",
     "transpile": "git://github.com/bitovi/transpile.git#master",
     "uglify-js": "2.4.13",
-    "lodash": "2.4.1",
-    "clean-css": "2.1.8"
+    "yargs": "^1.2.2"
   },
   "devDependencies": {
     "mocha": "1.18.2",
@@ -30,6 +31,9 @@
     "rimraf": "2.1",
     "less": "^1.7.0"
   },
+	"bin": {
+		"steal": "bin/steal"
+	},
   "main": "index",
   "homepage": "git://github.com/bitovi/steal-tools.git",
   "repository": {

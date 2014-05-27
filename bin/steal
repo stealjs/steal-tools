@@ -1,0 +1,87 @@
+#!/usr/bin/env node
+var yargs = require("yargs")
+	.usage("Usage: $0 [build|pluginify] --main app --config path/to/stealconfig.js")
+	.demand(["config", "main"])
+	.describe("config", "Path to the config file")
+	.describe("main", "The application's entry point module")
+	.describe("ignore", "For pluginify, a comma-separated list of modules to not include in the output")
+	.describe("out", "For pluginify, specify an output file")
+	.check(function(argv){
+		var command = argv._[0];
+
+		if(!command) {
+			throw "Must provide a command to execute";
+		}
+
+		if(command !== "build" && command !== "pluginify") {
+			throw "Unknown command: " + command;
+		}
+
+		if(command === "pluginify" && !argv.out) {
+			throw "When using pluginify, must specify an out file";
+		}
+
+	});
+
+// The command-line arguments
+var argv = yargs.argv;
+
+// Determine the location of the config file
+var config = argv.config[0] === "/" ?
+	argv.config : (process.cwd() + "/" + argv.config);
+
+
+// Which command to run, either `build` or `pluginify`
+var command = argv._[0];
+
+// Load steal-tools
+var stealTools = require("../index");
+
+if(command === "build"){
+	
+	return build();
+
+} else if(command === "pluginify") {
+
+	return pluginify();
+
+}
+
+function build() {
+
+	stealTools.build({
+		config: config,
+		main: argv.main
+	}).then(function(){
+		console.log("Build completed successfully");
+	});
+
+}
+
+function pluginify() {
+	var fs = require("fs");
+	var ignore = [];
+
+	// ignore would be a comma-separated list like jquery,underscore,moment
+	if(argv.ignore) {
+		ignore = argv.ignore.split(",");
+	}
+
+	stealTools.pluginify({
+
+		system: {
+			config: config,
+			main: argv.main
+		}
+
+	}).then(function(pluginify){
+
+		var content = pluginify(null, {
+			ignore: ignore
+		});
+
+		// Write out the contents
+		fs.writeFileSync(argv.out, content, "utf8");
+	});
+
+}
