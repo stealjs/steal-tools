@@ -1,62 +1,59 @@
-Steal Tools is a collection of command-line utilities
-that make building, packaging, and sharing ES6, CommonJS, AMD, and [Steal](http://github.com/bitovi/steal)
+StealTools is a collection of command-line utilities
+that make building, packaging, and sharing ES6, CommonJS, AMD, and [Steal](https://github.com/bitovi/steal/tree/systemjs)
 applications easy.
-
-
-## Install
-
-```
-npm install steal-tools
-```
 
 ## Use
 
-After creating an application that works in the browser, you can build it and then
-setup a page for production.
+Currently, StealTools depends 
+on [StealJS](https://github.com/bitovi/steal/tree/systemjs). Before doing a build, make
+sure StealJS loads your app successfully in the browser.
 
-### Build
+### Hello World
 
+If you followed [StealJS's Hello World Example](https://github.com/bitovi/steal/tree/systemjs),
+the following will walk you through setting up StealTools to build that app.  That app has a 
+structure that looks like:
 
-From the command line:
+    ROOT/
+      bower.json
+      bower_components/
+      stealconfig.js
+      index.html
+      main.js
 
-```
-steal-tools build main=moduleName config=path/to/config.js
-```
+`stealconfig.js` is the config file and `main.js` is the main module.
 
-In node:
+1.  Install StealTools.
 
-```js
-var stealTools = require('steal-tools');
-stealTools.build({
-  main: "moduleName",
-  config: "pathTo/config.js"
-})
-```
+Using npm:
 
-Grunt:
+    > npm install steal-tools --save-dev
 
-```js
-grunt.loadNpmTasks( "steal-tools" );
+2.  Create a build script.
 
-grunt.initConfig({
-  stealTools: {
-    main: "moduleName",
-    config: "pathTo/config.js"
-  }
-});
-```
+In your build script, add:
 
+    var stealTools = require('steal-tools');
+    stealTools.build({
+      config: "path/to/ROOT/stealconfig.js",
+      main: "main"
+    }).then(function(){
+      console.log("build is successful")
+    })
 
-## Contributing
+Notice that the `config` option includes the path to the configuration file.  Your script
+might want to use `__dirname`.  `stealTools.build` returns a deferred when the build is complete.
 
-### Install
+3. Run your build script.
 
-1.  Clone the steal-tools repo.
-2.  Run `npm install`
-3.  Install mocha globally `npm install -g mocha`
+This will produce a `ROOT/bundles/main.js`.
 
-### Test
+4. Switch to production.  
 
-Run `mocha test/test.js`
+In `index.html`, switch to production by adding `data-env='production'` to the steal `<script>` tag:
 
+    <script src='./bower_components/steal/steal.js'
+            data-config='stealconfig.js'
+            data-main='main'
+            data-env-'production'></script>
 
