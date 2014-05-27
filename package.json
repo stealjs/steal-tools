@@ -47,6 +47,6 @@
     }
   ],
   "scripts": {
-    "test": "grunt test --verbose"
+    "test": "node node_modules/mocha/bin/mocha test/test.js"
   }
 }

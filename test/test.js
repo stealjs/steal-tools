@@ -364,7 +364,7 @@ describe("plugins", function(){
 		});
 	});
 	
-	it.only("builds paths correctly", function(done){
+	it("builds paths correctly", function(done){
 		rmdir(__dirname+"/css_paths/bundles", function(error){
 			
 			if(error){
