@@ -1,0 +1,15 @@
+/*folder/main.less!steal/less*/
+#test-element1 {
+  background-image: url(../images/hero-ribbons.png);
+}
+
+/*folder/main.css!steal/css*/
+#test-element2 {
+  background-image: url(../images/hero-ribbons.png);
+}
+
+/*style.css!steal/css*/
+#test-element3 {
+  background-image: url(../images/hero-ribbons.png);
+}
+

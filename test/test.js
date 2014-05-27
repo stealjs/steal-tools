@@ -363,6 +363,42 @@ describe("plugins", function(){
 			});
 		});
 	});
+	
+	it.only("builds paths correctly", function(done){
+		rmdir(__dirname+"/css_paths/bundles", function(error){
+			
+			if(error){
+				done(error)
+			}
+			// build the project that 
+			// uses a plugin
+			multiBuild({
+				config: __dirname+"/css_paths/config.js",
+				main: "main"
+			}).then(function(data){
+				// open the prod page and make sure
+				// the plugin processed the input correctly
+				open("test/css_paths/prod.html", function(browser, close){
+			
+					find(browser,"STYLE_CONTENT", function(styleContent){
+						
+						var count = 0;
+						styleContent.replace(/url\(['"]?([^'"\)]*)['"]?\)/g, function(whole, part){
+							assert.equal(part,"../images/hero-ribbons.png", "reference is correct");
+							count++;
+						});
+						assert.equal(count, 3, "correct number of styles");
+						close();
+					}, close);
+					
+				}, done);
+				
+			}).catch(function(e){
+				done(e);
+			});
+		});
+	})
+	
 });
 
 
