@@ -25,38 +25,38 @@ structure that looks like:
 
 1.  Install StealTools.
 
-Using npm:
-
-    > npm install git://github.com/bitovi/steal-tools.git#systemjs --save-dev
+  Using npm:
+  
+      > npm install git://github.com/bitovi/steal-tools.git#systemjs --save-dev
 
 2.  Create a build script.
 
-In your build script, add:
-
-```js
-var stealTools = require('steal-tools');
-stealTools.build({
-  config: "path/to/ROOT/stealconfig.js",
-  main: "main"
-}).then(function(){
-  console.log("build is successful")
-})
-```
-
-Notice that the `config` option includes the path to the configuration file.  Your script
-might want to use `__dirname`.  `stealTools.build` returns a deferred when the build is complete.
+  In your build script, add:
+  
+  ```js
+  var stealTools = require('steal-tools');
+  stealTools.build({
+    config: "path/to/ROOT/stealconfig.js",
+    main: "main"
+  }).then(function(){
+    console.log("build is successful")
+  })
+  ```
+  
+  Notice that the `config` option includes the path to the configuration file.  Your script
+  might want to use `__dirname`.  `stealTools.build` returns a deferred when the build is complete.
 
 3. Run your build script.
 
-This will produce a `ROOT/bundles/main.js`.
+  This will produce a `ROOT/bundles/main.js`.
 
 4. Switch to production.  
 
-In `index.html`, switch to production by adding `data-env='production'` to the steal `<script>` tag:
+  In `index.html`, switch to production by adding `data-env='production'` to the steal `<script>` tag:
 
-```html
-<script src='./bower_components/steal/steal.js'
-        data-config='stealconfig.js'
-        data-main='main'
-        data-env-'production'></script>
-```
+  ```html
+  <script src='./bower_components/steal/steal.js'
+          data-config='stealconfig.js'
+          data-main='main'
+          data-env-'production'></script>
+  ```
