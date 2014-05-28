@@ -1,15 +1,7 @@
 /*bundlesConfig*/
 System.bundles = {"bundles/main":["stealconfig","steal/css","less","steal/less","main"],"bundles/main.css!":["folder/main.less!steal/less","folder/main.css!steal/css","style.css!steal/css"]};
 /*stealconfig*/
-if(typeof window === "undefined") {
-	System.register("less",[], function(){
-		var r = require;
-		return { __useDefault: true, 'default': r('less') };
-	});
-} else {
-	System.paths.less ="../../bower_components/less/dist/less-1.7.0.js";
-}
-
+// Empty
 /*steal/css*/
 define('steal/css', function(require, exports, module) {if( steal.config('env') === 'production' ) {
 	  exports.fetch = function(load) {
