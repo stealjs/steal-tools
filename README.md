@@ -1,16 +1,16 @@
 StealTools is a collection of command-line utilities
-that make building, packaging, and sharing ES6, CommonJS, AMD, and [Steal](https://github.com/bitovi/steal/tree/systemjs)
+that make building, packaging, and sharing ES6, CommonJS, AMD, and [Steal](https://github.com/bitovi/steal)
 applications easy.
 
 ## Use
 
 Currently, StealTools depends 
-on [StealJS](https://github.com/bitovi/steal/tree/systemjs). Before doing a build, make
+on [StealJS](https://github.com/bitovi/steal). Before doing a build, make
 sure StealJS loads your app successfully in the browser.
 
 ### Hello World
 
-If you followed [StealJS's Hello World Example](https://github.com/bitovi/steal/tree/systemjs),
+If you followed [StealJS's Hello World Example](https://github.com/bitovi/steal),
 the following will walk you through setting up StealTools to build that app.  That app has a 
 structure that looks like:
 
