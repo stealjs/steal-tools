@@ -68,12 +68,8 @@ function pluginify() {
 	}
 
 	stealTools.pluginify({
-
-		system: {
-			config: config,
-			main: argv.main
-		}
-
+		config: config,
+		main: argv.main
 	}).then(function(pluginify){
 
 		var content = pluginify(null, {

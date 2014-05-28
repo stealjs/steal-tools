@@ -468,10 +468,9 @@ describe("pluginify", function(){
 	it("basics should work", function(done){
 		
 		pluginify({
-			system : {
-				config: __dirname+"/stealconfig.js",
-				main: "pluginify/pluginify"
-			},
+			config: __dirname+"/stealconfig.js",
+			main: "pluginify/pluginify"
+		}, {
 			exports: {}
 		}).then(function(pluginify){
 			
@@ -500,11 +499,10 @@ describe("pluginify", function(){
 	it("ignores files told to ignore", function(done){
 
 		pluginify({
-			system: {
-				config: __dirname + "/stealconfig.js",
-				main: "pluginify/pluginify"
-			},
-			exports: {}
+			config: __dirname + "/stealconfig.js",
+			main: "pluginify/pluginify"
+		}, {
+			exports: {}				 
 		}).then(function(pluginify){
 
 			// Get the resulting string, ignoring amdmodule

@@ -8,9 +8,7 @@ module.exports = function(grunt){
 		var options = this.options();
 		var dest = this.files[0].dest;
 
-		pluginifier({
-			system: options.system
-		}).then(function(pluginify){
+		pluginifier(options.system).then(function(pluginify){
 
 			// pluginify is a function that is called to return the content string.
 			var content = pluginify(null, {
