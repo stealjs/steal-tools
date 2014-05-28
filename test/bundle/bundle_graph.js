@@ -11,7 +11,7 @@ module.exports = {
          "app_d"
       ]
    },
-   "steal/dev/dev":{
+   "steal/dev":{
       "bundles":[
          "bundle",
          "app_a",

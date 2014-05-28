@@ -2,6 +2,7 @@
 .tmp*
 dist
 test/myapp/production.js
+test/css_paths/bundles/
 node_modules
 bower_components
 build/apps/test/multibuild/*/*.production.js

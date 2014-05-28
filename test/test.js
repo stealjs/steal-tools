@@ -25,7 +25,7 @@ describe('dependency graph', function(){
 				stealconfig: {
 					load: {}
 				},
-				'steal/dev/dev': {
+				'steal/dev': {
 					load: {
 						metadata: {
 							// ignore: true
