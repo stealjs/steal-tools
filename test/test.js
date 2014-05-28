@@ -188,7 +188,7 @@ var open = function(url, callback, done){
 }
 
 
-describe("mutli build", function(){
+describe("multi build", function(){
 	
 	it("should work", function(done){
 		
@@ -221,6 +221,67 @@ describe("mutli build", function(){
 		});
 		
 		
+	});
+
+	it("Should minify by default", function(done){
+		var config = {
+			config: __dirname + "/minify/config.js",
+			main: "minify"
+		};
+
+		rmdir(__dirname+"/minify/bundles", function(error){
+			if(error) {
+				done(error);
+				return;
+			}
+
+			multiBuild(config).then(function(){
+
+				var actual = fs.readFileSync(__dirname + "/minify/bundles/minify.js", "utf8");
+
+				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
+				
+				assert(!hasLongVariable, "Minified source renamed long variable.");
+
+				done();
+			}).catch(function(e){
+				done(e);
+			});
+		});
+
+	});
+
+	it("Should allow minification to be turned off", function(done){
+		var config = {
+			config: __dirname + "/minify/config.js",
+			main: "minify"
+		};
+
+		var options = {
+			minify: false
+		};
+
+		rmdir(__dirname+"/minify/bundles", function(error){
+			if(error) {
+				done(error);
+				return;
+			}
+		
+			multiBuild(config, options).then(function(){
+
+				var actual = fs.readFileSync(__dirname + "/minify/bundles/minify.js", "utf8");
+
+				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
+				
+				assert(hasLongVariable, "Source includes long variable name.");
+
+				done();
+			}).catch(function(e){
+				done(e);
+			});
+
+		});
+
 	});
 	
 });
