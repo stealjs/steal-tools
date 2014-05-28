@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>cookbook/recipe/list Demo</title>
+        <style type='text/css'>
+            body {font-family: verdana}
+        </style>
+	</head>
+	<body>
+	    <h1>cookbook/recipe/list Demo</h1>
+		<ul id='recipes'></ul>
+		<a href='javascript://' id='create'>Create Recipe</a>
+		<script type='text/javascript' 
+                src='../../../steal/steal.js'>
+        </script>
+		<script type='text/javascript'>
+			steal(
+				'cookbook/recipe/list', 
+				'cookbook/models/recipe.js',
+          		'cookbook/models/fixtures',
+          		function(RecipeList, Recipe){
+				
+				new RecipeList('#recipes');
+				
+				$('#create').click(function(){
+					new Recipe({
+						name: "Grilled Cheese",
+						description: "Bread and Cheese"
+					}).save();
+				})
+			})
+		</script>
+	</body>
+</html>

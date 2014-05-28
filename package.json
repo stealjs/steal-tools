@@ -1,0 +1,45 @@
+{
+  "name": "steal-tools",
+  "description": "Development tools for Steal applications.",
+  "version": "0.0.4",
+  "author": {
+    "name": "Bitovi",
+    "email": "contact@bitovi.com",
+    "web": "http://bitovi.com/"
+  },
+  "dependencies": {
+    "steal": "git://github.com/bitovi/steal.git#systemjs",
+    "traceur": "0.0.32",
+    "transpile": "git://github.com/bitovi/transpile.git#master"
+  },
+  "devDependencies": {
+    "mocha": "1.18.2",
+    "comparify" : "git://github.com/bitovi/comparify#master",
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-watch": "~0.3.0",
+    "grunt-contrib-copy": "~0.5.0"
+  },
+  "bin": {
+    "steal": "bin/steal",
+    "steal-build": "bin/steal-build",
+    "steal-install": "bin/steal-install"
+  },
+  "main": "index",
+  "homepage": "git://github.com/bitovi/steal-tools.git",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bitovi/steal-tools.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "scripts": {
+    "test": "grunt test --verbose"
+  }
+}
