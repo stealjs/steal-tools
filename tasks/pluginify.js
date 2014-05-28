@@ -3,7 +3,7 @@ var pluginifier = require("../index").pluginify;
 
 module.exports = function(grunt){
 
-	grunt.registerMultiTask("pluginify", "Create a 'plugin' version of your project which is not dependent on Steal.", function(){
+	grunt.registerMultiTask("stealPluginify", "Create a 'plugin' version of your project which is not dependent on Steal.", function(){
 		var done = this.async();
 		var options = this.options();
 		var dest = this.files[0].dest;

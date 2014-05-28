@@ -11,7 +11,7 @@ module.exports = function(grunt){
 			}
 		},
 
-		pluginify: {
+		stealPluginify: {
 			all: {
 				options: {
 					system: {
@@ -30,5 +30,6 @@ module.exports = function(grunt){
 	grunt.loadTasks("../tasks");
 
 	grunt.registerTask("build", ["stealBuild"]);
+	grunt.registerTask("pluginify", ["stealPluginify"]);
 
 };
