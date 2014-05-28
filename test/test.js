@@ -283,6 +283,34 @@ describe("multi build", function(){
 		});
 
 	});
+
+	it("Allows specifying a bundle location", function(done){
+		var config = {
+			config: __dirname + "/stealconfig.js",
+			main: "basics/basics"
+		};
+
+		var options = {
+			bundlesDir: __dirname + "/other_bundles"
+		};
+
+		rmdir(__dirname + "/other_bundles", function(error){
+			if(error) {
+				done(error);
+				return;
+			}
+
+			multiBuild(config, options).then(function(){
+				var fileExists = fs.existsSync(__dirname + "/other_bundles/basics.js");
+
+				assert(fileExists, "File written to alternative bundle location.");
+
+				done();
+			});
+
+		});
+
+	});
 	
 });
 
