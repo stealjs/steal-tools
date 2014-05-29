@@ -39,9 +39,10 @@ var command = argv._[0];
 
 // Load steal-tools
 var stealTools = require("../index");
+var StealTransport = require('../lib/logger').Steal;
 
 winston.remove(winston.transports.Console);
-winston.add(winston.transports.Console, {
+winston.add(StealTransport, {
   level: argv.verbose ? 'debug' : 'info',
   colorize: true,
   silent: argv.quiet && !argv.verbose
@@ -63,7 +64,7 @@ function build() {
 		config: config,
 		main: argv.main
 	}).then(function(){
-		winston.info("Build completed successfully");
+		winston.info('\nBuild completed successfully'.green);
 	});
 
 }

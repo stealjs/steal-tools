@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "clean-css": "2.1.8",
+    "colors": "^0.6.2",
     "lodash": "2.4.1",
     "steal": "git://github.com/bitovi/steal.git#master",
     "traceur": "0.0.32",
