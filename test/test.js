@@ -1,3 +1,4 @@
+var winston = require('winston');
 var dependencyGraph = require("../lib/graph/make_graph"),
 	comparify = require("comparify"),
 	bundle = require("../lib/graph/make_graph_with_bundles"),
@@ -12,6 +13,7 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	pluginify = require("../lib/build/pluginifier"),
 	fs = require('fs');
 
+winston.remove(winston.transports.Console);
 
 describe('dependency graph', function(){
     it('should work', function(done){
