@@ -39,17 +39,9 @@ var command = argv._[0];
 
 // Load steal-tools
 var stealTools = require("../index");
-var StealTransport = require('../lib/logger').Steal;
-
-winston.remove(winston.transports.Console);
-winston.add(StealTransport, {
-  level: argv.verbose ? 'debug' : 'info',
-  colorize: true,
-  silent: argv.quiet && !argv.verbose
-});
 
 if(command === "build"){
-	
+
 	return build();
 
 } else if(command === "pluginify") {
@@ -63,6 +55,9 @@ function build() {
 	stealTools.build({
 		config: config,
 		main: argv.main
+	}, {
+		verbose: argv.verbose,
+		quiet: argv.quiet
 	}).then(function(){
 		winston.info('\nBuild completed successfully'.green);
 	});
@@ -81,6 +76,9 @@ function pluginify() {
 	stealTools.pluginify({
 		config: config,
 		main: argv.main
+	}, {
+		verbose: argv.verbose,
+		quiet: argv.quiet
 	}).then(function(pluginify){
 
 		var content = pluginify(null, {
