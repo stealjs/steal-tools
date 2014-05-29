@@ -96,7 +96,7 @@ describe('dependency graph', function(){
 
 describe("bundle", function(){
 	
-	it("should work", function(done){
+	it.only("should work", function(done){
 		
 		bundle({
 			config: __dirname+"/bundle/stealconfig.js",

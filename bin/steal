@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+var winston = require('winston');
 var yargs = require("yargs")
 	.usage("Usage: $0 [build|pluginify] --main app --config path/to/stealconfig.js")
 	.demand(["config", "main"])
@@ -6,6 +7,8 @@ var yargs = require("yargs")
 	.describe("main", "The application's entry point module")
 	.describe("ignore", "For pluginify, a comma-separated list of modules to not include in the output")
 	.describe("out", "For pluginify, specify an output file")
+  .describe("verbose", "Verbose output")
+  .describe("quiet", "Quiet output")
 	.check(function(argv){
 		var command = argv._[0];
 
@@ -37,6 +40,13 @@ var command = argv._[0];
 // Load steal-tools
 var stealTools = require("../index");
 
+winston.remove(winston.transports.Console);
+winston.add(winston.transports.Console, {
+  level: argv.verbose ? 'debug' : 'info',
+  colorize: true,
+  silent: argv.quiet && !argv.verbose
+});
+
 if(command === "build"){
 	
 	return build();
@@ -53,7 +63,7 @@ function build() {
 		config: config,
 		main: argv.main
 	}).then(function(){
-		console.log("Build completed successfully");
+		winston.info("Build completed successfully");
 	});
 
 }
