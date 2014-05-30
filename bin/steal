@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+var winston = require('winston');
 var yargs = require("yargs")
 	.usage("Usage: $0 [build|pluginify] --main app --config path/to/stealconfig.js")
 	.demand(["config", "main"])
@@ -6,6 +7,8 @@ var yargs = require("yargs")
 	.describe("main", "The application's entry point module")
 	.describe("ignore", "For pluginify, a comma-separated list of modules to not include in the output")
 	.describe("out", "For pluginify, specify an output file")
+  .describe("verbose", "Verbose output")
+  .describe("quiet", "Quiet output")
 	.check(function(argv){
 		var command = argv._[0];
 
@@ -38,7 +41,7 @@ var command = argv._[0];
 var stealTools = require("../index");
 
 if(command === "build"){
-	
+
 	return build();
 
 } else if(command === "pluginify") {
@@ -52,8 +55,11 @@ function build() {
 	stealTools.build({
 		config: config,
 		main: argv.main
+	}, {
+		verbose: argv.verbose,
+		quiet: argv.quiet
 	}).then(function(){
-		console.log("Build completed successfully");
+		winston.info('\nBuild completed successfully'.green);
 	});
 
 }
@@ -70,6 +76,9 @@ function pluginify() {
 	stealTools.pluginify({
 		config: config,
 		main: argv.main
+	}, {
+		verbose: argv.verbose,
+		quiet: argv.quiet
 	}).then(function(pluginify){
 
 		var content = pluginify(null, {
