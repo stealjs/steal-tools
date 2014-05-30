@@ -189,7 +189,7 @@ var open = function(url, callback, done){
 
 
 describe("multi build", function(){
-	
+
 	it("should work", function(done){
 		
 		rmdir(__dirname+"/bundle/bundles", function(error){
@@ -219,11 +219,9 @@ describe("multi build", function(){
 			
 			
 		});
-		
-		
 	});
 
-	describe("uglifier", function() {
+	describe("minifier", function() {
 		var config;
 
 		beforeEach(function(done) {
@@ -258,7 +256,7 @@ describe("multi build", function(){
 			}).catch(done);
 		});
 
-		it("should allow setting uglify options", function(done){
+		it("should allow setting uglify-js options", function(done){
 			var options = {
 				uglifyOptions: {
 					mangle: false // skip mangling names.
@@ -270,6 +268,22 @@ describe("multi build", function(){
 					hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
 
 				assert(hasLongVariable, "uglifier set to skip mangling names");
+				done();
+			}).catch(done);
+		});
+
+		it("should allow setting clean-css options", function(done){
+			var options = {
+				cleanCSSOptions: {
+					keepSpecialComments: 0 // remove all, default '*'
+				}
+			};
+
+			multiBuild(config, options).then(function(){
+				var actual = fs.readFileSync(__dirname + "/minify/bundles/minify.css", "utf8"),
+					lackSpecialComment = actual.indexOf("a special comment") === -1;
+
+				assert(lackSpecialComment, "clean css set to remove special comments");
 				done();
 			}).catch(done);
 		});
