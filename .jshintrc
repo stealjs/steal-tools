@@ -6,7 +6,8 @@
 		"after": true,
 		"exports": true,
 		"Promise": true,
-		"System": true
+		"System": true,
+		"beforeEach": true
 	},
 	"loopfunc": true,
 	"eqnull": true,
