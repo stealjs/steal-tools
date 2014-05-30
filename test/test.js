@@ -265,9 +265,11 @@ describe("multi build", function(){
 
 			multiBuild(config, options).then(function(){
 				var actual = fs.readFileSync(__dirname + "/minify/bundles/minify.js", "utf8"),
-					hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
+					hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1,
+					hasAnotherLongVariable = actual.indexOf("anotherLongVariableName") !== -1;
 
-				assert(hasLongVariable, "uglifier set to skip mangling names");
+				assert(hasLongVariable, "skip mangling names in dependencies graph files");
+				assert(hasAnotherLongVariable, "skip mangling names in stealconfig and main files");
 				done();
 			}).catch(done);
 		});
