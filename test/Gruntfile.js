@@ -3,10 +3,12 @@ module.exports = function(grunt){
 
 	grunt.initConfig({
 		stealBuild: {
-			all: {
+			bundle: {
 				options: {
-					config: __dirname + "/bundle/stealconfig.js",
-					main: "bundle"
+					system: {
+						config: __dirname + "/bundle/stealconfig.js",
+						main: "bundle"
+					}
 				}
 			}
 		},

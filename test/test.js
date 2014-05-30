@@ -196,7 +196,6 @@ var open = function(url, callback, done){
 describe("multi build", function(){
 
 	it("should work", function(done){
-
 		rmdir(__dirname+"/bundle/bundles", function(error){
 			if(error){
 				done(error)
@@ -206,9 +205,9 @@ describe("multi build", function(){
 				config: __dirname+"/bundle/stealconfig.js",
 				main: "bundle"
 			}, {
-				quiet: true
+				quiet: true,
+				distDir: ''
 			}).then(function(data){
-
 				open("test/bundle/bundle.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
 							assert(true, "got A");
@@ -236,7 +235,7 @@ describe("multi build", function(){
 			main: "minify"
 		};
 
-		rmdir(__dirname+"/minify/bundles", function(error){
+		rmdir(__dirname+"/minify/dist", function(error){
 			if(error) {
 				done(error);
 				return;
@@ -244,7 +243,7 @@ describe("multi build", function(){
 
 			multiBuild(config, { quiet: true }).then(function(){
 
-				var actual = fs.readFileSync(__dirname + "/minify/bundles/minify.js", "utf8");
+				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
 
 				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
 
@@ -269,7 +268,7 @@ describe("multi build", function(){
 			quiet: true
 		};
 
-		rmdir(__dirname+"/minify/bundles", function(error){
+		rmdir(__dirname+"/minify/dist", function(error){
 			if(error) {
 				done(error);
 				return;
@@ -277,7 +276,7 @@ describe("multi build", function(){
 
 			multiBuild(config, options).then(function(){
 
-				var actual = fs.readFileSync(__dirname + "/minify/bundles/minify.js", "utf8");
+				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
 
 				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
 
@@ -292,25 +291,25 @@ describe("multi build", function(){
 
 	});
 
-	it("Allows specifying a bundle location", function(done){
+	it("Allows specifying an alternative dist directory", function(done){
 		var config = {
 			config: __dirname + "/stealconfig.js",
 			main: "basics/basics"
 		};
 
 		var options = {
-			bundlesDir: __dirname + "/other_bundles",
+			distDir: __dirname + "/other_dist",
 			quiet: true
 		};
 
-		rmdir(__dirname + "/other_bundles", function(error){
+		rmdir(__dirname + "/other_dist", function(error){
 			if(error) {
 				done(error);
 				return;
 			}
 
 			multiBuild(config, options).then(function(){
-				var fileExists = fs.existsSync(__dirname + "/other_bundles/basics.js");
+				var fileExists = fs.existsSync(__dirname + "/other_dist/bundles/basics.js");
 
 				assert(fileExists, "File written to alternative bundle location.");
 
@@ -339,7 +338,7 @@ describe("plugins", function(){
 
 	it("work built", function(done){
 		// remove the bundles dir
-		rmdir(__dirname+"/plugins/bundles", function(error){
+		rmdir(__dirname+"/plugins/dist/bundles", function(error){
 
 			if(error){
 				done(error)
@@ -372,7 +371,7 @@ describe("plugins", function(){
 
 	it("work built using steal", function(done){
 		// remove the bundles dir
-		rmdir(__dirname+"/plugins/bundles", function(error){
+		rmdir(__dirname+"/plugins/dist", function(error){
 
 			if(error){
 				done(error)
@@ -408,7 +407,7 @@ describe("plugins", function(){
 
 	it("work with css buildType", function(done){
 
-		rmdir(__dirname+"/build_types/bundles", function(error){
+		rmdir(__dirname+"/build_types/dist", function(error){
 
 			if(error){
 				done(error)
@@ -440,7 +439,7 @@ describe("plugins", function(){
 	});
 
 	it("can build less", function(done){
-		rmdir(__dirname+"/dep_plugins/bundles", function(error){
+		rmdir(__dirname+"/dep_plugins/dist", function(error){
 
 			if(error){
 				done(error)
@@ -471,7 +470,7 @@ describe("plugins", function(){
 	});
 
 	it("builds paths correctly", function(done){
-		rmdir(__dirname+"/css_paths/bundles", function(error){
+		rmdir(__dirname+"/css_paths/dist", function(error){
 
 			if(error){
 				done(error)

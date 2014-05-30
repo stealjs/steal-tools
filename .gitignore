@@ -11,7 +11,7 @@ test/bundle/bundles/
 test/pluginify/out.js
 test/dep_plugins/bundles
 test/bundles/
-test/other_bundles/
+test/other_dist/
 test/minify/bundles/
 test/build_types/bundles/
 test/css_paths/bundles/
