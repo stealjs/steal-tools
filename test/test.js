@@ -565,7 +565,7 @@ describe("plugins", function(){
 
 						var count = 0;
 						styleContent.replace(/url\(['"]?([^'"\)]*)['"]?\)/g, function(whole, part){
-							assert.equal(part,"../images/hero-ribbons.png", "reference is correct");
+							assert.equal(part,"../../images/hero-ribbons.png", "reference is correct");
 							count++;
 						});
 						assert.equal(count, 3, "correct number of styles");
