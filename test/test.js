@@ -1,3 +1,4 @@
+var winston = require('winston');
 var dependencyGraph = require("../lib/graph/make_graph"),
 	comparify = require("comparify"),
 	bundle = require("../lib/graph/make_graph_with_bundles"),
@@ -10,17 +11,21 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	path = require('path'),
 	rmdir = require('rimraf'),
 	pluginify = require("../lib/build/pluginifier"),
-	fs = require('fs');
-
+	fs = require('fs'),
+	logging = require('../lib/logger');
 
 describe('dependency graph', function(){
-    it('should work', function(done){
-		
+	beforeEach(function() {
+		logging.setup({ quiet: true });
+	});
+
+	it('should work', function(done){
+
 		dependencyGraph({
 			config: __dirname+"/stealconfig.js",
 			startId: "basics"
 		}).then(function(data){
-			
+
 			var result = comparify(data.graph, {
 				stealconfig: {
 					load: {}
@@ -45,19 +50,19 @@ describe('dependency graph', function(){
 					dependencies:["basics/amdmodule"]
 				}
 			}, true);
-			
-			
+
+
 			done();
 
-			
+
 		}).catch(function(e){
 			done(e)
 		});
-		
+
     });
 
 		it("Should allow extra config options to be passed in", function(done){
-			
+
 			dependencyGraph({
 				config: __dirname + "/stealconfig.js",
 				startId: "basics",
@@ -95,30 +100,30 @@ describe('dependency graph', function(){
 });
 
 describe("bundle", function(){
-	
+
 	it("should work", function(done){
-		
+
 		bundle({
 			config: __dirname+"/bundle/stealconfig.js",
 			startId: "bundle.js"
 		}).then(function(data){
-			
+
 			var graphCompare = require('./bundle/bundle_graph');
 			comparify(data.graph, graphCompare, true);
 			done();
-			
+
 		}).catch(function(e){
 			done(e)
 		});
 	});
-	
+
 });
 
 
 describe("order", function(){
-	
+
 	it("should work", function(){
-		
+
 		var graph = {
 		   "a":{
 		      "deps":[ "dep_a_b",  "dep_all" ],
@@ -137,7 +142,7 @@ describe("order", function(){
 		      dependencies: []
 		   }
 		};
-		
+
 		orderGraph(graph,"a");
 		comparify(graph, {
 		   "a":{
@@ -153,9 +158,9 @@ describe("order", function(){
 		      order: 1
 		   }
 		}, true);
-		
+
 	});
-	
+
 });
 
 var find = function(browser, property, callback, done){
@@ -185,23 +190,25 @@ var open = function(url, callback, done){
 					server.close();
 					done(e)
 				});
-}
+};
 
 
 describe("multi build", function(){
-	
+
 	it("should work", function(done){
-		
+
 		rmdir(__dirname+"/bundle/bundles", function(error){
 			if(error){
 				done(error)
 			}
-			
+
 			multiBuild({
 				config: __dirname+"/bundle/stealconfig.js",
 				main: "bundle"
+			}, {
+				quiet: true
 			}).then(function(data){
-	
+
 				open("test/bundle/bundle.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
 							assert(true, "got A");
@@ -210,17 +217,17 @@ describe("multi build", function(){
 							close();
 					}, close);
 				}, done);
-				
-				
+
+
 			}).catch(function(e){
 				done(e);
 			});
-			
-			
-			
+
+
+
 		});
-		
-		
+
+
 	});
 
 	it("Should minify by default", function(done){
@@ -235,12 +242,12 @@ describe("multi build", function(){
 				return;
 			}
 
-			multiBuild(config).then(function(){
+			multiBuild(config, { quiet: true }).then(function(){
 
 				var actual = fs.readFileSync(__dirname + "/minify/bundles/minify.js", "utf8");
 
 				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
-				
+
 				assert(!hasLongVariable, "Minified source renamed long variable.");
 
 				done();
@@ -258,7 +265,8 @@ describe("multi build", function(){
 		};
 
 		var options = {
-			minify: false
+			minify: false,
+			quiet: true
 		};
 
 		rmdir(__dirname+"/minify/bundles", function(error){
@@ -266,13 +274,13 @@ describe("multi build", function(){
 				done(error);
 				return;
 			}
-		
+
 			multiBuild(config, options).then(function(){
 
 				var actual = fs.readFileSync(__dirname + "/minify/bundles/minify.js", "utf8");
 
 				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
-				
+
 				assert(hasLongVariable, "Source includes long variable name.");
 
 				done();
@@ -291,7 +299,8 @@ describe("multi build", function(){
 		};
 
 		var options = {
-			bundlesDir: __dirname + "/other_bundles"
+			bundlesDir: __dirname + "/other_bundles",
+			quiet: true
 		};
 
 		rmdir(__dirname + "/other_bundles", function(error){
@@ -323,7 +332,8 @@ describe("multi build", function(){
 				config: __dirname+"/bundle/stealconfig.js",
 				main: "bundle"
 			},{
-				bundleSteal: true
+				bundleSteal: true,
+				quiet: true
 			}).then(function(data){
 	
 				open("test/bundle/packaged_steal.html#a",function(browser, close){
@@ -358,7 +368,8 @@ describe("multi build", function(){
 				config: __dirname+"/bundle/stealconfig.js",
 				main: "bundle"
 			},{
-				bundleSteal: true
+				bundleSteal: true,
+				quiet: true
 			}).then(function(data){
 	
 				open("test/bundle/folder/packaged_steal.html#a",function(browser, close){
@@ -382,27 +393,26 @@ describe("multi build", function(){
 		
 	});
 	
-	
 });
 
 describe("plugins", function(){
 	it("work on the client", function(done){
-		
+
 		open("test/plugins/site.html", function(browser, close){
-			
+
 			find(browser,"PLUGTEXT", function(plugText){
 					assert.equal(plugText, "client-Holler", "client can do plugins");
 					close();
 			}, close);
-			
+
 		}, done);
-		
+
 	});
-	
+
 	it("work built", function(done){
 		// remove the bundles dir
 		rmdir(__dirname+"/plugins/bundles", function(error){
-			
+
 			if(error){
 				done(error)
 			}
@@ -411,29 +421,31 @@ describe("plugins", function(){
 			multiBuild({
 				config: __dirname+"/plugins/config.js",
 				main: "main"
+			}, {
+				quiet: true
 			}).then(function(data){
 				// open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/plugins/prod.html", function(browser, close){
-			
+
 					find(browser,"PLUGTEXT", function(plugText){
 							assert.equal(plugText, "server-Holler", "server can do plugins");
 							close();
 					}, close);
-					
+
 				}, done);
-				
+
 			}).catch(function(e){
 				done(e);
 			});
 		});
-		
+
 	});
 
 	it("work built using steal", function(done){
 		// remove the bundles dir
 		rmdir(__dirname+"/plugins/bundles", function(error){
-			
+
 			if(error){
 				done(error)
 			}
@@ -446,28 +458,30 @@ describe("plugins", function(){
 				paths: {
 					"plug/plug": "plug.js"
 				}
+			}, {
+				quiet: true
 			}).then(function(data){
 				// open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/plugins/prod-steal.html", function(browser, close){
-			
+
 					find(browser,"PLUGTEXT", function(plugText){
 							assert.equal(plugText, "server-Holler", "server can do plugins");
 							close();
 					}, close);
-					
+
 				}, done);
-				
+
 			}).catch(function(e){
 				done(e);
 			});
 		});
 	});
-	
+
 	it("work with css buildType", function(done){
-		
+
 		rmdir(__dirname+"/build_types/bundles", function(error){
-			
+
 			if(error){
 				done(error)
 			}
@@ -476,28 +490,30 @@ describe("plugins", function(){
 			multiBuild({
 				config: __dirname+"/build_types/config.js",
 				main: "main"
+			}, {
+				quiet: true
 			}).then(function(data){
 
 				// open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/build_types/prod.html", function(browser, close){
-			
+
 					find(browser,"STYLE_CONTENT", function(styleContent){
 						assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
 						close();
 					}, close);
-					
+
 				}, done);
-				
+
 			}).catch(function(e){
 				done(e);
 			});
 		});
 	});
-	
+
 	it("can build less", function(done){
 		rmdir(__dirname+"/dep_plugins/bundles", function(error){
-			
+
 			if(error){
 				done(error)
 			}
@@ -506,27 +522,29 @@ describe("plugins", function(){
 			multiBuild({
 				config: __dirname+"/dep_plugins/config.js",
 				main: "main"
+			}, {
+				quiet: true
 			}).then(function(data){
 				// open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/dep_plugins/prod.html", function(browser, close){
-			
+
 					find(browser,"STYLE_CONTENT", function(styleContent){
 						assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
 						close();
 					}, close);
-					
+
 				}, done);
-				
+
 			}).catch(function(e){
 				done(e);
 			});
 		});
 	});
-	
+
 	it("builds paths correctly", function(done){
 		rmdir(__dirname+"/css_paths/bundles", function(error){
-			
+
 			if(error){
 				done(error)
 			}
@@ -535,13 +553,15 @@ describe("plugins", function(){
 			multiBuild({
 				config: __dirname+"/css_paths/config.js",
 				main: "main"
+			}, {
+				quiet: true
 			}).then(function(data){
 				// open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/css_paths/prod.html", function(browser, close){
-			
+
 					find(browser,"STYLE_CONTENT", function(styleContent){
-						
+
 						var count = 0;
 						styleContent.replace(/url\(['"]?([^'"\)]*)['"]?\)/g, function(whole, part){
 							assert.equal(part,"../images/hero-ribbons.png", "reference is correct");
@@ -550,49 +570,50 @@ describe("plugins", function(){
 						assert.equal(count, 3, "correct number of styles");
 						close();
 					}, close);
-					
+
 				}, done);
-				
+
 			}).catch(function(e){
 				done(e);
 			});
 		});
 	})
-	
+
 });
 
 
 describe("pluginify", function(){
-	
+
 	it("basics should work", function(done){
-		
+
 		pluginify({
 			config: __dirname+"/stealconfig.js",
 			main: "pluginify/pluginify"
 		}, {
-			exports: {}
+			exports: {},
+			quiet: true
 		}).then(function(pluginify){
-			
-			
+
+
 			fs.writeFile(__dirname+"/pluginify/out.js", pluginify(), function(err) {
 			    // open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/pluginify/index.html", function(browser, close){
-			
+
 					find(browser,"RESULT", function(result){
 						assert(result.module.es6module, "have dependeny");
 						close();
 					}, close);
-					
+
 				}, done);
-			}); 
-			
-			
+			});
+
+
 		}).catch(function(e){
 			console.log(e.stack)
 		});
-		
-		
+
+
 	});
 
 	it("ignores files told to ignore", function(done){
@@ -601,7 +622,8 @@ describe("pluginify", function(){
 			config: __dirname + "/stealconfig.js",
 			main: "pluginify/pluginify"
 		}, {
-			exports: {}				 
+			exports: {},
+			quiet: true
 		}).then(function(pluginify){
 
 			// Get the resulting string, ignoring amdmodule
@@ -616,7 +638,7 @@ describe("pluginify", function(){
 		}).then(done);
 
 	});
-	
-	
+
+
 });
 
