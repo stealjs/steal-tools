@@ -190,7 +190,7 @@ var open = function(url, callback, done){
 					server.close();
 					done(e)
 				});
-}
+};
 
 
 describe("multi build", function(){
@@ -319,7 +319,81 @@ describe("multi build", function(){
 		});
 
 	});
-
+	
+	it("allows bundling steal", function(done){
+		
+		rmdir(__dirname+"/bundle/bundles", function(error){
+			if(error){
+				done(error)
+			}
+			
+			multiBuild({
+				config: __dirname+"/bundle/stealconfig.js",
+				main: "bundle"
+			},{
+        distDir: "",
+				bundleSteal: true,
+				quiet: true
+			}).then(function(data){
+	
+				open("test/bundle/packaged_steal.html#a",function(browser, close){
+					find(browser,"appA", function(appA){
+						assert(true, "got A");
+						assert.equal(appA.name, "a", "got the module");
+						assert.equal(appA.ab.name, "a_b", "a got ab");
+						close();
+					}, close);
+				}, done);
+				
+				
+			}).catch(function(e){
+				done(e);
+			});
+			
+			
+			
+		});
+		
+		
+	});
+	
+	it("allows bundling steal and loading from alternate locations", function(done){
+		
+		rmdir(__dirname+"/bundle/bundles", function(error){
+			if(error){
+				done(error)
+			}
+			
+			multiBuild({
+				config: __dirname+"/bundle/stealconfig.js",
+				main: "bundle"
+			},{
+				bundleSteal: true,
+				quiet: true,
+        distDir: ""
+			}).then(function(data){
+	
+				open("test/bundle/folder/packaged_steal.html#a",function(browser, close){
+					find(browser,"appA", function(appA){
+						assert(true, "got A");
+						assert.equal(appA.name, "a", "got the module");
+						assert.equal(appA.ab.name, "a_b", "a got ab");
+						close();
+					}, close);
+				}, done);
+				
+				
+			}).catch(function(e){
+				done(e);
+			});
+			
+			
+			
+		});
+		
+		
+	});
+	
 });
 
 describe("plugins", function(){
