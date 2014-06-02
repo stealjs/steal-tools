@@ -5,6 +5,7 @@ var yargs = require("yargs")
 	.demand(["config", "main"])
 	.describe("config", "Path to the config file")
 	.describe("main", "The application's entry point module")
+	.describe("dist-dir", "Defaults to dist/, a directory to save the bundles")
 	.describe("ignore", "For pluginify, a comma-separated list of modules to not include in the output")
 	.describe("out", "For pluginify, specify an output file")
   .describe("verbose", "Verbose output")
@@ -57,7 +58,8 @@ function build() {
 		main: argv.main
 	}, {
 		verbose: argv.verbose,
-		quiet: argv.quiet
+		quiet: argv.quiet,
+		distDir: argv.distDir
 	}).then(function(){
 		winston.info('\nBuild completed successfully'.green);
 	});
