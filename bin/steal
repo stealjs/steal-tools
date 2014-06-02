@@ -6,6 +6,7 @@ var yargs = require("yargs")
 	.describe("config", "Path to the config file")
 	.describe("main", "The application's entry point module")
 	.describe("dist-dir", "Defaults to dist/, a directory to save the bundles")
+	.describe("bundle-steal", "Include steal.js in your main bundled JavaScript")
 	.describe("ignore", "For pluginify, a comma-separated list of modules to not include in the output")
 	.describe("out", "For pluginify, specify an output file")
   .describe("verbose", "Verbose output")
@@ -59,7 +60,8 @@ function build() {
 	}, {
 		verbose: argv.verbose,
 		quiet: argv.quiet,
-		distDir: argv.distDir
+		bundleSteal: argv.bundleSteal,
+		distDir: argv.distDir,
 	}).then(function(){
 		winston.info('\nBuild completed successfully'.green);
 	});
