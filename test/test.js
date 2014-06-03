@@ -196,7 +196,7 @@ var open = function(url, callback, done){
 describe("multi build", function(){
 
 	it("should work", function(done){
-		rmdir(__dirname+"/bundle/bundles", function(error){
+		rmdir(__dirname+"/bundle/dist", function(error){
 			if(error){
 				done(error)
 			}
@@ -205,8 +205,7 @@ describe("multi build", function(){
 				config: __dirname+"/bundle/stealconfig.js",
 				main: "bundle"
 			}, {
-				quiet: true,
-				distDir: ''
+				quiet: true
 			}).then(function(data){
 				open("test/bundle/bundle.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
@@ -293,27 +292,30 @@ describe("multi build", function(){
 
 	it("Allows specifying an alternative dist directory", function(done){
 		var config = {
-			config: __dirname + "/stealconfig.js",
-			main: "basics/basics"
+			config: __dirname + "/other_bundle/stealconfig.js",
+			main: "bundle"
 		};
 
 		var options = {
-			distDir: __dirname + "/other_dist",
+			distDir: __dirname + "/other_bundle/other_dist",
 			quiet: true
 		};
 
-		rmdir(__dirname + "/other_dist", function(error){
+		rmdir(__dirname + "/other_bundle/other_dist", function(error){
 			if(error) {
 				done(error);
 				return;
 			}
 
 			multiBuild(config, options).then(function(){
-				var fileExists = fs.existsSync(__dirname + "/other_dist/bundles/basics.js");
-
-				assert(fileExists, "File written to alternative bundle location.");
-
-				done();
+				open("test/other_bundle/bundle.html#a",function(browser, close){
+					find(browser,"appA", function(appA){
+							assert(true, "got A");
+							assert.equal(appA.name, "a", "got the module");
+							assert.equal(appA.ab.name, "a_b", "a got ab");
+							close();
+					}, close);
+				}, done);
 			});
 
 		});
@@ -331,7 +333,6 @@ describe("multi build", function(){
 				config: __dirname+"/bundle/stealconfig.js",
 				main: "bundle"
 			},{
-        distDir: "",
 				bundleSteal: true,
 				quiet: true
 			}).then(function(data){
@@ -359,7 +360,7 @@ describe("multi build", function(){
 	
 	it("allows bundling steal and loading from alternate locations", function(done){
 		
-		rmdir(__dirname+"/bundle/bundles", function(error){
+		rmdir(__dirname+"/bundle/alternate", function(error){
 			if(error){
 				done(error)
 			}
@@ -370,7 +371,7 @@ describe("multi build", function(){
 			},{
 				bundleSteal: true,
 				quiet: true,
-        distDir: ""
+        distDir: __dirname + "/bundle/alternate"
 			}).then(function(data){
 	
 				open("test/bundle/folder/packaged_steal.html#a",function(browser, close){
