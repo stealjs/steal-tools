@@ -399,7 +399,7 @@ describe("multi build", function(){
 		
 	});
 	
-	it.only("builds and can load transpiled ES6 modules", function(done){
+	it("builds and can load transpiled ES6 modules", function(done){
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
 				done(error)
@@ -409,7 +409,7 @@ describe("multi build", function(){
 				config: __dirname+"/stealconfig.js",
 				main: "basics/basics"
 			}, {
-				//quiet: true
+				quiet: true
 			}).then(function(data){
 				open("test/basics/prod.html",function(browser, close){
 					find(browser,"MODULE", function(module){
