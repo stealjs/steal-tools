@@ -197,8 +197,6 @@ describe("order", function(){
 });
 
 
-
-
 describe("multi build", function(){
 
 	it("should work", function(done){
@@ -377,7 +375,7 @@ describe("multi build", function(){
 			},{
 				bundleSteal: true,
 				quiet: true,
-        distDir: __dirname + "/bundle/alternate"
+				distDir: __dirname + "/bundle/alternate"
 			}).then(function(data){
 	
 				open("test/bundle/folder/packaged_steal.html#a",function(browser, close){
@@ -401,6 +399,42 @@ describe("multi build", function(){
 		
 	});
 	
+	it.only("builds and can load transpiled ES6 modules", function(done){
+		rmdir(__dirname+"/dist", function(error){
+			if(error){
+				done(error)
+			}
+
+			multiBuild({
+				config: __dirname+"/stealconfig.js",
+				main: "basics/basics"
+			}, {
+				//quiet: true
+			}).then(function(data){
+				open("test/basics/prod.html",function(browser, close){
+					find(browser,"MODULE", function(module){
+						assert(true, "module");
+						
+						assert.equal(module.name, "module", "module name is right");
+		
+						assert.equal(module.es6module.name, "es6Module", "steal loads ES6");
+						
+						assert.equal(module.es6module.amdModule.name, "amdmodule", "ES6 loads amd");
+						
+						close();
+					}, close);
+				}, done);
+
+
+			}).catch(function(e){
+				done(e);
+			});
+
+
+
+		});
+	
+	});
 });
 
 describe("multi build with plugins", function(){

@@ -11,7 +11,7 @@ steal('basics/module', function(module){
 		QUnit.start();
 		removeMyself();
 	} else {
-		console.log("basics loaded", module);
+		window.MODULE = module;
 	}
 	
 });
