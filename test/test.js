@@ -14,6 +14,40 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	fs = require('fs'),
 	logging = require('../lib/logger');
 
+// Helpers
+var find = function(browser, property, callback, done){
+	var start = new Date();
+	var check = function(){
+		if(browser.window && browser.window[property]) {
+			callback(browser.window[property]);
+		} else if(new Date() - start < 2000){
+			setTimeout(check, 20);
+		} else {
+			done("failed to find "+property);
+		}
+	};
+	check();
+};
+
+var open = function(url, callback, done){
+	var server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
+	var browser = new Browser();
+	browser.visit("http://localhost:8081/"+url)
+		.then(function(){
+			callback(browser, function(){
+				server.close();
+				done();
+			})
+		}).catch(function(e){
+			server.close();
+			done(e)
+		});
+};
+
+
+(function(){
+
+
 describe('dependency graph', function(){
 	beforeEach(function() {
 		logging.setup({ quiet: true });
@@ -25,7 +59,7 @@ describe('dependency graph', function(){
 			config: __dirname+"/stealconfig.js",
 			startId: "basics"
 		}).then(function(data){
-
+			debugger;
 			var result = comparify(data.graph, {
 				stealconfig: {
 					load: {}
@@ -38,7 +72,7 @@ describe('dependency graph', function(){
 					}
 				},
 				'basics/basics': {
-					deps: ['basics/module'],
+					deps: ['basics/module/module'],
 					dependencies: ['basics/module/module']
 				},
 				'basics/module/module': {
@@ -58,45 +92,44 @@ describe('dependency graph', function(){
 		}).catch(function(e){
 			done(e)
 		});
-
     });
 
-		it("Should allow extra config options to be passed in", function(done){
+	it("Should allow extra config options to be passed in", function(done){
 
+		dependencyGraph({
+			config: __dirname + "/stealconfig.js",
+			startId: "basics",
+			extra: "stuff"
+		}).then(function(data){
+			var steal = data.steal;
+			var extra = steal.config("extra");
+
+			assert.equal(extra, "stuff", "Extra config options added");
+		}).then(done);
+
+	});
+
+	describe("Utility functions", function(){
+		it("Map should work", function(done){
 			dependencyGraph({
 				config: __dirname + "/stealconfig.js",
-				startId: "basics",
-				extra: "stuff"
+				startId: "basics"
 			}).then(function(data){
-				var steal = data.steal;
-				var extra = steal.config("extra");
+				var graph = data.graph;
 
-				assert.equal(extra, "stuff", "Extra config options added");
+				var modules = mapDeps(graph, 'basics/basics', function(name){
+					return name;
+				});
+
+				comparify(modules, [
+					"basics/basics", "basics/module/module",
+					"basics/es6module", "basics/amdmodule"
+				], true);
+
 			}).then(done);
 
 		});
-
-		describe("Utility functions", function(){
-			it("Map should work", function(done){
-				dependencyGraph({
-					config: __dirname + "/stealconfig.js",
-					startId: "basics"
-				}).then(function(data){
-					var graph = data.graph;
-
-					var modules = mapDeps(graph, 'basics/basics', function(name){
-						return name;
-					});
-
-					comparify(modules, [
-						"basics/basics", "basics/module/module",
-						"basics/es6module", "basics/amdmodule"
-					], true);
-
-				}).then(done);
-
-			});
-		});
+	});
 });
 
 describe("bundle", function(){
@@ -163,34 +196,7 @@ describe("order", function(){
 
 });
 
-var find = function(browser, property, callback, done){
-	var start = new Date();
-	var check = function(){
-		if(browser.window && browser.window[property]) {
-			callback(browser.window[property]);
-		} else if(new Date() - start < 2000){
-			setTimeout(check, 20);
-		} else {
-			done("failed to find "+property);
-		}
-	};
-	check();
-};
 
-var open = function(url, callback, done){
-	var server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
-			var browser = new Browser();
-			browser.visit("http://localhost:8081/"+url)
-				.then(function(){
-					callback(browser, function(){
-						server.close();
-						done();
-					})
-				}).catch(function(e){
-					server.close();
-					done(e)
-				});
-};
 
 
 describe("multi build", function(){
@@ -322,7 +328,7 @@ describe("multi build", function(){
 
 	});
 	
-	it("allows bundling steal", function(done){
+	it("supports bundling steal", function(done){
 		
 		rmdir(__dirname+"/bundle/bundles", function(error){
 			if(error){
@@ -397,7 +403,7 @@ describe("multi build", function(){
 	
 });
 
-describe("plugins", function(){
+describe("multi build with plugins", function(){
 	it("work on the client", function(done){
 
 		open("test/plugins/site.html", function(browser, close){
@@ -420,6 +426,7 @@ describe("plugins", function(){
 			}
 			// build the project that 
 			// uses a plugin
+			
 			multiBuild({
 				config: __dirname+"/plugins/config.js",
 				main: "main"
@@ -617,9 +624,8 @@ describe("pluginify", function(){
 
 
 	});
-
+	
 	it("ignores files told to ignore", function(done){
-
 		pluginify({
 			config: __dirname + "/stealconfig.js",
 			main: "pluginify/pluginify"
@@ -634,7 +640,7 @@ describe("pluginify", function(){
 			});
 
 			// Regex test to see if the basics/amdmodule is included
-			var includesIgnoredThings = /\*basics\/amdmodule\*/.test(result);
+			var includesIgnoredThings = new RegExp("\\*basics\\/amdmodule\\*").test(result);
 
 			assert.equal(includesIgnoredThings, false, "It excluded the modules told to.");
 		}).then(done);
@@ -644,3 +650,4 @@ describe("pluginify", function(){
 
 });
 
+})();

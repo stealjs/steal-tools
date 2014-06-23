@@ -1,3 +1,5 @@
+debugger;
+
 import {prefix} from 'plugin-dep';
 
 export function translate(load) {

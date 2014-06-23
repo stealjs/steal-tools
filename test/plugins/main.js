@@ -1,3 +1,5 @@
-import template from "template.plug!plug";
+define(["template.plug!plug"], function(template){
+	window.PLUGTEXT = template();
+});
 
-window.PLUGTEXT = template();
+
