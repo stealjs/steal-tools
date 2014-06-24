@@ -27,7 +27,7 @@ structure that looks like:
 
   Using npm:
   
-      > npm install git://github.com/bitovi/steal-tools.git#systemjs --save-dev
+      > npm install steal-tools --save-dev
 
 2.  Create a build script.
 
