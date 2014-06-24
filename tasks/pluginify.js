@@ -1,4 +1,3 @@
-var build = require("../index").build;
 var pluginifier = require("../index").pluginify;
 
 module.exports = function(grunt){
