@@ -59,7 +59,6 @@ describe('dependency graph', function(){
 			config: __dirname+"/stealconfig.js",
 			startId: "basics"
 		}).then(function(data){
-			debugger;
 			var result = comparify(data.graph, {
 				stealconfig: {
 					load: {}

@@ -11,7 +11,7 @@
     "clean-css": "2.1.8",
     "colors": "^0.6.2",
     "lodash": "2.4.1",
-    "steal": "0.2.0",
+    "steal": "git://github.com/bitovi/steal#alias-require",
     "traceur": "0.0.45",
     "transpile": "0.2.0",
     "uglify-js": "2.4.13",
