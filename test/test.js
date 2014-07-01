@@ -644,6 +644,7 @@ describe("pluginify", function(){
 
 					find(browser,"RESULT", function(result){
 						assert(result.module.es6module, "have dependeny");
+						assert(result.other.message, "have other");
 						close();
 					}, close);
 
