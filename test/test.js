@@ -767,6 +767,27 @@ describe("pluginify", function(){
 
 
 	});
+
+	it("works when a file has no callback", function(done) {
+		pluginify({
+			config: __dirname + "/stealconfig.js",
+			main: "nocallback/nocallback"
+		}, {
+			exports: {},
+			quiet: true
+		}).then(function(pluginify) {
+			fs.writeFile(__dirname+"/nocallback/out.js", pluginify(), function(err) {
+			    // open the prod page and make sure
+				// the plugin processed the input correctly
+				open("test/nocallback/index.html", function(browser, close){
+					find(browser, "RESULT", function(result){
+						assert(result.message, "I worked!");
+						close();
+					}, close);
+				}, done);
+			});
+		});
+	});
 });
 
 describe("multi-main", function(){
