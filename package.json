@@ -16,7 +16,8 @@
     "transpile": "0.2.0",
     "uglify-js": "2.4.13",
     "winston": "^0.7.3",
-    "yargs": "^1.2.2"
+    "yargs": "^1.2.2",
+    "fs-extra" :"~0.8.1"
   },
   "devDependencies": {
     "bower": "1.2.8",

@@ -325,6 +325,40 @@ describe("multi build", function(){
 
 	});
 	
+	
+	it("Allows specifying dist as the current folder", function(done){
+		var config = {
+			config: __dirname + "/other_bundle/stealconfig.js",
+			main: "bundle"
+		};
+
+		var options = {
+			distDir: __dirname+"/other_bundle",
+			quiet: true
+		};
+
+		rmdir(__dirname + "/other_bundle/bundles", function(error){
+			if(error) {
+				done(error);
+				return;
+			}
+
+			multiBuild(config, options).then(function(){
+				open("test/other_bundle/bundle-dist.html#a",function(browser, close){
+					find(browser,"appA", function(appA){
+							assert(true, "got A");
+							assert.equal(appA.name, "a", "got the module");
+							assert.equal(appA.ab.name, "a_b", "a got ab");
+							close();
+					}, close);
+				}, done);
+			});
+
+		});
+
+	});
+	
+	
 	it("supports bundling steal", function(done){
 		
 		rmdir(__dirname+"/bundle/bundles", function(error){

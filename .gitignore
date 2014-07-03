@@ -17,3 +17,4 @@ test/minify/bundles/
 test/build_types/bundles/
 test/css_paths/bundles/
 test/plugins/bundles/
+test/other_bundle/bundles/
