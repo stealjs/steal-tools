@@ -20,18 +20,21 @@ will also specify `baseURL`.
 @option {String} [baseURL] If a configuration file is not used, 
 the [System.baseURL baseURL] value must be set.
 
+@option {String} [bundlesPath='dist/bundle']  Specifies the path where the production bundles should be 
+placed. Often, this is the same value as [System.bundlesPath]. By default, the location is `"dist/bundles"`.
+
+The path can be specified in three ways:
+
+
+ - Absolute path - bundlesPath starts with `/` or matches _/^\w+:?[\/\\]/_ like:  `__dirname+"/place"` or `"c:\my\bundles"`.
+ - Relative to `process.cwd()` - bundlesPath starts with `./` like `distDir: "./place"`.
+ - Relative to [System.baseURL baseURL] - bundlesPath looks like: "packages", "foo/bar".
+  
 @param {{}} [options]
 
 Specifies the behavior of the build.
 
-@option {String} [distDir='//dist']  Specifies the path where the build files should be 
-placed. By default, the location is a dist folder directly within the baseURL folder.
 
-The path can be specified in three ways:
-
- - Relative to baseURL - distDir starts with `//` like `distDir: "//place"`
- - Relative to `process.cwd()` - distDir starts with `./` like `distDir: "./place"`
- - Absolute path - distDir does not start with `//` or `./` like `distDir: __dirname+"/place"` 
 
 @option {Boolean} [minify=true] Prevents minification.
 @option {Boolean} [debug=false] Turns on debug messages
