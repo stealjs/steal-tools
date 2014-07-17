@@ -1,4 +1,4 @@
-import 'main.less!steal/less';
+import 'main.less!';
 
 function getFile(url, cb) {
 	var xhr = new XMLHttpRequest();              

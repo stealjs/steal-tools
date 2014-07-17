@@ -26,8 +26,8 @@ placed. Often, this is the same value as [System.bundlesPath]. By default, the l
 The path can be specified in three ways:
 
 
- - Absolute path - bundlesPath starts with `/` or matches _/^\w+:?[\/\\]/_ like:  `__dirname+"/place"` or `"c:\my\bundles"`.
- - Relative to `process.cwd()` - bundlesPath starts with `./` like `distDir: "./place"`.
+ - Absolute path - bundlesPath starts with `/` or matches _/^\w+:[\/\\]/_ like:  `__dirname+"/place"` or `"c:\my\bundles"`.
+ - Relative to `process.cwd()` - bundlesPath starts with `./` like `"./place"`.
  - Relative to [System.baseURL baseURL] - bundlesPath looks like: "packages", "foo/bar".
   
 @param {{}} [options]

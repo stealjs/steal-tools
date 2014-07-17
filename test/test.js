@@ -60,10 +60,10 @@ describe('dependency graph', function(){
 			startId: "basics"
 		}).then(function(data){
 			var result = comparify(data.graph, {
-				stealconfig: {
+				"@config": {
 					load: {}
 				},
-				'steal/dev': {
+				'@dev': {
 					load: {
 						metadata: {
 							// ignore: true
@@ -137,9 +137,8 @@ describe("bundle", function(){
 
 		bundle({
 			config: __dirname+"/bundle/stealconfig.js",
-			startId: "bundle.js"
+			main: "bundle"
 		}).then(function(data){
-
 			var graphCompare = require('./bundle/bundle_graph');
 			comparify(data.graph, graphCompare, true);
 			done();
@@ -296,11 +295,11 @@ describe("multi build", function(){
 	it("Allows specifying an alternative dist directory", function(done){
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
-			main: "bundle"
+			main: "bundle",
+			bundlesPath: __dirname + "/other_bundle/other_dist/bundles"
 		};
 
 		var options = {
-			distDir: __dirname + "/other_bundle/other_dist",
 			quiet: true
 		};
 
@@ -329,11 +328,11 @@ describe("multi build", function(){
 	it("Allows specifying dist as the current folder", function(done){
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
-			main: "bundle"
+			main: "bundle",
+			bundlesPath: __dirname+"/other_bundle/bundles"
 		};
 
 		var options = {
-			distDir: __dirname+"/other_bundle",
 			quiet: true
 		};
 
@@ -404,11 +403,11 @@ describe("multi build", function(){
 			
 			multiBuild({
 				config: __dirname+"/bundle/stealconfig.js",
-				main: "bundle"
+				main: "bundle",
+				bundlesPath: __dirname + "/bundle/alternate/bundles"
 			},{
 				bundleSteal: true,
-				quiet: true,
-				distDir: __dirname + "/bundle/alternate"
+				quiet: true
 			}).then(function(data){
 	
 				open("test/bundle/folder/packaged_steal.html#a",function(browser, close){
@@ -619,6 +618,8 @@ describe("multi build with plugins", function(){
 	});
 
 	it("builds paths correctly", function(done){
+		this.timeout(3000);
+		
 		rmdir(__dirname+"/css_paths/dist", function(error){
 
 			if(error){
