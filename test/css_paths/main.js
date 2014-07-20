@@ -1,4 +1,4 @@
-import 'folder/main.less!steal/less';
+import 'folder/main.less!';
 import 'folder/main.css!';
 import 'style.css!';
 

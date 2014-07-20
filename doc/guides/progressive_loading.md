@@ -1,7 +1,10 @@
+@page StealTools.guides.progressive_loading Progressive Loading
+@parent StealJS.guides
+
 If you have a large single page app, you may want to progressively load parts 
 of the app.  Here's how you might do that:
 
-### Write your modules
+## Write your modules
 
 Write out your main module to load only the bare minimum to determine what "page" you 
 are on. A bare bones example might have a file structure like:
