@@ -1,5 +1,5 @@
 @function stealTools.pluginifier pluginifier
-@parent StealTools.JS 
+@parent steal-tools.JS 
 
 Build a module and its dependencies to work independently of `steal.js`.
 

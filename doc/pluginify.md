@@ -1,5 +1,5 @@
 @function stealTools.pluginify pluginify
-@parent StealTools.JS 
+@parent steal-tools.JS 
 
 A function provided by [stealTools.pluginifier] that can build out a specific module.
 

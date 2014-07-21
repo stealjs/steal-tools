@@ -1,5 +1,5 @@
 @function stealTools.cmd.pluginify stealTools pluginify
-@parent StealTools.cmd 
+@parent steal-tools.cmd 
 
 Pluginifies a module from the command line.
 
@@ -17,7 +17,7 @@ will be converted to a regular expression.
 
 ## Use
 
-StealTools must have been installed into the commandLine like:
+steal-tools must have been installed into the commandLine like:
 
     npm install steal-tools -g
     

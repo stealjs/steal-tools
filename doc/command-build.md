@@ -1,5 +1,5 @@
 @function stealTools.cmd.build stealTools build
-@parent StealTools.cmd 
+@parent steal-tools.cmd 
 
 Builds stealTools from the command line.
 
@@ -13,7 +13,7 @@ Builds stealTools from the command line.
 
 ## Use
 
-StealTools must have been installed into the commandLine like:
+steal-tools must have been installed into the commandLine like:
 
     npm install steal-tools -g
     

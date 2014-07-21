@@ -1,5 +1,5 @@
 @typedef {{}} stealTools.grunt.build stealBuild
-@parent StealTools.grunt 
+@parent steal-tools.grunt 
 
 The `stealBuild` options object values.
 

@@ -1,4 +1,4 @@
-@page StealTools.guides.progressive_loading Progressive Loading
+@page steal-tools.guides.progressive_loading Progressive Loading
 @parent StealJS.guides
 
 If you have a large single page app, you may want to progressively load parts 
