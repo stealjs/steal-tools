@@ -1,17 +1,17 @@
-StealTools is a collection of command-line utilities
+steal-tools is a collection of command-line utilities
 that make building, packaging, and sharing ES6, CommonJS, AMD, and [Steal](https://github.com/bitovi/steal)
 applications easy.
 
 ## Use
 
-Currently, StealTools depends 
+Currently, steal-tools depends 
 on [StealJS](https://github.com/bitovi/steal). Before doing a build, make
 sure StealJS loads your app successfully in the browser.
 
 ### Hello World
 
 If you followed [StealJS's Hello World Example](https://github.com/bitovi/steal),
-the following will walk you through setting up StealTools to build that app.  That app has a 
+the following will walk you through setting up steal-tools to build that app.  That app has a 
 structure that looks like:
 
     ROOT/
@@ -23,7 +23,7 @@ structure that looks like:
 
 `stealconfig.js` is the config file and `main.js` is the main module.
 
-1.  Install StealTools.
+1.  Install steal-tools.
 
   Using npm:
   

@@ -1,5 +1,5 @@
 @function stealTools.grunt.pluginify stealPluginify
-@parent StealTools.grunt 
+@parent steal-tools.grunt 
 
 @body
 

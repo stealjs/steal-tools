@@ -1,5 +1,5 @@
 @function stealTools.build build
-@parent StealTools.JS 
+@parent steal-tools.JS 
 
 Build a module and all of its dependencies and optionally other bundles to progressively load.
 
@@ -60,4 +60,4 @@ for any `bundle` module.
 
 ## Implementation
 
-Implemented in [StealTools](https://github.com/bitovi/steal-tools).
+Implemented in [steal-tools](https://github.com/bitovi/steal-tools).
