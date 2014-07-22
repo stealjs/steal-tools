@@ -23,7 +23,7 @@ var find = function(browser, property, callback, done){
 		} else if(new Date() - start < 2000){
 			setTimeout(check, 20);
 		} else {
-			done("failed to find "+property);
+			done("failed to find "+property+" in "+browser.window.location.href);
 		}
 	};
 	check();
@@ -34,9 +34,9 @@ var open = function(url, callback, done){
 	var browser = new Browser();
 	browser.visit("http://localhost:8081/"+url)
 		.then(function(){
-			callback(browser, function(){
+			callback(browser, function(err){
 				server.close();
-				done();
+				done(err);
 			})
 		}).catch(function(e){
 			server.close();
@@ -717,22 +717,30 @@ describe("pluginify", function(){
 	});
 
 });
-/*
+
 describe("multi-main", function(){
 	it("should work", function(done){
+		this.timeout(10000);
 		var mains = ["app_a","app_b","app_c","app_d"],
 			ab = {name: "a_b"},
 			cd = {name: "c_d"},
 			all = {name: "all"},
 			results = {
 				app_a: {
-					name: "a",
-					ab: ab,
-					all: all
+					name: "a", ab: ab, all: all
+				},
+				app_b: {
+					name: "b", ab: ab, all: all
+				},
+				app_c:{
+					name: "b", cd: cd, all: all
+				},
+				app_d:{
+					name: "d", cd: cd, all: all
 				}
 			};
 		
-		rmdir(__dirname+"/bundle/dist", function(error){
+		rmdir(__dirname+"/multi-main/dist", function(error){
 			if(error){
 				done(error)
 			}
@@ -741,24 +749,30 @@ describe("multi-main", function(){
 				config: __dirname+"/multi-main/config.js",
 				main: mains
 			}, {
-				//quiet: true
+				quiet: true
+				//verbose: true
 			}).then(function(data){
 				
 				var checkNext = function(next){
 					if(next) {
 						open("test/multi-main/"+next+".html",function(browser, close){
 							find(browser,"app", function(app){
-									assert(true, "got app");
-									comparify(results[next], app);
-									close();
+							
+								assert(true, "got app");
+								comparify(results[next], app);
+								close();
+								
 							}, close);
+							
 						}, function(err){
 							if(err) {
 								done(err);
 							} else {
-								var mynext = mains.pop();
+								var mynext = mains.shift();
 								if(mynext) {
-									checkNext(mynext)
+									setTimeout(function(){
+										checkNext(mynext)
+									},1);
 								} else {
 									done();
 								}
@@ -771,13 +785,10 @@ describe("multi-main", function(){
 			}).catch(function(e){
 				done(e);
 			});
-
-
-
 		});
 
 
 	});
-})*/
+})
 
 })();
