@@ -587,6 +587,7 @@ describe("multi build with plugins", function(){
 	});
 
 	it("can build less", function(done){
+		this.timeout(10000);
 		rmdir(__dirname+"/dep_plugins/dist", function(error){
 
 			if(error){
@@ -715,7 +716,68 @@ describe("pluginify", function(){
 
 	});
 
-
 });
+/*
+describe("multi-main", function(){
+	it("should work", function(done){
+		var mains = ["app_a","app_b","app_c","app_d"],
+			ab = {name: "a_b"},
+			cd = {name: "c_d"},
+			all = {name: "all"},
+			results = {
+				app_a: {
+					name: "a",
+					ab: ab,
+					all: all
+				}
+			};
+		
+		rmdir(__dirname+"/bundle/dist", function(error){
+			if(error){
+				done(error)
+			}
+
+			multiBuild({
+				config: __dirname+"/multi-main/config.js",
+				main: mains
+			}, {
+				//quiet: true
+			}).then(function(data){
+				
+				var checkNext = function(next){
+					if(next) {
+						open("test/multi-main/"+next+".html",function(browser, close){
+							find(browser,"app", function(app){
+									assert(true, "got app");
+									comparify(results[next], app);
+									close();
+							}, close);
+						}, function(err){
+							if(err) {
+								done(err);
+							} else {
+								var mynext = mains.pop();
+								if(mynext) {
+									checkNext(mynext)
+								} else {
+									done();
+								}
+							}
+						});
+					}
+				};
+				checkNext( mains.pop() );
+
+			}).catch(function(e){
+				done(e);
+			});
+
+
+
+		});
+
+
+	});
+})*/
 
 })();
