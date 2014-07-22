@@ -14,7 +14,9 @@ a [System] loader. The [System.main main] option must be specified. Typically
 most other __build__ configuration values are specified in
 by [System.buildConfig] in the config file.
 
-@option {String} main The module whos dependencies should be built.
+@option {String|Array<moduleName>} main The module or modules whos dependencies 
+should be built.  If main is specified as an Array, 
+
 @option {String} [config] The path to a configuration file. This
 will also specify `baseURL`.
 @option {String} [baseURL] If a configuration file is not used, 
@@ -37,14 +39,15 @@ Specifies the behavior of the build.
 
 
 @option {Boolean} [minify=true] Prevents minification.
-@option {Boolean} [debug=false] Turns on debug messages
+@option {Boolean} [debug=false] `true` turns on debug messages.
 @option {Boolean} [quiet=false] No logging.
 @option {Boolean} [bundleSteal=false] Set to true to include steal in the main bundle.
 @option {Array.<moduleName>} bundle An array of module names that should be
 progressively loaded.
-@option {Number} [bundleDepth=3] The total number of bundles that need to be loaded
+@option {Number} [bundleDepth=3] The maximum number of bundles that need to be loaded
 for any `bundle` module.
-
+@option {Number} [mainDepth=3] The maximum number of bundles that will be loaded for any `main`
+module.
 
 
 @return {{}}
@@ -57,6 +60,23 @@ for any `bundle` module.
 @body
 
 ## Use
+
+    var stealTools = require("steal-tools");
+    
+    stealTools.build({
+      main: ["login","homepage"],
+      config: __dirname+"/config.js"
+    },{
+      bundleSteal: true,
+      // the following are the default values, so you don't need
+      // to write them.
+      minify: true,
+      debug: false,
+      quiet: false,
+      bundleDepth: 3,
+      mainDepth: 3
+    })
+
 
 ## Implementation
 

@@ -23,7 +23,7 @@ var find = function(browser, property, callback, done){
 		} else if(new Date() - start < 2000){
 			setTimeout(check, 20);
 		} else {
-			done("failed to find "+property);
+			done("failed to find "+property+" in "+browser.window.location.href);
 		}
 	};
 	check();
@@ -34,9 +34,9 @@ var open = function(url, callback, done){
 	var browser = new Browser();
 	browser.visit("http://localhost:8081/"+url)
 		.then(function(){
-			callback(browser, function(){
+			callback(browser, function(err){
 				server.close();
-				done();
+				done(err);
 			})
 		}).catch(function(e){
 			server.close();
@@ -587,6 +587,7 @@ describe("multi build with plugins", function(){
 	});
 
 	it("can build less", function(done){
+		this.timeout(10000);
 		rmdir(__dirname+"/dep_plugins/dist", function(error){
 
 			if(error){
@@ -715,7 +716,146 @@ describe("pluginify", function(){
 
 	});
 
-
 });
+
+describe("multi-main", function(){
+	it("should work", function(done){
+		this.timeout(10000);
+		var mains = ["app_a","app_b","app_c","app_d"],
+			ab = {name: "a_b"},
+			cd = {name: "c_d"},
+			all = {name: "all"},
+			results = {
+				app_a: {
+					name: "a", ab: ab, all: all
+				},
+				app_b: {
+					name: "b", ab: ab, all: all
+				},
+				app_c:{
+					name: "b", cd: cd, all: all
+				},
+				app_d:{
+					name: "d", cd: cd, all: all
+				}
+			};
+		
+		rmdir(__dirname+"/multi-main/dist", function(error){
+			if(error){
+				done(error)
+			}
+
+			multiBuild({
+				config: __dirname+"/multi-main/config.js",
+				main: mains
+			}, {
+				quiet: true
+				//verbose: true
+			}).then(function(data){
+				
+				var checkNext = function(next){
+					if(next) {
+						open("test/multi-main/"+next+".html",function(browser, close){
+							find(browser,"app", function(app){
+							
+								assert(true, "got app");
+								comparify(results[next], app);
+								close();
+								
+							}, close);
+							
+						}, function(err){
+							if(err) {
+								done(err);
+							} else {
+								var mynext = mains.shift();
+								if(mynext) {
+									setTimeout(function(){
+										checkNext(mynext)
+									},1);
+								} else {
+									done();
+								}
+							}
+						});
+					}
+				};
+				checkNext( mains.pop() );
+
+			}).catch(function(e){
+				done(e);
+			});
+		});
+	});
+	
+	it("works with steal bundled", function(done){
+		this.timeout(10000);
+		var mains = ["app_a","app_b","app_c","app_d"],
+			ab = {name: "a_b"},
+			cd = {name: "c_d"},
+			all = {name: "all"},
+			results = {
+				app_a: {
+					name: "a", ab: ab, all: all
+				},
+				app_b: {
+					name: "b", ab: ab, all: all
+				},
+				app_c:{
+					name: "b", cd: cd, all: all
+				},
+				app_d:{
+					name: "d", cd: cd, all: all
+				}
+			};
+		
+		rmdir(__dirname+"/multi-main/dist", function(error){
+			if(error){
+				done(error)
+			}
+
+			multiBuild({
+				config: __dirname+"/multi-main/config.js",
+				main: mains
+			}, {
+				bundleSteal: true,
+				quiet: true
+			}).then(function(data){
+				
+				var checkNext = function(next){
+					if(next) {
+						open("test/multi-main/bundle_"+next+".html",function(browser, close){
+							find(browser,"app", function(app){
+							
+								assert(true, "got app");
+								comparify(results[next], app);
+								close();
+								
+							}, close);
+							
+						}, function(err){
+							if(err) {
+								done(err);
+							} else {
+								var mynext = mains.shift();
+								if(mynext) {
+									setTimeout(function(){
+										checkNext(mynext)
+									},1);
+								} else {
+									done();
+								}
+							}
+						});
+					}
+				};
+				checkNext( mains.pop() );
+
+			}).catch(function(e){
+				done(e);
+			});
+		});
+	});
+})
 
 })();
