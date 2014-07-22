@@ -1,62 +1,14 @@
-steal-tools is a collection of command-line utilities
-that make building, packaging, and sharing ES6, CommonJS, AMD, and [Steal](https://github.com/bitovi/steal)
-applications easy.
+# steal-tools
 
-## Use
+[![Build Status](https://travis-ci.org/bitovi/steal-tools.svg?branch=master)](https://travis-ci.org/bitovi/steal-tools)
 
-Currently, steal-tools depends 
-on [StealJS](https://github.com/bitovi/steal). Before doing a build, make
-sure StealJS loads your app successfully in the browser.
+`steal-tools` is a collection of command-line utilities
+that make building ES6, CommonJS, AMD, and [Steal](https://github.com/bitovi/steal)
+applications easy and load _fast_.
 
-### Hello World
+It is one half of the [StealJS](http://stealjs.com) project.  It's other half,
+[steal](https://github.com/bitovi/steal) provides client-side dependency management.
 
-If you followed [StealJS's Hello World Example](https://github.com/bitovi/steal),
-the following will walk you through setting up steal-tools to build that app.  That app has a 
-structure that looks like:
+For more information on `steal-tools`, visit [stealjs.com](http://stealjs.com).
 
-    ROOT/
-      bower.json
-      bower_components/
-      stealconfig.js
-      index.html
-      main.js
-
-`stealconfig.js` is the config file and `main.js` is the main module.
-
-1.  Install steal-tools.
-
-  Using npm:
-  
-      > npm install steal-tools --save-dev
-
-2.  Create a build script.
-
-  In your build script, add:
-  
-  ```js
-  var stealTools = require('steal-tools');
-  stealTools.build({
-    config: "path/to/ROOT/stealconfig.js",
-    main: "main"
-  }).then(function(){
-    console.log("build is successful")
-  })
-  ```
-  
-  Notice that the `config` option includes the path to the configuration file.  Your script
-  might want to use `__dirname`.  `stealTools.build` returns a deferred when the build is complete.
-
-3. Run your build script.
-
-  This will produce a `ROOT/bundles/main.js`.
-
-4. Switch to production.  
-
-  In `index.html`, switch to production by adding `data-env='production'` to the steal `<script>` tag:
-
-  ```html
-  <script src='./bower_components/steal/steal.js'
-          data-config='stealconfig.js'
-          data-main='main'
-          data-env-'production'></script>
-  ```
+For information on contributing and developing `steal-tools`, go [here](http://127.0.0.1:8125/steal.com/docs/guides.Contributing.html).
