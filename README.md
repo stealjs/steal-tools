@@ -3,8 +3,10 @@
 [![Build Status](https://travis-ci.org/bitovi/steal-tools.svg?branch=master)](https://travis-ci.org/bitovi/steal-tools)
 
 `steal-tools` is a collection of command-line utilities
-that make building ES6, CommonJS, AMD, and [Steal](https://github.com/bitovi/steal)
-applications easy and load _fast_.
+that:
+ 
+ - makes building ES6, CommonJS, AMD, and applications _easy_, and 
+ - writes those builds so your apps load _fast_.
 
 It is one half of the [StealJS](http://stealjs.com) project.  It's other half,
 [steal](https://github.com/bitovi/steal) provides client-side dependency management.
