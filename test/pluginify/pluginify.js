@@ -1,8 +1,9 @@
-steal('basics/module', function(module){
+steal('basics/module', './common.js', function(module, cjs){
 	
 	window.RESULT = {
 		name: "pluginified",
-		module: module
+		module: module,
+    cjs: cjs
 	};
 
 	

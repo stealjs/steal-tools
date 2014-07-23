@@ -663,7 +663,6 @@ describe("multi build with plugins", function(){
 describe("pluginify", function(){
 
 	it("basics should work", function(done){
-
 		pluginify({
 			config: __dirname+"/stealconfig.js",
 			main: "pluginify/pluginify"
@@ -680,6 +679,7 @@ describe("pluginify", function(){
 
 					find(browser,"RESULT", function(result){
 						assert(result.module.es6module, "have dependeny");
+						assert(result.cjs(), "cjs");
 						close();
 					}, close);
 
