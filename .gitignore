@@ -9,6 +9,7 @@ bower_components
 
 test/bundle/bundles/
 test/pluginify/out.js
+test/pluginify_plugins/out.js
 test/dep_plugins/bundles
 test/bundles/
 test/other_bundle/other_dist/
