@@ -19,4 +19,4 @@ steal-tools must have been installed into the commandLine like:
     
 Then you can run `stealTools` like:
 
-    stealTools build --config app/config.js --main app/app
+    steal build --config app/config.js --main app/app
