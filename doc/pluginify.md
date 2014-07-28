@@ -24,4 +24,12 @@ matches module names that should not be included in the pluginified output.
 
 If keepDevTags is true, this code is not removed.
 
+@option {Boolean} [useNormalizedDependencies=true] Use normalized dependency names instead of
+relative module names.  For example "foo/bar" will be used instead of "./bar".
+
+@option {function(String, String, String)} [normalize(name, currentModule, address)] An
+optional function that will normalize all module names written out. Use this for custom normalization
+behavior.
+
+
 @return {String} The result of `moduleName` being pluginified.
