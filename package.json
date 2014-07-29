@@ -38,7 +38,7 @@
     "zombie": "1.4.1"
   },
   "bin": {
-    "steal": "bin/steal"
+    "steal-tools": "bin/steal"
   },
   "main": "index",
   "homepage": "git://github.com/bitovi/steal-tools.git",
