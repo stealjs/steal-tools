@@ -716,6 +716,38 @@ describe("pluginify", function(){
 
 	});
 
+	it("Omits plugin files", function(done){
+		pluginify({
+			config:  __dirname + "/pluginify_plugins/config.js",
+			main: "main"
+		}, {
+			exports: {},
+			quiet: true
+		}).then(function(pluginify){
+
+
+			fs.writeFile(__dirname+"/pluginify_plugins/out.js", pluginify(), function(err) {
+			    // open the prod page and make sure
+				// the plugin processed the input correctly
+				open("test/pluginify_plugins/index.html", function(browser, close){
+
+					find(browser,"RESULT", function(result){
+						assert(result, "It worked!");
+						close();
+					}, close);
+
+				}, done);
+			});
+
+
+		}).catch(function(e){
+			console.log(e.stack)
+		});
+
+
+	});
+
+
 });
 
 describe("multi-main", function(){
