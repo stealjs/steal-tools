@@ -716,6 +716,52 @@ describe("pluginify", function(){
 
 	});
 
+	it("makes plugins that depend on other made plugins",function(done){
+
+		pluginify({
+			config: __dirname+"/pluginify_deps/config.js",
+			main: "plugin"
+		}, {
+			exports: {},
+			quiet: true
+		}).then(function(pluginify){
+			var pluginOut = pluginify("plugin",{
+				ignore: ["util"],
+				minify: false
+			});
+			var utilOut = pluginify("util",{
+				ignore: ["lib"],
+				minify: false,
+				exports: {
+					"lib" : "lib" 
+				}
+			});
+
+			fs.writeFile(__dirname+"/pluginify_deps/out/plugin.js", pluginOut, function(err) {
+			    
+			    fs.writeFile(__dirname+"/pluginify_deps/out/util.js", utilOut, function(err) {
+					
+					// open the prod page and make sure
+					// the plugin processed the input correctly
+					open("test/pluginify_deps/prod.html", function(browser, close){
+	
+						find(browser,"plugin", function(plugin){
+							assert.equal(plugin.util.lib.name, "lib");
+							close();
+						}, close);
+	
+					}, done);
+				
+			    });
+			    
+			});
+
+		}).catch(function(e){
+			console.log(e.stack)
+		});
+
+
+	});
 });
 
 describe("multi-main", function(){

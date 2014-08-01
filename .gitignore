@@ -18,3 +18,4 @@ test/build_types/bundles/
 test/css_paths/bundles/
 test/plugins/bundles/
 test/other_bundle/bundles/
+test/pluginify_deps/out/
