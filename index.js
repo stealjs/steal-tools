@@ -1,9 +1,9 @@
 var multiBuild = require("./lib/build/multi");
-var pluginify = require("./lib/build/pluginifier");
+var pluginifier = require("./lib/build/pluginifier");
 
 module.exports = {
 	build: multiBuild,
-	pluginify: pluginify,
+	pluginifier: pluginifier,
 	graph: {
 		each: require("./lib/graph/each_dependencies"),
 		map: require("./lib/graph/map_dependencies"),
