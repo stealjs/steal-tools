@@ -6,7 +6,7 @@ test/css_paths/bundles/
 node_modules
 bower_components
 /packages/
-
+test/out/
 test/bundle/bundles/
 test/pluginify/out.js
 test/dep_plugins/bundles

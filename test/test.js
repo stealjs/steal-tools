@@ -12,7 +12,8 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	rmdir = require('rimraf'),
 	pluginify = require("../lib/build/pluginifier"),
 	fs = require('fs'),
-	logging = require('../lib/logger');
+	logging = require('../lib/logger'),
+	pluginifierBuilder = require('../lib/build/pluginifier_builder');
 
 // Helpers
 var find = function(browser, property, callback, done){
@@ -902,6 +903,42 @@ describe("multi-main", function(){
 			});
 		});
 	});
-})
+});
+
+describe("pluginifier builder", function(){
+	it.only("works", function(done){
+		
+		pluginifierBuilder({
+			
+			system: {
+				main: "pluginifier_builder/pluginify",
+				config: __dirname+"/stealconfig.js"
+			},
+			options: {
+				quiet: true
+			},
+			"outputs": {
+				"basics standalone": {
+					modules: ["basics/module/module"],
+					out: function(){
+						return __dirname+"/out/basics.js"
+					},
+					minify: false
+				},
+				"pluginify without basics": {
+					modules: ["pluginifier_builder/pluginify"],
+					ignore: ["basics/module/module"],
+					out: function(){
+						return __dirname+"/out/pluginify.js"
+					},
+					minify: false
+				}
+			}
+		}, [{}], {}, function(err){
+			done(err);
+		});
+	});
+});
+
 
 })();
