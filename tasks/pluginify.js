@@ -7,7 +7,7 @@ module.exports = function(grunt){
 		var options = this.data;
 		["system","outputs"].forEach(function(name){
 			if(!options[name]) {
-				grunt.fail.warn("stealPluginify needs a "+name+" property");
+				grunt.fail.warn("stealPluginify needs a "+name+" property.");
 			}
 		});
 		pluginifierBuilder(options, grunt.config('meta.modules'), grunt.config('meta.defaults'), done);
