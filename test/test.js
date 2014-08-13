@@ -11,7 +11,7 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	path = require('path'),
 	rmdir = require('rimraf'),
 	pluginify = require("../lib/build/pluginifier"),
-	fs = require('fs'),
+	fs = require('fs-extra'),
 	logging = require('../lib/logger'),
 	pluginifierBuilder = require('../lib/build/pluginifier_builder');
 
@@ -738,23 +738,27 @@ describe("pluginify", function(){
 				}
 			});
 
-			fs.writeFile(__dirname+"/pluginify_deps/out/plugin.js", pluginOut, function(err) {
-			    
-			    fs.writeFile(__dirname+"/pluginify_deps/out/util.js", utilOut, function(err) {
+			fs.mkdirs(__dirname+"/pluginify_deps/out", function(err) {
+
+				fs.writeFile(__dirname+"/pluginify_deps/out/plugin.js", pluginOut, function(err) {
 					
-					// open the prod page and make sure
-					// the plugin processed the input correctly
-					open("test/pluginify_deps/prod.html", function(browser, close){
-	
-						find(browser,"plugin", function(plugin){
-							assert.equal(plugin.util.lib.name, "lib");
-							close();
-						}, close);
-	
-					}, done);
-				
-			    });
-			    
+					fs.writeFile(__dirname+"/pluginify_deps/out/util.js", utilOut, function(err) {
+						
+						// open the prod page and make sure
+						// the plugin processed the input correctly
+						open("test/pluginify_deps/prod.html", function(browser, close){
+		
+							find(browser,"plugin", function(plugin){
+								assert.equal(plugin.util.lib.name, "lib");
+								close();
+							}, close);
+		
+						}, done);
+					
+					});
+					
+				});
+
 			});
 
 		}).catch(function(e){
