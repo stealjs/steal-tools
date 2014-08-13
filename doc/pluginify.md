@@ -7,68 +7,59 @@ A function provided by [stealTools.pluginifier] that can build out a specific mo
 
 @param {moduleName} [moduleName=config.main] The module name to build.
 
-@param {{}} [options]
+@param {stealTools.pluginify.options} [options]
 
 Options that configure how the files are compiled.  These options overwrite the 
 `pluginifierOptions` argument passed to [stealTools.pluginifier].
 
-@option {Array.<RegExp|String>} [ignore] An Array of regular expression or strings that 
-are used to specify [moduleName]'s that should not be included in the 
-output.  
-
-Module names that match the regular expressions are not included. The following
-ignores everything in _can/util/_.
-
-    pluginify("can/construct",{ignore: [/^can\/util\/]});
-
-
-Module names and their dependenceis that match the 
-strings in the array are not included. The following will not include
-"can/construct" and all of its dependencies:
-
-    pluginify("can/component",{ignore: ["can/construct"]});
-
-@option {Boolean} [removeDevelopmentCode=true] By default, removes code in between comments like:
-
-    //!steal-remove-start
-    REMOVE.THIS;
-    //!steal-remove-end
-
-If removeDevelopmentCode is `false`, this code is not removed.
-
-@option {String} [format='global'] What format the output will be transpiled to.  By default
-the format is `"global"`.  `"global"` means the code will be transpiled to work
-standalone.  Module dependencies that are not included should be mapped to their
-name on the global object in exports.
-
-The other possible format values are "steal","amd", and "cjs".
-
-@option {Object<moduleName,String>} A mapping of module names to their name on the
-global object.  For example, if an output depends on jQuery, but does not include it, you
-should include:
-
-    pluginify("mywidget",{exports: {"jquery": "jQuery"}})
-
-__note__ - In future release, 
-these values will be taken directly from [System.shim] configuration values.
-
-@option {Boolean} [useNormalizedDependencies=true] Use normalized dependency names instead of
-relative module names.  For example "foo/bar" will be used instead of "./bar".
-
-@option {function(String, String, String)} [normalize(name, currentModule, address)] An
-optional function that will normalize all module names written out. Use this for custom normalization
-behavior.
-
-@option {Boolean} [minify=true] By default, the output is minified.
-Set to `false` to prevent minification.
-
-@option {Boolean} [ignoreAllDependencies=false] By default, the dependencies of
-the module specified are included unless they are explicitly ignored.  Setting
-_ignoreAllDependencies_ to `true` only results in returning that individual module
-as the output.
-
-@option {includeTraceurRuntime} [includeTraceurRuntime=true] By default, if an ES6 module
-is found, the [@traceur] runtime is packaged with the output.  Setting this to `false`
-prevents that behavior.
-
 @return {String} The result of `moduleName` being pluginified.
+
+@body
+
+## Use
+
+After getting `pluginify` from [stealTools.pluginifier] you can call it like:
+
+    var result = pluginify("module/name/to/build", {
+      // specifies modules to ignore
+      ignore: [
+        // ignores this module and all of its dependencies
+        "module/name/to/ignore",
+        // ignores modules names matching this pattern
+        /can\//
+      ],
+      
+      // Remove code between !steal-remove-start and !steal-remove-end.
+      // true by default.
+      removeDevelopmentCode: true,
+      
+      // Transpile the code to either "amd","steal","cjs" or "global".
+      // "global", the default, allows the file to work without any module loader.
+      format: "global",
+      
+      // Minify the file using uglify.
+      // `false` by default.
+      minify: true,
+      
+      // Only write the module specified by `moduleName` instead of its dependencies.
+      // `false` by default.
+      ignoreAllDependencies: false
+      
+      // Map module names to their name on the global object. Useful for
+      // building "global" modules that depend on other scripts already in the page.
+      exports: {"jquery": "jQuery"},
+      
+      // Transpile to normalized dependency names.
+      // `true` by default.
+      useNormalizedDependencies: true
+      
+      // Custom normalization behavior
+      // By default the normalized name is used.
+      normalize: function(name, currentModule, address){
+        return name;
+      }
+      
+    });
+    
+Most of these options are optional.  For more 
+information, read [stealTools.pluginify.options pluginifyOptions].

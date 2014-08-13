@@ -1,7 +1,7 @@
 {
   "name": "steal-tools",
   "description": "Futuristic build tools for ES6 Module applications.",
-  "version": "0.4.1-pre",
+  "version": "0.5.0-pre",
   "author": {
     "name": "Bitovi",
     "email": "contact@bitovi.com",

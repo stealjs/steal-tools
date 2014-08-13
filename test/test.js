@@ -906,7 +906,7 @@ describe("multi-main", function(){
 });
 
 describe("pluginifier builder", function(){
-	it.only("works", function(done){
+	it("basics work", function(done){
 		
 		pluginifierBuilder({
 			
@@ -920,7 +920,7 @@ describe("pluginifier builder", function(){
 			"outputs": {
 				"basics standalone": {
 					modules: ["basics/module/module"],
-					out: function(){
+					dest: function(){
 						return __dirname+"/out/basics.js"
 					},
 					minify: false
@@ -928,14 +928,25 @@ describe("pluginifier builder", function(){
 				"pluginify without basics": {
 					modules: ["pluginifier_builder/pluginify"],
 					ignore: ["basics/module/module"],
-					out: function(){
+					dest: function(){
 						return __dirname+"/out/pluginify.js"
 					},
 					minify: false
 				}
 			}
 		}, [{}], {}, function(err){
-			done(err);
+			
+			open("test/pluginifier_builder/index.html", function(browser, close){
+	
+				find(browser,"RESULT", function(result){
+					assert.ok(result.module, "has module");
+					assert.ok(result.cjs,"has cjs module");
+					assert.equal(result.name, "pluginified");
+					close();
+				}, close);
+
+			}, done);
+			
 		});
 	});
 });
