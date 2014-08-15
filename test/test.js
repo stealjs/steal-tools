@@ -767,6 +767,23 @@ describe("pluginify", function(){
 
 
 	});
+
+	it("Excludes plugins from the built output unless marked includeInBuild", function(done){
+		pluginify({
+			config: __dirname+"/plugins/config.js",
+			main: "main"
+		}, {
+			exports: {},
+			quiet: true
+		}).then(function(pluginify){
+			var pluginOut = pluginify(null, {
+				minify: false
+			});
+
+			assert.equal(/System\.set/.test(pluginOut), false,
+						 "No System.set in the output");
+		}).then(done);
+	});
 });
 
 describe("multi-main", function(){
