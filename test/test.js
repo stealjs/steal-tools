@@ -249,9 +249,11 @@ describe("multi build", function(){
 
 				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
 				var hasGlobalLongVariable = actual.indexOf("anotherVeryLongName") !== -1;
+				var hasDevCode = actual.indexOf("remove this") !== -1;
 
 				assert(!hasLongVariable, "Minified source renamed long variable.");
 				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
+				assert(!hasDevCode, "Minified source has dev code removed.");
 
 			}).then(done);
 		});
