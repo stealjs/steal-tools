@@ -468,6 +468,28 @@ describe("multi build", function(){
 		});
 	
 	});
+
+
+	it("Returns an error when building a main that doesn\'t exist", function(done){
+		var config = {
+			config: __dirname + "/stealconfig.js",
+			main: "some/fake/app"
+		};
+
+		var options = {
+			quiet: true
+		};
+
+		multiBuild(config, options).then(function onFulfilled(){
+			// If we get then the error wasn't caught properly
+			assert(false, "Build completed successfully when there should have been an error");
+			done();
+		}, function onRejected(err){
+			assert(err instanceof Error, "Caught an error when loading a fake main");
+			done();
+		});
+
+	});
 });
 
 describe("multi build with plugins", function(){
