@@ -248,13 +248,12 @@ describe("multi build", function(){
 				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
 
 				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
+				var hasGlobalLongVariable = actual.indexOf("anotherVeryLongName") !== -1;
 
 				assert(!hasLongVariable, "Minified source renamed long variable.");
+				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
 
-				done();
-			}).catch(function(e){
-				done(e);
-			});
+			}).then(done);
 		});
 
 	});
