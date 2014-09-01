@@ -48,6 +48,7 @@ progressively loaded.
 for any `bundle` module.
 @option {Number} [mainDepth=3] The maximum number of bundles that will be loaded for any `main`
 module.
+@option {Boolean} [removeDevelopmentCode=true] Remove any development code from the bundle specified using `//!steal-remove-start` and `//!steal-remove-end` comments.
 
 
 @return {{}}
