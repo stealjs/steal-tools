@@ -1,5 +1,7 @@
 "format cjs";
 
+var global = require("global");
+
 var thisObjectHasABigName = {
 	foo: "bar" 
 };
