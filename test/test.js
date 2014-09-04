@@ -212,10 +212,11 @@ describe("multi build", function(){
 			}).then(function(data){
 				open("test/bundle/bundle.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
-							assert(true, "got A");
-							assert.equal(appA.name, "a", "got the module");
-							assert.equal(appA.ab.name, "a_b", "a got ab");
-							close();
+						assert(true, "got A");
+						assert.equal(appA.name, "a", "got the module");
+						assert.equal(appA.ab.name, "a_b", "a got ab");
+						assert.equal(appA.clean, undefined, "removed dev code");
+						close();
 					}, close);
 				}, done);
 
