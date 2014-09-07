@@ -337,6 +337,66 @@ describe("multi build", function(){
 
 	});
 
+	it("Should allow setting uglify-js options", function(done) {
+		var config = {
+			config: __dirname + "/minify/config.js",
+			main: "minify"
+		};
+
+		var options = {
+			quiet: true,
+			uglifyOptions: {
+				mangle: false // skip mangling names.
+			}
+		};
+
+		rmdir(__dirname + "/minify/dist", function(error){
+			if(error) {
+				done(error);
+				return;
+			}
+
+			multiBuild(config, options).then(function(){
+				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8"),
+					hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1,
+					hasAnotherLongVariable = actual.indexOf("anotherLongVariableName") !== -1;
+
+				assert(hasLongVariable, "Skip mangling names in dependencies graph files");
+				assert(hasAnotherLongVariable, "skip mangling names in stealconfig and main files");
+				done();
+			}).catch(done);
+		});
+	});
+
+	it("Should allow setting clean-css options", function(done) {
+		var config = {
+			config: __dirname + "/minify/config.js",
+			main: "minify"
+		};
+
+		var options = {
+			quiet: true,
+			cleanCSSOptions: {
+				keepSpecialComments: 0 // remove all, default '*'
+			}
+		};
+
+		rmdir(__dirname + "/minify/dist", function(error){
+			if(error) {
+				done(error);
+				return;
+			}
+
+			multiBuild(config, options).then(function(){
+				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8"),
+					lackSpecialComment = actual.indexOf("a special comment") === -1;
+
+				assert(lackSpecialComment, "clean-css set to remove special comments");
+				done();
+			}).catch(done);
+		});
+	});
+
 	it("Allows specifying an alternative dist directory", function(done){
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
