@@ -461,9 +461,7 @@ describe("multi build", function(){
 				}, done);
 
 
-			}).catch(function(e){
-				done(e);
-			});
+			}, done);
 
 
 
@@ -482,26 +480,30 @@ describe("multi build", function(){
 			quiet: true
 		};
 
+		// Temporarily swallow console.logs to prevent 404 showing.
+		var log = console.log;
+		console.log = function(){};
+
 		multiBuild(config, options).then(function onFulfilled(){
 			// If we get then the error wasn't caught properly
 			assert(false, "Build completed successfully when there should have been an error");
-			done();
 		}, function onRejected(err){
 			assert(err instanceof Error, "Caught an error when loading a fake main");
-			done();
-		});
+		}).then(function() {
+			// Set back console.log
+			console.log = log;
+		}).then(done);
 
 	});
 });
 
 describe("multi build with plugins", function(){
 	it("work on the client", function(done){
-
 		open("test/plugins/site.html", function(browser, close){
 
 			find(browser,"PLUGTEXT", function(plugText){
-					assert.equal(plugText, "client-Holler", "client can do plugins");
-					close();
+				assert.equal(plugText, "client-Holler", "client can do plugins");
+				close();
 			}, close);
 
 		}, done);
