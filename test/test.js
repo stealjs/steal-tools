@@ -694,7 +694,9 @@ describe("pluginify", function(){
 			config: __dirname+"/stealconfig.js",
 			main: "pluginify/pluginify"
 		}, {
-			exports: {},
+			exports: {
+				'pluginify/global': 'globalModule'
+			},
 			quiet: true
 		}).then(function(pluginify){
 
@@ -707,6 +709,7 @@ describe("pluginify", function(){
 					find(browser,"RESULT", function(result){
 						assert(result.module.es6module, "have dependeny");
 						assert(result.cjs(), "cjs");
+						assert.equal(result.global, "This is a global module", "Global module loaded");
 						close();
 					}, close);
 
