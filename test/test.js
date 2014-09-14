@@ -32,10 +32,7 @@ var find = function(browser, property, callback, done){
 
 var open = function(url, callback, done){
 	var server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
-	var browser = Browser.create();//new Browser();
-	browser.on('console', function(lvl, msg){ 
-		console.log(lvl, msg);
-	});
+	var browser = Browser.create();
 	browser.visit("http://localhost:8081/"+url)
 		.then(function(){
 			callback(browser, function(err){

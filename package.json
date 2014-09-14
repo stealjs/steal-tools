@@ -11,7 +11,7 @@
     "clean-css": "2.1.8",
     "colors": "^0.6.2",
     "lodash": "2.4.1",
-    "steal": "git://github.com/bitovi/steal#16249da0d28fe4d032c8444249ac3e51ff5d1779",
+    "steal": "git://github.com/bitovi/steal#605d2ec497873f287e14f98c14c0c02f2da7b983",
     "traceur": "0.0.58",
     "transpile": "git://github.com/bitovi/transpile#d8a3b000ee8e493e97fae253d48c5b2bbe2757eb",
     "uglify-js": "~2.4.13",
@@ -35,7 +35,7 @@
     "grunt-simple-mocha": "^0.4.0",
     "mocha": "1.18.2",
     "rimraf": "2.1",
-    "zombie": "2.0.0-alpha31"
+    "zombie": "2.0.0-alpha27"
   },
   "bin": {
     "steal-tools": "bin/steal"
