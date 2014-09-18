@@ -442,7 +442,8 @@ describe("multi build", function(){
 				config: __dirname+"/stealconfig.js",
 				main: "basics/basics"
 			}, {
-				quiet: true
+				quiet: true,
+				minify: false
 			}).then(function(data){
 				open("test/basics/prod.html",function(browser, close){
 					find(browser,"MODULE", function(module){
@@ -492,41 +493,6 @@ describe("multi build", function(){
 			console.log = log;
 		}).then(done);
 
-	});
-	
-	it.only("supports multiple builds at once", function(done){
-		console.log("here")
-		rmdir(__dirname+"/bundle/dist", function(error){
-			if(error){
-				done(error)
-			}
-
-			var first = multiBuild({
-					config: __dirname+"/bundle/stealconfig.js",
-					main: "bundle",
-					systemName: "1"
-				}, {
-					verbose: true
-				});
-
-			var second = multiBuild({
-					config: __dirname+"/bundle/stealconfig.js",
-					main: "bundle",
-					bundlesPath: __dirname+"/bundle_multiple_builds",
-					systemName: "2"
-				}, {
-					verbose: true
-				})
-
-			Promise.all([first, second]).then(function(data){
-				done();
-
-
-			}).catch(function(e){
-				done(e);
-			});
-		});
-		
 	});
 	
 });
@@ -648,7 +614,6 @@ describe("multi build with plugins", function(){
 	});
 
 	it("can build less", function(done){
-		this.timeout(10000);
 		rmdir(__dirname+"/dep_plugins/dist", function(error){
 
 			if(error){
@@ -680,8 +645,6 @@ describe("multi build with plugins", function(){
 	});
 
 	it("builds paths correctly", function(done){
-		this.timeout(3000);
-		
 		rmdir(__dirname+"/css_paths/dist", function(error){
 
 			if(error){
@@ -869,7 +832,6 @@ describe("pluginify", function(){
 
 describe("multi-main", function(){
 	it("should work", function(done){
-		this.timeout(10000);
 		var mains = ["app_a","app_b","app_c","app_d"],
 			ab = {name: "a_b"},
 			cd = {name: "c_d"},
@@ -938,7 +900,6 @@ describe("multi-main", function(){
 	});
 	
 	it("works with steal bundled", function(done){
-		this.timeout(10000);
 		var mains = ["app_a","app_b","app_c","app_d"],
 			ab = {name: "a_b"},
 			cd = {name: "c_d"},
@@ -1051,6 +1012,99 @@ describe("pluginifier builder", function(){
 			
 		});
 	});
+});
+
+describe("@loader used in configs", function() {
+	
+	it("works built", function(done) {
+
+		rmdir(__dirname+"/current-loader/dist", function(error){
+			if(error){
+				done(error)
+			}
+			// build the project that uses @loader
+			multiBuild({
+				config: __dirname + "/current-loader/config.js",
+				main: "main"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				// open the prod page and make sure
+				// and make sure the module loaded successfully
+				open("test/current-loader/prod.html", function(browser, close){
+
+					find(browser,"moduleValue", function(moduleValue){
+						assert.equal(moduleValue, "Loader config works", "@loader worked when built.");
+						close();
+					}, close);
+
+				}, done);
+
+			}).catch(done);
+		});
+
+
+	});
+
+	it("works with es6", function(done) {
+		rmdir(__dirname+"/current-loader/dist", function(error){
+			if(error){
+				done(error)
+			}
+			// build the project that uses @loader
+			multiBuild({
+				config: __dirname + "/current-loader/esconfig.js",
+				main: "main"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				// open the prod page and make sure
+				// and make sure the module loaded successfully
+				open("test/current-loader/prod.html", function(browser, close){
+
+					find(browser,"moduleValue", function(moduleValue){
+						assert.equal(moduleValue, "Loader config works", "@loader worked when built.");
+						close();
+					}, close);
+
+				}, done);
+
+			}).catch(done);
+		});
+
+	});
+
+	it("supports multiple builds at once", function(done){
+		rmdir(__dirname+"/bundle/dist", function(error){
+			if(error){ return done(error); }
+
+			var first = multiBuild({
+					config: __dirname+"/bundle/stealconfig.js",
+					main: "bundle",
+					systemName: "1"
+				}, {
+					quiet: true
+				});
+
+			var second = multiBuild({
+					config: __dirname+"/bundle/stealconfig.js",
+					main: "bundle",
+					bundlesPath: __dirname+"/bundle_multiple_builds",
+					systemName: "2"
+				}, {
+					quiet: true
+				})
+
+			Promise.all([first, second]).then(function(data){
+				done();
+			}).catch(done);
+		});
+		
+	});
+
+
 });
 
 
