@@ -495,6 +495,42 @@ describe("multi build", function(){
 		}).then(done);
 
 	});
+	
+	it.only("supports multiple builds at once", function(done){
+		console.log("here")
+		rmdir(__dirname+"/bundle/dist", function(error){
+			if(error){
+				done(error)
+			}
+
+			var first = multiBuild({
+					config: __dirname+"/bundle/stealconfig.js",
+					main: "bundle",
+					systemName: "1"
+				}, {
+					verbose: true
+				});
+
+			var second = multiBuild({
+					config: __dirname+"/bundle/stealconfig.js",
+					main: "bundle",
+					bundlesPath: __dirname+"/bundle_multiple_builds",
+					systemName: "2"
+				}, {
+					verbose: true
+				})
+
+			Promise.all([first, second]).then(function(data){
+				done();
+
+
+			}).catch(function(e){
+				done(e);
+			});
+		});
+		
+	});
+	
 });
 
 describe("multi build with plugins", function(){

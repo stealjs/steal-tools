@@ -1,4 +1,8 @@
-steal.config({
+var loader = require('@loader');
+
+console.log(loader.systemName,"STEALCONFIG.js");
+
+loader.config({
 	map: {
 		"app_a/app_a" : "app_a",
 		"app_b/app_b" : "app_b",
@@ -10,7 +14,7 @@ steal.config({
 		"steal/*" : "../../node_modules/steal/*.js",
 		"@traceur": "../../node_modules/traceur/bin/traceur.js"
 	},
-	bundle: ['app_a', 'app_b', 'app_c', 'app_d']
+	bundle: []
 });
 
 
