@@ -230,6 +230,28 @@ describe("multi build", function(){
 
 	});
 
+	it("should work with CommonJS", function(done){
+		rmdir(__dirname + "/commonjs/bundle", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/commonjs/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				open("test/commonjs/prod.html", function(browser, close){
+					find(browser, "app", function(app){
+						assert.equal(app.foo, "bar", "Correct object placed on the window");
+						close();
+					}, close);
+				}, done);
+			}).catch(done);
+		});
+	});
+
 	it("Should minify by default", function(done){
 		var config = {
 			config: __dirname + "/minify/config.js",
