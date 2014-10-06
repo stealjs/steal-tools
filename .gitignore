@@ -20,3 +20,4 @@ test/css_paths/bundles/
 test/plugins/bundles/
 test/other_bundle/bundles/
 test/pluginify_deps/out/
+test/bundle_multiple_builds/
