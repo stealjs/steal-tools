@@ -635,35 +635,47 @@ describe("multi build with plugins", function(){
 		});
 	});
 
-	it("can build less", function(done){
-		rmdir(__dirname+"/dep_plugins/dist", function(error){
-
-			if(error){
-				done(error)
-			}
-			// build the project that 
-			// uses a plugin
-			multiBuild({
-				config: __dirname+"/dep_plugins/config.js",
-				main: "main"
-			}, {
-				quiet: true
-			}).then(function(data){
-				// open the prod page and make sure
-				// the plugin processed the input correctly
-				open("test/dep_plugins/prod.html", function(browser, close){
-
-					find(browser,"STYLE_CONTENT", function(styleContent){
-						assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
-						close();
-					}, close);
-
+	describe('building less', function() {
+		before(function(done){
+			rmdir(__dirname+"/dep_plugins/dist", function(error){
+				if(error){
+					return done(error);
+				}
+				// build the project that 
+				// uses a plugin
+				multiBuild({
+					config: __dirname+"/dep_plugins/config.js",
+					main: "main"
+				}, {
+					quiet: true
+				}).then(function() {
+					done();
 				}, done);
-
-			}).catch(function(e){
-				done(e);
 			});
 		});
+
+		it("builds correctly", function(done){
+			// open the prod page and make sure
+			// the plugin processed the input correctly
+			open("test/dep_plugins/prod.html", function(browser, close){
+				find(browser,"STYLE_CONTENT", function(styleContent){
+					assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
+					close();
+				}, close);
+
+			}, done);
+		});
+
+		it.only("doesn't include traceur runtime while es6 not used", function(done){
+			this.timeout(999999);
+
+			fs.readFile(__dirname + "/dep_plugins/dist/bundles/main.js", function(err, contents) {
+				assert.equal(err, null, "There is no error");
+				assert.equal(/\$traceurRuntime/.test(contents), false, "Traceur Runtime not included");
+				done();
+			});
+		});
+
 	});
 
 	it("builds paths correctly", function(done){

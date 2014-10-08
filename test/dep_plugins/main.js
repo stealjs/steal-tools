@@ -1,4 +1,4 @@
-import 'main.less!';
+require('main.less!');
 
 function getFile(url, cb) {
 	var xhr = new XMLHttpRequest();              
