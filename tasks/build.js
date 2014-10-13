@@ -10,10 +10,18 @@ module.exports = function(grunt){
 		var buildOptions = options.buildOptions;
 
 		// Run the build with the provided options
-		build(system, buildOptions).then(function(){
-			grunt.log.writeln("Build was successful.");
+		build(system, buildOptions).then(function(bundles){
 
-			done();
+			var finish = function(){
+				grunt.log.writeln("Build was successful.");
+				done();
+			}
+
+			if (typeof options.after == 'function'){
+				options.after(bundles, options, finish)
+			} else {
+				finish()
+			}
 		});
 		
 	});
