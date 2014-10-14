@@ -12,16 +12,11 @@ module.exports = function(grunt){
 		// Run the build with the provided options
 		build(system, buildOptions).then(function(bundles){
 
-			var finish = function(){
+			Promise.resolve(options.after == 'function' && options.after(bundles)).then(function(){
 				grunt.log.writeln("Build was successful.");
 				done();
-			}
+			});
 
-			if (typeof options.after == 'function'){
-				options.after(bundles, options, finish)
-			} else {
-				finish()
-			}
 		});
 		
 	});
