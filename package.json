@@ -11,9 +11,9 @@
     "clean-css": "2.1.8",
     "colors": "^0.6.2",
     "lodash": "2.4.1",
-    "steal": "git://github.com/bitovi/steal#master",
-    "traceur": "0.0.45",
-    "transpile": "git://github.com/bitovi/transpile#48eb67420cf16176d98167199a2341571f92d5df",
+    "steal": "git://github.com/bitovi/steal#3bed4ad03326bda1891e61b3cc5a791e3e114810",
+    "traceur": "0.0.58",
+    "transpile": "git://github.com/bitovi/transpile#10473fbfad0df190294bab6a6a3e2f73f9515e89",
     "uglify-js": "~2.4.13",
     "winston": "^0.7.3",
     "yargs": "^1.2.2",
@@ -35,7 +35,7 @@
     "grunt-simple-mocha": "^0.4.0",
     "mocha": "1.18.2",
     "rimraf": "2.1",
-    "zombie": "1.4.1"
+    "zombie": "2.0.0-alpha27"
   },
   "bin": {
     "steal-tools": "bin/steal"

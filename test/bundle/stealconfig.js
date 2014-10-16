@@ -1,4 +1,6 @@
-steal.config({
+var loader = require('@loader');
+
+loader.config({
 	map: {
 		"app_a/app_a" : "app_a",
 		"app_b/app_b" : "app_b",
