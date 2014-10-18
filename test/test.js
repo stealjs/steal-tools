@@ -538,6 +538,31 @@ describe("multi build", function(){
 		}).then(done);
 
 	});
+
+	it.only("metdata deps works when built", function(done){
+		rmdir(__dirname+"/dist", function(error){
+			if(error){ return done(error); }
+
+			multiBuild({
+				config: __dirname+"/metadata_deps/config.js",
+				main: "a"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(data){
+				open("test/metadata_deps/site.html",function(browser, close){
+					find(browser,"MODULE", function(module){
+						assert(true, "module");
+						assert.equal(module.b, "b", "Dependency declared in metadata loaded correctly.");
+						
+						close();
+					}, close);
+				}, done);
+
+
+			}, done);
+		});
+	});
 	
 });
 
