@@ -875,6 +875,44 @@ describe("pluginify", function(){
 						 "No System.set in the output");
 		}).then(done);
 	});
+
+	it("Works with globals that set `this`", function(done){
+		rmdir(__dirname+"/pluginify_global/out.js", function(error){
+			if(error){
+				return done(error);
+			}
+
+			pluginify({
+				config: __dirname+"/pluginify_global/config.js",
+				main: "main"
+			}, {
+				exports: {
+					"global": "GLOBAL"
+				},
+				quiet: true
+			}).then(function(pluginify){
+				var pluginOut = pluginify(null, {
+					minify: false
+				});
+
+				fs.writeFile(__dirname + "/pluginify_global/out.js", pluginOut, function(error) {
+					if(error) {
+						return done(error);
+					}
+
+					open("test/pluginify_global/site.html", function(browser, close){
+			
+						find(browser,"MODULE", function(result){
+							assert.equal(result.GLOBAL, "global", "Global using this set correctly.");
+							close();
+						}, close);
+
+					}, done);
+				});
+			});
+		});
+
+	});
 });
 
 describe("multi-main", function(){
