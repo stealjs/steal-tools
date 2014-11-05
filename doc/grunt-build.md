@@ -10,7 +10,7 @@ The `stealBuild` options object values.
 most other __build__ configuration values are specified in
 by [System.buildConfig] in the config file.
 
-@option {Object} buildOptions Specifies the `options` argument in [stealTool.build].
+@option {Object} buildOptions Specifies the `options` argument in [stealTools.build].
 
 
 @body
