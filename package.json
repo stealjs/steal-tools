@@ -11,7 +11,7 @@
     "clean-css": "2.1.8",
     "colors": "^0.6.2",
     "lodash": "2.4.1",
-    "steal": "git://github.com/bitovi/steal#master",
+    "steal": "git://github.com/bitovi/steal#a6e7eda6cd99b96eb9e18ae4f6ccf6c80156dfea",
     "traceur": "0.0.45",
     "transpile": "git://github.com/bitovi/transpile#9041690e574ba8efecb80c095ea31463789c016f",
     "uglify-js": "~2.4.13",
