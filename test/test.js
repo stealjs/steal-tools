@@ -32,7 +32,7 @@ var find = function(browser, property, callback, done){
 
 var open = function(url, callback, done){
 	var server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
-	var browser = new Browser();
+	var browser = Browser.create();
 	browser.visit("http://localhost:8081/"+url)
 		.then(function(){
 			callback(browser, function(err){
@@ -221,15 +221,57 @@ describe("multi build", function(){
 				}, done);
 
 
-			}).catch(function(e){
-				done(e);
-			});
+			}, done);
 
 
 
 		});
 
 
+	});
+
+	it("should work with CommonJS", function(done){
+		rmdir(__dirname + "/commonjs/bundle", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/commonjs/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				open("test/commonjs/prod.html", function(browser, close){
+					find(browser, "app", function(app){
+						assert.equal(app.foo, "bar", "Correct object placed on the window");
+						close();
+					}, close);
+				}, done);
+			}).catch(done);
+		});
+	});
+
+	it("doesn't include the traceur runtime if it's not being used", function(done){
+		rmdir(__dirname + "/simple-es6/dist", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/simple-es6/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				fs.readFile(__dirname + "/simple-es6/dist/bundles/main.js", function(error, contents){
+					assert.equal(error, null, "Able to open the file");
+					assert.equal(/\$traceurRuntime/.test(contents), false, 
+								 "Traceur not included");
+					done();
+				});
+			}).catch(done);
+		});
 	});
 
 	it("Should minify by default", function(done){
@@ -444,7 +486,8 @@ describe("multi build", function(){
 				config: __dirname+"/stealconfig.js",
 				main: "basics/basics"
 			}, {
-				quiet: true
+				quiet: true,
+				minify: false
 			}).then(function(data){
 				open("test/basics/prod.html",function(browser, close){
 					find(browser,"MODULE", function(module){
@@ -495,6 +538,7 @@ describe("multi build", function(){
 		}).then(done);
 
 	});
+	
 });
 
 describe("multi build with plugins", function(){
@@ -614,7 +658,6 @@ describe("multi build with plugins", function(){
 	});
 
 	it("can build less", function(done){
-		this.timeout(10000);
 		rmdir(__dirname+"/dep_plugins/dist", function(error){
 
 			if(error){
@@ -646,8 +689,6 @@ describe("multi build with plugins", function(){
 	});
 
 	it("builds paths correctly", function(done){
-		this.timeout(3000);
-		
 		rmdir(__dirname+"/css_paths/dist", function(error){
 
 			if(error){
@@ -694,7 +735,9 @@ describe("pluginify", function(){
 			config: __dirname+"/stealconfig.js",
 			main: "pluginify/pluginify"
 		}, {
-			exports: {},
+			exports: {
+				'pluginify/global': 'globalModule'
+			},
 			quiet: true
 		}).then(function(pluginify){
 
@@ -707,6 +750,7 @@ describe("pluginify", function(){
 					find(browser,"RESULT", function(result){
 						assert(result.module.es6module, "have dependeny");
 						assert(result.cjs(), "cjs");
+						assert.equal(result.global, "This is a global module", "Global module loaded");
 						close();
 					}, close);
 
@@ -831,11 +875,48 @@ describe("pluginify", function(){
 						 "No System.set in the output");
 		}).then(done);
 	});
+
+	it("Works with globals that set `this`", function(done){
+		rmdir(__dirname+"/pluginify_global/out.js", function(error){
+			if(error){
+				return done(error);
+			}
+
+			pluginify({
+				config: __dirname+"/pluginify_global/config.js",
+				main: "main"
+			}, {
+				exports: {
+					"global": "GLOBAL"
+				},
+				quiet: true
+			}).then(function(pluginify){
+				var pluginOut = pluginify(null, {
+					minify: false
+				});
+
+				fs.writeFile(__dirname + "/pluginify_global/out.js", pluginOut, function(error) {
+					if(error) {
+						return done(error);
+					}
+
+					open("test/pluginify_global/site.html", function(browser, close){
+			
+						find(browser,"MODULE", function(result){
+							assert.equal(result.GLOBAL, "global", "Global using this set correctly.");
+							close();
+						}, close);
+
+					}, done);
+				});
+			});
+		});
+
+	});
 });
 
 describe("multi-main", function(){
 	it("should work", function(done){
-		this.timeout(10000);
 		var mains = ["app_a","app_b","app_c","app_d"],
 			ab = {name: "a_b"},
 			cd = {name: "c_d"},
@@ -904,7 +985,6 @@ describe("multi-main", function(){
 	});
 	
 	it("works with steal bundled", function(done){
-		this.timeout(10000);
 		var mains = ["app_a","app_b","app_c","app_d"],
 			ab = {name: "a_b"},
 			cd = {name: "c_d"},
@@ -1017,6 +1097,99 @@ describe("pluginifier builder", function(){
 			
 		});
 	});
+});
+
+describe("@loader used in configs", function() {
+	
+	it("works built", function(done) {
+
+		rmdir(__dirname+"/current-loader/dist", function(error){
+			if(error){
+				done(error)
+			}
+			// build the project that uses @loader
+			multiBuild({
+				config: __dirname + "/current-loader/config.js",
+				main: "main"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				// open the prod page and make sure
+				// and make sure the module loaded successfully
+				open("test/current-loader/prod.html", function(browser, close){
+
+					find(browser,"moduleValue", function(moduleValue){
+						assert.equal(moduleValue, "Loader config works", "@loader worked when built.");
+						close();
+					}, close);
+
+				}, done);
+
+			}).catch(done);
+		});
+
+
+	});
+
+	it("works with es6", function(done) {
+		rmdir(__dirname+"/current-loader/dist", function(error){
+			if(error){
+				done(error)
+			}
+			// build the project that uses @loader
+			multiBuild({
+				config: __dirname + "/current-loader/esconfig.js",
+				main: "main"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				// open the prod page and make sure
+				// and make sure the module loaded successfully
+				open("test/current-loader/prod.html", function(browser, close){
+
+					find(browser,"moduleValue", function(moduleValue){
+						assert.equal(moduleValue, "Loader config works", "@loader worked when built.");
+						close();
+					}, close);
+
+				}, done);
+
+			}).catch(done);
+		});
+
+	});
+
+	it("supports multiple builds at once", function(done){
+		rmdir(__dirname+"/bundle/dist", function(error){
+			if(error){ return done(error); }
+
+			var first = multiBuild({
+					config: __dirname+"/bundle/stealconfig.js",
+					main: "bundle",
+					systemName: "1"
+				}, {
+					quiet: true
+				});
+
+			var second = multiBuild({
+					config: __dirname+"/bundle/stealconfig.js",
+					main: "bundle",
+					bundlesPath: __dirname+"/bundle_multiple_builds",
+					systemName: "2"
+				}, {
+					quiet: true
+				})
+
+			Promise.all([first, second]).then(function(data){
+				done();
+			}).catch(done);
+		});
+		
+	});
+
+
 });
 
 
