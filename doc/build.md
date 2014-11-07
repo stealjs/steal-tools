@@ -49,7 +49,9 @@ for any `bundle` module.
 @option {Number} [mainDepth=3] The maximum number of bundles that will be loaded for any `main`
 module.
 @option {Boolean} [removeDevelopmentCode=true] Remove any development code from the bundle specified using `//!steal-remove-start` and `//!steal-remove-end` comments.
-
+@option {Object} [cleanCSSOptions] A hash of options to customize the minification of css files. All available options are listed in the [clean-css documentation](https://github.com/jakubpawlowicz/clean-css#how-to-use-clean-css-programmatically).
+@option {Object} [uglifyOptions] A hash of options to customize the minification of javascript files. StealTool uses the top level `minify` function of uglify-js, and the available options are listed [here](https://github.com/mishoo/UglifyJS2#the-simple-way).
+The option `fromString` is used internally and will always be `true`, any other value will be ignored.
 
 @return {{}}
 
