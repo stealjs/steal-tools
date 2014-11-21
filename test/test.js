@@ -913,6 +913,36 @@ describe("pluginify", function(){
 		});
 
 	});
+
+	it("Works with modules that check for define.amd", function(done){
+		rmdir(__dirname + "/pluginify_define/out.js", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			pluginify({
+				config: __dirname + "/pluginify_define/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(pluginify){
+				var out = pluginify(null, { minify: false });
+
+				fs.writeFile(__dirname + "/pluginify_define/out.js", out, function(error){
+					if(error) {
+						return done(error);
+					}
+
+					open("test/pluginify_define/site.html", function(browser, close){
+						find(browser, "MODULE", function(result){
+							assert.equal(result.define, "it worked", "Module using define.amd works");
+							close();
+						}, close);
+					}, done);
+				});
+			});
+		});
+	});
 });
 
 describe("multi-main", function(){
