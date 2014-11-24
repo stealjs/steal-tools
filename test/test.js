@@ -538,7 +538,32 @@ describe("multi build", function(){
 		}).then(done);
 
 	});
-	
+
+	it("removes steal.dev references", function(done){
+		rmdir(__dirname + "/bundle/dist", function(error){
+			if(error){
+				done(error);
+			}
+
+			multiBuild({
+				main: "bundle",
+				config: __dirname + "/bundle/stealconfig.js"
+			}, {
+				quiet: true
+			}).then(function(){
+				fs.readFile(__dirname + "/bundle/dist/bundles/app_a.js", function(error, content){
+					assert(!error, "able to open the file");
+					assert.equal(
+						/steal.dev/.test(content),
+						false,
+						"it should remove steal.dev references"
+					);
+					done();
+				});
+			}, done);
+		});
+	});
+
 });
 
 describe("multi build with plugins", function(){
