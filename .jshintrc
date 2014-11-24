@@ -7,7 +7,10 @@
     "exports": true,
     "Promise": true,
     "System": true,
-    "beforeEach": true
+    "beforeEach": true,
+    "steal": true,
+    "define": true,
+    "window": true
   },
   "loopfunc": true,
   "eqnull": true,
