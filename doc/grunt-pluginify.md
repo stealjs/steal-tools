@@ -1,23 +1,68 @@
 @typedef {{}} stealTools.grunt.pluginify stealPluginify
 @parent steal-tools.grunt 
 
-Write out modules that are optionally transpiled, minified, and bundled.
+A [http://gruntjs.com/ Grunt] multi task that load modules and write them out in different formats.
 
-@option {Object<stealTools.grunt.pluginify.task>} tasks Specify pluginify tasks with their own set of `system`, `options`, and [stealTools.grunt.pluginify.output outputs].
+@option {Object<String,stealTools.grunt.pluginify.task>} tasks An object of task names as keys
+and PluginifyTask objects as values.
+
+```
+grunt.initConfig({
+  stealPluginify: {
+    taskName1: { PluginifyTask1 },
+    taskName2: { PluginifyTask2 }
+  }
+});
+```
+
+Each [stealTools.grunt.pluginify.task] specifies:
+
+ - A `system` object that specifies the modules to be loaded.
+ - An `options` object that specifies any special loading behavior like turning logging.
+ - An `outputs` object that specifies how the modules should be written out.
+ 
+```
+grunt.initConfig({
+  stealPluginify: {
+    taskName: {
+      system : { .. },
+      options: { .. },
+      outputs: { .. }
+    }
+  }
+});
+```
+
 
 @body
 
 ## Use
 
-`stealPluginify` is a grunt [multi-task](http://gruntjs.com/creating-tasks#multi-tasks) that is used to build library projects to a variety of formats. This means that to build output 
+`stealPluginify` is a grunt [multi-task](http://gruntjs.com/creating-tasks#multi-tasks) that is 
+used to build library projects to a variety of formats. For example, to load a "main" module and
+transpile it and all of its dependencies (except jQuery) to AMD and CommonJS with debug output:
 
     grunt.initConfig({
       stealPluginify: {
-        main: {
-          system: { ... },
-          options: { ... },
+        transpile: {
+          system: {
+            main: "main",
+            config: __dirname + "/config.js"
+          },
+          options: {
+            debug: true
+          },
           outputs: {
-            "output 1 name" : { ... }
+            amd: {
+              graphs: ["main"],
+              format: "amd",
+              ignore: ["jquery"]
+            },
+            cjs: {
+              graphs: ["main"],
+              format: "amd",
+              ignore: ["jquery"]
+            }
           }
         }
       }
@@ -45,13 +90,38 @@ Options are the [stealTools.buildOptions] used for configuration the behavior of
 
 ## outputs
 
-Outputs is an object names and [stealTools.grunt.pluginify.output output configuration] objects.  Each configuration object contains 
+`outputs` specifies different ways the modules loaded by `system` are written out. It's
+an object of [stealTools.grunt.pluginify.output] objects.  Each [stealTools.grunt.pluginify.output]
+supports the following options:
 
-    {
-      eachModule: [],
-      graphs: [],
-      modules: [],
-      ignore: [],
-      format: [],
-      dest: 
-    }
+{{#each [stealTools.grunt.pluginify.output].types.0.options}}
+ - {{name}} <i>{{{makeTypesString types}}}</i>{{/each}}
+
+And the options available to [stealTools.pluginify.options].
+
+{{#each [stealTools.pluginify.options].types.0.options}}
+ - {{name}} <i>{{{makeTypesString types}}}</i>{{/each}}
+
+Only one of `modules`, `eachModule` or `graphs` should be specified. 
+
+
+Example:
+
+```
+outputs: {
+  "global first and second together without jQuery": {
+    modules: ["first","second"],
+    ignore: ["jquery"],
+    format: "global"
+  },
+  "first and second seperately without jQuery": {
+    eachModule: ["first","second"],
+    ignore: ["jquery"],
+    format: "global"
+  },
+  "first and second and their dependencies individually converted to amd": {
+    graph: ["first","second"],
+    format: "amd"
+  }
+}
+```

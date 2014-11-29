@@ -10,7 +10,8 @@ The `stealBuild` options object values.
 most other __build__ configuration values are specified in
 by [System.buildConfig] in the config file.
 
-@option {Object} buildOptions Specifies the `options` argument in [stealTools.build].
+@option {Object} buildOptions Specifies the `options` argument 
+to [stealTools.build stealTools.build].
 
 
 @body
@@ -36,4 +37,27 @@ default "stealBuild" task options as follows:
       }
     });
 
-As you can see, the grunt task takes 2 object as its options, `system` and `buildOptions`.
+The grunt task takes 2 object as its 
+options, `system` and `buildOptions`.
+
+## system
+
+These are [System.config] values that are used to 
+load modules during the build process. Typically you will want 
+to specify at least the `config` and `main` options like so:
+
+    {
+	  config: __dirname + "/config.js",
+      main: ["math/add", "math/subtract"]
+    }
+
+## buildOptions
+
+The `buildOptions` property specifies the properties on the `options`
+argument to [stealTools.build stealTools.build]. The following options are available:
+
+{{#each [stealTools.build].signatures.0.params.1.types.0.options}}
+ - {{name}} <i>{{{makeTypesString types}}}</i>{{/each}}
+ 
+Read more about them on [stealTools.build stealTools.build].
+

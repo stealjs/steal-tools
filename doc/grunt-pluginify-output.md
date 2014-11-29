@@ -1,11 +1,11 @@
-@typedef {{}} stealTools.grunt.pluginify.output output
+@typedef {{}} stealTools.grunt.pluginify.output PluginifyOutput
 @inherits stealTools.pluginify.options
 
 Specifies the behavior for an output in [stealTools.grunt.pluginify]. These properties are in
 addition to [stealTools.pluginify.options].
 
 @option {Array<moduleName|comparitor>} [modules] Builds all the modules in `modules` together with their dependencies.
-@option {Array<moduleName|comparitor>} [eachModule] Builds each module in the list 
+@option {Array<moduleName|comparitor>|Boolean} [eachModule] Builds each module in the list 
 with its dependendencies individually.
 @option {Array<moduleName|comparitor>} [graphs] Builds each item in the graph on its own. Each dependency is 
 built individually.
