@@ -1,4 +1,5 @@
 import 'main.less!';
+import 'other.css!';
 
 function getFile(url, cb) {
 	var xhr = new XMLHttpRequest();              
