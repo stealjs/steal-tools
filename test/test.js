@@ -15,6 +15,8 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	logging = require('../lib/logger'),
 	pluginifierBuilder = require('../lib/build/pluginifier_builder');
 
+System.logLevel = 3;
+
 // Helpers
 var find = function(browser, property, callback, done){
 	var start = new Date();
@@ -58,7 +60,8 @@ describe('dependency graph', function(){
 
 		dependencyGraph({
 			config: __dirname+"/stealconfig.js",
-			startId: "basics"
+			startId: "basics",
+			logLevel: 3
 		}).then(function(data){
 			var result = comparify(data.graph, {
 				"@config": {
@@ -99,7 +102,8 @@ describe('dependency graph', function(){
 		dependencyGraph({
 			config: __dirname + "/stealconfig.js",
 			startId: "basics",
-			extra: "stuff"
+			extra: "stuff",
+			logLevel: 3
 		}).then(function(data){
 			var steal = data.steal;
 			var extra = steal.config("extra");
@@ -113,7 +117,8 @@ describe('dependency graph', function(){
 		it("Map should work", function(done){
 			dependencyGraph({
 				config: __dirname + "/stealconfig.js",
-				startId: "basics"
+				startId: "basics",
+				logLevel: 3
 			}).then(function(data){
 				var graph = data.graph;
 
@@ -138,7 +143,8 @@ describe("bundle", function(){
 
 		bundle({
 			config: __dirname+"/bundle/stealconfig.js",
-			main: "bundle"
+			main: "bundle",
+			logLevel: 3
 		}).then(function(data){
 			var graphCompare = require('./bundle/bundle_graph');
 			comparify(data.graph, graphCompare, true);
@@ -1129,7 +1135,8 @@ describe("multi-main", function(){
 				main: mains
 			}, {
 				bundleSteal: true,
-				quiet: true
+				quiet: true,
+				minify: false
 			}).then(function(data){
 				
 				var checkNext = function(next){
@@ -1304,6 +1311,54 @@ describe("@loader used in configs", function() {
 		
 	});
 
+
+});
+
+describe("importing into config", function(){
+	it("works", function(done){
+		rmdir(__dirname + "/import-config/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/import-config/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				open("test/import-config/prod.html", function(browser, close){
+
+					find(browser,"moduleValue", function(moduleValue){
+						assert.equal(moduleValue, "it worked", "Importing a config within a config works");
+						close();
+					}, close);
+
+				}, done);
+			}).catch(done);
+		});
+	});
+
+	it("works bundled with steal", function(done){
+		rmdir(__dirname + "/import-config/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/import-config/config.js",
+				main: "main"
+			}, {
+				quiet: true,
+				bundleSteal: true
+			}).then(function(){
+				open("test/import-config/bundled.html", function(browser, close){
+
+					find(browser,"moduleValue", function(moduleValue){
+						assert.equal(moduleValue, "it worked", "Importing a config within a config works");
+						close();
+					}, close);
+
+				}, done);
+			}).catch(done);
+		});
+	});
 
 });
 
