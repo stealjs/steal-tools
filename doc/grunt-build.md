@@ -12,6 +12,10 @@ by [System.buildConfig] in the config file.
 
 @option {Object} buildOptions Specifies the `options` argument in [stealTools.build].
 
+@option {Function} after Specifies the function that will be executed after build,
+"bundles" result will be passed there. Function maybe synchronous (when returns undefined)
+or asynchronous (when returns instance of Promise).
+
 
 @body
 
@@ -30,6 +34,17 @@ default "stealBuild" task options as follows:
             },
             buildOptions: {
               minify: false
+            },
+            after(bundles){
+            	new Promise(function(resolve){
+
+            		// do something with bundle
+            		console.log('Name of main bundle module', bundle[0].name)
+            		console.log('Source code of main bundle module', bundle[0].source)
+            		...
+            		// finish custom action asynchronously
+            		resolve()
+            	})
             }
           }
         }
