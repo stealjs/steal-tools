@@ -1,10 +1,9 @@
-@typedef {{}} stealTools.pluginify.options pluginifyOptions
+@typedef {{}} stealTools.pluginify.options PluginifyOptions
 
 Specify the behavior of pluginify.
 
 @option {Array.<RegExp|String>} [ignore] An Array of regular expression or strings that 
-are used to specify [moduleName]'s that should not be included in the 
-output.  
+specify [moduleName]'s that should not be included in the output. 
 
 Module names that match the regular expressions are not included. The following
 ignores everything in _can/util/_.
@@ -12,7 +11,7 @@ ignores everything in _can/util/_.
     pluginify("can/construct",{ignore: [/^can\/util\/]});
 
 
-Module names and their dependenceis that match the 
+Module names and their dependencies that match the 
 strings in the array are not included. The following will not include
 "can/construct" and all of its dependencies:
 

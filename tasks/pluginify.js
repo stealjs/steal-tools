@@ -10,7 +10,9 @@ module.exports = function(grunt){
 				grunt.fail.warn("stealPluginify needs a "+name+" property.");
 			}
 		});
-		pluginifierBuilder(options, grunt.config('meta.modules'), grunt.config('meta.defaults'), done);
+		pluginifierBuilder(options, 
+			grunt.config('meta.modules'), 
+			grunt.config('meta.defaults'), done);
 	});
 
 };
