@@ -630,6 +630,52 @@ describe("multi build", function(){
 		});
 	});
 
+	it("works with the bower plugin", function(done){
+		rmdir(__dirname + "/bower/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/bower/config.js",
+				main: "main"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/bower/prod.html",function(browser, close){
+					find(browser,"MODULE", function(module){
+						assert(true, "module");
+						assert(module.jquerty, "has jquerty");
+						assert(module.jquerty(), "hello jquerty", "correct function loaded");
+						close();
+					}, close);
+				}, done);
+			}, done);
+		});
+	});
+
+	it("works with the bower plugin when using as the config", function(done){
+		rmdir(__dirname + "/bower/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/bower/bower.json",
+				main: "main"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/bower/prod.html",function(browser, close){
+					find(browser,"MODULE", function(module){
+						assert(true, "module");
+						assert(module.jquerty, "has jquerty");
+						assert(module.jquerty(), "hello jquerty", "correct function loaded");
+						close();
+					}, close);
+				}, done);
+			}, done);
+		});
+	});
+
 });
 
 describe("multi build with plugins", function(){
