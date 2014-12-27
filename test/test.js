@@ -230,6 +230,50 @@ describe("multi build", function(){
 
 	});
 
+	it("should work with CommonJS", function(done){
+		rmdir(__dirname + "/commonjs/bundle", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/commonjs/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				open("test/commonjs/prod.html", function(browser, close){
+					find(browser, "app", function(app){
+						assert.equal(app.foo, "bar", "Correct object placed on the window");
+						close();
+					}, close);
+				}, done);
+			}).catch(done);
+		});
+	});
+
+	it("doesn't include the traceur runtime if it's not being used", function(done){
+		rmdir(__dirname + "/simple-es6/dist", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/simple-es6/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				fs.readFile(__dirname + "/simple-es6/dist/bundles/main.js", function(error, contents){
+					assert.equal(error, null, "Able to open the file");
+					assert.equal(/\$traceurRuntime/.test(contents), false, 
+								 "Traceur not included");
+					done();
+				});
+			}).catch(done);
+		});
+	});
+
 	it("Should minify by default", function(done){
 		var config = {
 			config: __dirname + "/minify/config.js",
@@ -691,7 +735,9 @@ describe("pluginify", function(){
 			config: __dirname+"/stealconfig.js",
 			main: "pluginify/pluginify"
 		}, {
-			exports: {},
+			exports: {
+				'pluginify/global': 'globalModule'
+			},
 			quiet: true
 		}).then(function(pluginify){
 
@@ -704,6 +750,7 @@ describe("pluginify", function(){
 					find(browser,"RESULT", function(result){
 						assert(result.module.es6module, "have dependeny");
 						assert(result.cjs(), "cjs");
+						assert.equal(result.global, "This is a global module", "Global module loaded");
 						close();
 					}, close);
 
@@ -827,6 +874,44 @@ describe("pluginify", function(){
 			assert.equal(/System\.set/.test(pluginOut), false,
 						 "No System.set in the output");
 		}).then(done);
+	});
+
+	it("Works with globals that set `this`", function(done){
+		rmdir(__dirname+"/pluginify_global/out.js", function(error){
+			if(error){
+				return done(error);
+			}
+
+			pluginify({
+				config: __dirname+"/pluginify_global/config.js",
+				main: "main"
+			}, {
+				exports: {
+					"global": "GLOBAL"
+				},
+				quiet: true
+			}).then(function(pluginify){
+				var pluginOut = pluginify(null, {
+					minify: false
+				});
+
+				fs.writeFile(__dirname + "/pluginify_global/out.js", pluginOut, function(error) {
+					if(error) {
+						return done(error);
+					}
+
+					open("test/pluginify_global/site.html", function(browser, close){
+			
+						find(browser,"MODULE", function(result){
+							assert.equal(result.GLOBAL, "global", "Global using this set correctly.");
+							close();
+						}, close);
+
+					}, done);
+				});
+			});
+		});
+
 	});
 });
 

@@ -8,6 +8,12 @@ if(typeof window === "undefined" || window.noConfig !== true)  {
 		},
 		map: {
 			"mapd/mapd": "map/mapped"
+		},
+		meta: {
+			"pluginify/global": {
+				format: "global",
+				exports: "globalModule"
+			}
 		}
 	});
 
