@@ -64,7 +64,7 @@ describe('dependency graph', function(){
 			logLevel: 3
 		}).then(function(data){
 			var result = comparify(data.graph, {
-				"@config": {
+				"stealconfig.js": {
 					load: {}
 				},
 				'@dev': {
@@ -654,11 +654,12 @@ describe("multi build", function(){
 	});
 
 	it("works with the bower plugin when using as the config", function(done){
+		// this test seems broken.
 		rmdir(__dirname + "/bower/dist", function(error){
 			if(error) return done(error);
 
 			multiBuild({
-				config: __dirname + "/bower/bower.json",
+				config: __dirname + "/bower/bower.json!bower",
 				main: "main"
 			}, {
 				quiet: true,
@@ -1285,7 +1286,7 @@ describe("@loader used in configs", function() {
 			}).then(function(){
 				// open the prod page and make sure
 				// and make sure the module loaded successfully
-				open("test/current-loader/prod.html", function(browser, close){
+				open("test/current-loader/config-prod.html", function(browser, close){
 
 					find(browser,"moduleValue", function(moduleValue){
 						assert.equal(moduleValue, "Loader config works", "@loader worked when built.");
@@ -1405,7 +1406,65 @@ describe("importing into config", function(){
 			}).catch(done);
 		});
 	});
+});
 
+describe("npm package.json builds", function(){
+	beforeEach(function() {
+		
+	});
+	
+	
+	var setup = function(done){
+		rmdir(__dirname+"/npm/node_modules", function(error){
+		
+			if(error){ return done(error); }
+		
+			fs.copy(
+				path.join(__dirname, "..", "node_modules","jquery"),
+				__dirname+"/npm/node_modules/jquery", function(error){
+					
+					if(error){ return done(error); }
+					
+					fs.copy(
+						path.join(__dirname, "..", "bower_components","steal"),
+						__dirname+"/npm/node_modules/steal", function(error){
+					
+						if(error){ return done(error); }
+						
+						done()
+						
+					});
+					
+			});
+		});
+	};
+	
+	it("only needs a config", function(done){
+		this.timeout(50000);
+		setup(function(error){
+			if(error){ return done(error); }
+			
+			multiBuild({
+				config: __dirname + "/npm/package.json!npm"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				// open the prod page and make sure
+				// and make sure the module loaded successfully
+				open("test/npm/prod.html", function(browser, close){
+					var h1s = browser.window.document.getElementsByTagName('h1');
+					assert.equal(h1s.length, 1, "Wrote H!.");
+					close();
+
+				}, done);
+
+			}).catch(done);
+			
+		});
+
+	});
+	
 });
 
 
