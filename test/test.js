@@ -15,6 +15,8 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	logging = require('../lib/logger'),
 	pluginifierBuilder = require('../lib/build/pluginifier_builder');
 
+System.logLevel = 3;
+
 // Helpers
 var find = function(browser, property, callback, done){
 	var start = new Date();
@@ -58,10 +60,11 @@ describe('dependency graph', function(){
 
 		dependencyGraph({
 			config: __dirname+"/stealconfig.js",
-			startId: "basics"
+			startId: "basics",
+			logLevel: 3
 		}).then(function(data){
 			var result = comparify(data.graph, {
-				"@config": {
+				"stealconfig.js": {
 					load: {}
 				},
 				'@dev': {
@@ -99,7 +102,8 @@ describe('dependency graph', function(){
 		dependencyGraph({
 			config: __dirname + "/stealconfig.js",
 			startId: "basics",
-			extra: "stuff"
+			extra: "stuff",
+			logLevel: 3
 		}).then(function(data){
 			var steal = data.steal;
 			var extra = steal.config("extra");
@@ -113,7 +117,8 @@ describe('dependency graph', function(){
 		it("Map should work", function(done){
 			dependencyGraph({
 				config: __dirname + "/stealconfig.js",
-				startId: "basics"
+				startId: "basics",
+				logLevel: 3
 			}).then(function(data){
 				var graph = data.graph;
 
@@ -138,7 +143,8 @@ describe("bundle", function(){
 
 		bundle({
 			config: __dirname+"/bundle/stealconfig.js",
-			main: "bundle"
+			main: "bundle",
+			logLevel: 3
 		}).then(function(data){
 			var graphCompare = require('./bundle/bundle_graph');
 			comparify(data.graph, graphCompare, true);
@@ -335,6 +341,66 @@ describe("multi build", function(){
 
 		});
 
+	});
+
+	it("Should allow setting uglify-js options", function(done) {
+		var config = {
+			config: __dirname + "/minify/config.js",
+			main: "minify"
+		};
+
+		var options = {
+			quiet: true,
+			uglifyOptions: {
+				mangle: false // skip mangling names.
+			}
+		};
+
+		rmdir(__dirname + "/minify/dist", function(error){
+			if(error) {
+				done(error);
+				return;
+			}
+
+			multiBuild(config, options).then(function(){
+				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8"),
+					hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1,
+					hasAnotherLongVariable = actual.indexOf("anotherLongVariableName") !== -1;
+
+				assert(hasLongVariable, "Skip mangling names in dependencies graph files");
+				assert(hasAnotherLongVariable, "skip mangling names in stealconfig and main files");
+				done();
+			}).catch(done);
+		});
+	});
+
+	it("Should allow setting clean-css options", function(done) {
+		var config = {
+			config: __dirname + "/minify/config.js",
+			main: "minify"
+		};
+
+		var options = {
+			quiet: true,
+			cleanCSSOptions: {
+				keepSpecialComments: 0 // remove all, default '*'
+			}
+		};
+
+		rmdir(__dirname + "/minify/dist", function(error){
+			if(error) {
+				done(error);
+				return;
+			}
+
+			multiBuild(config, options).then(function(){
+				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8"),
+					lackSpecialComment = actual.indexOf("a special comment") === -1;
+
+				assert(lackSpecialComment, "clean-css set to remove special comments");
+				done();
+			}).catch(done);
+		});
 	});
 
 	it("Allows specifying an alternative dist directory", function(done){
@@ -538,7 +604,79 @@ describe("multi build", function(){
 		}).then(done);
 
 	});
-	
+
+	it("removes steal.dev references", function(done){
+		rmdir(__dirname + "/bundle/dist", function(error){
+			if(error){
+				done(error);
+			}
+
+			multiBuild({
+				main: "bundle",
+				config: __dirname + "/bundle/stealconfig.js"
+			}, {
+				quiet: true
+			}).then(function(){
+				fs.readFile(__dirname + "/bundle/dist/bundles/app_a.js", function(error, content){
+					assert(!error, "able to open the file");
+					assert.equal(
+						/steal.dev/.test(content),
+						false,
+						"it should remove steal.dev references"
+					);
+					done();
+				});
+			}, done);
+		});
+	});
+
+	it("works with the bower plugin", function(done){
+		rmdir(__dirname + "/bower/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/bower/config.js",
+				main: "main"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/bower/prod.html",function(browser, close){
+					find(browser,"MODULE", function(module){
+						assert(true, "module");
+						assert(module.jquerty, "has jquerty");
+						assert(module.jquerty(), "hello jquerty", "correct function loaded");
+						close();
+					}, close);
+				}, done);
+			}, done);
+		});
+	});
+
+	it("works with the bower plugin when using as the config", function(done){
+		// this test seems broken.
+		rmdir(__dirname + "/bower/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/bower/bower.json!bower",
+				main: "main"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/bower/prod.html",function(browser, close){
+					find(browser,"MODULE", function(module){
+						assert(true, "module");
+						assert(module.jquerty, "has jquerty");
+						assert(module.jquerty(), "hello jquerty", "correct function loaded");
+						close();
+					}, close);
+				}, done);
+			}, done);
+		});
+	});
+
 });
 
 describe("multi build with plugins", function(){
@@ -913,6 +1051,36 @@ describe("pluginify", function(){
 		});
 
 	});
+
+	it("Works with modules that check for define.amd", function(done){
+		rmdir(__dirname + "/pluginify_define/out.js", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			pluginify({
+				config: __dirname + "/pluginify_define/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(pluginify){
+				var out = pluginify(null, { minify: false });
+
+				fs.writeFile(__dirname + "/pluginify_define/out.js", out, function(error){
+					if(error) {
+						return done(error);
+					}
+
+					open("test/pluginify_define/site.html", function(browser, close){
+						find(browser, "MODULE", function(result){
+							assert.equal(result.define, "it worked", "Module using define.amd works");
+							close();
+						}, close);
+					}, done);
+				});
+			});
+		});
+	});
 });
 
 describe("multi-main", function(){
@@ -1014,7 +1182,8 @@ describe("multi-main", function(){
 				main: mains
 			}, {
 				bundleSteal: true,
-				quiet: true
+				quiet: true,
+				minify: false
 			}).then(function(data){
 				
 				var checkNext = function(next){
@@ -1117,7 +1286,7 @@ describe("@loader used in configs", function() {
 			}).then(function(){
 				// open the prod page and make sure
 				// and make sure the module loaded successfully
-				open("test/current-loader/prod.html", function(browser, close){
+				open("test/current-loader/config-prod.html", function(browser, close){
 
 					find(browser,"moduleValue", function(moduleValue){
 						assert.equal(moduleValue, "Loader config works", "@loader worked when built.");
@@ -1190,6 +1359,112 @@ describe("@loader used in configs", function() {
 	});
 
 
+});
+
+describe("importing into config", function(){
+	it("works", function(done){
+		rmdir(__dirname + "/import-config/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/import-config/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				open("test/import-config/prod.html", function(browser, close){
+
+					find(browser,"moduleValue", function(moduleValue){
+						assert.equal(moduleValue, "it worked", "Importing a config within a config works");
+						close();
+					}, close);
+
+				}, done);
+			}).catch(done);
+		});
+	});
+
+	it("works bundled with steal", function(done){
+		rmdir(__dirname + "/import-config/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/import-config/config.js",
+				main: "main"
+			}, {
+				quiet: true,
+				bundleSteal: true
+			}).then(function(){
+				open("test/import-config/bundled.html", function(browser, close){
+
+					find(browser,"moduleValue", function(moduleValue){
+						assert.equal(moduleValue, "it worked", "Importing a config within a config works");
+						close();
+					}, close);
+
+				}, done);
+			}).catch(done);
+		});
+	});
+});
+
+describe("npm package.json builds", function(){
+	beforeEach(function() {
+		
+	});
+	
+	
+	var setup = function(done){
+		rmdir(__dirname+"/npm/node_modules", function(error){
+		
+			if(error){ return done(error); }
+		
+			fs.copy(
+				path.join(__dirname, "..", "node_modules","jquery"),
+				__dirname+"/npm/node_modules/jquery", function(error){
+					
+					if(error){ return done(error); }
+					
+					fs.copy(
+						path.join(__dirname, "..", "bower_components","steal"),
+						__dirname+"/npm/node_modules/steal", function(error){
+					
+						if(error){ return done(error); }
+						
+						done()
+						
+					});
+					
+			});
+		});
+	};
+	
+	it("only needs a config", function(done){
+		this.timeout(50000);
+		setup(function(error){
+			if(error){ return done(error); }
+			
+			multiBuild({
+				config: __dirname + "/npm/package.json!npm"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				// open the prod page and make sure
+				// and make sure the module loaded successfully
+				open("test/npm/prod.html", function(browser, close){
+					var h1s = browser.window.document.getElementsByTagName('h1');
+					assert.equal(h1s.length, 1, "Wrote H!.");
+					close();
+
+				}, done);
+
+			}).catch(done);
+			
+		});
+
+	});
+	
 });
 
 

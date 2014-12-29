@@ -5,5 +5,4 @@ steal(function(){
 			window.appA = appA;
 		});
 	}
-	
 });

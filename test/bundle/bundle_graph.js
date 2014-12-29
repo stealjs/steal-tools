@@ -1,7 +1,7 @@
 module.exports = {
-   "@config":{
+   "stealconfig.js":{
       "load":{
-         "name":"@config"
+         "name":"stealconfig.js"
       },
       "bundles":[
          "bundle",
