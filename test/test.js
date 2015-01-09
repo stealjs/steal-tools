@@ -978,8 +978,6 @@ describe("pluginify", function(){
 		}).catch(function(e){
 			console.log(e.stack)
 		});
-
-
 	});
 
 	it("works when a file has no callback", function(done) {
@@ -1272,6 +1270,56 @@ describe("pluginifier builder", function(){
 			
 		});
 	});
+	
+	it("passes the load objects to normalize and dest", function(done){
+		var destCalls = 0;
+		
+		pluginifierBuilder({
+			
+			system: {
+				main: "pluginifier_builder_load/main",
+				config: __dirname+"/stealconfig.js"
+			},
+			options: {
+				cquiet: true
+			},
+			"outputs": {
+				"cjs": {
+					graphs: ["pluginifier_builder_load/main"],
+					useNormalizedDependencies: false,
+					format: "cjs",
+					normalize: function(name, load, curName, curLoad) {
+						assert.equal(name, "./bar");
+						assert.equal(load.name, "pluginifier_builder_load/bar");
+						assert.equal(curName, "pluginifier_builder_load/main");
+						assert.equal(curLoad.name, "pluginifier_builder_load/main");
+						return name;
+					},
+					dest: function(moduleName, moduleData, load){
+						switch(destCalls++) {
+							case 0:
+								assert.equal(load.name, "pluginifier_builder_load/main");
+								break;
+							case 1:
+								assert.equal(load.name, "pluginifier_builder_load/bar");
+								break;
+						}
+						return __dirname+"/out/"+moduleName+".js"
+					},
+					minify: false
+				}
+			}
+		}, [{}], {}, function(err){
+			if(err) {
+				done(err)
+			} else {
+				done();
+			}
+			
+		});
+	});
+	
+	
 });
 
 describe("@loader used in configs", function() {

@@ -44,9 +44,15 @@ these values will be taken directly from [System.shim] configuration values.
 @option {Boolean} [useNormalizedDependencies=true] Use normalized dependency names instead of
 relative module names.  For example "foo/bar" will be used instead of "./bar".
 
-@option {function(String, String, String)} [normalize(name, currentModule, address)] An
+@option {function(String, Load, String, Load):String} [normalize(depName, depLoad, curName, curLoad)] An
 optional function that will normalize all module names written out. Use this for custom normalization
 behavior.
+
+  @param {String} depName The dependency name to normalize.
+  @param {Load} depLoad The load object for the dependency to normalize.
+  @param {String} curName The moduleName of the module whose dependencies are being normalized.
+  @param {Load} curLoad The load object of the module whose dependencies are being normalized.
+  @return {String} The dependency name to write in. By default, `depName` is used.
 
 @option {Boolean} [minify=false] By default, the output is not minified.
 Set to `true` to minify the result.
