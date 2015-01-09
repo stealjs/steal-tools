@@ -216,6 +216,12 @@ describe("multi build", function(){
 			}, {
 				quiet: true
 			}).then(function(data){
+				var exists = fs.existsSync(  path.join(__dirname,"bundle/dist/bundles/bundle.js")  );
+				if(!exists) {
+					done(new Error("no bundle info"))
+					return;
+				}
+				
 				open("test/bundle/bundle.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
 						assert(true, "got A");
@@ -1450,6 +1456,7 @@ describe("npm package.json builds", function(){
 				quiet: true,
 				minify: false
 			}).then(function(){
+				
 				// open the prod page and make sure
 				// and make sure the module loaded successfully
 				open("test/npm/prod.html", function(browser, close){
