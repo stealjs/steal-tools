@@ -1281,7 +1281,7 @@ describe("pluginifier builder", function(){
 				config: __dirname+"/stealconfig.js"
 			},
 			options: {
-				cquiet: true
+				quiet: true
 			},
 			"outputs": {
 				"cjs": {
@@ -1295,13 +1295,27 @@ describe("pluginifier builder", function(){
 						assert.equal(curLoad.name, "pluginifier_builder_load/main");
 						return name;
 					},
-					dest: function(moduleName, moduleData, load){
+					ignore: function(moduleName, load){
 						switch(destCalls++) {
 							case 0:
 								assert.equal(load.name, "pluginifier_builder_load/main");
 								break;
-							case 1:
+							case 2:
 								assert.equal(load.name, "pluginifier_builder_load/bar");
+								return true;
+								break;
+							default:
+								assert.ok(false, "should not be called "+moduleName+"."+destCalls);
+								break;
+						}
+					},
+					dest: function(moduleName, moduleData, load){
+						switch(destCalls++) {
+							case 1:
+								assert.equal(load.name, "pluginifier_builder_load/main");
+								break;
+							default:
+								assert.ok(false, "should not be called "+moduleName+"."+destCalls);
 								break;
 						}
 						return __dirname+"/out/"+moduleName+".js"
