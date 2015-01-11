@@ -4,6 +4,9 @@
     "jquery": ">2.0"
   },
   "system": {
+    "directories": {
+      "lib": "src"
+    },
     "meta": {
       "jquery": {"format": "global", "exports": "jQuery"}
     }
