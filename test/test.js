@@ -1507,7 +1507,7 @@ describe("npm package.json builds", function(){
 		});
 	};
 	
-	it.only("only needs a config", function(done){
+	it("only needs a config", function(done){
 		this.timeout(50000);
 		setup(function(error){
 			if(error){ return done(error); }
