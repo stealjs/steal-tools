@@ -1288,11 +1288,12 @@ describe("pluginifier builder", function(){
 					graphs: ["pluginifier_builder_load/main"],
 					useNormalizedDependencies: false,
 					format: "cjs",
-					normalize: function(name, load, curName, curLoad) {
+					normalize: function(name, load, curName, curLoad, loader) {
 						assert.equal(name, "./bar");
 						assert.equal(load.name, "pluginifier_builder_load/bar");
 						assert.equal(curName, "pluginifier_builder_load/main");
 						assert.equal(curLoad.name, "pluginifier_builder_load/main");
+						assert.equal(loader.main, "pluginifier_builder_load/main");
 						return name;
 					},
 					ignore: function(moduleName, load){
