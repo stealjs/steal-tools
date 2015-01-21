@@ -2,7 +2,7 @@
   "name": "steal-tools",
   "version": "0.5.0",
   "devDependencies": {
-    "steal": "bitovi/steal#7d70615201086144df162ceee74ae7c62fc72923",
+    "steal": "bitovi/steal#7145e390bf85cca06563475faf527bd8c56b1170",
     "jquery": "~1.10.0",
 	"less" : "^1.7.0"
   }
