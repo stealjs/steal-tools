@@ -1227,6 +1227,7 @@ describe("multi-main", function(){
 });
 
 describe("pluginifier builder", function(){
+	
 	it("basics work", function(done){
 		
 		pluginifierBuilder({
@@ -1334,6 +1335,65 @@ describe("pluginifier builder", function(){
 		});
 	});
 	
+	it.only("build helpers work", function(done){
+		
+		var setup =  function(done){
+			rmdir(__dirname+"/pluginifier_builder_helpers/node_modules", function(error){
+		
+				if(error){ return done(error); }
+			
+				fs.copy(
+						path.join(__dirname, "..", "node_modules","jquery"),
+						__dirname+"/pluginifier_builder_helpers/node_modules/jquery", function(error){
+							
+					if(error) {
+						done(error);
+					}
+					done();
+				});
+				
+			});
+		};
+		
+		setup(function(error){
+			if(error){ return done(error); }
+			
+			pluginifierBuilder({
+				
+				system: {
+					config: __dirname+"/pluginifier_builder_helpers/package.json!npm"
+				},
+				options: {
+					verbose: true
+				},
+				"outputs": {
+					"+cjs": {
+						"dest": __dirname+"/pluginifier_builder_helpers/src/dist/cjs"
+					}
+				}
+			}, [{}], {}, function(err){
+				if(err) {return done(err);}
+				
+				done();
+				
+				/*
+				open("test/pluginifier_builder/index.html", function(browser, close){
+		
+					find(browser,"RESULT", function(result){
+						assert.ok(result.module, "has module");
+						assert.ok(result.cjs,"has cjs module");
+						assert.equal(result.name, "pluginified");
+						close();
+					}, close);
+	
+				}, done);*/
+				
+			});
+			
+		});
+		
+		
+	})
 	
 });
 
@@ -1519,7 +1579,6 @@ describe("npm package.json builds", function(){
 				quiet: true,
 				minify: false
 			}).then(function(){
-				
 				// open the prod page and make sure
 				// and make sure the module loaded successfully
 				open("test/npm/prod.html", function(browser, close){

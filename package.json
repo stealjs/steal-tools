@@ -13,12 +13,13 @@
     "lodash": "2.4.1",
     "steal": "0.5.0-pre.2",
     "traceur": "0.0.58",
-    "transpile": "0.4.0-alpha.0",
+    "transpile": "0.4.0-alpha.1",
     "uglify-js": "~2.4.13",
     "winston": "^0.7.3",
     "yargs": "^1.2.2",
     "fs-extra" :"~0.8.1",
-    "less": "^1.7.0"
+    "less": "^1.7.0",
+    "system-parse-amd": "0.0.1"
   },
   "devDependencies": {
     "bower": "1.3.8",
