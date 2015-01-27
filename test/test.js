@@ -1335,9 +1335,8 @@ describe("pluginifier builder", function(){
 		});
 	});
 	
-	it.only("build helpers work", function(done){
-		
-		var setup =  function(done){
+	describe("helpers", function(){
+		beforeEach(function(done) {
 			rmdir(__dirname+"/pluginifier_builder_helpers/node_modules", function(error){
 		
 				if(error){ return done(error); }
@@ -1346,54 +1345,112 @@ describe("pluginifier builder", function(){
 						path.join(__dirname, "..", "node_modules","jquery"),
 						__dirname+"/pluginifier_builder_helpers/node_modules/jquery", function(error){
 							
-					if(error) {
-						done(error);
-					}
-					done();
+					if(error) { return done(error); }
+					
+					fs.copy(
+						path.join(__dirname, "..", "node_modules","cssify"),
+						__dirname+"/pluginifier_builder_helpers/node_modules/cssify", function(error){
+							
+						if(error) { return done(error); }
+						done();
+						
+					});
 				});
 				
 			});
-		};
+		});
 		
-		setup(function(error){
-			if(error){ return done(error); }
+		it("+cjs", function(done){
+			this.timeout(10000);
 			
 			pluginifierBuilder({
 				
-				system: {
-					config: __dirname+"/pluginifier_builder_helpers/package.json!npm"
-				},
-				options: {
-					verbose: true
-				},
+				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				options: { quiet: true },
 				"outputs": {
-					"+cjs": {
-						"dest": __dirname+"/pluginifier_builder_helpers/src/dist/cjs"
-					}
+					"+cjs": {}
 				}
 			}, [{}], {}, function(err){
 				if(err) {return done(err);}
 				
-				done();
+				var browserify = require("browserify");
 				
-				/*
-				open("test/pluginifier_builder/index.html", function(browser, close){
-		
-					find(browser,"RESULT", function(result){
-						assert.ok(result.module, "has module");
-						assert.ok(result.cjs,"has cjs module");
-						assert.equal(result.name, "pluginified");
-						close();
-					}, close);
-	
-				}, done);*/
+				var b = browserify();
+				b.add(path.join(__dirname, "pluginifier_builder_helpers/browserify.js"));
+				var out = fs.createWriteStream(path.join(__dirname, "pluginifier_builder_helpers/browserify-out.js"));
+				b.bundle().pipe(out);
+				out.on('finish', function(){
+					open("test/pluginifier_builder_helpers/browserify.html", function(browser, close) {
+						find(browser,"WIDTH", function(width){
+							
+							assert.equal(width, 200, "with of element");
+							close();
+						}, close);
+					}, done);
+				});
+				
 				
 			});
+				
+		});
+		
+		// NOTICE: this test uses a modified version of the css plugin to better work
+		// in HTMLDOM
+		it("+amd", function(done){
+			this.timeout(10000);
 			
+			pluginifierBuilder({
+				
+				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				options: { quiet: true },
+				"outputs": {
+					"+amd": {}
+				}
+			}, [{}], {}, function(err){
+				if(err) {return done(err);}
+				
+				open("test/pluginifier_builder_helpers/amd.html", function(browser, close) {
+					find(browser,"WIDTH", function(width){
+						assert.equal(width, 200, "with of element");
+						close();
+					}, close);
+				}, done);
+				
+				
+			});
+				
+		});
+		
+		it("+global-css +global-js", function(done){
+			this.timeout(10000);
+			
+			pluginifierBuilder({
+				
+				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				options: { quiet: true },
+				"outputs": {
+					"+global-css": {},
+					"+global-js": { exports: {"jquery": "jQuery"} }
+				}
+			}, [{}], {}, function(err){
+				if(err) {return done(err);}
+				
+				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
+					find(browser,"WIDTH", function(width){
+						assert.equal(width, 200, "with of element");
+						close();
+					}, close);
+				}, done);
+				
+				
+			});
+				
 		});
 		
 		
-	})
+		
+		
+	});
 	
 });
 

@@ -37,7 +37,9 @@
     "mocha": "1.18.2",
     "rimraf": "2.1",
     "zombie": "2.0.0-alpha27",
-    "jquery": ">2.0"
+    "jquery": ">2.0",
+    "browserify": "~8.1.0",
+    "cssify": "^0.6.0"
   },
   "bin": {
     "steal-tools": "bin/steal"
