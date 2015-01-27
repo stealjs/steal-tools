@@ -1338,23 +1338,30 @@ describe("pluginifier builder", function(){
 	describe("helpers", function(){
 		beforeEach(function(done) {
 			rmdir(__dirname+"/pluginifier_builder_helpers/node_modules", function(error){
-		
+				
 				if(error){ return done(error); }
-			
-				fs.copy(
-						path.join(__dirname, "..", "node_modules","jquery"),
-						__dirname+"/pluginifier_builder_helpers/node_modules/jquery", function(error){
-							
-					if(error) { return done(error); }
-					
+				
+				rmdir(__dirname+"/pluginifier_builder_helpers/dist", function(error){
+				
+		
+					if(error){ return done(error); }
+				
 					fs.copy(
-						path.join(__dirname, "..", "node_modules","cssify"),
-						__dirname+"/pluginifier_builder_helpers/node_modules/cssify", function(error){
-							
+							path.join(__dirname, "..", "node_modules","jquery"),
+							__dirname+"/pluginifier_builder_helpers/node_modules/jquery", function(error){
+								
 						if(error) { return done(error); }
-						done();
 						
+						fs.copy(
+							path.join(__dirname, "..", "node_modules","cssify"),
+							__dirname+"/pluginifier_builder_helpers/node_modules/cssify", function(error){
+								
+							if(error) { return done(error); }
+							done();
+							
+						});
 					});
+					
 				});
 				
 			});
