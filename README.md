@@ -5,7 +5,7 @@
 `steal-tools` is a collection of command-line utilities
 that:
  
- - makes building ES6, CommonJS, AMD, and applications _easy_, and 
+ - makes building ES6, CommonJS, AMD, applications and plugins _easy_, and 
  - writes those builds so your apps load _fast_.
 
 It is one half of the [StealJS](http://stealjs.com) project.  It's other half,
