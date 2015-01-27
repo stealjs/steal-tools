@@ -1394,6 +1394,43 @@ describe("pluginifier builder", function(){
 				
 		});
 		
+		
+		it("+cjs with dest", function(done){
+			this.timeout(10000);
+			
+			pluginifierBuilder({
+				
+				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				options: { quiet: true },
+				"outputs": {
+					"+cjs": {dest: __dirname+"/pluginifier_builder_helpers/cjs"}
+				}
+			}, [{}], {}, function(err){
+				if(err) {return done(err);}
+				
+				var browserify = require("browserify");
+				
+				var b = browserify();
+				b.add(path.join(__dirname, "pluginifier_builder_helpers/browserify-cjs.js"));
+				var out = fs.createWriteStream(path.join(__dirname, "pluginifier_builder_helpers/browserify-out.js"));
+				b.bundle().pipe(out);
+				out.on('finish', function(){
+					open("test/pluginifier_builder_helpers/browserify.html", function(browser, close) {
+						find(browser,"WIDTH", function(width){
+							
+							assert.equal(width, 200, "with of element");
+							close();
+						}, close);
+					}, done);
+				});
+				
+				
+			});
+				
+		});
+		
+		
+		
 		// NOTICE: this test uses a modified version of the css plugin to better work
 		// in HTMLDOM
 		it("+amd", function(done){
