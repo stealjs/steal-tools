@@ -1227,6 +1227,7 @@ describe("multi-main", function(){
 });
 
 describe("pluginifier builder", function(){
+	
 	it("basics work", function(done){
 		
 		pluginifierBuilder({
@@ -1334,6 +1335,122 @@ describe("pluginifier builder", function(){
 		});
 	});
 	
+	describe("helpers", function(){
+		beforeEach(function(done) {
+			rmdir(__dirname+"/pluginifier_builder_helpers/node_modules", function(error){
+		
+				if(error){ return done(error); }
+			
+				fs.copy(
+						path.join(__dirname, "..", "node_modules","jquery"),
+						__dirname+"/pluginifier_builder_helpers/node_modules/jquery", function(error){
+							
+					if(error) { return done(error); }
+					
+					fs.copy(
+						path.join(__dirname, "..", "node_modules","cssify"),
+						__dirname+"/pluginifier_builder_helpers/node_modules/cssify", function(error){
+							
+						if(error) { return done(error); }
+						done();
+						
+					});
+				});
+				
+			});
+		});
+		
+		it("+cjs", function(done){
+			this.timeout(10000);
+			
+			pluginifierBuilder({
+				
+				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				options: { quiet: true },
+				"outputs": {
+					"+cjs": {}
+				}
+			}, [{}], {}, function(err){
+				if(err) {return done(err);}
+				
+				var browserify = require("browserify");
+				
+				var b = browserify();
+				b.add(path.join(__dirname, "pluginifier_builder_helpers/browserify.js"));
+				var out = fs.createWriteStream(path.join(__dirname, "pluginifier_builder_helpers/browserify-out.js"));
+				b.bundle().pipe(out);
+				out.on('finish', function(){
+					open("test/pluginifier_builder_helpers/browserify.html", function(browser, close) {
+						find(browser,"WIDTH", function(width){
+							
+							assert.equal(width, 200, "with of element");
+							close();
+						}, close);
+					}, done);
+				});
+				
+				
+			});
+				
+		});
+		
+		// NOTICE: this test uses a modified version of the css plugin to better work
+		// in HTMLDOM
+		it("+amd", function(done){
+			this.timeout(10000);
+			
+			pluginifierBuilder({
+				
+				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				options: { quiet: true },
+				"outputs": {
+					"+amd": {}
+				}
+			}, [{}], {}, function(err){
+				if(err) {return done(err);}
+				
+				open("test/pluginifier_builder_helpers/amd.html", function(browser, close) {
+					find(browser,"WIDTH", function(width){
+						assert.equal(width, 200, "with of element");
+						close();
+					}, close);
+				}, done);
+				
+				
+			});
+				
+		});
+		
+		it("+global-css +global-js", function(done){
+			this.timeout(10000);
+			
+			pluginifierBuilder({
+				
+				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				options: { quiet: true },
+				"outputs": {
+					"+global-css": {},
+					"+global-js": { exports: {"jquery": "jQuery"} }
+				}
+			}, [{}], {}, function(err){
+				if(err) {return done(err);}
+				
+				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
+					find(browser,"WIDTH", function(width){
+						assert.equal(width, 200, "with of element");
+						close();
+					}, close);
+				}, done);
+				
+				
+			});
+				
+		});
+		
+		
+		
+		
+	});
 	
 });
 
@@ -1519,7 +1636,6 @@ describe("npm package.json builds", function(){
 				quiet: true,
 				minify: false
 			}).then(function(){
-				
 				// open the prod page and make sure
 				// and make sure the module loaded successfully
 				open("test/npm/prod.html", function(browser, close){
