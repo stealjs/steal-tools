@@ -10,10 +10,10 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	connect = require("connect"),
 	path = require('path'),
 	rmdir = require('rimraf'),
-	pluginify = require("../lib/build/pluginifier"),
+	transformImport = require("../lib/build/transform"),
 	fs = require('fs-extra'),
 	logging = require('../lib/logger'),
-	pluginifierBuilder = require('../lib/build/pluginifier_builder');
+	stealExport = require('../lib/build/export');
 
 System.logLevel = 3;
 
@@ -872,10 +872,10 @@ describe("multi build with plugins", function(){
 });
 
 
-describe("pluginify", function(){
+describe("transformImport", function(){
 
 	it("basics should work", function(done){
-		pluginify({
+		transformImport({
 			config: __dirname+"/stealconfig.js",
 			main: "pluginify/pluginify"
 		}, {
@@ -883,10 +883,10 @@ describe("pluginify", function(){
 				'pluginify/global': 'globalModule'
 			},
 			quiet: true
-		}).then(function(pluginify){
+		}).then(function(transform){
 
 
-			fs.writeFile(__dirname+"/pluginify/out.js", pluginify(), function(err) {
+			fs.writeFile(__dirname+"/pluginify/out.js", transform(), function(err) {
 			    // open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/pluginify/index.html", function(browser, close){
@@ -910,16 +910,16 @@ describe("pluginify", function(){
 	});
 	
 	it("ignores files told to ignore", function(done){
-		pluginify({
+		transformImport({
 			config: __dirname + "/stealconfig.js",
 			main: "pluginify/pluginify"
 		}, {
 			exports: {},
 			quiet: true
-		}).then(function(pluginify){
+		}).then(function(transform){
 
 			// Get the resulting string, ignoring amdmodule
-			var result = pluginify(null, {
+			var result = transform(null, {
 				ignore: ["basics/amdmodule"]
 			});
 
@@ -933,18 +933,18 @@ describe("pluginify", function(){
 
 	it("makes plugins that depend on other made plugins",function(done){
 
-		pluginify({
+		transformImport({
 			config: __dirname+"/pluginify_deps/config.js",
 			main: "plugin"
 		}, {
 			exports: {},
 			quiet: true
-		}).then(function(pluginify){
-			var pluginOut = pluginify("plugin",{
+		}).then(function(transform){
+			var pluginOut = transform("plugin",{
 				ignore: ["util"],
 				minify: false
 			});
-			var utilOut = pluginify("util",{
+			var utilOut = transform("util",{
 				ignore: ["lib"],
 				minify: false,
 				exports: {
@@ -981,14 +981,14 @@ describe("pluginify", function(){
 	});
 
 	it("works when a file has no callback", function(done) {
-		pluginify({
+		transformImport({
 			config: __dirname + "/stealconfig.js",
 			main: "nocallback/nocallback"
 		}, {
 			exports: {},
 			quiet: true
-		}).then(function(pluginify) {
-			fs.writeFile(__dirname+"/nocallback/out.js", pluginify(), function(err) {
+		}).then(function(transform) {
+			fs.writeFile(__dirname+"/nocallback/out.js", transform(), function(err) {
 			    // open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/nocallback/index.html", function(browser, close){
@@ -1002,14 +1002,14 @@ describe("pluginify", function(){
 	});
 
 	it("Excludes plugins from the built output unless marked includeInBuild", function(done){
-		pluginify({
+		transformImport({
 			config: __dirname+"/plugins/config.js",
 			main: "main"
 		}, {
 			exports: {},
 			quiet: true
-		}).then(function(pluginify){
-			var pluginOut = pluginify(null, {
+		}).then(function(transform){
+			var pluginOut = transform(null, {
 				minify: false
 			});
 
@@ -1024,7 +1024,7 @@ describe("pluginify", function(){
 				return done(error);
 			}
 
-			pluginify({
+			transformImport({
 				config: __dirname+"/pluginify_global/config.js",
 				main: "main"
 			}, {
@@ -1032,8 +1032,8 @@ describe("pluginify", function(){
 					"global": "GLOBAL"
 				},
 				quiet: true
-			}).then(function(pluginify){
-				var pluginOut = pluginify(null, {
+			}).then(function(transform){
+				var pluginOut = transform(null, {
 					minify: false
 				});
 
@@ -1062,13 +1062,13 @@ describe("pluginify", function(){
 				return done(error);
 			}
 
-			pluginify({
+			transformImport({
 				config: __dirname + "/pluginify_define/config.js",
 				main: "main"
 			}, {
 				quiet: true
-			}).then(function(pluginify){
-				var out = pluginify(null, { minify: false });
+			}).then(function(transform){
+				var out = transform(null, { minify: false });
 
 				fs.writeFile(__dirname + "/pluginify_define/out.js", out, function(error){
 					if(error) {
@@ -1226,11 +1226,11 @@ describe("multi-main", function(){
 	});
 });
 
-describe("pluginifier builder", function(){
+describe("export", function(){
 	
 	it("basics work", function(done){
 		
-		pluginifierBuilder({
+		stealExport({
 			
 			system: {
 				main: "pluginifier_builder/pluginify",
@@ -1256,8 +1256,7 @@ describe("pluginifier builder", function(){
 					minify: false
 				}
 			}
-		}, [{}], {}, function(err){
-			
+		}).then(function(){
 			open("test/pluginifier_builder/index.html", function(browser, close){
 	
 				find(browser,"RESULT", function(result){
@@ -1269,13 +1268,13 @@ describe("pluginifier builder", function(){
 
 			}, done);
 			
-		});
+		}, done);
 	});
 	
 	it("passes the load objects to normalize and dest", function(done){
 		var destCalls = 0;
 		
-		pluginifierBuilder({
+		stealExport({
 			
 			system: {
 				main: "pluginifier_builder_load/main",
@@ -1325,14 +1324,11 @@ describe("pluginifier builder", function(){
 					minify: false
 				}
 			}
-		}, [{}], {}, function(err){
-			if(err) {
-				done(err)
-			} else {
-				done();
-			}
-			
-		});
+		}).then(function(err){
+
+			done();
+
+		}, done);
 	});
 	
 	describe("helpers", function(){
@@ -1370,16 +1366,15 @@ describe("pluginifier builder", function(){
 		it("+cjs", function(done){
 			this.timeout(10000);
 			
-			pluginifierBuilder({
+			stealExport({
 				
 				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
 					"+cjs": {}
 				}
-			}, [{}], {}, function(err){
-				if(err) {return done(err);}
-				
+			}).then(function(){
+
 				var browserify = require("browserify");
 				
 				var b = browserify();
@@ -1397,7 +1392,7 @@ describe("pluginifier builder", function(){
 				});
 				
 				
-			});
+			}, done);
 				
 		});
 		
@@ -1405,15 +1400,14 @@ describe("pluginifier builder", function(){
 		it("+cjs with dest", function(done){
 			this.timeout(10000);
 			
-			pluginifierBuilder({
+			stealExport({
 				
 				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
 					"+cjs": {dest: __dirname+"/pluginifier_builder_helpers/cjs"}
 				}
-			}, [{}], {}, function(err){
-				if(err) {return done(err);}
+			}).then(function(){
 				
 				var browserify = require("browserify");
 				
@@ -1432,7 +1426,7 @@ describe("pluginifier builder", function(){
 				});
 				
 				
-			});
+			}, done);
 				
 		});
 		
@@ -1443,15 +1437,14 @@ describe("pluginifier builder", function(){
 		it("+amd", function(done){
 			this.timeout(10000);
 			
-			pluginifierBuilder({
+			stealExport({
 				
 				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
 					"+amd": {}
 				}
-			}, [{}], {}, function(err){
-				if(err) {return done(err);}
+			}).then(function(){
 				
 				open("test/pluginifier_builder_helpers/amd.html", function(browser, close) {
 					find(browser,"WIDTH", function(width){
@@ -1461,14 +1454,14 @@ describe("pluginifier builder", function(){
 				}, done);
 				
 				
-			});
+			}, done);
 				
 		});
 		
 		it("+global-css +global-js", function(done){
 			this.timeout(10000);
 			
-			pluginifierBuilder({
+			stealExport({
 				
 				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
@@ -1476,8 +1469,7 @@ describe("pluginifier builder", function(){
 					"+global-css": {},
 					"+global-js": { exports: {"jquery": "jQuery"} }
 				}
-			}, [{}], {}, function(err){
-				if(err) {return done(err);}
+			}).then(function(err){
 				
 				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
 					find(browser,"WIDTH", function(width){
@@ -1487,7 +1479,7 @@ describe("pluginifier builder", function(){
 				}, done);
 				
 				
-			});
+			}, done);
 				
 		});
 		
