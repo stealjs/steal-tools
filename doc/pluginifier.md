@@ -1,4 +1,4 @@
-@function stealTools.pluginifier pluginifier
+@function steal-tools.pluginifier pluginifier
 @parent steal-tools.JS 
 
 Build a module and its dependencies to work independently of `steal.js`.
@@ -27,12 +27,12 @@ the [System.baseURL baseURL] value must be set.
 @param {{}} pluginifierOptions
 
 Configures the behavior of loading the modules and acts as default values
-for the resulting [stealTools.pluginify pluginify function's] options argument.
+for the resulting [steal-tools.pluginify pluginify function's] options argument.
 
 @option {Boolean} [verbose=false] Set to true to get a lot of warning messages.
 @option {Boolean} [quiet=false] Set to true to log nothing.
 
-@return {Promise.<stealTools.pluginify>} A deferred that resolves to a function
+@return {Promise.<steal-tools.pluginify>} A deferred that resolves to a function
 that can write out all or part of the loaded dependency tree. 
 
 
@@ -47,7 +47,7 @@ more simple projects pluginifier is a good option. Plugnifier is also used when 
 where you want to split your modules into individual module file (hence *plugins*) and 
 distribute them that way.
 
-Like [stealTools.build], pluginifier can be used from the command-line, from Grunt, or 
+Like [steal-tools.build], pluginifier can be used from the command-line, from Grunt, or 
 programmatically in Node.js. For this example we're going to use 
 pluginifier programmatically in order to showcase 
 it's more advanced functionality:

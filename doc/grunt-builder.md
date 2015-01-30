@@ -1,17 +1,17 @@
-@typedef {{}} stealTools.grunt.build stealBuild
+@typedef {{}} steal-tools.grunt.builder stealBuilder
 @parent steal-tools.grunt 
 
 The `stealBuild` options object values.
 
 @option {Object} system Specifies the `config` argument in
-[stealTools.build]. The [System.main main] option must be specified. Typically
+[steal-tools.build]. The [System.main main] option must be specified. Typically
 [System.configPath configPath] is also specified as that is used to set 
 [System.baseURL baseURL].  Any System [System.config configuration] can be specified; however,
 most other __build__ configuration values are specified in
 by [System.buildConfig] in the config file.
 
 @option {Object} buildOptions Specifies the `options` argument 
-to [stealTools.build stealTools.build].
+to [steal-tools.build stealTools.build].
 
 
 @body
@@ -54,10 +54,10 @@ to specify at least the `config` and `main` options like so:
 ## buildOptions
 
 The `buildOptions` property specifies the properties on the `options`
-argument to [stealTools.build stealTools.build]. The following options are available:
+argument to [steal-tools.build stealTools.build]. The following options are available:
 
-{{#each [stealTools.build].signatures.0.params.1.types.0.options}}
+{{#each [steal-tools.build].signatures.0.params.1.types.0.options}}
  - {{name}} <i>{{{makeTypesString types}}}</i>{{/each}}
  
-Read more about them on [stealTools.build stealTools.build].
+Read more about them on [steal-tools.build stealTools.build].
 

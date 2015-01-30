@@ -1,16 +1,16 @@
-@function stealTools.pluginify pluginify
+@function steal-tools.pluginify pluginify
 @parent steal-tools.JS 
 
-A function provided by [stealTools.pluginifier] that can build out a specific module.
+A function provided by [steal-tools.pluginifier] that can build out a specific module.
 
 @signature `pluginify(moduleName, options)`
 
 @param {moduleName} [moduleName=config.main] The module name to build.
 
-@param {stealTools.pluginify.options} [options]
+@param {steal-tools.pluginify.options} [options]
 
 Options that configure how the files are compiled.  These options overwrite the 
-`pluginifierOptions` argument passed to [stealTools.pluginifier].
+`pluginifierOptions` argument passed to [steal-tools.pluginifier].
 
 @return {String} The result of `moduleName` being pluginified.
 
@@ -18,7 +18,7 @@ Options that configure how the files are compiled.  These options overwrite the
 
 ## Use
 
-After getting `pluginify` from [stealTools.pluginifier] you can call it like:
+After getting `pluginify` from [steal-tools.pluginifier] you can call it like:
 
     var result = pluginify("module/name/to/build", {
       // specifies modules to ignore
@@ -62,4 +62,4 @@ After getting `pluginify` from [stealTools.pluginifier] you can call it like:
     });
     
 Most of these options are optional.  For more 
-information, read [stealTools.pluginify.options pluginifyOptions].
+information, read [steal-tools.pluginify.options pluginifyOptions].

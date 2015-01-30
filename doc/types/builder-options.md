@@ -1,5 +1,7 @@
-@typedef {{}} stealTools.buildOptions buildOptions
-@description Options used throughout the build process.
+@typedef {{}} steal-tools.BuilderOptions BuilderOptions
+@parent steal-tools.types
+
+Options used to configure the build process.
 
 @option {Boolean} [minify=true] Whether the source code is minified prior to writing.
 
@@ -13,4 +15,4 @@
       ignore: [ "jquery" ]
     }
 
-@option {stealTools.format} format Specifies a format to transpile the dependency graph to. In the multiBuild all code is automatically transpiled to **amd** format. In [stealTools.pluginify] the default is to **global**.
+@option {steal-tools.format} format Specifies a format to transpile the dependency graph to. In the multiBuild all code is automatically transpiled to **amd** format. In [steal-tools.pluginify] the default is to **global**.

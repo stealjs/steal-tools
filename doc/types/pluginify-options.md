@@ -1,8 +1,9 @@
-@typedef {{}} stealTools.pluginify.options PluginifyOptions
+@typedef {{}} steal-tools.pluginify.options PluginifyOptions
+@parent steal-tools.types
 
 Specify the behavior of pluginify.
 
-@option {Array.<RegExp|String>} [ignore] An Array of regular expression or strings that 
+@option {Array.<RegExp|String|function(String,Load)>} [ignore] An Array of regular expression or strings that 
 specify [moduleName]'s that should not be included in the output. 
 
 Module names that match the regular expressions are not included. The following
