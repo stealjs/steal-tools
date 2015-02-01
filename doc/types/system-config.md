@@ -17,21 +17,21 @@ the [System.baseURL baseURL] value must be set.
 
 ## Use
 
-[steal-tools.builder], [steal-tools.exporter], and [steal-tools.pluginifier] all
+[steal-tools.build], [steal-tools.export], and [steal-tools.transformImport] all
 take a `SystemConfig` to configure the modules to load.
 
 ```
-stealTools.builder(SystemConfig, ...)
+stealTools.build(SystemConfig, ...)
 stealTools.pluginifier(SystemConfig, ...)
-stealTools.exporter({system: SystemConfig, outputs: {...}});
+stealTools["export"]({system: SystemConfig, outputs: {...}});
 ```
 
 If your `config` file specifies `main`, all that is needed is the `config` location:
 
 ```
-stealTools.builder({config: __dirname+"/package.json!npm"}, ...)
+stealTools.build({config: __dirname+"/package.json!npm"}, ...)
 stealTools.pluginifier({config: __dirname+"/package.json!npm"}, ...)
-stealTools.exporter({
+stealTools.export({
   system: {config: __dirname+"/package.json!npm"}, 
   outputs: {...}
 });
@@ -41,7 +41,7 @@ Otherwise, `main` and `config` are probably needed:
 
 
 ```
-stealTools.builder({
+stealTools.build({
   config: __dirname+"/config.js",
   main: "myproject"
 }, ...);
@@ -51,7 +51,7 @@ stealTools.pluginifier({
   main: "myproject"
 }, ...);
 
-stealTools.exporter({
+stealTools.export({
   system: {
     config: __dirname+"/config.js",
     main: "myproject"

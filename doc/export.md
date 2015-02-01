@@ -1,21 +1,23 @@
-@function steal-tools.exporter exporter
+@function steal-tools.export export
 @parent steal-tools.JS 
 
-@signature `stealTools.exporter( exporterTask, defaults, modules )`
+Export a project's modules to other forms and formats declaratively.  
 
-@param {steal-tools.exporter.object} exporterTask An [steal-tools.exporter.object] with the following properties:
+@signature `stealTools.export( exportTask, defaults, modules )`
+
+@param {steal-tools.export.object} exportTask An [steal-tools.export.object] with the following properties:
 
   @option {steal-tools.SystemConfig} config `System.config` data needed to load
   all the modules that need exporting.
 
   @option {{}} [options] Options that configure logging.
   
-  @option {Object<String,steal-tools.exporter.output>} outputs Configures output files to be written.
+  @option {Object<String,steal-tools.export.output>} outputs Configures output files to be written.
 
-@param {Object<String,steal-tools.exporter.output>} [defaults] An object of names and default ExportOutput
+@param {Object<String,steal-tools.export.output>} [defaults] An object of names and default ExportOutput
 values.
 
-@param {Array<{}>} [modules] An array of module data that a [steal-tools.exporter.output]'s
+@param {Array<{}>} [modules] An array of module data that a [steal-tools.export.output]'s
 `modules`, `eachModule`, `graphs` or `ignore` can be filtered against.
 
 @return {Promise} A promise that resolves when all outputs have been written out.
@@ -24,12 +26,18 @@ values.
 
 ## Use
 
-The basic use of `stealTools` exporter is to give it a "system" that is able to load your project's modules
+`stealTools.export` is used to declaratively describe multiple [steal-tools.transform transformations]
+that take place on an application's modules to make it distributable.  The
+[steal-tools/lib/build/helpers/amd], [steal-tools/lib/build/helpers/cjs], and
+[steal-tools/lib/build/helpers/global] _Export Helpers_ can be used to export censible versions
+of your project in those formats.
+
+The basic use of `stealTools` export is to give it a "system" that is able to load your project's modules
 and several "outputs" that write out those modules in a new form:
 
 ```
 var stealTools = require("stealTools");
-stealTools.exporter({
+stealTools.export({
   system: {
     main: "myproject",
     config: __dirname+"/config.js"
@@ -53,9 +61,9 @@ stealTools.exporter({
 })
 ```
 
-## exporterTask
+## exportTask
 
-The first argument is an [steal-tools.exporter.object].  Detail about its API and options can be found on its page.
+The first argument is an [steal-tools.export.object].  Detail about its API and options can be found on its page.
 
 ## defaults
 
@@ -64,7 +72,7 @@ contain default values each output can call to:
 
 ```
 var stealTools = require("stealTools");
-stealTools.exporter({
+stealTools.export({
   system: {
     main: "myproject",  config: __dirname+"/config.js"
   },
@@ -92,7 +100,7 @@ The [steal-tools/lib/build/helpers/cjs] and other export helpers can also be mix
 
 ```
 var stealTools = require("stealTools");
-stealTools.exporter({
+stealTools.export({
   system: {
     main: "myproject",  config: __dirname+"/config.js"
   },

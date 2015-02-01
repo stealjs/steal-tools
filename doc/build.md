@@ -1,9 +1,9 @@
-@function steal-tools.builder builder
+@function steal-tools.build build
 @parent steal-tools.JS 
 
 Build a module and all of its dependencies and optionally other bundles to progressively load.
 
-@signature `stealTools.builder(config, options)`
+@signature `stealTools.build(config, options)`
 
 @param {steal-tools.SystemConfig} config
 
@@ -65,7 +65,7 @@ Specifies the behavior of the build.
 
     var stealTools = require("steal-tools");
     
-    stealTools.builder({
+    stealTools.build({
       main: ["login","homepage"],
       config: __dirname+"/config.js"
     },{

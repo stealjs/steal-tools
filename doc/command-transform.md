@@ -1,12 +1,12 @@
-@function steal-tools.cmd.pluginify steal-tools pluginify
+@function steal-tools.cmd.transform steal-tools transform
 @parent steal-tools.cmd 
 
-Pluginifies a module from the command line.
+Transform a module from the command line.
 
-@signature `steal-tools pluginify [--OPTION_NAME OPTION_VALUE]...`
+@signature `steal-tools transform [--OPTION_NAME OPTION_VALUE]...`
 
 @param {String} OPTION_NAME Any `config`, `pluginifierOptions` or `options` name in 
-[steal-tools.pluginifier] or [steal-tools.pluginify pluginify].
+[steal-tools.transformImport] or [steal-tools.transform transform].
 
 @param {String} OPTION_VALUE The value of `OPTION_NAME`.  The `ignores` option
 will be converted to a regular expression.
@@ -23,7 +23,7 @@ steal-tools must have been installed into the commandLine like:
     
 Then you can run `steal-tools` like:
 
-    steal-tools pluginify \
+    steal-tools transform \
                --config app/config.js \
                --main app \
                --ignores foo/.+

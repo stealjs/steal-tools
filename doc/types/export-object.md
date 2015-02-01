@@ -1,8 +1,8 @@
-@typedef {{}} steal-tools.exporter.object ExporterObject
+@typedef {{}} steal-tools.export.object ExportObject
 @parent steal-tools.types
 
 An object that specifies the modules to load and their outputs. This is used by
-[steal-tools.exporter] and [steal-tools.grunt.exporter].
+[steal-tools.export] and [steal-tools.grunt.export].
 
 @option {steal-tools.SystemConfig} system Specifies the [System.config] values used 
 to load modules.  At a minimum some set of [System.main main], [System.baseURL baseURL]
@@ -22,15 +22,15 @@ system: {
   @option {Boolean} [quiet=false] No logging.  Defaults to `false`.
 
 
-@option {Object<String,steal-tools.exporter.output>} outputs Configures output files to be written.
+@option {Object<String,steal-tools.export.output>} outputs Configures output files to be written.
 
 @body
 
 ## Use
 
-Each ExporterObject task is configured by three values:
+Each ExportObject task is configured by three values:
 
- - system - describes the [System.config] values used to load modules, this is passed to [steal-tools.pluginifier].
+ - system - describes the [System.config] values used to load modules, this is passed to [steal-tools.transformImport].
  - options - configures special behavior of the loader such as logging.
  - outputs - configures the modules that should be written out, how they 
              should be written out, and where they should be written. 
@@ -61,15 +61,15 @@ options: { quiet: true }
 ## outputs
 
 `outputs` specifies different ways the modules loaded by `system` are written out. It's
-an object of [steal-tools.exporter.output] objects.  Each [steal-tools.exporter.output]
+an object of [steal-tools.export.output] objects.  Each [steal-tools.export.output]
 supports the following options:
 
-{{#each [steal-tools.exporter.output].types.0.options}}
+{{#each [steal-tools.export.output].types.0.options}}
  - {{name}} <i>{{{makeTypesString types}}}</i>{{/each}}
 
-And the options available to [steal-tools.pluginify.options].
+And the options available to [steal-tools.transform.options].
 
-{{#each [steal-tools.pluginify.options].types.0.options}}
+{{#each [steal-tools.transform.options].types.0.options}}
  - {{name}} <i>{{{makeTypesString types}}}</i>{{/each}}
 
 Only one of `modules`, `eachModule` or `graphs` should be specified. 
@@ -110,7 +110,7 @@ outputs: {
 }
 ```
 
-The given output ExporterObject's value will overwrite or modify the behavior of the __Export Helper__.  For example,
+The given output ExportObject's value will overwrite or modify the behavior of the __Export Helper__.  For example,
 `{dist: __dirname+"/cjs"}` will change the output destination of "+cjs".
 
 

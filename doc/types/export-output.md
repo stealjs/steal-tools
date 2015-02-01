@@ -1,9 +1,9 @@
-@typedef {Object} steal-tools.exporter.output ExporterOutput
-@inherits steal-tools.pluginify.options
+@typedef {Object} steal-tools.export.output ExportOutput
+@inherits steal-tools.transform.options
 @parent steal-tools.types
 
-Specifies the behavior for an output in a [steal-tools.exporter.object] "outputs" property. These properties are in
-addition to [steal-tools.pluginify.options].
+Specifies the behavior for an output in a [steal-tools.export.object] "outputs" property. These properties are in
+addition to [steal-tools.transform.options].
 
 @option {Array<moduleName|comparitor>} [modules] Builds all the modules in `modules` together 
 with their dependencies. 

@@ -1,4 +1,4 @@
-@typedef {{}} steal-tools.BuilderOptions BuilderOptions
+@typedef {{}} steal-tools.BuildOptions BuildOptions
 @parent steal-tools.types
 
 Options used to configure the build process.
@@ -15,4 +15,4 @@ Options used to configure the build process.
       ignore: [ "jquery" ]
     }
 
-@option {steal-tools.format} format Specifies a format to transpile the dependency graph to. In the multiBuild all code is automatically transpiled to **amd** format. In [steal-tools.pluginify] the default is to **global**.
+@option {steal-tools.format} format Specifies a format to transpile the dependency graph to. In the multiBuild all code is automatically transpiled to **amd** format. In [steal-tools.transform] the default is to **global**.

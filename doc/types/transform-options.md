@@ -1,7 +1,7 @@
-@typedef {{}} steal-tools.pluginify.options PluginifyOptions
+@typedef {{}} steal-tools.transform.options TransformOptions
 @parent steal-tools.types
 
-Specify the behavior of pluginify.
+Specify the behavior of a transform.
 
 @option {Array.<RegExp|String|function(String,Load)>} [ignore] An Array of regular expression or strings that 
 specify [moduleName]'s that should not be included in the output. 
@@ -9,14 +9,14 @@ specify [moduleName]'s that should not be included in the output.
 Module names that match the regular expressions are not included. The following
 ignores everything in _can/util/_.
 
-    pluginify("can/construct",{ignore: [/^can\/util\/]});
+    transform("can/construct",{ignore: [/^can\/util\/]});
 
 
 Module names and their dependencies that match the 
 strings in the array are not included. The following will not include
 "can/construct" and all of its dependencies:
 
-    pluginify("can/component",{ignore: ["can/construct"]});
+    transform("can/component",{ignore: ["can/construct"]});
 
 @option {Boolean} [removeDevelopmentCode=true] By default, removes code in between comments like:
 
@@ -37,7 +37,7 @@ The other possible format values are "steal","amd", and "cjs".
 global object.  For example, if an output depends on jQuery, but does not include it, you
 should include:
 
-    pluginify("mywidget",{exports: {"jquery": "jQuery"}})
+    transform("mywidget",{exports: {"jquery": "jQuery"}})
 
 __note__ - In future release, 
 these values will be taken directly from [System.shim] configuration values.

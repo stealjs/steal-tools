@@ -1,16 +1,17 @@
-@function steal-tools.pluginify pluginify
+@function steal-tools.transform transform
 @parent steal-tools.JS 
 
-A function provided by [steal-tools.pluginifier] that can build out a specific module.
+A function provided by [steal-tools.transformImport] that returns a transformed
+module or modules.
 
-@signature `pluginify(moduleName, options)`
+@signature `transform(moduleName, options)`
 
 @param {moduleName} [moduleName=config.main] The module name to build.
 
-@param {steal-tools.pluginify.options} [options]
+@param {steal-tools.transform.options} [options]
 
 Options that configure how the files are compiled.  These options overwrite the 
-`pluginifierOptions` argument passed to [steal-tools.pluginifier].
+`pluginifierOptions` argument passed to [steal-tools.transformImport].
 
 @return {String} The result of `moduleName` being pluginified.
 
@@ -18,9 +19,9 @@ Options that configure how the files are compiled.  These options overwrite the
 
 ## Use
 
-After getting `pluginify` from [steal-tools.pluginifier] you can call it like:
+After getting `transform` from [steal-tools.transformImport] you can call it like:
 
-    var result = pluginify("module/name/to/build", {
+    var result = transform("module/name/to/build", {
       // specifies modules to ignore
       ignore: [
         // ignores this module and all of its dependencies
@@ -62,4 +63,4 @@ After getting `pluginify` from [steal-tools.pluginifier] you can call it like:
     });
     
 Most of these options are optional.  For more 
-information, read [steal-tools.pluginify.options pluginifyOptions].
+information, read [steal-tools.transform.options transformOptions].

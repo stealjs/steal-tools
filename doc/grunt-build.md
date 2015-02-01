@@ -1,7 +1,7 @@
-@typedef {{}} steal-tools.grunt.builder stealBuilder
+@typedef {{}} steal-tools.grunt.build steal-build
 @parent steal-tools.grunt 
 
-The `stealBuild` options object values.
+The `steal-build` options object values.
 
 @option {Object} system Specifies the `config` argument in
 [steal-tools.build]. The [System.main main] option must be specified. Typically
@@ -18,11 +18,11 @@ to [steal-tools.build stealTools.build].
 
 ## Use
 
-`"stealBuild"` is registered as a grunt multi-build task. Specify the
-default "stealBuild" task options as follows:
+`"steal-build"` is registered as a grunt multi-build task. Specify the
+default "steal-build" task options as follows:
 
     grunt.initConfig({
-      stealBuild: {
+      "steal-build": {
         default: {
           options: {
             system: {
