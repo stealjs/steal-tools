@@ -1,5 +1,5 @@
 @page steal-tools.guides.progressive_loading Progressive Loading
-@parent StealJS.guides
+@parent StealJS.guides 1
 
 If you have a large single page app, you may want to progressively load parts 
 of the app.  Here's how you might do that:

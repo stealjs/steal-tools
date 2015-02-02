@@ -13,8 +13,8 @@ module.exports = function(grunt){
 		});
 		
 		pluginifierBuilder(options, 
-			grunt.config('meta.defaults'),
-			grunt.config('meta.modules') ).then(function(){
+			grunt.config('meta.steal.export-helpers'),
+			grunt.config('meta.steal.modules') ).then(function(){
 			done();
 		}, done);
 	};

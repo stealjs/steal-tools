@@ -76,3 +76,36 @@ Each [steal-tools.export.object] task is configured by three values:
              should be written out, and where they should be written. 
 
 The [steal-tools.export.object] documentation has more information.
+
+## meta.steal.export-helpers
+
+You can add your own export helpers on your grunt config's 
+`meta.steal.export-helpers` object like the following:
+
+```
+grunt.initConfig({
+  meta: {
+    steal: {
+      "export-helpers": {
+        "minify": {minify: true}
+      }
+    }
+  },
+  "steal-export": {
+    transpile: {
+      system: { ... },
+      outputs: {
+        "amd +minify": {
+          format: "amd"
+        }
+      }
+    }
+  }
+})
+```
+
+
+
+
+
+
