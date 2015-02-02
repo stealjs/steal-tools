@@ -8,7 +8,7 @@ Build a module and all of its dependencies and optionally other bundles to progr
 @param {steal-tools.SystemConfig} config
 
 Specifies configuration values to set on the System loader.  In addition to the `main`, `config` and `baseUrl` values 
-specified in [steal-tools.SystemConfig], an additonal `bundlesPath` is sometimes provided.
+specified in [steal-tools.SystemConfig], an additional `bundlesPath` is sometimes provided.
 
 
   @option {String} [bundlesPath='dist/bundle']  Specifies the path where the production bundles should be 
