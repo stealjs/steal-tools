@@ -19,6 +19,5 @@ module.exports = function(grunt){
 		}, done);
 	};
 
-	grunt.registerMultiTask("stealExport", "Create a 'plugin' version of your project which is not dependent on Steal.", task);
 	grunt.registerMultiTask("steal-export", "Create a 'plugin' version of your project which is not dependent on Steal.", task);
 };
