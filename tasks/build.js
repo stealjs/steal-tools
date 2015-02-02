@@ -2,7 +2,7 @@ var build = require("../index").build;
 
 module.exports = function(grunt){
 
-	grunt.registerMultiTask("stealBuild", "Build a steal project into bundles.", function(){
+	grunt.registerMultiTask("steal-build", "Build a steal project into bundles.", function(){
 		var done = this.async();
 		var options = this.options();
 

@@ -1,4 +1,4 @@
-var pluginifierBuilder = require("../lib/build/exporter");
+var pluginifierBuilder = require("../lib/build/export");
 
 module.exports = function(grunt){
 
