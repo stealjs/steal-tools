@@ -109,7 +109,7 @@ The following will load `steal.js`, `config.js` and `app.js`
 
 From your main folder, run:
 
-    > steal-tools build main=app config=site/config.js
+    > ./node_modules/steal-tools/bin/steal build --main=app --config=site/config.js
 
 Notice that the path to config must be relative to your cwd. This will create a 
 `site/bundles` directory with the following contents:
