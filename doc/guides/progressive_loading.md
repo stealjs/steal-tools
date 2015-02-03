@@ -4,9 +4,25 @@
 If you have a large single page app, you may want to progressively load parts 
 of the app.  Here's how you might do that:
 
-## Write your modules
+## Setup
 
-Write out your main module to load only the bare minimum to determine what "page" you 
+This simple single page app demonstrates progressive loading. It uses a common but simple file structure, but Steal supports a wide variety of other configuration options which can be found [steal here].
+
+To get started, ensure [Node.js](http://nodejs.org/) and [bower](http://bower.io/) are installed on your computer.
+Initialize a `package.json` and install [steal-tools].
+
+	> npm init
+	> npm install steal-tools --save-dev
+
+Next, initialize `bower` and install `jquery` and `steal`.
+
+	> bower init
+	> bower install jquery --save
+	> bower install steal --save
+
+
+## Create your modules
+Create a main module that loads only the bare minimum to determine what "page" you
 are on. A bare bones example might have a file structure like:
 
     bower_components/
@@ -18,13 +34,16 @@ are on. A bare bones example might have a file structure like:
       steal-tools/
     site/
       app.js
-      homepage.js
-      signup.js
-      login.js
-      site.html
       config.js
-      
-`app.js`:
+      homepage.js
+      login.js
+      signup.js
+      site.html
+
+
+Create `app.js` which import jquery using ES6 module syntax. And create an event handles which listens to the `hashchange` event.
+
+`app.js`
 
     import $ from 'jquery';
     $(function(){
