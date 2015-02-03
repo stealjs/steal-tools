@@ -45,26 +45,26 @@ Create `app.js` which import jquery using ES6 module syntax. And create an event
 
 `app.js`
 
-    import $ from 'jquery';
-    $(function(){
-      var onhashchange = function(){
-        if(window.location.hash === "#login") {
-          System.import("login").then(function(){
-            $("#main").login();
-          });
-        } else if(window.location.hash === "#signup" ) {
-          System.import("login").then(function(){
-            $("#main").signup();
-          });
-        } else {
-          System.import("homepage").then(function(){
-            $("#main").hompage();
-          });
-        }
-      }
-      $(document).bind("hashchange",onhashchange);
-      onhashchange();
-    });
+	import $ from 'jquery';
+	$(function(){
+	  var onhashchange = function(){
+		if(window.location.hash === "#login") {
+		  System.import("login").then(function(){
+			$("#main").login();
+		  });
+		} else if(window.location.hash === "#signup" ) {
+		  System.import("signup").then(function(){
+			$("#main").signup();
+		  });
+		} else {
+		  System.import("homepage").then(function(){
+			$("#main").homepage();
+		  });
+		}
+	  };
+	  $(window).bind("hashchange",onhashchange);
+	  onhashchange();
+	});
 
 `homepage.js`
 
