@@ -122,7 +122,7 @@ Notice that the path to config must be relative to your cwd. This will create a
 
 If you want to limit the number of scripts any bundle might load, configure that like:
 
-    > steal-tools build main=app config=site/config bundleDepth=3
+    > ./node_modules/steal-tools/bin/steal build --main=app --config=site/config.js --bundleDepth=3
 
 ## See it live
 
@@ -133,3 +133,5 @@ If you add `data-env="production"` to your site, you can see it live:
             data-main="app"
             data-config="./config"
             data-env="production"></script>
+
+Change the hash in the address bar to update the page.
