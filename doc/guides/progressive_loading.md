@@ -97,10 +97,13 @@ The following will load `steal.js`, `config.js` and `app.js`
 
 `site.html`
     
-    <div id="main"></div>
-    <script src="../bower_components/steal/steal.js"
-            data-main="app"
-            data-config="./config.js"></script>
+	<div id="main"></div>
+
+	<script src="../bower_components/steal/steal.js"
+			data-main="app"
+			data-config="./config"
+			></script>
+
 
 ## Build your site
 
