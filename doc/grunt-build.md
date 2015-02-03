@@ -1,7 +1,7 @@
 @typedef {{}} steal-tools.grunt.build steal-build
 @parent steal-tools.grunt 
 
-The `steal-build` options object values.
+The `steal-build` options object's values.
 
 @option {Object} system Specifies the `config` argument in
 [steal-tools.build]. The [System.main main] option must be specified. Typically,
@@ -44,7 +44,7 @@ options: `system`, and `buildOptions`.
 
 These are [System.config] values that are used to 
 load modules during the build process. Typically, you will want 
-to specify at least the `config` and `main` options like so:
+to specify at least the `config` and `main` options, like so:
 
     {
 	  config: __dirname + "/config.js",

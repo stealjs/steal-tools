@@ -40,7 +40,7 @@ grunt.initConfig({
 
 `steal-export` is a Grunt [multi-task](http://gruntjs.com/creating-tasks#multi-tasks) that is 
 used to build library projects to a variety of formats. For example, to load a "main" module and
-transpile it and all of its dependencies (except jQuery) to AMD and CommonJS with debug output:
+transpile it, and all of its dependencies (except jQuery), to AMD and CommonJS with debug output:
 
     grunt.initConfig({
       "steal-export": {

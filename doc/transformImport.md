@@ -13,7 +13,7 @@ so that they don't depend on `steal.js`.
 @param {steal-tools.SystemConfig} config
 
 Specifies configuration values to set on 
-a [System] loader. The [System.main main] option must be specified. Typically,
+a System loader. The [System.main main] option must be specified. Typically,
 [System.configPath configPath] is also specified, as that is used to set 
 [System.baseURL baseURL].  Any System [System.config configuration] can be specified; however,
 most other __build__ configuration values are specified
@@ -50,13 +50,13 @@ to load modules. Once all modules have been loaded, it provides a
  - minified, or
  - with development code removed.
  
-`transformImport` and `transform` are low level functionality. For the majority of projects, [steal-tools.export]
+`transformImport` and `transform` are low-level functionality. For the majority of projects, [steal-tools.export]
 will be a better fit for the most common transformation behavior.
 
 Like [steal-tools.build], transformImport can be used from the command-line, from Grunt, or 
 programmatically in Node.js. For this example, we're going to use 
 transformImport programmatically, in order to showcase 
-it's more advanced functionality:
+its more advanced functionality:
 
     var transformImport = require("steal-tools").transformImport;
     var fs = require("fs");
@@ -82,6 +82,6 @@ it's more advanced functionality:
 
 As you can see, transformImport takes an object containing the 
 System configuration and returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). 
-The promise will return another function (named transform in this example) that can be used to generate 
-a string containing a module and it's dependencies. By default, the transform 
-function will return the main module, but can be used to generate any dependency in the graph.
+The promise will return another function (named "transform" in this example) that can be used to generate 
+a string containing a module and its dependencies. By default, the transform 
+function will return the main module; but it can be used to generate any dependency in the graph.

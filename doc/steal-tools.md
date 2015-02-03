@@ -14,10 +14,10 @@ applications easy.
 
 There are three core pieces of functionality that steal-tools provides:
 
- - [steal-tools.build] - Application packager that intelligently bundles progressively loaded
+ - [steal-tools.build] - An application packager that intelligently bundles progressively-loaded
    apps to improve application load times and caching.
- - [steal-tools.transformImport] and [steal-tools.transform]- A low level utility that can convert modules from one form to another.
- - [steal-tools.export] - A higher level utility that can export projects into many formats.
+ - [steal-tools.transformImport] and [steal-tools.transform] - A low-level utility that can convert modules from one form to another.
+ - [steal-tools.export] - A higher-level utility that can export projects into many formats.
 
 
 Currently, steal-tools depends 

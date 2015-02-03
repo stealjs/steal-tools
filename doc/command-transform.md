@@ -17,7 +17,7 @@ will be converted to a regular expression.
 
 ## Use
 
-steal-tools must have been installed into the commandLine, like:
+steal-tools must have been installed into the command line, like:
 
     npm install steal-tools -g
     

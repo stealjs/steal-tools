@@ -16,7 +16,7 @@ specified in [steal-tools.SystemConfig], an additional `bundlesPath` is sometime
 
   The path can be specified in three ways:
 
- - Absolute path - bundlesPath starts with `/`, or matches _/^\w+:[\/\\]/_, like:  `__dirname+"/place"` or `"c:\my\bundles"`.
+ - Absolute path - bundlesPath starts with `/`, or matches _/^\w+:[\/\\]/_, like:  `__dirname+"/place"`, or `"c:\my\bundles"`.
  - Relative to `process.cwd()` - bundlesPath starts with `./`, like `"./place"`.
  - Relative to [System.baseURL baseURL] - bundlesPath looks like: "packages", "foo/bar".
  
@@ -48,9 +48,9 @@ Specifies the behavior of the build.
   @option {Object} [cleanCSSOptions] A hash of options to customize the minification of css files. 
   All available options are listed in the [clean-css documentation](https://github.com/jakubpawlowicz/clean-css#how-to-use-clean-css-programmatically).
   
-  @option {Object} [uglifyOptions] A hash of options to customize the minification of JavaScript files. StealTool uses the 
-  top level `minify` function of uglify-js, and the available options are listed [here](https://github.com/mishoo/UglifyJS2#the-simple-way).
-  The option `fromString` is used internally and will always be `true`, any other value will be ignored.
+  @option {Object} [uglifyOptions] A hash of options to customize the minification of JavaScript files. StealTools uses the 
+  top-level `minify` function of uglify-js, and the available options are listed [here](https://github.com/mishoo/UglifyJS2#the-simple-way).
+  The option `fromString` is used internally and will always be `true`; any other value will be ignored.
 
 @return {{}}
 

@@ -26,7 +26,7 @@ After getting `transform` from [steal-tools.transformImport] you can call it, li
       ignore: [
         // ignores this module, and all of its dependencies
         "module/name/to/ignore",
-        // ignores modules names matching this pattern
+        // ignores modules with names matching this pattern
         /can\//
       ],
       
@@ -34,7 +34,7 @@ After getting `transform` from [steal-tools.transformImport] you can call it, li
       // true by default.
       removeDevelopmentCode: true,
       
-      // Transpile the code to either "amd","steal","cjs" or "global".
+      // Transpile the code to either "amd", "steal", "cjs" or "global".
       // "global", the default, allows the file to work without any module loader.
       format: "global",
       

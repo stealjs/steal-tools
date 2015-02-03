@@ -8,7 +8,7 @@ Export a project's modules to other forms and formats declaratively.
 @param {steal-tools.export.object} exportTask An [steal-tools.export.object] with the following properties:
 
   @option {steal-tools.SystemConfig} config `System.config` data needed to load
-  all the modules that need exporting.
+  all the modules for export.
 
   @option {{}} [options] Options that configure logging.
   
@@ -32,7 +32,7 @@ that take place on an application's modules to make it distributable.  The
 [steal-tools/lib/build/helpers/global] _Export Helpers_ can be used to export censible versions
 of your project in those formats.
 
-The basic use of `stealTools` export is to give it a "system" that is able to load your project's modules,
+The basic use of `stealTools` export is to provide a "system" that is able to load your project's modules,
 and several "outputs" that write out those modules in a new form:
 
 ```
@@ -67,7 +67,7 @@ The first argument is an [steal-tools.export.object].  Details about its API and
 
 ## defaults
 
-As the same options may need to be set over and over again, the `defaults` option can 
+As there are times when the same options may need to be set over and over again, the `defaults` option can 
 contain default values each output can call:
 
 ```
