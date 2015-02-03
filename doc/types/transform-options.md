@@ -3,8 +3,8 @@
 
 Specify the behavior of a transform.
 
-@option {Array.<RegExp|String|function(String,Load)>} [ignore] An Array of regular expression or strings that 
-specify [moduleName]'s that should not be included in the output. 
+@option {Array.<RegExp|String|function(String,Load)>} [ignore] An Array of regular expressions, or strings that 
+specify [moduleName]s that should not be included in the output. 
 
 Module names that match the regular expressions are not included. The following
 ignores everything in _can/util/_.
@@ -14,11 +14,11 @@ ignores everything in _can/util/_.
 
 Module names and their dependencies that match the 
 strings in the array are not included. The following will not include
-"can/construct" and all of its dependencies:
+"can/construct", and all of its dependencies:
 
     transform("can/component",{ignore: ["can/construct"]});
 
-@option {Boolean} [removeDevelopmentCode=true] By default, removes code in between comments like:
+@option {Boolean} [removeDevelopmentCode=true] By default, removes code in between comments, like:
 
     //!steal-remove-start
     REMOVE.THIS;
@@ -39,7 +39,7 @@ should include:
 
     transform("mywidget",{exports: {"jquery": "jQuery"}})
 
-__note__ - In future release, 
+__note__ - In future releases, 
 these values will be taken directly from [System.shim] configuration values.
 
 @option {Boolean} [useNormalizedDependencies=true] Use normalized dependency names instead of
@@ -59,7 +59,7 @@ behavior.
 Set to `true` to minify the result.
 
 @option {Boolean} [ignoreAllDependencies=false] By default, the dependencies of
-the module specified are included unless they are explicitly ignored.  Setting
+the module specified are included, unless they are explicitly ignored.  Setting
 _ignoreAllDependencies_ to `true` only results in returning that individual module
 as the output.
 

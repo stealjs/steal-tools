@@ -13,10 +13,10 @@ Builds steal-tools from the command line.
 
 ## Use
 
-steal-tools must have been installed into the commandLine like:
+steal-tools must have been installed into the commandLine, like:
 
     npm install steal-tools -g
     
-Then you can run `steal-tools` like:
+Then you can run `steal-tools`, like:
 
     steal-tools build --config app/config.js --main app/app

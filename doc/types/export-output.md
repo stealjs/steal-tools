@@ -2,7 +2,7 @@
 @inherits steal-tools.transform.options
 @parent steal-tools.types
 
-Specifies the behavior for an output in a [steal-tools.export.object] "outputs" property. These properties are in
+Specifies the behavior for an output in an [steal-tools.export.object] "outputs" property. These properties are in
 addition to [steal-tools.transform.options].
 
 @option {Array<moduleName|comparitor>} [modules] Builds all the modules in `modules` together 
@@ -22,7 +22,7 @@ location.
   @param {String|Array<String>} moduleName The module name or module names being written
   out by this output.
   @param {Object|Array<Object>} moduleData Deprecated.
-  @param {Load|Array<Load>} load The module load record or module load records being written by this output. 
+  @param {Load|Array<Load>} load The module load record, or module load records, being written by this output. 
   @param {Loader} System The System loader used by Steal to load all of these modules.  All configuration
   should be available on it.
 
@@ -43,7 +43,7 @@ All modules specified by `modules` and their dependencies will be built together
 }
 ```
 
-This will build "foo" and "bar" together in the global format.  If "foo" or "bar" depend on "zed", "zed"
+This will build "foo" and "bar" together in the global format.  If "foo", or "bar" depend on "zed", "zed"
 will also be included.
 
 ## eachModule
@@ -57,7 +57,7 @@ Each module specified by `eachModule` will be exported, including its dependenci
 }
 ```
 
-This will build a "foo" export and a "bar" export.  If "foo" and "bar" both depend on "zed", it will
+This will build a "foo" export and a "bar" export.  If "foo" and "bar" both depend on "zed", "zed" will
 be included in both exports.
 
 
@@ -72,14 +72,14 @@ Each module specified by `graphs` and its dependencies will be exported individu
 }
 ```
 
-This will export "foo" to a file and each of its dependencies to their own file.  This will also export "bar"
-to a file and each of its dependencies to their own file.  If "foo" and "bar" both depend on "zed", "zed"
+This will export "foo" to a file, and each of its dependencies to their own file.  This will also export "bar"
+to a file, and each of its dependencies to their own file.  If "foo" and "bar" both depend on "zed", "zed"
 will be written to its own file one time.
 
 
 ## dest
 
-Dest should specify a single file, typically with a string, if `modules` is provided like:
+Dest should specify a single file, typically with a string, if `modules` is provided, like:
 
 ```
 {
@@ -89,7 +89,7 @@ Dest should specify a single file, typically with a string, if `modules` is prov
 }
 ```
 
-Otherwise, a folder or function should be provided if using `eachModule or `graphs`:
+Otherwise, a folder or function should be provided, if using `eachModule or `graphs`:
 
 ```
 {

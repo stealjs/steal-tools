@@ -17,8 +17,8 @@ Export a project's modules to other forms and formats declaratively.
 @param {Object<String,steal-tools.export.output>} [defaults] An object of names and default ExportOutput
 values.
 
-@param {Array<{}>} [modules] An array of module data that a [steal-tools.export.output]'s
-`modules`, `eachModule`, `graphs` or `ignore` can be filtered against.
+@param {Array<{}>} [modules] An array of module data that an [steal-tools.export.output]'s
+`modules`, `eachModule`, `graphs`, or `ignore` can be filtered against.
 
 @return {Promise} A promise that resolves when all outputs have been written out.
 
@@ -32,7 +32,7 @@ that take place on an application's modules to make it distributable.  The
 [steal-tools/lib/build/helpers/global] _Export Helpers_ can be used to export censible versions
 of your project in those formats.
 
-The basic use of `stealTools` export is to give it a "system" that is able to load your project's modules
+The basic use of `stealTools` export is to give it a "system" that is able to load your project's modules,
 and several "outputs" that write out those modules in a new form:
 
 ```
@@ -63,12 +63,12 @@ stealTools.export({
 
 ## exportTask
 
-The first argument is an [steal-tools.export.object].  Detail about its API and options can be found on its page.
+The first argument is an [steal-tools.export.object].  Details about its API and options can be found on its page.
 
 ## defaults
 
-As sometimes the same options need to be set over and over again, the `defaults` option can 
-contain default values each output can call to:
+As the same options may need to be set over and over again, the `defaults` option can 
+contain default values each output can call:
 
 ```
 var stealTools = require("stealTools");
