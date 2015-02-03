@@ -68,31 +68,28 @@ Create `app.js` which import jquery using ES6 module syntax. And create an event
 
 `homepage.js`
 
-    define(['jquery'], function($){
-      return $.fn.homepage = function(){
-        this.html("<h1>Homepage</h1>");
-      };
-    });
+	define(['jquery'], function($){
+	  return $.fn.homepage = function(){
+		this.html("<h1>Homepage</h1>");
+	  };
+	});
     
 `signup.js`
 
-    var $ = require('jquery');
-    module.exports = $.fn.signup = function(){
-      this.html("<h1>Homepage</h1>");
-    };
+	module.exports = $.fn.signup = function(){
+	  this.html("<h1>Signup</h1>");
+	};
 
 `login.js`
 
-    $.fn.login = function(){
-      this.html("<h1>Homepage</h1>");
-    };
+	module.exports = $.fn.login = function() {
+	  this.html("<h1>Login</h1>");
+	};
 
 `config.js`
 
-    System.bundle = ["homepage","signup","login"];
-    System.meta = {
-      login: {exports: "$.fn.login"}
-    }
+	System.bundle = ["homepage","signup","login"];
+	System.paths.jquery = "../bower_components/jquery/dist/jquery.js";
 
 ## Write out your page
 
