@@ -9,8 +9,9 @@ var yargs = require("yargs")
 	.describe("bundle-steal", "Include steal.js in your main bundled JavaScript")
 	.describe("ignore", "For pluginify, a comma-separated list of modules to not include in the output")
 	.describe("out", "For pluginify, specify an output file")
-  .describe("verbose", "Verbose output")
-  .describe("quiet", "Quiet output")
+	.describe("verbose", "Verbose output")
+	.describe("quiet", "Quiet output")
+	.version(require("../package.json").version, "version")
 	.check(function(argv){
 		var command = argv._[0];
 
