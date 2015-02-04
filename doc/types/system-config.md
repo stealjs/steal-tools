@@ -4,11 +4,11 @@
 Configuration values needed for StealJS to load modules. Some set of the following
 values are required:
 
-@option {String|Array<moduleName>} main The module or modules who should be 
+@option {String|Array<moduleName>} main The module, or modules, that should be 
 imported.  This sets [System.main].  
 
 @option {String} [config] The path to a configuration file. This
-will also specify `baseURL` and sometimes `main`. This set [System.configPath].
+will also specify `baseURL`, and sometimes `main`. This sets [System.configPath].
 
 @option {String} [baseURL] If a configuration file is not used, 
 the [System.baseURL baseURL] value must be set.
@@ -18,7 +18,7 @@ the [System.baseURL baseURL] value must be set.
 ## Use
 
 [steal-tools.build], [steal-tools.export], and [steal-tools.transformImport] all
-take a `SystemConfig` to configure the modules to load.
+take a `SystemConfig`, which configures the modules to load.
 
 ```
 stealTools.build(SystemConfig, ...)
@@ -60,5 +60,5 @@ stealTools.export({
 });
 ```
 
-If there is no `config`, you should specify the baseURL so StealJS knows where to find your modules.
+If there is no `config`, you should specify the baseURL, so StealJS knows where to find your modules.
 

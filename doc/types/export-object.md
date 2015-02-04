@@ -5,7 +5,7 @@ An object that specifies the modules to load and their outputs. This is used by
 [steal-tools.export] and [steal-tools.grunt.export].
 
 @option {steal-tools.SystemConfig} system Specifies the [System.config] values used 
-to load modules.  At a minimum some set of [System.main main], [System.baseURL baseURL]
+to load modules.  At a minimum, some set of [System.main main], [System.baseURL baseURL],
 or [System.configPath configPath] must be specified.
 
 ```
@@ -30,14 +30,14 @@ system: {
 
 Each ExportObject task is configured by three values:
 
- - system - describes the [System.config] values used to load modules, this is passed to [steal-tools.transformImport].
- - options - configures special behavior of the loader such as logging.
- - outputs - configures the modules that should be written out, how they 
+ - system - Describes the [System.config] values used to load modules; this is passed to [steal-tools.transformImport].
+ - options - Configures special behavior of the loader such as logging.
+ - outputs - Configures the modules that should be written out, how they 
              should be written out, and where they should be written. 
 
 ## system
 
-A [steal-tools.SystemConfig] object that is used to load modules. Typically you will want to specify at least the `config` and `main` options like so:
+A [steal-tools.SystemConfig] object that is used to load modules. Typically, you will want to specify at least the `config` and `main` options, like so:
 
     system: {
 	  config: __dirname + "/config.js",
@@ -72,7 +72,7 @@ And the options available to [steal-tools.transform.options].
 {{#each [steal-tools.transform.options].types.0.options}}
  - {{name}} <i>{{{makeTypesString types}}}</i>{{/each}}
 
-Only one of `modules`, `eachModule` or `graphs` should be specified. 
+Only one of `modules`, `eachModule`, or `graphs` should be specified. 
 
 
 Example:
@@ -98,8 +98,8 @@ outputs: {
 
 ### output names
 
-An output name can mixin default output options of an __Export Helper__ like [steal-tools/lib/build/helpers/cjs]
-by including a "+" followed by the name of the export helper.  For example:
+An output name can mixin default output options of an __Export Helper__, like [steal-tools/lib/build/helpers/cjs],
+by including a "+", followed by the name of the export helper.  For example:
 
 ```
 outputs: {

@@ -1,7 +1,7 @@
 @page steal-tools.guides.progressive_loading Progressive Loading
 @parent StealJS.guides 1
 
-If you have a large single page app, you may want to progressively load parts 
+If you have a large single-page app, you may want to progressively load parts 
 of the app.  Here's how you might do that:
 
 ## Setup
@@ -22,8 +22,7 @@ Next, initialize `bower` and install `jquery` and `steal`.
 
 
 ## Create your modules
-Create a main module that loads only the bare minimum to determine what "page" you
-are on. A bare bones example might have a file structure like:
+Create a main module that loads only the bare minimum to determine what "page" you are on. A bare bones example might have a file structure like:
 
     bower_components/
       steal/
@@ -93,7 +92,7 @@ Create `app.js` which import jquery using ES6 module syntax. And create an event
 
 ## Write out your page
 
-The following will load `steal.js`, `config.js` and `app.js`
+The following will load `steal.js`, `config.js`, and `app.js`
 
 `site.html`
     

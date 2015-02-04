@@ -19,14 +19,14 @@ Options that configure how the files are compiled.  These options overwrite the
 
 ## Use
 
-After getting `transform` from [steal-tools.transformImport] you can call it like:
+After getting `transform` from [steal-tools.transformImport] you can call it, like:
 
     var result = transform("module/name/to/build", {
       // specifies modules to ignore
       ignore: [
-        // ignores this module and all of its dependencies
+        // ignores this module, and all of its dependencies
         "module/name/to/ignore",
-        // ignores modules names matching this pattern
+        // ignores modules with names matching this pattern
         /can\//
       ],
       
@@ -34,7 +34,7 @@ After getting `transform` from [steal-tools.transformImport] you can call it lik
       // true by default.
       removeDevelopmentCode: true,
       
-      // Transpile the code to either "amd","steal","cjs" or "global".
+      // Transpile the code to either "amd", "steal", "cjs" or "global".
       // "global", the default, allows the file to work without any module loader.
       format: "global",
       
@@ -42,7 +42,7 @@ After getting `transform` from [steal-tools.transformImport] you can call it lik
       // `false` by default.
       minify: true,
       
-      // Only write the module specified by `moduleName` instead of its dependencies.
+      // Only write the module specified by `moduleName`, instead of its dependencies.
       // `false` by default.
       ignoreAllDependencies: false
       
@@ -55,7 +55,7 @@ After getting `transform` from [steal-tools.transformImport] you can call it lik
       useNormalizedDependencies: true
       
       // Custom normalization behavior
-      // By default the normalized name is used.
+      // By default, the normalized name is used.
       normalize: function(name, currentModule, address){
         return name;
       }
