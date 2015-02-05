@@ -1,14 +1,16 @@
 @page steal-tools.guides.progressive_loading Progressive Loading
 @parent StealJS.guides 1
 
-Single page apps and even regular web pages typically load several sometimes dozens of javascript files which causes long initial page load times.
-Concatenating and minifying the scripts can help but the web page still loads files it doesn't need. Progressive loading solves this problem by loading only the scripts required and lazy loading the remaining files as needed. The example app below demonstrates a basic single page app with progressive loading.
+Single page apps and regular web pages typically load several, sometimes dozens, of javascript files which causes long initial page load times.
+Concatenating and minifying your scripts can help but the web page still loads files it doesn't need. Progressive loading solves this problem by loading only the scripts required and lazy loading the remaining files as needed. The example app below demonstrates a basic single page app with progressive loading.
+
+This guide is a step-by-step guide to create the app from scratch, or you can clone the source from the [GitHub Quick Start repo](https://github.com/stealjs/progressive-loading).
 
 ## Setup
 
 This basic single page app demonstrates progressive loading. It uses a common file structure, but Steal supports a wide variety of other configuration options which can be found [steal here].
 
-To get started, ensure [Node.js](http://nodejs.org/) and [bower](http://bower.io/) are installed on your computer, then initialize a `package.json` and install [steal-tools].
+To get started, ensure [Node.js](http://nodejs.org/) and [bower](http://bower.io/) are properly installed on your computer, then initialize a `package.json` and install [steal-tools].
 
 	> npm init
 	> npm install steal-tools --save-dev
@@ -18,6 +20,11 @@ Next, initialize `bower` and install `jquery` and `steal`.
 	> bower init
 	> bower install jquery --save
 	> bower install steal --save
+
+
+If you already have a webserver running locally, you can skip this step. If you don't have a web server, install this simple command-line [http-server](https://www.npmjs.com/package/http-server) to help you get started.
+
+	> npm install http-server -g
 
 ## Create your modules
 
