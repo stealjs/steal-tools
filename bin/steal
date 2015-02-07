@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 var winston = require('winston');
 var yargs = require("yargs")
-	.usage("Usage: $0 [build|pluginify] --main app --config path/to/stealconfig.js")
+	.usage("Usage: $0 [build|transform] --main app --config path/to/stealconfig.js")
 	.demand(["config", "main"])
 	.describe("config", "Path to the config file")
 	.describe("main", "The application's entry point module")
