@@ -1,7 +1,7 @@
 {
   "name": "steal-tools",
   "description": "Futuristic build tools for ES6 Module applications.",
-  "version": "0.6.0-pre.3",
+  "version": "0.6.0",
   "author": {
     "name": "Bitovi",
     "email": "contact@bitovi.com",
@@ -11,9 +11,9 @@
     "clean-css": "2.1.8",
     "colors": "^0.6.2",
     "lodash": "2.4.1",
-    "steal": "0.6.0-pre.0",
+    "steal": "0.6.x",
     "traceur": "0.0.58",
-    "transpile": "0.4.0-alpha.1",
+    "transpile": "0.4.x",
     "uglify-js": "~2.4.13",
     "winston": "^0.7.3",
     "yargs": "^1.2.2",
