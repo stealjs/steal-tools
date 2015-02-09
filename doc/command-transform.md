@@ -17,13 +17,29 @@ will be converted to a regular expression.
 
 ## Use
 
-steal-tools must have been installed into the command line, like:
+> Note: The `steal-tools transform` command-line
+utility calls [steal-tools.transform steal-tools.transform] and
+[steal-tools.transformImport steal-tools.transformImport]
+internally. This page documents the specifics of the command-line utility. Read
+[steal-tools.transform steal-tools.transform's documentation] for how to use
+transform in various workflows and detailed information
+on the options available.
 
-    npm install steal-tools -g
+Access `steal-tools` in _node_modules/.bin_, like:
+
+    > ./node_modules/.bin/steal-tools transform \
+               --config app/config.js \
+               --main app \
+               --ignores foo/.+
+               > app.js
+
+Or, `steal-tools` can be installed into the command line, like:
+
+    > npm install steal-tools -g
     
-Then you can run `steal-tools`, like:
+Then you can run `steal-tools transform`, like:
 
-    steal-tools transform \
+    > steal-tools transform \
                --config app/config.js \
                --main app \
                --ignores foo/.+

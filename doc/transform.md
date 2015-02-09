@@ -35,19 +35,21 @@ After getting `transform` from [steal-tools.transformImport] you can call it, li
       removeDevelopmentCode: true,
       
       // Transpile the code to either "amd", "steal", "cjs" or "global".
-      // "global", the default, allows the file to work without any module loader.
+      // "global", the default, allows the file to work without any 
+      // module loader.
       format: "global",
       
       // Minify the file using uglify.
       // `false` by default.
       minify: true,
       
-      // Only write the module specified by `moduleName`, instead of its dependencies.
-      // `false` by default.
+      // Only write the module specified by `moduleName`, instead of its 
+      // dependencies. `false` by default.
       ignoreAllDependencies: false
       
       // Map module names to their name on the global object. Useful for
-      // building "global" modules that depend on other scripts already in the page.
+      // building "global" modules that depend on other scripts already in 
+      // the page.
       exports: {"jquery": "jQuery"},
       
       // Transpile to normalized dependency names.

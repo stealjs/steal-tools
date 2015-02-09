@@ -52,7 +52,7 @@ Specifies the behavior of the build.
   top-level `minify` function of uglify-js, and the available options are listed [here](https://github.com/mishoo/UglifyJS2#the-simple-way).
   The option `fromString` is used internally and will always be `true`; any other value will be ignored.
 
-@return {{}}
+@return {Promise<{}>} A promise that resolves, if successful to an object with the following data:
 
   @option {buildGraph} graph A map of moduleNames to node.
   @option {steal} steal The steal function used to load the main module.
@@ -63,9 +63,109 @@ Specifies the behavior of the build.
 
 ## Use
 
+The following uses steal-tool's `build` method to programatically build out the "my-app"
+module as bundles.    
+
     var stealTools = require("steal-tools");
     
-    stealTools.build({
+    var promise = stealTools.build({
+      main: "my-app",
+      config: __dirname+"/package.json!npm"
+    },{
+      // the following are the default values, so you don't need
+      // to write them.
+      minify: true,
+      debug: true
+    });
+
+This will build bundles like:
+
+    /dist/bundles/
+      my-app.js
+      my-app.css
+
+To load the bundles, a html page should have a script tag like:
+
+```
+<script src='./node_modules/steal/steal.production.js' 
+        main='my-app'
+        env='production'></script>
+```
+
+## bundleSteal
+
+Setting the `bundleSteal` option to `true` includes _steal.js_ and the [System.configMain] in each
+main bundle.  This means one fewer http request.  
+
+    var promise = stealTools.build({
+      main: "my-app",
+      config: __dirname+"/package.json!npm"
+    },{
+      bundleSteal: true
+    });
+
+This will build bundles like:
+
+    /dist/bundles/
+      my-app.js
+      my-app.css
+
+To load the bundles, a html page should have a script tag like:
+
+```
+<script src='./dist/bundles/my-app.js' 
+        config='../../package.json!npm'></script>
+```
+
+The [System.configPath] must be given if a [System.configMain config file] is in the bundle;
+otherwise, [System.baseURL] should be set like:
+
+```
+<script src='./dist/bundles/my-app.js' 
+        base-url='../../'></script>
+```
+
+
+## bundlesPath
+
+The `bundlesPath` option specifies where the bundles should be looked for
+relative to [System.baseURL].  It will also change where the bundles are written out.
+
+    var promise = stealTools.build({
+      main: "my-app",
+      config: __dirname+"/package.json!npm",
+      bundlesPath: "mobile/assets"
+    },{
+      bundleSteal: true
+    });
+
+This will build bundles like:
+
+    /mobile/assets/
+      my-app.js
+      my-app.css
+
+To load the bundles, a html page should have a script tag like:
+
+```
+<script src='../mobile/assets/my-app.js' 
+        config='../package.json!npm'
+        bundles-path='mobile/assets'
+        ></script>
+```
+
+> Notice: bundlesPath should typically not be set in your
+config file. Instead, it should be set when `.build` is called
+and as an attribute in the script that loads _steal.js_.
+
+## Multi-page use
+
+The following uses steal-tool's `build` method to programatically build out the "login" and "homepage"
+modules as bundles.    
+
+    var stealTools = require("steal-tools");
+    
+    var promise = stealTools.build({
       main: ["login","homepage"],
       config: __dirname+"/config.js"
     },{
@@ -77,9 +177,23 @@ Specifies the behavior of the build.
       quiet: false,
       bundleDepth: 3,
       mainDepth: 3
-    })
+    });
 
+Assuming that "login" and "homepage" need the same modules, the following bundles will be created:
 
-## Implementation
+    /dist/bundles/
+      homepage.js
+      homepage.css
+      login.js
+      login.css
+      login_homepage.css
+      login_homepage.js
+      
+To load the homepage JS, CSS and the shared JS and CSS, an html page should have a script tag like:
 
-Implemented in [steal-tools](https://github.com/bitovi/steal-tools).
+```
+<script src='./node_modules/steal/steal.js' 
+        main='homepage'
+        env='production'>
+```
+

@@ -38,6 +38,12 @@ grunt.initConfig({
 
 ## Use
 
+> Note: The `steal-export` Grunt task calls [steal-tools.export steal-tools.export] 
+internally. This page documents the specifics of the Grunt task. Read
+[steal-tools.export steal-tools.export's documentation] for how to use
+the export in various workflows and detailed information
+on the system and options arguments.
+
 `steal-export` is a Grunt [multi-task](http://gruntjs.com/creating-tasks#multi-tasks) that is 
 used to build library projects to a variety of formats. For example, to load a "main" module and
 transpile it, and all of its dependencies (except jQuery), to AMD and CommonJS with debug output:

@@ -18,6 +18,12 @@ to [steal-tools.build stealTools.build].
 
 ## Use
 
+> Note: The `steal-build` Grunt task calls [steal-tools.build steal-tools.build] 
+internally. This page documents the specifics of the Grunt task. Read
+[steal-tools.build steal-tools.build's documentation] for how to use
+the build in various workflows and detailed information
+on the system and options arguments.
+
 `"steal-build"` is registered as a Grunt multi-build task. Specify the
 default "steal-build" task options, as follows:
 
@@ -59,5 +65,7 @@ argument to [steal-tools.build stealTools.build]. The following options are avai
 {{#each [steal-tools.build].signatures.0.params.1.types.0.options}}
  - {{name}} <i>{{{makeTypesString types}}}</i>{{/each}}
  
+
+
 Read more about them on [steal-tools.build stealTools.build].
 

@@ -1,7 +1,7 @@
 @function steal-tools.cmd.build steal-tools build
 @parent steal-tools.cmd 
 
-Builds steal-tools from the command line.
+Call steal-tools [steal-tools.build] from the command line.
 
 @signature `steal-tools build [--OPTION_NAME OPTION_VALUE]...`
 
@@ -13,10 +13,26 @@ Builds steal-tools from the command line.
 
 ## Use
 
-steal-tools must have been installed into the command line, like:
+> Note: The `steal-tools build` command-line
+utility calls [steal-tools.build steal-tools.build] 
+internally. This page documents the specifics of the command-line utility. Read
+[steal-tools.build steal-tools.build's documentation] for how to use
+the build in various workflows and detailed information
+on the options available.
 
-    npm install steal-tools -g
+
+`steal-tools` can be installed into the command line, like:
+
+    > npm install steal-tools -g
     
-Then you can run `steal-tools`, like:
+Then you can run `steal-tools build`, like:
 
-    steal-tools build --config app/config.js --main app/app
+    > steal-tools build --config app/config.js --main app/app
+
+Or, you can access `steal-tools` in _node_modules/.bin_, like:
+
+    > ./node_modules/.bin/steal-tools build \
+          --config app/config.js \
+          --main app/app
+          
+
