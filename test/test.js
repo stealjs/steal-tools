@@ -732,6 +732,70 @@ describe("multi build with plugins", function(){
 
 	});
 
+	describe("multi build when long bundle names", function(){
+
+		it("should work", function(done){
+			rmdir(__dirname+"/long_bundle_names/dist", function(error){
+				if(error){
+					done(error)
+				}
+
+				multiBuild({
+					config: __dirname+"/long_bundle_names/stealconfig.js",
+					main: "bundle"
+				}, {
+					quiet: true
+				}).then(function(data){
+					open("test/long_bundle_names/bundle.html#a",function(browser, close){
+						find(browser,"appA", function(appA){
+								assert(true, "got A");
+								assert.equal(appA.name, "a", "got the module");
+								assert.equal(appA.ab.name, "a_b", "a got ab");
+								close();
+						}, close);
+					}, done);
+
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+
+		it("should truncate and hash long bundle names", function(done){
+			rmdir(__dirname+"/long_bundle_names/dist", function(error){
+				if(error){
+					done(error)
+				}
+
+				multiBuild({
+					config: __dirname+"/long_bundle_names/stealconfig.js",
+					main: "bundle"
+				}, {
+					quiet: true
+				}).then(function(data){
+
+					assert(fs.existsSync("test/long_bundle_names/dist/bundles/app_a_with_a_ver-5797ef41.js"));
+					assert(fs.existsSync("test/long_bundle_names/dist/bundles/app_a_with_a_ver-8702980e.js"));
+					
+					fs.readFile("test/long_bundle_names/dist/bundles/bundle.js", "utf8", function(err, data) {
+						if (err) {
+							done(err);
+						}
+						assert(data.indexOf("app_a_with_a_ver-5797ef41"));
+						assert(data.indexOf("app_a_with_a_ver-8702980e"));
+						done();
+					});
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+
+	});
+
+
 	it("work built using steal", function(done){
 		// remove the bundles dir
 		rmdir(__dirname+"/plugins/dist", function(error){
