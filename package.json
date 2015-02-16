@@ -13,7 +13,7 @@
     "lodash": "2.4.1",
     "steal": "git://github.com/bitovi/steal#b6cb08983d93990de36644dca7288b6efb50966c",
     "traceur": "0.0.58",
-    "transpile": "0.4.0-alpha.1",
+    "transpile": "git://github.com/bitovi/transpile#1ec2705dd0b2b268b4c01170072128be557ec938",
     "uglify-js": "~2.4.13",
     "winston": "^0.7.3",
     "yargs": "^1.2.2",
