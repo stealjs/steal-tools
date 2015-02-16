@@ -25,3 +25,4 @@ test/pluginify_global/out.js
 test/pluginify_define/out.js
 test/pluginifier_builder_helpers/dist/
 test/pluginifier_builder_helpers/cjs/
+test/pluginifier_builder_helpers/browserify-out.js
