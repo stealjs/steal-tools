@@ -134,6 +134,22 @@ describe('dependency graph', function(){
 			}).then(done);
 
 		});
+
+		describe("Order", function(){
+			it("works when a module is dependent on @empty", function(){
+				var graph = {
+					main: {
+						dependencies: ["@empty", "dep"]
+					},
+					dep: {
+						dependencies: []
+					}
+				};
+				orderGraph(graph, "main");
+				assert.equal(graph.dep.order, 0, "Dep is first");
+				assert.equal(graph.main.order, 1, "Main is second");
+			});
+		});
 	});
 });
 
