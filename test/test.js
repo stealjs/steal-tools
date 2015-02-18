@@ -713,9 +713,9 @@ describe("multi build", function(){
 		});
 	});
 
-	it("works with 6to5/babel", function(done){
+	it("works with babel", function(done){
 		// this test seems broken.
-		rmdir(__dirname + "/6to5/dist", function(error){
+		rmdir(__dirname + "/babel/dist", function(error){
 			if(error) return done(error);
 
 			multiBuild({

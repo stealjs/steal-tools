@@ -17,7 +17,7 @@
     "steal": "git://github.com/bitovi/steal#v0.7.0-pre.2",
     "system-parse-amd": "0.0.2",
     "traceur": "0.0.58",
-    "transpile": "git://github.com/bitovi/transpile#05bfd7f2363809fb90ffa3fd5bccaa95854fa898",
+    "transpile": "git://github.com/bitovi/transpile#v0.5.0-pre.0",
     "uglify-js": "~2.4.13",
     "winston": "^0.7.3",
     "yargs": "^1.2.2"
