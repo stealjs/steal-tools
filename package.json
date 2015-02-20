@@ -10,16 +10,17 @@
   "dependencies": {
     "clean-css": "2.1.8",
     "colors": "^0.6.2",
+    "fs-extra": "~0.8.1",
+    "glob": "^4.3.5",
+    "less": "^1.7.0",
     "lodash": "2.4.1",
     "steal": "git://github.com/bitovi/steal#460a11629c5964c018867310baae1ba29a81eb43",
+    "system-parse-amd": "0.0.2",
     "traceur": "0.0.58",
     "transpile": "0.4.0-alpha.1",
     "uglify-js": "~2.4.13",
     "winston": "^0.7.3",
-    "yargs": "^1.2.2",
-    "fs-extra" :"~0.8.1",
-    "less": "^1.7.0",
-    "system-parse-amd": "0.0.2"
+    "yargs": "^1.2.2"
   },
   "devDependencies": {
     "bower": "1.3.8",
