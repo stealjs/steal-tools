@@ -207,7 +207,7 @@ describe("multi build", function(){
 	it("should work", function(done){
 		rmdir(__dirname+"/bundle/dist", function(error){
 			if(error){
-				done(error)
+				done(error);
 			}
 
 			multiBuild({
@@ -218,7 +218,7 @@ describe("multi build", function(){
 			}).then(function(data){
 				var exists = fs.existsSync(  path.join(__dirname,"bundle/dist/bundles/bundle.js")  );
 				if(!exists) {
-					done(new Error("no bundle info"))
+					done(new Error("no bundle info"));
 					return;
 				}
 				
