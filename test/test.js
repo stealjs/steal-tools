@@ -59,7 +59,7 @@ describe('dependency graph', function(){
 	it('should work', function(done){
 
 		dependencyGraph({
-			config: __dirname+"/stealconfig.js",
+			config: path.join(__dirname, "stealconfig.js"),
 			startId: "basics",
 			logLevel: 3
 		}).then(function(data){
@@ -1189,7 +1189,6 @@ describe("multi-main", function(){
 				quiet: true,
 				minify: false
 			}).then(function(data){
-				
 				var checkNext = function(next){
 					if(next) {
 						open("test/multi-main/bundle_"+next+".html",function(browser, close){
@@ -1227,7 +1226,6 @@ describe("multi-main", function(){
 });
 
 describe("export", function(){
-	
 	it("basics work", function(done){
 		
 		stealExport({
@@ -1338,25 +1336,25 @@ describe("export", function(){
 				if(error){ return done(error); }
 				
 				rmdir(__dirname+"/pluginifier_builder_helpers/dist", function(error){
-				
 		
 					if(error){ return done(error); }
 				
 					fs.copy(
-							path.join(__dirname, "..", "node_modules","jquery"),
-							__dirname+"/pluginifier_builder_helpers/node_modules/jquery", function(error){
-								
-						if(error) { return done(error); }
-						
-						fs.copy(
-							path.join(__dirname, "..", "node_modules","cssify"),
-							__dirname+"/pluginifier_builder_helpers/node_modules/cssify", function(error){
-								
+						path.join(__dirname, "..", "node_modules","jquery"),
+						path.join(__dirname, "pluginifier_builder_helpers", "node_modules", "jquery"),
+						function(error){
 							if(error) { return done(error); }
-							done();
 							
-						});
-					});
+							fs.copy(
+								path.join(__dirname, "..", "node_modules","cssify"),
+								path.join(__dirname, "pluginifier_builder_helpers", "node_modules", "cssify"),
+								function(error){
+									if(error) { return done(error); }
+									done();
+								}
+							);
+						}
+					);
 					
 				});
 				
@@ -1458,7 +1456,7 @@ describe("export", function(){
 				
 		});
 		
-		it("+global-css +global-js", function(done){
+		it.only("+global-css +global-js", function(done){
 			this.timeout(10000);
 			
 			stealExport({
@@ -1473,7 +1471,7 @@ describe("export", function(){
 				
 				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
 					find(browser,"WIDTH", function(width){
-						assert.equal(width, 200, "with of element");
+						assert.equal(width, 200, "width of element");
 						close();
 					}, close);
 				}, done);
@@ -1637,19 +1635,19 @@ describe("npm package.json builds", function(){
 	
 	
 	var setup = function(done){
-		rmdir(__dirname+"/npm/node_modules", function(error){
+		rmdir(path.join(__dirname, "npm", "node_modules"), function(error){
 		
 			if(error){ return done(error); }
 		
 			fs.copy(
 				path.join(__dirname, "..", "node_modules","jquery"),
-				__dirname+"/npm/node_modules/jquery", function(error){
+				path.join(__dirname, "npm", "node_modules", "jquery"), function(error){
 					
 					if(error){ return done(error); }
 					
 					fs.copy(
 						path.join(__dirname, "..", "bower_components","steal"),
-						__dirname+"/npm/node_modules/steal", function(error){
+						path.join(__dirname, "npm", "node_modules", "steal"), function(error){
 					
 						if(error){ return done(error); }
 						
@@ -1667,7 +1665,7 @@ describe("npm package.json builds", function(){
 			if(error){ return done(error); }
 			
 			multiBuild({
-				config: __dirname + "/npm/package.json!npm"
+				config: path.join(__dirname, "npm", "package.json!npm")
 			}, {
 				quiet: true,
 				minify: false

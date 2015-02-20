@@ -17,8 +17,8 @@ $.fn.tabs = function () {
 };
 
 },{"./tabs.less.css":3,"jquery":5}],3:[function(require,module,exports){
-var css = "/*tabs.less!$less*/\n.tabs {\n  width: 200px;\n  border: solid 1px black;\n}\n\n"; (require("/Users/justin/dev/steal-tools/test/pluginifier_builder_helpers/node_modules/cssify"))(css); module.exports = css;
-},{"/Users/justin/dev/steal-tools/test/pluginifier_builder_helpers/node_modules/cssify":4}],4:[function(require,module,exports){
+var css = "/*tabs.less!$less*/\n.tabs {\n  width: 200px;\n  border: solid 1px black;\n}\n\n"; (require("C:\\Users\\James0x57\\Desktop\\Bitovi\\github\\steal-tools\\test\\pluginifier_builder_helpers\\node_modules\\cssify"))(css); module.exports = css;
+},{"C:\\Users\\James0x57\\Desktop\\Bitovi\\github\\steal-tools\\test\\pluginifier_builder_helpers\\node_modules\\cssify":4}],4:[function(require,module,exports){
 module.exports = function (css, customDocument) {
   var doc = customDocument || document;
   if (doc.createStyleSheet) {
