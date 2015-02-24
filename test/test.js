@@ -1486,11 +1486,11 @@ describe("export", function(){
 	
 	describe("helpers", function(){
 		beforeEach(function(done) {
-			rmdir(__dirname+"/pluginifier_builder_helpers/node_modules", function(error){
+			rmdir(path.join(__dirname, "pluginifier_builder_helpers", "node_modules"), function(error){
 				
 				if(error){ return done(error); }
 				
-				rmdir(__dirname+"/pluginifier_builder_helpers/dist", function(error){
+				rmdir(path.join(__dirname, "pluginifier_builder_helpers", "dist"), function(error){
 		
 					if(error){ return done(error); }
 				
