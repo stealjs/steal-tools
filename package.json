@@ -14,7 +14,7 @@
     "glob": "^4.3.5",
     "less": "^1.7.0",
     "lodash": "2.4.1",
-    "steal": "git://github.com/bitovi/steal#460a11629c5964c018867310baae1ba29a81eb43",
+    "steal": "git://github.com/bitovi/steal#v0.7.0-pre.2",
     "system-parse-amd": "0.0.2",
     "traceur": "0.0.58",
     "transpile": "0.4.0-alpha.1",
