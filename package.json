@@ -10,7 +10,7 @@
   "dependencies": {
     "clean-css": "2.1.8",
     "colors": "^0.6.2",
-    "fs-extra": "~0.8.1",
+    "fs-extra": "~0.16.3",
     "glob": "^4.3.5",
     "less": "^2.4.0",
     "lodash": "2.4.1",
