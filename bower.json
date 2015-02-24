@@ -4,6 +4,6 @@
   "devDependencies": {
     "steal": "bitovi/steal#v0.7.0-pre.4",
     "jquery": "~1.10.0",
-	"less" : "^1.7.0"
+    "less" : "^2.4.0"
   }
 }
