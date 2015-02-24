@@ -713,6 +713,30 @@ describe("multi build", function(){
 		});
 	});
 
+	it("works with babel", function(done){
+		// this test seems broken.
+		rmdir(__dirname + "/babel/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/babel/config.js",
+				main: "main"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/babel/prod.html",function(browser, close){
+					find(browser,"MODULE", function(module){
+						assert(true, "module");
+						assert(module.dep, "has jquerty");
+						assert(module.dep(), "hello jquerty", "correct function loaded");
+						close();
+					}, close);
+				}, done);
+			}, done);
+		});
+	});
+
 });
 
 describe("multi build with plugins", function(){
