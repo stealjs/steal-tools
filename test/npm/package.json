@@ -1,4 +1,6 @@
 {
+  "name": "npm-test",
+  "version": "0.0.1",
   "main": "main",
   "dependencies": {
     "jquery": ">2.0"

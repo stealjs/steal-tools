@@ -737,6 +737,43 @@ describe("multi build", function(){
 		});
 	});
 
+	it("works with an unnormalized main", function(done){
+		rmdir(__dirname+"/dist", function(error){
+			if(error){
+				done(error)
+			}
+
+			multiBuild({
+				config: __dirname+"/stealconfig.js",
+				main: "basics/"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(data){
+				open("test/basics/prod.html",function(browser, close){
+					find(browser,"MODULE", function(module){
+						assert(true, "module");
+						
+						assert.equal(module.name, "module", "module name is right");
+		
+						assert.equal(module.es6module.name, "es6Module", "steal loads ES6");
+						
+						assert.equal(module.es6module.amdModule.name, "amdmodule", "ES6 loads amd");
+						
+						close();
+					}, close);
+				}, done);
+
+
+			}, done);
+
+
+
+		});
+	
+	});
+
+
 });
 
 describe("multi build with plugins", function(){
@@ -1483,16 +1520,14 @@ describe("export", function(){
 		
 		it("+cjs", function(done){
 			this.timeout(10000);
-			
+
 			stealExport({
-				
 				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
 					"+cjs": {}
-				}
+				},
 			}).then(function(){
-
 				var browserify = require("browserify");
 				
 				var b = browserify();
@@ -1510,7 +1545,9 @@ describe("export", function(){
 				});
 				
 				
-			}, done);
+			}, function(e) {
+				done(e);
+			});
 				
 		});
 		
