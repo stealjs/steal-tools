@@ -1833,7 +1833,6 @@ describe("npm package.json builds", function(){
 					var h1s = browser.window.document.getElementsByTagName('h1');
 					assert.equal(h1s.length, 1, "Wrote H!.");
 					close();
-
 				}, done);
 
 			}).catch(done);
