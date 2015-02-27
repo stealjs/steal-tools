@@ -59,7 +59,7 @@ describe('dependency graph', function(){
 	it('should work', function(done){
 
 		dependencyGraph({
-			config: __dirname+"/stealconfig.js",
+			config: path.join(__dirname, "stealconfig.js"),
 			startId: "basics",
 			logLevel: 3
 		}).then(function(data){
@@ -237,7 +237,7 @@ describe("multi build", function(){
 	it("should work", function(done){
 		rmdir(__dirname+"/bundle/dist", function(error){
 			if(error){
-				done(error)
+				done(error);
 			}
 
 			multiBuild({
@@ -248,7 +248,7 @@ describe("multi build", function(){
 			}).then(function(data){
 				var exists = fs.existsSync(  path.join(__dirname,"bundle/dist/bundles/bundle.js")  );
 				if(!exists) {
-					done(new Error("no bundle info"))
+					done(new Error("no bundle info"));
 					return;
 				}
 				
@@ -1344,7 +1344,6 @@ describe("multi-main", function(){
 				quiet: true,
 				minify: false
 			}).then(function(data){
-				
 				var checkNext = function(next){
 					if(next) {
 						open("test/multi-main/bundle_"+next+".html",function(browser, close){
@@ -1382,7 +1381,6 @@ describe("multi-main", function(){
 });
 
 describe("export", function(){
-	
 	it("basics work", function(done){
 		
 		stealExport({
@@ -1488,30 +1486,30 @@ describe("export", function(){
 	
 	describe("helpers", function(){
 		beforeEach(function(done) {
-			rmdir(__dirname+"/pluginifier_builder_helpers/node_modules", function(error){
+			rmdir(path.join(__dirname, "pluginifier_builder_helpers", "node_modules"), function(error){
 				
 				if(error){ return done(error); }
 				
-				rmdir(__dirname+"/pluginifier_builder_helpers/dist", function(error){
-				
+				rmdir(path.join(__dirname, "pluginifier_builder_helpers", "dist"), function(error){
 		
 					if(error){ return done(error); }
 				
 					fs.copy(
-							path.join(__dirname, "..", "node_modules","jquery"),
-							__dirname+"/pluginifier_builder_helpers/node_modules/jquery", function(error){
-								
-						if(error) { return done(error); }
-						
-						fs.copy(
-							path.join(__dirname, "..", "node_modules","cssify"),
-							__dirname+"/pluginifier_builder_helpers/node_modules/cssify", function(error){
-								
+						path.join(__dirname, "..", "node_modules","jquery"),
+						path.join(__dirname, "pluginifier_builder_helpers", "node_modules", "jquery"),
+						function(error){
 							if(error) { return done(error); }
-							done();
 							
-						});
-					});
+							fs.copy(
+								path.join(__dirname, "..", "node_modules","cssify"),
+								path.join(__dirname, "pluginifier_builder_helpers", "node_modules", "cssify"),
+								function(error){
+									if(error) { return done(error); }
+									done();
+								}
+							);
+						}
+					);
 					
 				});
 				
@@ -1628,7 +1626,7 @@ describe("export", function(){
 				
 				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
 					find(browser,"WIDTH", function(width){
-						assert.equal(width, 200, "with of element");
+						assert.equal(width, 200, "width of element");
 						close();
 					}, close);
 				}, done);
@@ -1792,15 +1790,21 @@ describe("npm package.json builds", function(){
 	
 	
 	var setup = function(done){
-		rmdir(__dirname+"/npm/node_modules", function(error){
+		rmdir(path.join(__dirname, "npm", "node_modules"), function(error){
 			if(error){ return done(error); }
-			rmdir(__dirname+"/npm/dist", function(error){
+
+			rmdir(path.join(__dirname, "npm", "dist"), function(error){
 				if(error){ return done(error); }
-			
-				fs.copy(
-					path.join(__dirname, "..", "node_modules","jquery"),
-					__dirname+"/npm/node_modules/jquery", function(error){
-						
+		
+				fs.copy(path.join(__dirname, "..", "node_modules","jquery"),
+					path.join(__dirname, "npm", "node_modules", "jquery"), function(error){
+					
+					if(error){ return done(error); }
+					
+					fs.copy(
+						path.join(__dirname, "..", "bower_components","steal"),
+						path.join(__dirname, "npm", "node_modules", "steal"), function(error){
+					
 						if(error){ return done(error); }
 						
 						fs.copy(
@@ -1813,6 +1817,7 @@ describe("npm package.json builds", function(){
 							
 						});
 						
+					});
 				});
 			});
 		});
@@ -1824,7 +1829,7 @@ describe("npm package.json builds", function(){
 			if(error){ return done(error); }
 			
 			multiBuild({
-				config: __dirname + "/npm/package.json!npm"
+				config: path.join(__dirname, "npm", "package.json!npm")
 			}, {
 				quiet: true,
 				minify: false
