@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 var winston = require('winston');
+var path = require("path");
 var yargs = require("yargs")
 	.usage("Usage: $0 [build|transform] --main app --config path/to/stealconfig.js")
 	.demand(["config", "main"])
 	.describe("config", "Path to the config file")
 	.describe("main", "The application's entry point module")
-	.describe("dist-dir", "Defaults to dist/, a directory to save the bundles")
+	.describe("bundles-path", "Defaults to dist/bundles, a directory to save the bundles")
 	.describe("bundle-steal", "Include steal.js in your main bundled JavaScript")
-	.describe("ignore", "For pluginify, a comma-separated list of modules to not include in the output")
-	.describe("out", "For pluginify, specify an output file")
+	.describe("ignore", "For transform, a comma-separated list of modules to not include in the output")
+	.describe("out", "For transform, specify an output file")
 	.describe("verbose", "Verbose output")
 	.describe("quiet", "Quiet output")
 	.version(require("../package.json").version, "version")
@@ -19,12 +20,12 @@ var yargs = require("yargs")
 			throw "Must provide a command to execute";
 		}
 
-		if(command !== "build" && command !== "pluginify") {
+		if(command !== "build" && command !== "transform") {
 			throw "Unknown command: " + command;
 		}
 
-		if(command === "pluginify" && !argv.out) {
-			throw "When using pluginify, must specify an out file";
+		if(command === "transform" && !argv.out) {
+			throw "When using transform, must specify an out file";
 		}
 
 	});
@@ -34,10 +35,10 @@ var argv = yargs.argv;
 
 // Determine the location of the config file
 var config = argv.config[0] === "/" ?
-	argv.config : (process.cwd() + "/" + argv.config);
+	argv.config : path.join(process.cwd(), argv.config);
 
 
-// Which command to run, either `build` or `pluginify`
+// Which command to run, either `build` or `transform`
 var command = argv._[0];
 
 // Load steal-tools
@@ -47,9 +48,9 @@ if(command === "build"){
 
 	return build();
 
-} else if(command === "pluginify") {
+} else if(command === "transform") {
 
-	return pluginify();
+	return transform();
 
 }
 
@@ -62,14 +63,14 @@ function build() {
 		verbose: argv.verbose,
 		quiet: argv.quiet,
 		bundleSteal: argv.bundleSteal,
-		distDir: argv.distDir,
+		bundlesPath: argv.bundlesPath
 	}).then(function(){
 		winston.info('\nBuild completed successfully'.green);
 	});
 
 }
 
-function pluginify() {
+function transform() {
 	var fs = require("fs");
 	var ignore = [];
 
@@ -78,15 +79,15 @@ function pluginify() {
 		ignore = argv.ignore.split(",");
 	}
 
-	stealTools.pluginifier({
+	stealTools.transform({
 		config: config,
 		main: argv.main
 	}, {
 		verbose: argv.verbose,
 		quiet: argv.quiet
-	}).then(function(pluginify){
+	}).then(function(transform){
 
-		var content = pluginify(null, {
+		var content = transform(null, {
 			ignore: ignore
 		});
 
