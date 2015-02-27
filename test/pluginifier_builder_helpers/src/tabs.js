@@ -1,5 +1,5 @@
 import $ from "jquery";
-import "tabs.less!";
+import "./tabs.less!";
 
 $.fn.tabs = function(){
 	this.addClass("tabs").text("tabs!");

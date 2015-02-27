@@ -737,6 +737,43 @@ describe("multi build", function(){
 		});
 	});
 
+	it("works with an unnormalized main", function(done){
+		rmdir(__dirname+"/dist", function(error){
+			if(error){
+				done(error)
+			}
+
+			multiBuild({
+				config: __dirname+"/stealconfig.js",
+				main: "basics/"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(data){
+				open("test/basics/prod.html",function(browser, close){
+					find(browser,"MODULE", function(module){
+						assert(true, "module");
+						
+						assert.equal(module.name, "module", "module name is right");
+		
+						assert.equal(module.es6module.name, "es6Module", "steal loads ES6");
+						
+						assert.equal(module.es6module.amdModule.name, "amdmodule", "ES6 loads amd");
+						
+						close();
+					}, close);
+				}, done);
+
+
+			}, done);
+
+
+
+		});
+	
+	});
+
+
 });
 
 describe("multi build with plugins", function(){
@@ -1483,16 +1520,14 @@ describe("export", function(){
 		
 		it("+cjs", function(done){
 			this.timeout(10000);
-			
+
 			stealExport({
-				
 				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
 					"+cjs": {}
-				}
+				},
 			}).then(function(){
-
 				var browserify = require("browserify");
 				
 				var b = browserify();
@@ -1510,7 +1545,9 @@ describe("export", function(){
 				});
 				
 				
-			}, done);
+			}, function(e) {
+				done(e);
+			});
 				
 		});
 		
@@ -1756,25 +1793,27 @@ describe("npm package.json builds", function(){
 	
 	var setup = function(done){
 		rmdir(__dirname+"/npm/node_modules", function(error){
-		
 			if(error){ return done(error); }
-		
-			fs.copy(
-				path.join(__dirname, "..", "node_modules","jquery"),
-				__dirname+"/npm/node_modules/jquery", function(error){
-					
-					if(error){ return done(error); }
-					
-					fs.copy(
-						path.join(__dirname, "..", "bower_components","steal"),
-						__dirname+"/npm/node_modules/steal", function(error){
-					
+			rmdir(__dirname+"/npm/dist", function(error){
+				if(error){ return done(error); }
+			
+				fs.copy(
+					path.join(__dirname, "..", "node_modules","jquery"),
+					__dirname+"/npm/node_modules/jquery", function(error){
+						
 						if(error){ return done(error); }
 						
-						done()
+						fs.copy(
+							path.join(__dirname, "..", "bower_components","steal"),
+							__dirname+"/npm/node_modules/steal", function(error){
 						
-					});
-					
+							if(error){ return done(error); }
+							
+							done()
+							
+						});
+						
+				});
 			});
 		});
 	};
@@ -1796,7 +1835,31 @@ describe("npm package.json builds", function(){
 					var h1s = browser.window.document.getElementsByTagName('h1');
 					assert.equal(h1s.length, 1, "Wrote H!.");
 					close();
+				}, done);
 
+			}).catch(done);
+			
+		});
+
+	});
+
+	it("only needs a config and works with bundles", function(done){
+		setup(function(error){
+			if(error){ return done(error); }
+			
+			multiBuild({
+				config: __dirname + "/npm/package.json!npm",
+				bundle: ["npm-test/two", "npm-test/three"]
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				// open the prod page and make sure
+				// and make sure the module loaded successfully
+				open("test/npm/prod-bundle.html", function(browser, close){
+					var h1s = browser.window.document.getElementsByTagName('h1');
+					assert.equal(h1s.length, 1, "Wrote H!.");
+					close();
 				}, done);
 
 			}).catch(done);

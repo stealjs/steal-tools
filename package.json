@@ -14,7 +14,7 @@
     "glob": "^4.3.5",
     "less": "^1.7.0",
     "lodash": "2.4.1",
-    "steal": "git://github.com/bitovi/steal#v0.7.0-pre.2",
+    "steal": "git://github.com/bitovi/steal#v0.7.0-pre.4",
     "system-parse-amd": "0.0.2",
     "traceur": "0.0.58",
     "transpile": "git://github.com/bitovi/transpile#v0.5.0-pre.0",
@@ -37,7 +37,7 @@
     "grunt-simple-mocha": "^0.4.0",
     "mocha": "1.18.2",
     "rimraf": "2.1",
-    "zombie": "2.0.0-alpha27",
+    "zombie": "2.5.1",
     "jquery": ">2.0",
     "browserify": "~8.1.0",
     "cssify": "^0.6.0"
