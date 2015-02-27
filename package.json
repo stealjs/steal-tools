@@ -12,7 +12,7 @@
     "colors": "^0.6.2",
     "fs-extra": "~0.8.1",
     "glob": "^4.3.5",
-    "less": "^1.7.0",
+    "less": "^2.4.0",
     "lodash": "2.4.1",
     "steal": "git://github.com/bitovi/steal#v0.7.0-pre.4",
     "system-parse-amd": "0.0.2",
