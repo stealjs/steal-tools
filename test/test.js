@@ -1793,25 +1793,27 @@ describe("npm package.json builds", function(){
 	
 	var setup = function(done){
 		rmdir(__dirname+"/npm/node_modules", function(error){
-		
 			if(error){ return done(error); }
-		
-			fs.copy(
-				path.join(__dirname, "..", "node_modules","jquery"),
-				__dirname+"/npm/node_modules/jquery", function(error){
-					
-					if(error){ return done(error); }
-					
-					fs.copy(
-						path.join(__dirname, "..", "bower_components","steal"),
-						__dirname+"/npm/node_modules/steal", function(error){
-					
+			rmdir(__dirname+"/npm/dist", function(error){
+				if(error){ return done(error); }
+			
+				fs.copy(
+					path.join(__dirname, "..", "node_modules","jquery"),
+					__dirname+"/npm/node_modules/jquery", function(error){
+						
 						if(error){ return done(error); }
 						
-						done()
+						fs.copy(
+							path.join(__dirname, "..", "bower_components","steal"),
+							__dirname+"/npm/node_modules/steal", function(error){
 						
-					});
-					
+							if(error){ return done(error); }
+							
+							done()
+							
+						});
+						
+				});
 			});
 		});
 	};
@@ -1830,6 +1832,31 @@ describe("npm package.json builds", function(){
 				// open the prod page and make sure
 				// and make sure the module loaded successfully
 				open("test/npm/prod.html", function(browser, close){
+					var h1s = browser.window.document.getElementsByTagName('h1');
+					assert.equal(h1s.length, 1, "Wrote H!.");
+					close();
+				}, done);
+
+			}).catch(done);
+			
+		});
+
+	});
+
+	it("only needs a config and works with bundles", function(done){
+		setup(function(error){
+			if(error){ return done(error); }
+			
+			multiBuild({
+				config: __dirname + "/npm/package.json!npm",
+				bundle: ["npm-test/two", "npm-test/three"]
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				// open the prod page and make sure
+				// and make sure the module loaded successfully
+				open("test/npm/prod-bundle.html", function(browser, close){
 					var h1s = browser.window.document.getElementsByTagName('h1');
 					assert.equal(h1s.length, 1, "Wrote H!.");
 					close();
