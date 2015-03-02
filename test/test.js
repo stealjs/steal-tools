@@ -1636,11 +1636,9 @@ describe("export", function(){
 				
 		});
 		
-		it.only("+cjs +amd +global-css +global-js using Babel", function(done){
+		it("+cjs +amd +global-css +global-js using Babel", function(done){
 			this.timeout(10000);
-			
 			stealExport({
-				
 				system: {
 					config: __dirname+"/pluginifier_builder_helpers/package.json!npm",
 					transpiler: "babel"
@@ -1653,10 +1651,7 @@ describe("export", function(){
 					"+global-css": {}
 				}
 			}).then(done, done);
-				
 		});
-	
-		
 		
 	});
 	
