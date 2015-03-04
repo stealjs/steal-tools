@@ -1611,7 +1611,7 @@ describe("export", function(){
 				
 		});
 		
-		it("+global-css +global-js", function(done){
+		it.only("+global-css +global-js", function(done){
 			this.timeout(10000);
 			
 			stealExport({
@@ -1627,6 +1627,7 @@ describe("export", function(){
 				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
 					find(browser,"WIDTH", function(width){
 						assert.equal(width, 200, "width of element");
+						assert.ok(browser.window.TABS, "got tabs");
 						close();
 					}, close);
 				}, done);
