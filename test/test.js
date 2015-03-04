@@ -1611,7 +1611,7 @@ describe("export", function(){
 				
 		});
 		
-		it.only("+global-css +global-js", function(done){
+		it("+global-css +global-js", function(done){
 			this.timeout(10000);
 			
 			stealExport({

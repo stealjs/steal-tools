@@ -10,8 +10,7 @@
 		<script>
 			$("#tabs").tabs();
 			define("foo",["tabs"], function(tabs){
-				console.log("HERE", tabs);
-				window.TABS = tabs;
+				window.TABS = tabs["default"];
 			});
 		</script>
 		<script>
