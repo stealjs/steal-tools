@@ -9,6 +9,10 @@
 		<script src="./dist/global/tabs.js"></script>
 		<script>
 			$("#tabs").tabs();
+			define("foo",["tabs"], function(tabs){
+				console.log("HERE", tabs);
+				window.TABS = tabs;
+			});
 		</script>
 		<script>
 			// must be done with style for some reason.
