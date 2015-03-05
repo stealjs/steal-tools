@@ -1672,6 +1672,7 @@ describe("export", function(){
 				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
 					find(browser,"WIDTH", function(width){
 						assert.equal(width, 200, "width of element");
+						assert.ok(browser.window.TABS, "got tabs");
 						close();
 					}, close);
 				}, done);
