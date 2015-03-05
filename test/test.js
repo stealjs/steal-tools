@@ -1423,6 +1423,51 @@ describe("export", function(){
 			
 		}, done);
 	});
+
+	it("works with multiple mains", function(done){
+		stealExport({
+			
+			system: {
+				main: [
+					"pluginifier_builder/pluginify",
+					"pluginifier_builder/common"
+				],
+				config: __dirname+"/stealconfig.js"
+			},
+			options: {
+				quiet: true
+			},
+			"outputs": {
+				"basics standalone": {
+					modules: ["basics/module/module"],
+					dest: function(){
+						return __dirname+"/out/basics.js"
+					},
+					minify: false
+				},
+				"pluginify without basics": {
+					modules: ["pluginifier_builder/pluginify"],
+					ignore: ["basics/module/module"],
+					dest: function(){
+						return __dirname+"/out/pluginify.js"
+					},
+					minify: false
+				}
+			}
+		}).then(function(){
+			open("test/pluginifier_builder/index.html", function(browser, close){
+	
+				find(browser,"RESULT", function(result){
+					assert.ok(result.module, "has module");
+					assert.ok(result.cjs,"has cjs module");
+					assert.equal(result.name, "pluginified");
+					close();
+				}, close);
+
+			}, done);
+			
+		}, done);
+	});
 	
 	it("passes the load objects to normalize and dest", function(done){
 		var destCalls = 0;
