@@ -13,7 +13,8 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	transformImport = require("../lib/build/transform"),
 	fs = require('fs-extra'),
 	logging = require('../lib/logger'),
-	stealExport = require('../lib/build/export');
+	stealExport = require('../lib/build/export'),
+	asap = require("pdenodeify");
 
 System.logLevel = 3;
 
@@ -1932,26 +1933,48 @@ describe("npm package.json builds", function(){
 
 	});
 
-	it("works with unnormalized modules", function(done){
-		var allModules = [
-			"npm-test/main",
-			"npm-test/two",
-			"npm-test/three"
-		];
+	describe("steal-export", function(){
+		describe("ignore", function(){
+			it("works with unnormalized names", function(done){
+				stealExport({
+					system: {
+						config: __dirname+"/npm/package.json!npm",
+						main: "npm-test/main",
+						transpiler: "babel"
+					},
+					options: { quiet: true },
+					"outputs": {
+						"+global-js": {
+							modules: ["npm-test/main"],
+							minify: false,
+							ignore: ["npm-test/child"],
+							exports: {
+								"jquery": "$"
+							}
+						},
+					}
+				})
+				.then(check);
 
-		stealExport({
-			system: {
-				config: __dirname+"/npm/package.json!npm",
-				main: allModules
-			},
-			options: { quiet: true },
-			"outputs": {
-				"+cjs": {
-					eachModule: allModules,
-					minify: false
-				},
-			}
-		}).then(done, done);
+				function check() {
+					openPage(function(moduleValue){
+						var child = moduleValue.child;
+						assert.equal(child, undefined, "Child ignored in build");
+					}, done);
+				}
+
+				function openPage(callback, done) {
+					open("test/npm/prod-global.html", function(browser, close){
+						find(browser,"MODULE", function(moduleValue){
+							callback(moduleValue);
+							close();
+						}, close);
+					}, done);
+				}
+
+
+			});
+		});
 	});
 	
 });
