@@ -1931,6 +1931,28 @@ describe("npm package.json builds", function(){
 		});
 
 	});
+
+	it("works with unnormalized modules", function(done){
+		var allModules = [
+			"npm-test/main",
+			"npm-test/two",
+			"npm-test/three"
+		];
+
+		stealExport({
+			system: {
+				config: __dirname+"/npm/package.json!npm",
+				main: allModules
+			},
+			options: { quiet: true },
+			"outputs": {
+				"+cjs": {
+					eachModule: allModules,
+					minify: false
+				},
+			}
+		}).then(done, done);
+	});
 	
 });
 
