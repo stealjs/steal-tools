@@ -33,7 +33,7 @@ name on the global object in exports.
 
 The other possible format values are "steal","amd", and "cjs".
 
-@option {Object<moduleName,String>} export A mapping of module names to their name on the
+@option {Object<moduleName,String>} exports A mapping of module names to their name on the
 global object.  For example, if an output depends on jQuery, but does not include it, you
 should include:
 
