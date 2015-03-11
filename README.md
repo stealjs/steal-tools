@@ -1,6 +1,6 @@
 # steal-tools
 
-[![Build Status](https://travis-ci.org/bitovi/steal-tools.svg?branch=master)](https://travis-ci.org/bitovi/steal-tools)
+[![Build Status](https://travis-ci.org/stealjs/steal-tools.svg?branch=master)](https://travis-ci.org/stealjs/steal-tools)
 
 `steal-tools` is a collection of command-line utilities
 that:
@@ -9,7 +9,7 @@ that:
  - writes those builds so your apps load _fast_.
 
 It is one half of the [StealJS](http://stealjs.com) project.  It's other half,
-[steal](https://github.com/bitovi/steal) provides client-side dependency management.
+[steal](https://github.com/stealjs/steal) provides client-side dependency management.
 
 For more information on `steal-tools`, visit [stealjs.com](http://stealjs.com).
 
