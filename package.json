@@ -1,7 +1,7 @@
 {
   "name": "steal-tools",
   "description": "Futuristic build tools for ES6 Module applications.",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "author": {
     "name": "Bitovi",
     "email": "contact@bitovi.com",
@@ -14,7 +14,7 @@
     "glob": "^4.3.5",
     "less": "^2.4.0",
     "lodash": "2.4.1",
-    "steal": "git://github.com/stealjs/steal#v0.7.1-pre.2",
+    "steal": "~0.7.1",
     "system-parse-amd": "0.0.2",
     "traceur": "0.0.58",
     "transpile": "~0.5.0",
