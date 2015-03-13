@@ -1694,10 +1694,23 @@ describe("export", function(){
 				"outputs": {
 					"+cjs": {},
 					"+amd": {},
-					"+global-js": {},
+					"+global-js": { 
+						exports: {
+							"jquery": "jQuery"
+						}
+					},
 					"+global-css": {}
 				}
-			}).then(done, done);
+			})
+			.then(function() {
+				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
+					find(browser,"WIDTH", function(width){
+						assert.equal(width, 200, "width of element");
+						assert.ok(browser.window.TABS, "got tabs");
+						close();
+					}, close);
+				}, done);
+			}, done);
 		});
 		
 	});
