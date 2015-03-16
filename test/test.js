@@ -1683,7 +1683,7 @@ describe("export", function(){
 				
 		});
 		
-		it("+cjs +amd +global-css +global-js using Babel", function(done){
+		it.only("+cjs +amd +global-css +global-js using Babel", function(done){
 			this.timeout(10000);
 			stealExport({
 				system: {

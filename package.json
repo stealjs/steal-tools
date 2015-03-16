@@ -17,7 +17,7 @@
     "steal": "~0.7.1",
     "system-parse-amd": "0.0.2",
     "traceur": "0.0.58",
-    "transpile": "~0.5.0",
+    "transpile": "bitovi/transpile#es6-opts",
     "uglify-js": "~2.4.13",
     "winston": "^0.7.3",
     "yargs": "^1.2.2"
