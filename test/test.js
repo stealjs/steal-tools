@@ -1692,8 +1692,8 @@ describe("export", function(){
 				},
 				options: { quiet: true },
 				"outputs": {
-					"+cjs": {},
-					"+amd": {},
+					/*"+cjs": {},
+					"+amd": {},*/
 					"+global-js": { 
 						exports: {
 							"jquery": "jQuery"
