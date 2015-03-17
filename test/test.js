@@ -1909,6 +1909,32 @@ describe("npm package.json builds", function(){
 
 	});
 
+	it("works with bundleSteal", function(done){
+		this.timeout(50000);
+		setup(function(error){
+			if(error){ return done(error); }
+			
+			multiBuild({
+				config: path.join(__dirname, "npm", "package.json!npm")
+			}, {
+				quiet: true,
+				minify: false,
+				bundleSteal: true
+			}).then(function(){
+				// open the prod page and make sure
+				// and make sure the module loaded successfully
+				open("test/npm/prod-bundled.html", function(browser, close){
+					var h1s = browser.window.document.getElementsByTagName('h1');
+					assert.equal(h1s.length, 1, "Wrote H!.");
+					close();
+				}, done);
+
+			}).catch(done);
+			
+		});
+
+	});
+
 	it("only needs a config and works with bundles", function(done){
 		setup(function(error){
 			if(error){ return done(error); }
