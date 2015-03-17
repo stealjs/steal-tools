@@ -1683,7 +1683,7 @@ describe("export", function(){
 				
 		});
 		
-		it("+cjs +amd +global-css +global-js using Babel", function(done){
+		it.only("+cjs +amd +global-css +global-js using Babel", function(done){
 			this.timeout(10000);
 			stealExport({
 				system: {
@@ -1692,12 +1692,25 @@ describe("export", function(){
 				},
 				options: { quiet: true },
 				"outputs": {
-					"+cjs": {},
-					"+amd": {},
-					"+global-js": {},
+					/*"+cjs": {},
+					"+amd": {},*/
+					"+global-js": { 
+						exports: {
+							"jquery": "jQuery"
+						}
+					},
 					"+global-css": {}
 				}
-			}).then(done, done);
+			})
+			.then(function() {
+				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
+					find(browser,"WIDTH", function(width){
+						assert.equal(width, 200, "width of element");
+						assert.ok(browser.window.TABS, "got tabs");
+						close();
+					}, close);
+				}, done);
+			}, done);
 		});
 		
 	});
