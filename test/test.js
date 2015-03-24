@@ -1051,6 +1051,8 @@ describe("transformImport", function(){
 						assert(result.module.es6module, "have dependeny");
 						assert(result.cjs(), "cjs");
 						assert.equal(result.global, "This is a global module", "Global module loaded");
+						assert.equal(result.UMD, "works", "Doesn't mess with UMD modules");
+						assert.equal(result.define, undefined, "Not keeping a global.define");
 						close();
 					}, close);
 
@@ -1209,7 +1211,6 @@ describe("transformImport", function(){
 				});
 			});
 		});
-
 	});
 
 	it("Works with modules that check for define.amd", function(done){
