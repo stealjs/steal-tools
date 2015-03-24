@@ -8,17 +8,20 @@
     "web": "http://bitovi.com/"
   },
   "dependencies": {
-    "clean-css": "2.1.8",
+    "clean-css": "3.1.8",
     "colors": "^0.6.2",
+    "find-line-column": "^0.5.2",
     "fs-extra": "~0.16.3",
     "glob": "^4.3.5",
     "less": "^2.4.0",
     "lodash": "2.4.1",
-    "steal": "~0.7.1",
+    "source-map": "git://github.com/bitovi/source-map#0.4.2-bitovi.0",
+    "steal": "git://github.com/bitovi/steal#0435a014f0d7b090b78d7c907377ac4692261ecd",
     "system-parse-amd": "0.0.2",
     "traceur": "0.0.58",
-    "transpile": "~0.5.0",
+    "transpile": "bitovi/transpile#3a48a43128872d57351818c44944412c2fe6dd6d",
     "uglify-js": "~2.4.13",
+    "urix": "^0.1.0",
     "winston": "^0.7.3",
     "yargs": "^1.2.2"
   },
