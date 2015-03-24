@@ -1052,6 +1052,7 @@ describe("transformImport", function(){
 						assert(result.cjs(), "cjs");
 						assert.equal(result.global, "This is a global module", "Global module loaded");
 						assert.equal(result.UMD, "works", "Doesn't mess with UMD modules");
+						assert.equal(result.define, undefined, "Not keeping a global.define");
 						close();
 					}, close);
 
