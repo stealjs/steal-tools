@@ -63,6 +63,10 @@ the module specified are included, unless they are explicitly ignored.  Setting
 _ignoreAllDependencies_ to `true` only results in returning that individual module
 as the output.
 
-@option {includeTraceurRuntime} [includeTraceurRuntime=true] By default, if an ES6 module
-is found, the [@traceur] runtime is packaged with the output.  Setting this to `false`
+@option {Boolean} [includeTraceurRuntime=true] By default, if an ES6 module
+is found and the `transpiler` config is set to `traceur` (the default), the [@traceur] runtime is packaged with the output.  Setting this to `false`
 prevents that behavior.
+
+@option {Boolean} [sourceMaps=false] To generate source maps alongside your transformed source, set this option to true.
+
+@option {Boolean} [sourceMapsContent=false] Include the original source contents in the generated source maps.
