@@ -1053,6 +1053,7 @@ describe("transformImport", function(){
 						assert.equal(result.global, "This is a global module", "Global module loaded");
 						assert.equal(result.UMD, "works", "Doesn't mess with UMD modules");
 						assert.equal(result.define, undefined, "Not keeping a global.define");
+						assert.equal(result.System, undefined, "Not keeping a global.System");
 						close();
 					}, close);
 
