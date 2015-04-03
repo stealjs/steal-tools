@@ -10,6 +10,7 @@ var yargs = require("yargs")
 	.describe("bundle-steal", "Include steal.js in your main bundled JavaScript")
 	.describe("ignore", "For transform, a comma-separated list of modules to not include in the output")
 	.describe("out", "For transform, specify an output file")
+	.describe("source-maps", "Generate source maps")
 	.describe("verbose", "Verbose output")
 	.describe("quiet", "Quiet output")
 	.version(require("../package.json").version, "version")
@@ -63,7 +64,8 @@ function build() {
 		verbose: argv.verbose,
 		quiet: argv.quiet,
 		bundleSteal: argv.bundleSteal,
-		bundlesPath: argv.bundlesPath
+		bundlesPath: argv.bundlesPath,
+		sourceMaps: argv.sourceMaps
 	}).then(function(){
 		winston.info('\nBuild completed successfully'.green);
 	});
@@ -87,12 +89,17 @@ function transform() {
 		quiet: argv.quiet
 	}).then(function(transform){
 
-		var content = transform(null, {
+		var result = transform(null, {
 			ignore: ignore
 		});
+		var code = result.code;
+		var map = result.map;
 
 		// Write out the contents
-		fs.writeFileSync(argv.out, content, "utf8");
+		fs.writeFileSync(argv.out, code, "utf8");
+		if(map) {
+			fs.writeFileSync(argv.out+".map", map.toString(), "utf8");
+		}
 	});
 
 }
