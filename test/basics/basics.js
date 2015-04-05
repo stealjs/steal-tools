@@ -1,5 +1,5 @@
 steal('basics/module', function(module){
-	
+
 	if(window.QUnit) {
 		QUnit.ok(module, "got basics/module");
 		QUnit.equal(module.name, "module", "module name is right");
