@@ -3,22 +3,29 @@ var winston = require('winston');
 var path = require("path");
 var yargs = require("yargs")
 	.usage("Usage: $0 [build|transform] --main app --config path/to/stealconfig.js")
-	.demand(["config", "main"])
-	.describe("config", "Path to the config file")
-	.describe("main", "The application's entry point module")
+	.describe("c", "Path to the config file")
+	.alias("c", "config")
+	.default("c", "package.json!npm")
+	.describe("m", "The application's entry point module")
+	.alias("m", "main")
 	.describe("bundles-path", "Defaults to dist/bundles, a directory to save the bundles")
 	.describe("bundle-steal", "Include steal.js in your main bundled JavaScript")
 	.describe("ignore", "For transform, a comma-separated list of modules to not include in the output")
-	.describe("out", "For transform, specify an output file")
+	.describe("o", "For transform, specify an output file")
+	.alias("o", "out")
 	.describe("source-maps", "Generate source maps")
+	.describe("source-maps-content", "Include the original source contents with the source maps")
+	.describe("no-minify", "Do not minify the output")
 	.describe("verbose", "Verbose output")
 	.describe("quiet", "Quiet output")
 	.version(require("../package.json").version, "version")
+	.help("h")
+	.alias("h", "help")
 	.check(function(argv){
 		var command = argv._[0];
 
 		if(!command) {
-			throw "Must provide a command to execute";
+			command = "build";
 		}
 
 		if(command !== "build" && command !== "transform") {
@@ -34,16 +41,26 @@ var yargs = require("yargs")
 // The command-line arguments
 var argv = yargs.argv;
 
+// Use package.json as the config by default.
+argv.config = argv.config;
+
 // Determine the location of the config file
 var config = argv.config[0] === "/" ?
 	argv.config : path.join(process.cwd(), argv.config);
 
 
 // Which command to run, either `build` or `transform`
-var command = argv._[0];
+var command = argv._[0] || "build";
 
 // Load steal-tools
 var stealTools = require("../index");
+
+var system = { config: config };
+if(argv.main) {
+	system.main = argv.main;
+}
+
+var options = argv;
 
 if(command === "build"){
 
@@ -57,16 +74,7 @@ if(command === "build"){
 
 function build() {
 
-	stealTools.build({
-		config: config,
-		main: argv.main
-	}, {
-		verbose: argv.verbose,
-		quiet: argv.quiet,
-		bundleSteal: argv.bundleSteal,
-		bundlesPath: argv.bundlesPath,
-		sourceMaps: argv.sourceMaps
-	}).then(function(){
+	stealTools.build(system, options).then(function(){
 		winston.info('\nBuild completed successfully'.green);
 	});
 
@@ -81,13 +89,7 @@ function transform() {
 		ignore = argv.ignore.split(",");
 	}
 
-	stealTools.transform({
-		config: config,
-		main: argv.main
-	}, {
-		verbose: argv.verbose,
-		quiet: argv.quiet
-	}).then(function(transform){
+	stealTools.transform(system, options).then(function(transform){
 
 		var result = transform(null, {
 			ignore: ignore
