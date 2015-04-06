@@ -16,38 +16,12 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	stealExport = require('../lib/build/export'),
 	asap = require("pdenodeify");
 
+var find = require("./helpers").find;
+var open = require("./helpers").open;
+
 System.logLevel = 3;
 
-// Helpers
-var find = function(browser, property, callback, done){
-	var start = new Date();
-	var check = function(){
-		if(browser.window && browser.window[property]) {
-			callback(browser.window[property]);
-		} else if(new Date() - start < 2000){
-			setTimeout(check, 20);
-		} else {
-			done("failed to find "+property+" in "+browser.window.location.href);
-		}
-	};
-	check();
-};
-
-var open = function(url, callback, done){
-	var server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
-	var browser = Browser.create();
-	browser.visit("http://localhost:8081/"+url)
-		.then(function(){
-			callback(browser, function(err){
-				server.close();
-				done(err);
-			})
-		}).catch(function(e){
-			server.close();
-			done(e)
-		});
-};
-
+require("./test_cli");
 
 (function(){
 
@@ -1042,7 +1016,7 @@ describe("transformImport", function(){
 		}).then(function(transform){
 
 
-			fs.writeFile(__dirname+"/pluginify/out.js", transform(), function(err) {
+			fs.writeFile(__dirname+"/pluginify/out.js", transform().code, function(err) {
 			    // open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/pluginify/index.html", function(browser, close){
@@ -1080,7 +1054,7 @@ describe("transformImport", function(){
 			// Get the resulting string, ignoring amdmodule
 			var result = transform(null, {
 				ignore: ["basics/amdmodule"]
-			});
+			}).code;
 
 			// Regex test to see if the basics/amdmodule is included
 			var includesIgnoredThings = new RegExp("\\*basics\\/amdmodule\\*").test(result);
@@ -1102,14 +1076,14 @@ describe("transformImport", function(){
 			var pluginOut = transform("plugin",{
 				ignore: ["util"],
 				minify: false
-			});
+			}).code;
 			var utilOut = transform("util",{
 				ignore: ["lib"],
 				minify: false,
 				exports: {
 					"lib" : "lib" 
 				}
-			});
+			}).code;
 
 			fs.mkdirs(__dirname+"/pluginify_deps/out", function(err) {
 
@@ -1147,7 +1121,7 @@ describe("transformImport", function(){
 			exports: {},
 			quiet: true
 		}).then(function(transform) {
-			fs.writeFile(__dirname+"/nocallback/out.js", transform(), function(err) {
+			fs.writeFile(__dirname+"/nocallback/out.js", transform().code, function(err) {
 			    // open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/nocallback/index.html", function(browser, close){
@@ -1170,7 +1144,7 @@ describe("transformImport", function(){
 		}).then(function(transform){
 			var pluginOut = transform(null, {
 				minify: false
-			});
+			}).code;
 
 			assert.equal(/System\.set/.test(pluginOut), false,
 						 "No System.set in the output");
@@ -1194,7 +1168,7 @@ describe("transformImport", function(){
 			}).then(function(transform){
 				var pluginOut = transform(null, {
 					minify: false
-				});
+				}).code;
 
 				fs.writeFile(__dirname + "/pluginify_global/out.js", pluginOut, function(error) {
 					if(error) {
@@ -1226,7 +1200,7 @@ describe("transformImport", function(){
 			}, {
 				quiet: true
 			}).then(function(transform){
-				var out = transform(null, { minify: false });
+				var out = transform(null, { minify: false }).code;
 
 				fs.writeFile(__dirname + "/pluginify_define/out.js", out, function(error){
 					if(error) {
@@ -2006,6 +1980,117 @@ describe("npm package.json builds", function(){
 		});
 	});
 	
+});
+
+describe("Source Maps", function(){
+	describe("multi build", function(){
+		it("basics works", function(done){
+			rmdir(__dirname+"/bundle/dist", function(error){
+				if(error){
+					done(error);
+				}
+
+				multiBuild({
+					config: __dirname+"/stealconfig.js",
+					main: "basics/basics",
+					transpiler: "babel"
+				}, {
+					quiet: true,
+					sourceMaps: true,
+					minify: true
+				}).then(function(data){
+					var exists = fs.existsSync(path.join(__dirname,"dist/bundles/basics/basics.js.map"));
+					if(!exists) {
+						done(new Error("no bundle info"));
+						return;
+					}
+					done();
+				}, done);
+			});
+		});
+
+		it("works with clean and css", function(done){
+			rmdir(__dirname+"/bundle/dist", function(error){
+				if(error){
+					done(error);
+				}
+
+				multiBuild({
+					config: __dirname+"/stealconfig.js",
+					main: "sourcemaps/basics",
+					transpiler: "babel"
+				}, {
+					quiet: true,
+					sourceMaps: true,
+					minify: false,
+					bundleSteal: true
+				}).then(function(data){
+					var exists = fs.existsSync(path.join(__dirname,"dist/bundles/sourcemaps/basics.js.map"));
+					if(!exists) {
+						done(new Error("no bundle info"));
+						return;
+					}
+					done();
+				}, done);
+			});
+		});
+
+	});
+
+	describe("exporting", function(){
+		beforeEach(function(done){
+			rmdir(__dirname+"/pluginifier_builder_helpers/dist", function(err){
+				done(err);
+			});
+		});
+
+		it("+cjs +amd +global-css +global-js works", function(done){
+			this.timeout(10000);
+			stealExport({
+				system: {
+					config: __dirname+"/pluginifier_builder_helpers/package.json!npm",
+					transpiler: "babel"
+				},
+				options: {
+					quiet: true,
+					sourceMaps: true
+				},
+				"outputs": {
+					"+cjs": {},
+					"+amd": {},
+					"+global-js": { exports: {"jquery": "jQuery"} },
+					"+global-css": {}
+				}
+			})
+			.then(verify)
+			.then(done, done);
+		});
+
+		function read(filename){
+			var data = fs.readFileSync(__dirname +
+									   "/pluginifier_builder_helpers/dist/" +
+									   filename,
+			"utf8");
+			if(/\.map/.test(filename)) return JSON.parse(data);
+			return data;
+		}
+
+		function verify() {
+			var globalJsMap = read("global/tabs.js.map");
+			assert.equal(globalJsMap.sources[0], "../../src/tabs.js", "Relative to source file");
+			assert.equal(globalJsMap.file, "tabs.js", "Refers to generated file");
+
+			var globalJs = read("global/tabs.js");
+			assert(globalJs.indexOf("//# sourceMappingURL=tabs.js.map") > 0, "sourceMappingURL comment included.");
+
+			var globalCssMap = read("global/tabs.css.map");
+			assert.equal(globalCssMap.file, "tabs.css", "Refers to generated css");
+
+			var globalCss = read("global/tabs.css");
+			assert(globalCss.indexOf("/*# sourceMappingURL=tabs.css.map */") > 0, "sourceMappingURL comment included");
+		}
+
+	});
 });
 
 

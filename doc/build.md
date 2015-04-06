@@ -52,6 +52,10 @@ Specifies the behavior of the build.
   top-level `minify` function of uglify-js, and the available options are listed [here](https://github.com/mishoo/UglifyJS2#the-simple-way).
   The option `fromString` is used internally and will always be `true`; any other value will be ignored.
 
+  @option {Boolean} [sourceMaps=false] Generate source maps alongside your bundles.
+
+  @option {Boolean} [sourceMapsContent=false] Include the original source contents in the generated source maps. Use this option if your production environment doesn't have access to the source files. Will result in a larger source maps size but will cause fewer requests.
+
 @return {Promise<{}>} A promise that resolves, if successful to an object with the following data:
 
   @option {buildGraph} graph A map of moduleNames to node.
@@ -197,3 +201,27 @@ To load the homepage JS, CSS and the shared JS and CSS, an html page should have
         env='production'>
 ```
 
+## Source Maps
+
+Source maps provide a way to debug your bundled application. Using steal-tool's `build` you can generate source maps like so:
+
+    var stealTools = require("steal-tools");
+
+    stealTools.build({
+        config: "package.json!npm",
+        main: "app"
+    }, {
+        sourceMaps: true
+    });
+
+This will build out your application to `dist/bundles/app.js` and a corresponding source map will be at `dist/bundles/app.js.map`. Now load your application:
+
+```html
+<script src="./node_modules/steal/steal.js"
+    env="production"
+    main="app"></script>
+```
+
+And look in your debugger tools, the original sources should be shown and are debuggable.
+
+These source maps are light-weight because they only include mappings back to the original sources; the original source files are still loaded by the browser. If you have a production environment where the original source files cannot be accessed, or you want to limit the number of requests made, you can set the `sourceMapsContent` option to `true` and the original sources will be packaged along in the `app.js.map` file.

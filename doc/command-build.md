@@ -35,4 +35,8 @@ Or, you can access `steal-tools` in _node_modules/.bin_, like:
           --config app/config.js \
           --main app/app
           
+If you are using the [npm] plugin you don't need to specify `--config` or `--main`:
 
+    > steal-tools
+
+will default to `package.json!npm` as the config and build out to `dist/`.

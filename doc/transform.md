@@ -13,7 +13,7 @@ module or modules.
 Options that configure how the files are compiled.  These options overwrite the 
 `pluginifierOptions` argument passed to [steal-tools.transformImport].
 
-@return {String} The result of `moduleName` being pluginified.
+@return {steal-tools.source.object} An object containing a string `code` property and a `map` that is the source map if the `sourceMaps` option is set to `true`.
 
 @body
 
