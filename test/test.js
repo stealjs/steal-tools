@@ -2077,7 +2077,7 @@ describe("Source Maps", function(){
 
 		function verify() {
 			var globalJsMap = read("global/tabs.js.map");
-			assert.equal(globalJsMap.sources[0], "../../src/tabs.js", "Relative to source file");
+			assert.equal(globalJsMap.sources[1], "../../src/tabs.js", "Relative to source file");
 			assert.equal(globalJsMap.file, "tabs.js", "Refers to generated file");
 
 			var globalJs = read("global/tabs.js");
