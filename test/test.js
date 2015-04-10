@@ -748,6 +748,27 @@ describe("multi build", function(){
 	
 	});
 
+	it("works with a project with json", function(done){
+		rmdir(__dirname+"/json/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/json/package.json!npm"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/json/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						assert(!!module.data, "json data exists");
+						assert.equal(module.data.foo, "bar", "correctly parsed");
+						close();
+					}, close);
+				}, done);
+			});
+		});
+	});
+
 
 });
 
