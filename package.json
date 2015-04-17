@@ -8,6 +8,7 @@
     "web": "http://bitovi.com/"
   },
   "dependencies": {
+    "chokidar": "^1.0.1",
     "clean-css": "3.1.8",
     "colors": "^0.6.2",
     "find-line-column": "^0.5.2",
@@ -15,9 +16,11 @@
     "glob": "^4.3.5",
     "less": "^2.4.0",
     "lodash": "2.4.1",
+    "moment": "^2.10.2",
     "source-map": "git://github.com/bitovi/source-map#0.4.2-bitovi.0",
     "steal": "^0.8.0",
     "system-parse-amd": "0.0.2",
+    "through2": "^0.6.5",
     "traceur": "0.0.87",
     "transpile": "^0.7.0",
     "uglify-js": "~2.4.13",

@@ -15,7 +15,10 @@ var yargs = require("yargs")
 	.alias("o", "out")
 	.describe("source-maps", "Generate source maps")
 	.describe("source-maps-content", "Include the original source contents with the source maps")
+	.describe("minify", "Minify the output. Defaults to true except when used with --watch")
 	.describe("no-minify", "Do not minify the output")
+	.describe("w", "Watch for file changes and rebuild")
+	.alias("w", "watch")
 	.describe("verbose", "Verbose output")
 	.describe("quiet", "Quiet output")
 	.version(require("../package.json").version, "version")
@@ -74,9 +77,14 @@ if(command === "build"){
 
 function build() {
 
-	stealTools.build(system, options).then(function(){
-		winston.info('\nBuild completed successfully'.green);
-	});
+	var promise = stealTools.build(system, options);
+
+	// If this is watch mode this is actually a stream.
+	if(promise.then) {
+		promise.then(function(){
+			winston.info('\nBuild completed successfully'.green);
+		});
+	}
 
 }
 

@@ -56,12 +56,9 @@ Specifies the behavior of the build.
 
   @option {Boolean} [sourceMapsContent=false] Include the original source contents in the generated source maps. Use this option if your production environment doesn't have access to the source files. Will result in a larger source maps size but will cause fewer requests.
 
-@return {Promise<{}>} A promise that resolves, if successful to an object with the following data:
+  @option {Boolean} [watch=false] Actives watch mode which will continuously build as you develop your application.
 
-  @option {buildGraph} graph A map of moduleNames to node.
-  @option {steal} steal The steal function used to load the main module.
-  @option {Loader} loader The loader used to load the main module.
-  @option {Array} bundles The builds written out.
+@return {(Promise<steal-tools.BuildResult>|Stream<steal-tools.BuildResult>)} Either a Promise that resolves when the build is complete or a Stream that will send `data` events every time a rebuild is complete. By default a Promise is returned, unless the `watch` option is enabled.
 
 @body
 

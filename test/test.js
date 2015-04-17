@@ -239,12 +239,7 @@ describe("multi build", function(){
 
 
 			}, done);
-
-
-
 		});
-
-
 	});
 
 	it("should work with CommonJS", function(done){
