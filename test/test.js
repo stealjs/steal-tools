@@ -1691,6 +1691,34 @@ describe("export", function(){
 				}
 			}).then(done, done);
 		});
+
+		it.only("+global-js overriding ignore", function(done){
+			this.timeout(10000);
+			stealExport({
+				system: {
+					config: __dirname+"/pluginifier_builder_helpers/package.json!npm",
+					meta: {
+						"jquery": { format: "global" }
+					}
+				},
+				options: { quiet: true },
+				"outputs": {
+					"+global-js": {
+						ignore: []
+					}
+				}
+			}).then(function(err){
+				
+				open("test/pluginifier_builder_helpers/global-no-ignore.html", function(browser, close) {
+					find(browser,"jQuery", function($){
+						assert.ok(browser.window.jQuery, "jQuery in the page");
+						close();
+					}, close);
+				}, done);
+				
+			}, done);
+
+		});
 		
 	});
 	
