@@ -802,6 +802,36 @@ describe("multi build", function(){
 		});
 	});
 
+	it("can define own translate with meta", function(done){
+		rmdir(__dirname+"/meta_translate/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				configMain: "@empty",
+				main: "main",
+				baseURL: __dirname + "/meta_translate",
+				meta: {
+					a: {
+						translate: function(load){
+							load.metadata.format = "amd";
+							return "define([], function(){\n" +
+										   "return 'b';\n});";
+						}
+					}
+				}
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/meta_translate/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						assert.equal(module.a, "b", "translate worked");
+						close();
+					}, close);
+				}, done);
+			});
+		});
+	});
 
 });
 
