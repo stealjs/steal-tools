@@ -47,6 +47,7 @@
     "jquery": ">2.0",
     "mocha": "1.18.2",
     "rimraf": "2.1",
+    "steal-qunit": "0.0.4",
     "zombie": "2.5.1"
   },
   "bin": {
@@ -66,5 +67,10 @@
   ],
   "scripts": {
     "test": "grunt test"
+  },
+  "system": {
+    "npmDependencies": [
+      "steal-qunit"
+    ]
   }
 }
