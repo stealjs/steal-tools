@@ -47,6 +47,8 @@
     "jquery": ">2.0",
     "mocha": "1.18.2",
     "rimraf": "2.1",
+    "steal-qunit": "0.0.4",
+    "testee": "^0.2.0",
     "zombie": "2.5.1"
   },
   "bin": {
@@ -65,6 +67,11 @@
     }
   ],
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test && grunt test:browser"
+  },
+  "system": {
+    "npmDependencies": [
+      "steal-qunit"
+    ]
   }
 }
