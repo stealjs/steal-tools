@@ -7,7 +7,7 @@ Export a project's modules to other forms and formats declaratively.
 
 @param {steal-tools.export.object} exportTask An [steal-tools.export.object] with the following properties:
 
-  @option {steal-tools.SystemConfig} config `System.config` data needed to load
+  @option {steal-tools.SystemConfig} system `System.config` data needed to load
   all the modules for export.
 
   @option {{}} [options] Options that configure logging.
