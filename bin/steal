@@ -38,11 +38,6 @@ var yargs = require("yargs")
 			throw "Unknown command: " + command;
 		}
 
-		// If not in watch mode but live-reload is enabled.
-		if(command === "build" && argv.liveReload && !argv.watch) {
-			command = "live-reload";
-		}
-
 		if(command === "transform" && !argv.out) {
 			throw "When using transform, must specify an out file";
 		}
@@ -84,6 +79,7 @@ if(command === "build"){
 } else if(command === "live-reload") {
 	var liveReload = require("../lib/stream/live");
 
+	options.liveReload = true;
 	liveReload(system, options);
 }
 
