@@ -9,6 +9,10 @@ Starts a live-reload Web Socket server. Used with [steal.live-reload], allows yo
 
 @param {String} OPTION_VALUE The value of `OPTION_NAME`.
 
+@signature `steal-tools live-reload --live-reload-port PORT`
+
+@param {Number} [--live-reload-port=8012] Web Socket port to use for connecting with browser clients.
+
 @body
 
 ## Use
