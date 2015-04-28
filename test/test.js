@@ -585,6 +585,43 @@ describe("multi build", function(){
 	
 	});
 
+	
+	it("System.instantiate works when bundling steal", function(done){
+		rmdir(__dirname+"/dist", function(error){
+			if(error){
+				done(error)
+			}
+
+			multiBuild({
+				config: __dirname+"/stealconfig.js",
+				main: "basics/basics"
+			}, {
+				bundleSteal: true,
+				quiet: true,
+				minify: false
+			}).then(function(data){
+				open("test/basics/prod-inst.html",function(browser, close){
+					find(browser,"MODULE", function(module){
+						assert(true, "module");
+
+						// We marked stealconfig.js as instantiated so it shouldn't have it's properties
+						var System = browser.window.System;
+						assert.equal(System.map["mapd/mapd"], undefined, "Mapping not applied");
+						
+						close();
+					}, close);
+				}, done);
+
+
+			}, done);
+
+
+
+		});
+	
+	});
+
+
 
 	it("Returns an error when building a main that doesn\'t exist", function(done){
 		var config = {
