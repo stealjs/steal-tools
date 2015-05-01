@@ -2,6 +2,7 @@ var winston = require('winston');
 var dependencyGraph = require("../lib/graph/make_graph"),
 	comparify = require("comparify"),
 	bundle = require("../lib/graph/make_graph_with_bundles"),
+	recycle = require("../lib/graph/recycle"),
 	orderGraph = require("../lib/graph/order"),
 	mapDeps = require("../lib/graph/map_dependencies"),
 	assert = require('assert'),
@@ -14,7 +15,8 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	fs = require('fs-extra'),
 	logging = require('../lib/logger'),
 	stealExport = require('../lib/build/export'),
-	asap = require("pdenodeify");
+	asap = require("pdenodeify"),
+	mockFs = require("mock-fs");
 
 var find = require("./helpers").find;
 var open = require("./helpers").open;
@@ -161,6 +163,47 @@ describe("bundle", function(){
 			done(e)
 		});
 	});
+
+	describe("Recycle", function(){
+		beforeEach(function() {
+			logging.setup({ quiet: true });
+		});
+
+		afterEach(mockFs.restore);
+
+		it("Creates an error message when there is an es6 syntax error", function(done){
+			var config = {
+				config: path.join(__dirname, "stealconfig.js"),
+				main: "basics/basics",
+				logLevel: 3
+			};
+
+			var depStream = bundle.createBundleGraphStream(config);
+			var recycleStream = recycle(config);
+
+			depStream.pipe(recycleStream);
+
+			// Wait for it to initially finish loading.
+			recycleStream.once("data", function(data){
+				var node = data.graph["basics/es6module"];
+				var mockOptions = {};
+				// Fake string as the source.
+				mockOptions[node.load.address.replace("file:", "")] = "syntax error";
+				mockFs(mockOptions);
+
+				recycleStream.write(node.load.name);
+
+				recycleStream.once("error", function(err){
+					assert(err instanceof Error, "we got an error");
+					done();
+				});
+			});
+
+			depStream.write(config.main);
+
+		});
+	});
+
 });
 
 
@@ -227,7 +270,7 @@ describe("multi build", function(){
 					done(new Error("no bundle info"));
 					return;
 				}
-				
+
 				open("test/bundle/bundle.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
 						assert(true, "got A");
@@ -279,7 +322,7 @@ describe("multi build", function(){
 			}).then(function(){
 				fs.readFile(__dirname + "/simple-es6/dist/bundles/main.js", function(error, contents){
 					assert.equal(error, null, "Able to open the file");
-					assert.equal(/\$traceurRuntime/.test(contents), false, 
+					assert.equal(/\$traceurRuntime/.test(contents), false,
 								 "Traceur not included");
 					done();
 				});
@@ -441,8 +484,8 @@ describe("multi build", function(){
 		});
 
 	});
-	
-	
+
+
 	it("Allows specifying dist as the current folder", function(done){
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
@@ -474,15 +517,15 @@ describe("multi build", function(){
 		});
 
 	});
-	
-	
+
+
 	it("supports bundling steal", function(done){
-		
+
 		rmdir(__dirname+"/bundle/bundles", function(error){
 			if(error){
 				done(error)
 			}
-			
+
 			multiBuild({
 				config: __dirname+"/bundle/stealconfig.js",
 				main: "bundle"
@@ -490,7 +533,7 @@ describe("multi build", function(){
 				bundleSteal: true,
 				quiet: true
 			}).then(function(data){
-	
+
 				open("test/bundle/packaged_steal.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
 						assert(true, "got A");
@@ -499,26 +542,26 @@ describe("multi build", function(){
 						close();
 					}, close);
 				}, done);
-				
-				
+
+
 			}).catch(function(e){
 				done(e);
 			});
-			
-			
-			
+
+
+
 		});
-		
-		
+
+
 	});
-	
+
 	it("allows bundling steal and loading from alternate locations", function(done){
-		
+
 		rmdir(__dirname+"/bundle/alternate", function(error){
 			if(error){
 				done(error)
 			}
-			
+
 			multiBuild({
 				config: __dirname+"/bundle/stealconfig.js",
 				main: "bundle",
@@ -527,7 +570,7 @@ describe("multi build", function(){
 				bundleSteal: true,
 				quiet: true
 			}).then(function(data){
-	
+
 				open("test/bundle/folder/packaged_steal.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
 						assert(true, "got A");
@@ -536,19 +579,19 @@ describe("multi build", function(){
 						close();
 					}, close);
 				}, done);
-				
-				
+
+
 			}).catch(function(e){
 				done(e);
 			});
-			
-			
-			
+
+
+
 		});
-		
-		
+
+
 	});
-	
+
 	it("builds and can load transpiled ES6 modules", function(done){
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
@@ -565,13 +608,13 @@ describe("multi build", function(){
 				open("test/basics/prod.html",function(browser, close){
 					find(browser,"MODULE", function(module){
 						assert(true, "module");
-						
+
 						assert.equal(module.name, "module", "module name is right");
-		
+
 						assert.equal(module.es6module.name, "es6Module", "steal loads ES6");
-						
+
 						assert.equal(module.es6module.amdModule.name, "amdmodule", "ES6 loads amd");
-						
+
 						close();
 					}, close);
 				}, done);
@@ -582,10 +625,10 @@ describe("multi build", function(){
 
 
 		});
-	
+
 	});
 
-	
+
 	it("System.instantiate works when bundling steal", function(done){
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
@@ -607,7 +650,7 @@ describe("multi build", function(){
 						// We marked stealconfig.js as instantiated so it shouldn't have it's properties
 						var System = browser.window.System;
 						assert.equal(System.map["mapd/mapd"], undefined, "Mapping not applied");
-						
+
 						close();
 					}, close);
 				}, done);
@@ -618,7 +661,7 @@ describe("multi build", function(){
 
 
 		});
-	
+
 	});
 
 
@@ -761,13 +804,13 @@ describe("multi build", function(){
 				open("test/basics/prod.html",function(browser, close){
 					find(browser,"MODULE", function(module){
 						assert(true, "module");
-						
+
 						assert.equal(module.name, "module", "module name is right");
-		
+
 						assert.equal(module.es6module.name, "es6Module", "steal loads ES6");
-						
+
 						assert.equal(module.es6module.amdModule.name, "amdmodule", "ES6 loads amd");
-						
+
 						close();
 					}, close);
 				}, done);
@@ -778,7 +821,7 @@ describe("multi build", function(){
 
 
 		});
-	
+
 	});
 
 	it("works with a project with json", function(done){
@@ -855,9 +898,9 @@ describe("multi build with plugins", function(){
 			if(error){
 				done(error)
 			}
-			// build the project that 
+			// build the project that
 			// uses a plugin
-			
+
 			multiBuild({
 				config: __dirname+"/plugins/config.js",
 				main: "main"
@@ -927,7 +970,7 @@ describe("multi build with plugins", function(){
 
 					assert(fs.existsSync("test/long_bundle_names/dist/bundles/app_a_with_a_ver-5797ef41.js"));
 					assert(fs.existsSync("test/long_bundle_names/dist/bundles/app_a_with_a_ver-8702980e.js"));
-					
+
 					fs.readFile("test/long_bundle_names/dist/bundles/bundle.js", "utf8", function(err, data) {
 						if (err) {
 							done(err);
@@ -954,7 +997,7 @@ describe("multi build with plugins", function(){
 				done(error)
 			}
 
-			// build the project that 
+			// build the project that
 			// uses a plugin
 			multiBuild({
 				config: __dirname+"/plugins/config.js",
@@ -989,7 +1032,7 @@ describe("multi build with plugins", function(){
 			if(error){
 				done(error)
 			}
-			// build the project that 
+			// build the project that
 			// uses a plugin
 			multiBuild({
 				config: __dirname+"/build_types/config.js",
@@ -1021,7 +1064,7 @@ describe("multi build with plugins", function(){
 			if(error){
 				done(error)
 			}
-			// build the project that 
+			// build the project that
 			// uses a plugin
 			multiBuild({
 				config: __dirname+"/dep_plugins/config.js",
@@ -1052,7 +1095,7 @@ describe("multi build with plugins", function(){
 			if(error){
 				done(error)
 			}
-			// build the project that 
+			// build the project that
 			// uses a plugin
 			multiBuild({
 				config: __dirname+"/css_paths/config.js",
@@ -1125,7 +1168,7 @@ describe("transformImport", function(){
 
 
 	});
-	
+
 	it("ignores files told to ignore", function(done){
 		transformImport({
 			config: __dirname + "/stealconfig.js",
@@ -1165,29 +1208,29 @@ describe("transformImport", function(){
 				ignore: ["lib"],
 				minify: false,
 				exports: {
-					"lib" : "lib" 
+					"lib" : "lib"
 				}
 			}).code;
 
 			fs.mkdirs(__dirname+"/pluginify_deps/out", function(err) {
 
 				fs.writeFile(__dirname+"/pluginify_deps/out/plugin.js", pluginOut, function(err) {
-					
+
 					fs.writeFile(__dirname+"/pluginify_deps/out/util.js", utilOut, function(err) {
-						
+
 						// open the prod page and make sure
 						// the plugin processed the input correctly
 						open("test/pluginify_deps/prod.html", function(browser, close){
-		
+
 							find(browser,"plugin", function(plugin){
 								assert.equal(plugin.util.lib.name, "lib");
 								close();
 							}, close);
-		
+
 						}, done);
-					
+
 					});
-					
+
 				});
 
 			});
@@ -1260,7 +1303,7 @@ describe("transformImport", function(){
 					}
 
 					open("test/pluginify_global/site.html", function(browser, close){
-			
+
 						find(browser,"MODULE", function(result){
 							assert.equal(result.GLOBAL, "global", "Global using this set correctly.");
 							close();
@@ -1323,7 +1366,7 @@ describe("multi-main", function(){
 					name: "d", cd: cd, all: all
 				}
 			};
-		
+
 		rmdir(__dirname+"/multi-main/dist", function(error){
 			if(error){
 				done(error)
@@ -1336,18 +1379,18 @@ describe("multi-main", function(){
 				quiet: true
 				//verbose: true
 			}).then(function(data){
-				
+
 				var checkNext = function(next){
 					if(next) {
 						open("test/multi-main/"+next+".html",function(browser, close){
 							find(browser,"app", function(app){
-							
+
 								assert(true, "got app");
 								comparify(results[next], app);
 								close();
-								
+
 							}, close);
-							
+
 						}, function(err){
 							if(err) {
 								done(err);
@@ -1371,7 +1414,7 @@ describe("multi-main", function(){
 			});
 		});
 	});
-	
+
 	it("works with steal bundled", function(done){
 		var mains = ["app_a","app_b","app_c","app_d"],
 			ab = {name: "a_b"},
@@ -1391,7 +1434,7 @@ describe("multi-main", function(){
 					name: "d", cd: cd, all: all
 				}
 			};
-		
+
 		rmdir(__dirname+"/multi-main/dist", function(error){
 			if(error){
 				done(error)
@@ -1409,13 +1452,13 @@ describe("multi-main", function(){
 					if(next) {
 						open("test/multi-main/bundle_"+next+".html",function(browser, close){
 							find(browser,"app", function(app){
-							
+
 								assert(true, "got app");
 								comparify(results[next], app);
 								close();
-								
+
 							}, close);
-							
+
 						}, function(err){
 							if(err) {
 								done(err);
@@ -1443,9 +1486,9 @@ describe("multi-main", function(){
 
 describe("export", function(){
 	it("basics work", function(done){
-		
+
 		stealExport({
-			
+
 			system: {
 				main: "pluginifier_builder/pluginify",
 				config: __dirname+"/stealconfig.js"
@@ -1472,7 +1515,7 @@ describe("export", function(){
 			}
 		}).then(function(){
 			open("test/pluginifier_builder/index.html", function(browser, close){
-	
+
 				find(browser,"RESULT", function(result){
 					assert.ok(result.module, "has module");
 					assert.ok(result.cjs,"has cjs module");
@@ -1481,13 +1524,13 @@ describe("export", function(){
 				}, close);
 
 			}, done);
-			
+
 		}, done);
 	});
 
 	it("works with multiple mains", function(done){
 		stealExport({
-			
+
 			system: {
 				main: [
 					"pluginifier_builder/pluginify",
@@ -1517,7 +1560,7 @@ describe("export", function(){
 			}
 		}).then(function(){
 			open("test/pluginifier_builder/index.html", function(browser, close){
-	
+
 				find(browser,"RESULT", function(result){
 					assert.ok(result.module, "has module");
 					assert.ok(result.cjs,"has cjs module");
@@ -1526,15 +1569,15 @@ describe("export", function(){
 				}, close);
 
 			}, done);
-			
+
 		}, done);
 	});
-	
+
 	it("passes the load objects to normalize and dest", function(done){
 		var destCalls = 0;
-		
+
 		stealExport({
-			
+
 			system: {
 				main: "pluginifier_builder_load/main",
 				config: __dirname+"/stealconfig.js"
@@ -1589,23 +1632,23 @@ describe("export", function(){
 
 		}, done);
 	});
-	
+
 	describe("helpers", function(){
 		beforeEach(function(done) {
 			rmdir(path.join(__dirname, "pluginifier_builder_helpers", "node_modules"), function(error){
-				
+
 				if(error){ return done(error); }
-				
+
 				rmdir(path.join(__dirname, "pluginifier_builder_helpers", "dist"), function(error){
-		
+
 					if(error){ return done(error); }
-				
+
 					fs.copy(
 						path.join(__dirname, "..", "node_modules","jquery"),
 						path.join(__dirname, "pluginifier_builder_helpers", "node_modules", "jquery"),
 						function(error){
 							if(error) { return done(error); }
-							
+
 							fs.copy(
 								path.join(__dirname, "..", "node_modules","cssify"),
 								path.join(__dirname, "pluginifier_builder_helpers", "node_modules", "cssify"),
@@ -1616,12 +1659,12 @@ describe("export", function(){
 							);
 						}
 					);
-					
+
 				});
-				
+
 			});
 		});
-		
+
 		it("+cjs", function(done){
 			this.timeout(10000);
 
@@ -1633,7 +1676,7 @@ describe("export", function(){
 				},
 			}).then(function(){
 				var browserify = require("browserify");
-				
+
 				var b = browserify();
 				b.add(path.join(__dirname, "pluginifier_builder_helpers/browserify.js"));
 				var out = fs.createWriteStream(path.join(__dirname, "pluginifier_builder_helpers/browserify-out.js"));
@@ -1641,35 +1684,35 @@ describe("export", function(){
 				out.on('finish', function(){
 					open("test/pluginifier_builder_helpers/browserify.html", function(browser, close) {
 						find(browser,"WIDTH", function(width){
-							
+
 							assert.equal(width, 200, "with of element");
 							close();
 						}, close);
 					}, done);
 				});
-				
-				
+
+
 			}, function(e) {
 				done(e);
 			});
-				
+
 		});
-		
-		
+
+
 		it("+cjs with dest", function(done){
 			this.timeout(10000);
-			
+
 			stealExport({
-				
+
 				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
 					"+cjs": {dest: __dirname+"/pluginifier_builder_helpers/cjs"}
 				}
 			}).then(function(){
-				
+
 				var browserify = require("browserify");
-				
+
 				var b = browserify();
 				b.add(path.join(__dirname, "pluginifier_builder_helpers/browserify-cjs.js"));
 				var out = fs.createWriteStream(path.join(__dirname, "pluginifier_builder_helpers/browserify-out.js"));
@@ -1677,51 +1720,51 @@ describe("export", function(){
 				out.on('finish', function(){
 					open("test/pluginifier_builder_helpers/browserify.html", function(browser, close) {
 						find(browser,"WIDTH", function(width){
-							
+
 							assert.equal(width, 200, "with of element");
 							close();
 						}, close);
 					}, done);
 				});
-				
-				
+
+
 			}, done);
-				
+
 		});
-		
-		
-		
+
+
+
 		// NOTICE: this test uses a modified version of the css plugin to better work
 		// in HTMLDOM
 		it("+amd", function(done){
 			this.timeout(10000);
-			
+
 			stealExport({
-				
+
 				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
 					"+amd": {}
 				}
 			}).then(function(){
-				
+
 				open("test/pluginifier_builder_helpers/amd.html", function(browser, close) {
 					find(browser,"WIDTH", function(width){
 						assert.equal(width, 200, "with of element");
 						close();
 					}, close);
 				}, done);
-				
-				
+
+
 			}, done);
-				
+
 		});
-		
+
 		it("+global-css +global-js", function(done){
 			this.timeout(10000);
-			
+
 			stealExport({
-				
+
 				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
@@ -1729,7 +1772,7 @@ describe("export", function(){
 					"+global-js": { exports: {"jquery": "jQuery"} }
 				}
 			}).then(function(err){
-				
+
 				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
 					find(browser,"WIDTH", function(width){
 						assert.equal(width, 200, "width of element");
@@ -1737,12 +1780,12 @@ describe("export", function(){
 						close();
 					}, close);
 				}, done);
-				
-				
+
+
 			}, done);
-				
+
 		});
-		
+
 		it("+cjs +amd +global-css +global-js using Babel", function(done){
 			this.timeout(10000);
 			stealExport({
@@ -1759,13 +1802,13 @@ describe("export", function(){
 				}
 			}).then(done, done);
 		});
-		
+
 	});
-	
+
 });
 
 describe("@loader used in configs", function() {
-	
+
 	it("works built", function(done) {
 
 		rmdir(__dirname+"/current-loader/dist", function(error){
@@ -1851,7 +1894,7 @@ describe("@loader used in configs", function() {
 				done();
 			}).catch(done);
 		});
-		
+
 	});
 
 
@@ -1906,49 +1949,49 @@ describe("importing into config", function(){
 
 describe("npm package.json builds", function(){
 	beforeEach(function() {
-		
+
 	});
-	
-	
+
+
 	var setup = function(done){
 		rmdir(path.join(__dirname, "npm", "node_modules"), function(error){
 			if(error){ return done(error); }
 
 			rmdir(path.join(__dirname, "npm", "dist"), function(error){
 				if(error){ return done(error); }
-		
+
 				fs.copy(path.join(__dirname, "..", "node_modules","jquery"),
 					path.join(__dirname, "npm", "node_modules", "jquery"), function(error){
-					
+
 					if(error){ return done(error); }
-					
+
 					fs.copy(
 						path.join(__dirname, "..", "bower_components","steal"),
 						path.join(__dirname, "npm", "node_modules", "steal"), function(error){
-					
+
 						if(error){ return done(error); }
-						
+
 						fs.copy(
 							path.join(__dirname, "..", "bower_components","steal"),
 							__dirname+"/npm/node_modules/steal", function(error){
-						
+
 							if(error){ return done(error); }
-							
+
 							done()
-							
+
 						});
-						
+
 					});
 				});
 			});
 		});
 	};
-	
+
 	it("only needs a config", function(done){
 		this.timeout(50000);
 		setup(function(error){
 			if(error){ return done(error); }
-			
+
 			multiBuild({
 				config: path.join(__dirname, "npm", "package.json!npm")
 			}, {
@@ -1964,7 +2007,7 @@ describe("npm package.json builds", function(){
 				}, done);
 
 			}).catch(done);
-			
+
 		});
 
 	});
@@ -1973,7 +2016,7 @@ describe("npm package.json builds", function(){
 		this.timeout(50000);
 		setup(function(error){
 			if(error){ return done(error); }
-			
+
 			multiBuild({
 				config: path.join(__dirname, "npm", "package.json!npm")
 			}, {
@@ -1990,7 +2033,7 @@ describe("npm package.json builds", function(){
 				}, done);
 
 			}).catch(done);
-			
+
 		});
 
 	});
@@ -1998,7 +2041,7 @@ describe("npm package.json builds", function(){
 	it("only needs a config and works with bundles", function(done){
 		setup(function(error){
 			if(error){ return done(error); }
-			
+
 			multiBuild({
 				config: __dirname + "/npm/package.json!npm",
 				bundle: ["npm-test/two", "npm-test/three"]
@@ -2015,7 +2058,7 @@ describe("npm package.json builds", function(){
 				}, done);
 
 			}).catch(done);
-			
+
 		});
 
 	});
@@ -2063,7 +2106,7 @@ describe("npm package.json builds", function(){
 			});
 		});
 	});
-	
+
 });
 
 describe("Source Maps", function(){
