@@ -47,6 +47,7 @@
     "grunt-simple-mocha": "^0.4.0",
     "jquery": ">2.0",
     "mocha": "1.18.2",
+    "mock-fs": "^2.6.0",
     "rimraf": "2.1",
     "steal-qunit": "0.0.4",
     "testee": "^0.2.0",
