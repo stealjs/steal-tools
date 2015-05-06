@@ -1840,6 +1840,39 @@ describe("@loader used in configs", function() {
 
 	});
 
+
+	it("works built with plugins", function(done) {
+
+		rmdir(__dirname+"/current-loader/dist", function(error){
+			if(error){
+				done(error)
+			}
+			// build the project that uses @loader
+			multiBuild({
+				config: __dirname + "/current-loader/config.js",
+				main: "main-plugin"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				// open the prod page and make sure
+				// and make sure the module loaded successfully
+				open("test/current-loader/config-plugin.html", function(browser, close){
+
+					find(browser,"moduleValue", function(moduleValue){
+						assert.equal(moduleValue, "Loader config works", "@loader worked when built.");
+						close();
+					}, close);
+
+				}, done);
+
+			}).catch(done);
+		});
+
+
+	});
+
+
 	it("works with es6", function(done) {
 		rmdir(__dirname+"/current-loader/dist", function(error){
 			if(error){
