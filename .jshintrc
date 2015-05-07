@@ -8,6 +8,7 @@
     "Promise": true,
     "System": true,
     "beforeEach": true,
+    "afterEach": true,
     "steal": true,
     "define": true,
     "window": true
