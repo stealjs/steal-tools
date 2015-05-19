@@ -876,6 +876,31 @@ describe("multi build", function(){
 		});
 	});
 
+	it("sideBundle: true will move a module into a side bundle", function(done){
+		rmdir(__dirname+"/side_bundle/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/side_bundle/package.json!npm"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/side_bundle/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						var loader = browser.window.System;
+
+						comparify(loader.bundles, {
+							"bundles/b": [ "d", "b" ]
+						}, true);
+
+						close();
+					}, close);
+				}, done);
+			});
+		});
+	});
+
 });
 
 describe("multi build with plugins", function(){
