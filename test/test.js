@@ -901,6 +901,28 @@ describe("multi build", function(){
 		});
 	});
 
+	it.only("Globals with mapped ", function(done){
+		rmdir(__dirname+"/define_metadeps/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/define_metadeps/config.js",
+				main: "main"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/define_metadeps/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						console.log("MOD:", module)
+						assert.equal(module.global.b, "b", "got the b module");
+						close();
+					}, close);
+				}, done);
+			});
+		});
+	});
+
 });
 
 describe("multi build with plugins", function(){
