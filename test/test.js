@@ -901,7 +901,7 @@ describe("multi build", function(){
 		});
 	});
 
-	it.only("Globals with mapped ", function(done){
+	it.skip("Globals with mapped ", function(done){
 		rmdir(__dirname+"/define_metadeps/dist", function(error){
 			if(error) return done(error);
 
