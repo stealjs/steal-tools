@@ -2,7 +2,7 @@
 var winston = require('winston');
 var path = require("path");
 var yargs = require("yargs")
-	.usage("Usage: $0 [build|transform] --main app --config path/to/stealconfig.js")
+	.usage("Usage: $0 [build|transform|live-reload] --main app --config path/to/stealconfig.js")
 	.describe("c", "Path to the config file")
 	.alias("c", "config")
 	.default("c", "package.json!npm")
@@ -15,7 +15,12 @@ var yargs = require("yargs")
 	.alias("o", "out")
 	.describe("source-maps", "Generate source maps")
 	.describe("source-maps-content", "Include the original source contents with the source maps")
+	.describe("minify", "Minify the output. Defaults to true except when used with --watch")
 	.describe("no-minify", "Do not minify the output")
+	.describe("w", "Watch for file changes and rebuild")
+	.alias("w", "watch")
+	.describe("live-reload-port", "Specify a port to use for the websocket server")
+	.default("live-reload-port", 8012)
 	.describe("verbose", "Verbose output")
 	.describe("quiet", "Quiet output")
 	.version(require("../package.json").version, "version")
@@ -28,7 +33,8 @@ var yargs = require("yargs")
 			command = "build";
 		}
 
-		if(command !== "build" && command !== "transform") {
+		if(command !== "build" && command !== "transform" &&
+		  command !== "live-reload") {
 			throw "Unknown command: " + command;
 		}
 
@@ -70,13 +76,23 @@ if(command === "build"){
 
 	return transform();
 
+} else if(command === "live-reload") {
+	var liveReload = require("../lib/stream/live");
+
+	options.liveReload = true;
+	liveReload(system, options);
 }
 
 function build() {
 
-	stealTools.build(system, options).then(function(){
-		winston.info('\nBuild completed successfully'.green);
-	});
+	var promise = stealTools.build(system, options);
+
+	// If this is watch mode this is actually a stream.
+	if(promise.then) {
+		promise.then(function(){
+			winston.info('\nBuild completed successfully'.green);
+		});
+	}
 
 }
 

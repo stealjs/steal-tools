@@ -10,11 +10,14 @@ module.exports = function(grunt){
 		var buildOptions = options.buildOptions;
 
 		// Run the build with the provided options
-		build(system, buildOptions).then(function(){
-			grunt.log.writeln("Build was successful.");
+		var promise = build(system, buildOptions);
+		if(promise.then) {
+			promise.then(function(){
+				grunt.log.writeln("Build was successful.");
 
-			done();
-		});
+				done();
+			});
+		}
 		
 	});
 

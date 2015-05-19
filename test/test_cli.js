@@ -29,6 +29,8 @@ function stealTools(args){
 }
 
 describe("steal-tools cli", function(){
+	this.timeout(5000);
+
 	describe("build", function(){
 		describe("basics", function(){
 			beforeEach(function(){
@@ -84,7 +86,6 @@ describe("steal-tools cli", function(){
 			});
 
 			it("uses package.json", function(done){
-				this.timeout(5000);
 				stealTools(["--no-minify"]).then(function(){
 					open("test/npm/prod.html", function(browser, close){
 						var h1s = browser.window.document.getElementsByTagName('h1');
@@ -112,6 +113,7 @@ describe("steal-tools cli", function(){
 			});
 
 			it("works", function(done){
+
 				stealTools(["transform", "-c", "stealconfig.js", "-m",
 						   "pluginify/pluginify", "--out", "pluginify/out.js"]).then(function(){
 
