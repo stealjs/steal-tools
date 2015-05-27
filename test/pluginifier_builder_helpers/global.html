@@ -1,16 +1,16 @@
 <html>
 	<head>
-		
+
 	</head>
 	<body>
-		
+
 		<div id='tabs'></div>
 		<script src="./node_modules/jquery/dist/jquery.js"></script>
 		<script src="./dist/global/tabs.js"></script>
 		<script>
 			$("#tabs").tabs();
 			_define("foo",["tabs"], function(tabs){
-				window.TABS = tabs["default"];
+				window.TABS = tabs["default"] || tabs;
 			});
 		</script>
 		<script>
@@ -21,7 +21,7 @@
 			  document.head.appendChild(style);
 			  window.WIDTH = $("#tabs").width();
 			}
-			
+
 			var oReq = new XMLHttpRequest();
 			oReq.onload = reqListener;
 			oReq.open("get", "./dist/global/tabs.css", true);
