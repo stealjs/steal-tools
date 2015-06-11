@@ -876,6 +876,27 @@ describe("multi build", function(){
 		});
 	});
 
+	it("returns a buildResult", function(done){
+		rmdir(__dirname+"/bundle/dist", function(error){
+			if(error){
+				done(error);
+			}
+
+			multiBuild({
+				config: __dirname+"/bundle/stealconfig.js",
+				main: "bundle"
+			}, {
+				quiet: true
+			}).then(function(data){
+				assert(!!data.bundles, "bundles");
+				assert(!!data.configuration, "configuration");
+				assert(!!data.graph, "graph");
+				assert(!!data.loader, "loader");
+				assert(!!data.steal, "steal");
+			}).then(done);
+		});
+	});
+
 });
 
 describe("multi build with plugins", function(){
