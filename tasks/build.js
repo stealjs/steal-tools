@@ -12,13 +12,18 @@ module.exports = function(grunt){
 		// Run the build with the provided options
 		var promise = build(system, buildOptions);
 		if(promise.then) {
-			promise.then(function(){
+			var success = function(){
 				grunt.log.writeln("Build was successful.");
-
 				done();
-			});
+			};
+
+			var error = function(error) {
+				grunt.log.writeln("Build has failed. ", error);
+				done(error);
+			};
+
+			promise.then(success, error);
 		}
-		
 	});
 
 };
