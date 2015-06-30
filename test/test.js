@@ -24,7 +24,7 @@ var open = require("./helpers").open;
 System.logLevel = 3;
 
 require("./test_cli");
-require("./test_grunt");
+require("./grunt_tasks/steal_build");
 
 (function(){
 
