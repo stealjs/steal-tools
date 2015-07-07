@@ -33,6 +33,9 @@ name on the global object in exports.
 
 The other possible format values are "steal","amd", and "cjs".
 
+@option {Boolean} [noGlobalShim=false] By default, if _options.format_ is `"global"` then a shim will be added
+for the global _define_ method. Setting _noGlobalShim_ to `true` prevents this.
+
 @option {Object<moduleName,String>} exports A mapping of module names to their name on the
 global object.  For example, if an output depends on jQuery, but does not include it, you
 should include:
