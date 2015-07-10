@@ -26,7 +26,7 @@ To start a Web Socket server. Then in your `package.json` add:
     {
       "system": {
         "configDependencies": [
-          "live-reload
+          "live-reload"
         ]
       }
     }
