@@ -24,7 +24,7 @@ var open = require("./helpers").open;
 System.logLevel = 3;
 
 require("./test_cli");
-require("./test_grunt");
+require("./grunt_tasks/steal_build");
 
 (function(){
 
@@ -898,6 +898,27 @@ describe("multi build", function(){
 					}, close);
 				}, done);
 			});
+		});
+	});
+
+	it("returns a buildResult", function(done){
+		rmdir(__dirname+"/bundle/dist", function(error){
+			if(error){
+				done(error);
+			}
+
+			multiBuild({
+				config: __dirname+"/bundle/stealconfig.js",
+				main: "bundle"
+			}, {
+				quiet: true
+			}).then(function(data){
+				assert(!!data.bundles, "bundles");
+				assert(!!data.configuration, "configuration");
+				assert(!!data.graph, "graph");
+				assert(!!data.loader, "loader");
+				assert(!!data.steal, "steal");
+			}).then(done);
 		});
 	});
 
@@ -1822,10 +1843,23 @@ describe("export", function(){
 				"outputs": {
 					"+cjs": {},
 					"+amd": {},
-					"+global-js": {},
+					"+global-js": {
+						exports: {
+							"jquery": "jQuery"
+						}
+					},
 					"+global-css": {}
 				}
-			}).then(done, done);
+			})
+			.then(function() {
+				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
+					find(browser,"WIDTH", function(width){
+						assert.equal(width, 200, "width of element");
+						assert.ok(browser.window.TABS, "got tabs");
+						close();
+					}, close);
+				}, done);
+			}, done);
 		});
 
 	});
