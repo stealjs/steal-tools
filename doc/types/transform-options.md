@@ -33,6 +33,10 @@ name on the global object in exports.
 
 The other possible format values are "steal","amd", and "cjs".
 
+@option {Boolean} [noGlobalShim=false] By default, if _options.format_ is `"global"` then a global shim will be applied.
+This is so that the script can be run standalone. Setting _noGlobalShim_ to `true` prevents adding the shim.
+Excluding the shim means it will have to be run with an AMD loader like _requirejs_.
+
 @option {Object<moduleName,String>} exports A mapping of module names to their name on the
 global object.  For example, if an output depends on jQuery, but does not include it, you
 should include:
