@@ -2165,6 +2165,10 @@ describe("npm package.json builds", function(){
 				quiet: true,
 				minify: false
 			}).then(function(){
+				// Make sure they are named correctly.
+				assert(fs.existsSync(__dirname + "/npm/dist/bundles/two.js"),
+									 "two bundle in the right place");
+
 				// open the prod page and make sure
 				// and make sure the module loaded successfully
 				open("test/npm/prod-bundle.html", function(browser, close){
