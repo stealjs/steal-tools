@@ -1886,6 +1886,34 @@ describe("export", function(){
 			}, done);
 		});
 
+		it("ignore: false will not ignore node_modules for globals", function(done){
+			this.timeout(10000);
+			stealExport({
+				system: {
+					config: __dirname + "/pluginifier_builder_helpers/package.json!npm",
+					meta: {
+						jquery: { format: "global" }
+					}
+				},
+				options: { quiet: true },
+				outputs: {
+					"+global-js": {
+						ignore: false,
+						exports: {
+							"jquery": "jQuery"
+						}
+					}
+				}
+			}).then(function(){
+				open("test/pluginifier_builder_helpers/global-all.html", function(browser, close) {
+					find(browser, "TABS", function(width){
+						assert.ok(browser.window.TABS, "got tabs");
+						close();
+					}, close);
+				}, done);
+			}, done);
+		});
+
 	});
 
 });
