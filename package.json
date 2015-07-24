@@ -22,6 +22,7 @@
     "steal": "^0.10.0",
     "system-parse-amd": "0.0.2",
     "through2": "^0.6.5",
+    "tmp": "0.0.26",
     "traceur": "0.0.87",
     "transpile": "0.8.0-pre.0",
     "uglify-js": "~2.4.13",
