@@ -922,6 +922,30 @@ describe("multi build", function(){
 		});
 	});
 
+	it("virtual modules can become bundles", function(done){
+		rmdir(__dirname+"/virtual/dist", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/virtual/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				assert(true, "it worked");
+				open("test/virtual/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						assert(typeof module.b, "undefined", "b module not included in the main bundle");
+
+						close();
+					}, close);
+				}, done);
+			}).then(null, done);
+		});
+	});
+
 });
 
 describe("multi build with plugins", function(){
