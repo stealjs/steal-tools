@@ -32,6 +32,8 @@ Specifies the behavior of the build.
   @option {Boolean} [quiet=false] No logging.  Defaults to `false`.
   
   @option {Boolean} [bundleSteal=false] Set to true to include steal in the main bundle.
+
+  @option {steal-tools.BundleAssetsOptions|Boolean} [bundleAssets=false] Set to true to have assets from your project bundled into your dist folder.
   
   @option {Array.<moduleName>} bundle An array of module names that should be
   progressively loaded.
