@@ -20,6 +20,7 @@
     "pdenodeify": "^0.1.0",
     "source-map": "git://github.com/bitovi/source-map#0.4.2-bitovi.1",
     "steal": "^0.10.0",
+    "steal-bundler": "^0.2.0",
     "system-parse-amd": "0.0.2",
     "through2": "^0.6.5",
     "tmp": "0.0.26",
