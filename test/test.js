@@ -946,6 +946,31 @@ describe("multi build", function(){
 		});
 	});
 
+	describe("bundleAssets", function(){
+		before(function(done){
+			asap(rmdir)(__dirname + "/bundle_assets/dist")
+				.then(function(){
+					done();
+				});
+		});
+
+		it("works", function(done){
+			multiBuild({
+				config: __dirname + "/bundle_assets/package.json!npm"
+			}, {
+				quiet: true,
+				bundleAssets: true
+			}).then(function(){
+				open("test/bundle_assets/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						assert(true, "page loaded correctly");
+						close();
+					}, close);
+				}, done);
+			});
+		});
+	});
+
 });
 
 describe("multi build with plugins", function(){
