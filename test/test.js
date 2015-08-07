@@ -2254,6 +2254,24 @@ describe("npm package.json builds", function(){
 
 });
 
+describe("npm with directories.lib", function(){
+	beforeEach(function(done){
+		asap(rmdir)(__dirname + "/npm-directories/dist").then(function(){
+			done();
+		}, done);
+	});
+
+	it("builds and works", function(done){
+		multiBuild({
+			config: __dirname + "/npm-directories/package.json!npm"
+		}, {
+			quiet: true
+		}).then(function(){
+			done();
+		});
+	});
+});
+
 describe("Source Maps", function(){
 	describe("multi build", function(){
 		it("basics works", function(done){
