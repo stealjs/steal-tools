@@ -15,8 +15,13 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	fs = require('fs-extra'),
 	logging = require('../lib/logger'),
 	stealExport = require('../lib/build/export'),
-	asap = require("pdenodeify"),
-	mockFs = require("mock-fs");
+	asap = require("pdenodeify");
+
+var isIOjs = process.version.substr(0, 3) !== "v0.";
+// mock-fs doesn't work in iojs 3.0 right now so skipping until that is fixed.
+if(!isIOjs) {
+	var mockFs = require("mock-fs")
+}
 
 var find = require("./helpers").find;
 var open = require("./helpers").open;
@@ -163,7 +168,9 @@ describe("bundle", function(){
 			done(e)
 		});
 	});
+});
 
+if(!isIOjs) {
 	describe("Recycle", function(){
 		beforeEach(function() {
 			logging.setup({ quiet: true });
@@ -203,9 +210,7 @@ describe("bundle", function(){
 
 		});
 	});
-
-});
-
+}
 
 describe("order", function(){
 
