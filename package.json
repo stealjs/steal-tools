@@ -94,6 +94,9 @@
   "scripts": {
     "test": "grunt test && grunt test:browser"
   },
+  "engines": {
+    "node": "0.10.x - 0.12.x || ^3.0.0"
+  },
   "system": {
     "npmDependencies": [
       "steal-qunit"
