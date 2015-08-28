@@ -256,7 +256,7 @@ describe("order", function(){
 });
 
 
-describe("multi build", function(){
+describe.only("multi build", function(){
 
 	it("should work", function(done){
 		rmdir(__dirname+"/bundle/dist", function(error){
@@ -329,6 +329,7 @@ describe("multi build", function(){
 					assert.equal(error, null, "Able to open the file");
 					assert.equal(/\$traceurRuntime/.test(contents), false,
 								 "Traceur not included");
+					console.log("i got here ok");
 					done();
 				});
 			}).catch(done);
@@ -348,7 +349,6 @@ describe("multi build", function(){
 			}
 
 			multiBuild(config, { quiet: true }).then(function(){
-
 				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
 
 				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;

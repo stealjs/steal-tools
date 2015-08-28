@@ -22,7 +22,7 @@
     "steal": "^0.11.0-pre.1",
     "steal-bundler": "^0.2.0",
     "system-parse-amd": "0.0.2",
-    "through2": "^0.6.5",
+    "through2": "^2.0.0",
     "tmp": "0.0.26",
     "traceur": "0.0.87",
     "transpile": "0.8.0-pre.0",
@@ -92,7 +92,8 @@
     }
   ],
   "scripts": {
-    "test": "grunt test && grunt test:browser"
+    "test": "grunt test && grunt test:browser",
+    "mocha": "grunt simplemocha"
   },
   "engines": {
     "node": "0.10.x - 0.12.x || ^3.0.0"

@@ -9,9 +9,18 @@ require("steal");
 var find = require("./helpers").find;
 var open = require("./helpers").open;
 
+var isWin = /^win/.test(process.platform);
+
 function stealTools(args){
 	return new Promise(function(resolve, reject){
 		var cli = path.resolve(__dirname + "/../bin/steal");
+		args = args || [];
+		
+		if(isWin) {
+			args.unshift.apply(args, ["/c", "node", cli]);
+			cli = "cmd";
+		}
+		
 		var child = spawn(cli, args || []);
 
 		/*var print = function(d){ console.log(d+""); };
