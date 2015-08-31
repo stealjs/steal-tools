@@ -59,19 +59,19 @@
     "node": {
       "0.10.x": {
         "devDependencies": {
-          "zombie": "^3.0.0"
+          "zombie": "^3.1.1"
         }
       },
       "0.12.x": {
         "devDependencies": {
-          "zombie": "^3.0.0"
+          "zombie": "^3.1.1"
         }
       }
     },
     "iojs": {
       "^3.0.0": {
         "devDependencies": {
-          "zombie": "^4.0.0"
+          "zombie": "^4.1.0"
         }
       }
     }
@@ -93,7 +93,9 @@
   ],
   "scripts": {
     "test": "grunt test && grunt test:browser",
-    "mocha": "grunt simplemocha"
+    "mocha": "grunt simplemocha",
+	"bower-install": "bower install",
+	"install-engine-dependencies": "install-engine-dependencies"
   },
   "engines": {
     "node": "0.10.x - 0.12.x || ^3.0.0"
