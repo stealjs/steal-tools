@@ -94,6 +94,7 @@
   "scripts": {
     "test": "grunt test && grunt test:browser",
     "mocha": "grunt simplemocha",
+	"bower-install": "bower install",
 	"install-engine-dependencies": "install-engine-dependencies"
   },
   "engines": {
