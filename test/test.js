@@ -257,6 +257,7 @@ describe("order", function(){
 
 
 describe("multi build", function(){
+    this.timeout(5000);
 
 	it("should work", function(done){
 		rmdir(__dirname+"/bundle/dist", function(error){
@@ -348,7 +349,6 @@ describe("multi build", function(){
 			}
 
 			multiBuild(config, { quiet: true }).then(function(){
-
 				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
 
 				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
@@ -382,7 +382,6 @@ describe("multi build", function(){
 			}
 
 			multiBuild(config, options).then(function(){
-
 				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
 
 				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
@@ -492,6 +491,7 @@ describe("multi build", function(){
 
 
 	it("Allows specifying dist as the current folder", function(done){
+        this.timeout(5000);
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
 			main: "bundle",
@@ -637,7 +637,7 @@ describe("multi build", function(){
 	it("System.instantiate works when bundling steal", function(done){
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
-				done(error)
+				return done(error)
 			}
 
 			multiBuild({
@@ -659,9 +659,7 @@ describe("multi build", function(){
 						close();
 					}, close);
 				}, done);
-
-
-			}, done);
+			});
 
 
 
@@ -770,6 +768,8 @@ describe("multi build", function(){
 	});
 
 	it("works with babel", function(done){
+        this.timeout(5000);
+
 		// this test seems broken.
 		rmdir(__dirname + "/babel/dist", function(error){
 			if(error) return done(error);
@@ -952,6 +952,8 @@ describe("multi build", function(){
 	});
 
 	describe("bundleAssets", function(){
+        this.timeout(5000);
+
 		before(function(done){
 			asap(rmdir)(__dirname + "/bundle_assets/dist")
 				.then(function(){
@@ -980,6 +982,7 @@ describe("multi build", function(){
 
 describe("multi build with plugins", function(){
 	it("work on the client", function(done){
+        this.timeout(5000);
 		open("test/plugins/site.html", function(browser, close){
 
 			find(browser,"PLUGTEXT", function(plugText){
@@ -2372,7 +2375,7 @@ describe("Source Maps", function(){
 
 		function verify() {
 			var globalJsMap = read("global/tabs.js.map");
-			assert.equal(globalJsMap.sources[1], "../../src/tabs.js", "Relative to source file");
+			assert.equal(globalJsMap.sources[1], path.join("..","..","src/tabs.js"), "Relative to source file");
 			assert.equal(globalJsMap.file, "tabs.js", "Refers to generated file");
 
 			var globalJs = read("global/tabs.js");
