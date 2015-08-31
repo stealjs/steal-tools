@@ -13,8 +13,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   # install modules
   - npm install
-  - npm install -g bower
-  - bower install
+  - node node_modules\.bin\bower install
   - npm run install-engine-dependencies
 
 # Post-install test scripts.
