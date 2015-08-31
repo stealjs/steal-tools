@@ -1,6 +1,7 @@
 # steal-tools
 
 [![Build Status](https://travis-ci.org/stealjs/steal-tools.svg?branch=master)](https://travis-ci.org/stealjs/steal-tools)
+[![Build status](https://ci.appveyor.com/api/projects/status/vqk3ybu6fo5jwptk/branch/master?svg=true)](https://ci.appveyor.com/project/matthewp/steal-tools-427/branch/master)
 [![npm version](https://badge.fury.io/js/steal-tools.svg)](http://badge.fury.io/js/steal-tools)
 
 `steal-tools` is a collection of command-line utilities
