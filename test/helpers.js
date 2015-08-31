@@ -17,18 +17,27 @@ exports.find = function(browser, property, callback, done){
 	check();
 };
 
+var server;
 exports.open = function(url, callback, done){
-	var server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
+	if(server && server.address()) {
+		return server.close(function(){
+			exports.open(url, callback, done);
+		});
+	}
+	
+	server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
 	//var browser = Browser.create();
 	var browser = new Browser();
 	browser.visit("http://localhost:8081/"+url)
 		.then(function(){
 			callback(browser, function(err){
-				server.close();
-				done(err);
+				server.close(function(){
+					done(err);
+				});
 			})
 		}).catch(function(e){
-			server.close();
-			done(e)
+			server.close(function(){
+				done(e);
+			});
 		});
 };

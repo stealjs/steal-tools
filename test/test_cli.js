@@ -37,110 +37,111 @@ function stealTools(args){
 	});
 }
 
-describe("steal-tools cli", function(){
-	this.timeout(5000);
+describe("steal-tools cli", function () {
+    this.timeout(5000);
 
-	describe("build", function(){
-		describe("basics", function(){
-			beforeEach(function(){
-				this.cwd = process.cwd();
-				process.chdir(__dirname);
-			});
+    describe("build", function () {
+        describe("basics", function () {
+            beforeEach(function () {
+                this.cwd = process.cwd();
+                process.chdir(__dirname);
+            });
 
-			afterEach(function(){
-				process.chdir(this.cwd);
-			});
+            afterEach(function () {
+                process.chdir(this.cwd);
+            });
 
-			it("works", function(done){
-				stealTools(["build", "--config", "stealconfig.js", "--main",
+            it("works", function (done) {
+                stealTools(["build", "--config", "stealconfig.js", "--main",
 						   "basics/basics", "--no-minify"])
-					.then(function(){
-						done();
+					.then(function () {
+					    done();
 					});
-			});
+            });
 
-			it("uses build by default", function(done){
-				stealTools(["--config", "stealconfig.js", "--main", 
+            it("uses build by default", function (done) {
+                stealTools(["--config", "stealconfig.js", "--main",
 						   "basics/basics", "--no-minify"])
-					.then(function(){
-						done();
+					.then(function () {
+					    done();
 					});
-			});
-		});
+            });
+        });
 
-		describe("without --config or --main", function(){
+        describe("without --config or --main", function () {
+            this.timeout(10000);
 
-			beforeEach(function(done){
-				this.cwd = process.cwd();
-				process.chdir(path.resolve(__dirname + "/npm"));
+            beforeEach(function (done) {
+                this.cwd = process.cwd();
+                process.chdir(path.resolve(__dirname + "/npm"));
 
-				rmdir = asap(rmdir);
-				var copy = asap(fs.copy);
+                rmdir = asap(rmdir);
+                var copy = asap(fs.copy);
 
-				rmdir(path.join(__dirname, "npm", "node_modules"))
-					.then(function(){
-						return rmdir(path.join(__dirname, "npm", "dist"));
+                rmdir(path.join(__dirname, "npm", "node_modules"))
+					.then(function () {
+					    return rmdir(path.join(__dirname, "npm", "dist"));
 					})
-					.then(function(){
-						return copy(path.join(__dirname, "..", "node_modules","jquery"),
+					.then(function () {
+					    return copy(path.join(__dirname, "..", "node_modules", "jquery"),
 									path.join(__dirname, "npm", "node_modules", "jquery"));
-					}).then(function(){
-						return copy(path.join(__dirname, "..", "bower_components","steal"),
+					}).then(function () {
+					    return copy(path.join(__dirname, "..", "bower_components", "steal"),
 									path.join(__dirname, "npm", "node_modules", "steal"));
 					}).then(done, done);
-			});
+            });
 
-			afterEach(function(){
-				process.chdir(this.cwd);
-			});
+            afterEach(function () {
+                process.chdir(this.cwd);
+            });
 
-			it("uses package.json", function(done){
-				stealTools(["--no-minify"]).then(function(){
-					open("test/npm/prod.html", function(browser, close){
-						var h1s = browser.window.document.getElementsByTagName('h1');
-						assert.equal(h1s.length, 1, "Wrote H!.");
-						close();
-					}, done);
-				});
-			});
-		});
-	});
+            it("uses package.json", function (done) {
+                stealTools(["--no-minify"]).then(function () {
+                    open("test/npm/prod.html", function (browser, close) {
+                        var h1s = browser.window.document.getElementsByTagName('h1');
+                        assert.equal(h1s.length, 1, "Wrote H!.");
+                        close();
+                    }, done);
+                });
+            });
+        });
+    });
 
-	describe("transform", function(){
-		describe("basics", function(){
-			beforeEach(function(done){
-				this.cwd = process.cwd();
-				process.chdir(__dirname);
+    describe("transform", function () {
+        describe("basics", function () {
+            beforeEach(function (done) {
+                this.cwd = process.cwd();
+                process.chdir(__dirname);
 
-				rmdir(__dirname + "/pluginify/out.js", function(error){
-					done(error);
-				});
-			});
+                rmdir(__dirname + "/pluginify/out.js", function (error) {
+                    done(error);
+                });
+            });
 
-			afterEach(function(){
-				process.chdir(this.cwd);
-			});
+            afterEach(function () {
+                process.chdir(this.cwd);
+            });
 
-			it("works", function(done){
+            it("works", function (done) {
 
-				stealTools(["transform", "-c", "stealconfig.js", "-m",
-						   "pluginify/pluginify", "--out", "pluginify/out.js"]).then(function(){
+                stealTools(["transform", "-c", "stealconfig.js", "-m",
+						   "pluginify/pluginify", "--out", "pluginify/out.js"]).then(function () {
 
-					open("test/pluginify/index.html", function(browser, close){
+						       open("test/pluginify/index.html", function (browser, close) {
 
-						find(browser,"RESULT", function(result){
-							assert(result.module.es6module, "have dependeny");
-							assert(result.cjs(), "cjs");
-							assert.equal(result.UMD, "works", "Doesn't mess with UMD modules");
-							assert.equal(result.define, undefined, "Not keeping a global.define");
-							assert.equal(result.System, undefined, "Not keeping a global.System");
-							close();
-						}, close);
+						           find(browser, "RESULT", function (result) {
+						               assert(result.module.es6module, "have dependeny");
+						               assert(result.cjs(), "cjs");
+						               assert.equal(result.UMD, "works", "Doesn't mess with UMD modules");
+						               assert.equal(result.define, undefined, "Not keeping a global.define");
+						               assert.equal(result.System, undefined, "Not keeping a global.System");
+						               close();
+						           }, close);
 
-					}, done);
+						       }, done);
 
-				});
-			});
-		});
-	});
+						   });
+            });
+        });
+    });
 });
