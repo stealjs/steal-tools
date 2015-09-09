@@ -2120,6 +2120,8 @@ describe("importing into config", function(){
 });
 
 describe("npm package.json builds", function(){
+	this.timeout(5000);
+
 	beforeEach(function() {
 
 	});
@@ -2304,6 +2306,8 @@ describe("npm with directories.lib", function(){
 });
 
 describe("Source Maps", function(){
+	this.timeout(5000);
+
 	describe("multi build", function(){
 		it("basics works", function(done){
 			rmdir(__dirname+"/bundle/dist", function(error){
