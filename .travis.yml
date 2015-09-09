@@ -1,7 +1,7 @@
 language: node_js
 node_js:
   - 0.10
-  - "node"
+  - 0.12
   - "iojs"
 before_script:
   - install-engine-dependencies

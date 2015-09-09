@@ -951,6 +951,29 @@ describe("multi build", function(){
 		});
 	});
 
+	it("envs configuration works", function(done){
+		rmdir(__dirname+"/envs/dist", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/envs/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				open("test/envs/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						assert.equal(module.FOO, "bar", "envs configuration was set");
+
+						close();
+					}, close);
+				}, done);
+			}).then(null, done);
+		});
+	});
+
 	describe("bundleAssets", function(){
         this.timeout(5000);
 
