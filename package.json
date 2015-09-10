@@ -1,7 +1,7 @@
 {
   "name": "steal-tools",
   "description": "Futuristic build tools for ES6 Module applications.",
-  "version": "0.10.7",
+  "version": "0.11.0-pre.13",
   "author": {
     "name": "Bitovi",
     "email": "contact@bitovi.com",
@@ -19,11 +19,13 @@
     "moment": "^2.10.2",
     "pdenodeify": "^0.1.0",
     "source-map": "git://github.com/bitovi/source-map#0.4.2-bitovi.1",
-    "steal": "^0.10.0",
+    "steal": "^0.11.0-pre.8",
+    "steal-bundler": "^0.2.0",
     "system-parse-amd": "0.0.2",
-    "through2": "^0.6.5",
+    "through2": "^2.0.0",
+    "tmp": "0.0.26",
     "traceur": "0.0.91",
-    "transpile": "^0.7.0",
+    "transpile": "^0.8.0",
     "uglify-js": "~2.4.13",
     "urix": "^0.1.0",
     "winston": "^0.7.3",
@@ -36,6 +38,7 @@
     "comparify": "git://github.com/bitovi/comparify#master",
     "connect": "^2.14.4",
     "cssify": "^0.6.0",
+    "engine-dependencies": "^0.2.0",
     "grunt": "~0.4.1",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-concat": "~0.3.0",
@@ -46,12 +49,32 @@
     "grunt-release": "^0.7.0",
     "grunt-simple-mocha": "^0.4.0",
     "jquery": ">2.0",
-    "mocha": "1.18.2",
-    "mock-fs": "^2.6.0",
+    "mocha": "^2.2.5",
+    "mock-fs": "^3.1.0",
     "rimraf": "2.1",
     "steal-qunit": "0.0.4",
-    "testee": "^0.2.0",
-    "zombie": "2.5.1"
+    "testee": "^0.2.0"
+  },
+  "engineDependencies": {
+    "node": {
+      "0.10.x": {
+        "devDependencies": {
+          "zombie": "^3.1.1"
+        }
+      },
+      "0.12.x": {
+        "devDependencies": {
+          "zombie": "^3.1.1"
+        }
+      }
+    },
+    "iojs": {
+      "^3.0.0": {
+        "devDependencies": {
+          "zombie": "^4.1.0"
+        }
+      }
+    }
   },
   "bin": {
     "steal-tools": "bin/steal"
@@ -69,7 +92,13 @@
     }
   ],
   "scripts": {
-    "test": "grunt test && grunt test:browser"
+    "test": "grunt test && grunt test:browser",
+    "mocha": "grunt simplemocha",
+	"bower-install": "bower install",
+	"install-engine-dependencies": "install-engine-dependencies"
+  },
+  "engines": {
+    "node": "0.10.x - 0.12.x || ^3.0.0"
   },
   "system": {
     "npmDependencies": [

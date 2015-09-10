@@ -34,7 +34,10 @@ describe("steal-build grunt task", function(){
 				config: __dirname + "/config.js",
 				main: "main_with_error"
 			}
-		}).then(null, function(error){
+		}).then(function(){
+			assert(false, "This passed when it shouldn't have");
+			done();
+		}, function(error){
 			assert(error);
 			done();
 		});

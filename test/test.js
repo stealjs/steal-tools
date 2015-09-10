@@ -15,8 +15,13 @@ var dependencyGraph = require("../lib/graph/make_graph"),
 	fs = require('fs-extra'),
 	logging = require('../lib/logger'),
 	stealExport = require('../lib/build/export'),
-	asap = require("pdenodeify"),
-	mockFs = require("mock-fs");
+	asap = require("pdenodeify");
+
+var isIOjs = process.version.substr(0, 3) !== "v0.";
+// mock-fs doesn't work in iojs 3.0 right now so skipping until that is fixed.
+if(!isIOjs) {
+	var mockFs = require("mock-fs")
+}
 
 var find = require("./helpers").find;
 var open = require("./helpers").open;
@@ -163,7 +168,9 @@ describe("bundle", function(){
 			done(e)
 		});
 	});
+});
 
+if(!isIOjs) {
 	describe("Recycle", function(){
 		beforeEach(function() {
 			logging.setup({ quiet: true });
@@ -203,9 +210,7 @@ describe("bundle", function(){
 
 		});
 	});
-
-});
-
+}
 
 describe("order", function(){
 
@@ -252,6 +257,7 @@ describe("order", function(){
 
 
 describe("multi build", function(){
+    this.timeout(5000);
 
 	it("should work", function(done){
 		rmdir(__dirname+"/bundle/dist", function(error){
@@ -343,7 +349,6 @@ describe("multi build", function(){
 			}
 
 			multiBuild(config, { quiet: true }).then(function(){
-
 				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
 
 				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
@@ -377,7 +382,6 @@ describe("multi build", function(){
 			}
 
 			multiBuild(config, options).then(function(){
-
 				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
 
 				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
@@ -487,6 +491,7 @@ describe("multi build", function(){
 
 
 	it("Allows specifying dist as the current folder", function(done){
+        this.timeout(5000);
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
 			main: "bundle",
@@ -632,7 +637,7 @@ describe("multi build", function(){
 	it("System.instantiate works when bundling steal", function(done){
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
-				done(error)
+				return done(error)
 			}
 
 			multiBuild({
@@ -654,9 +659,7 @@ describe("multi build", function(){
 						close();
 					}, close);
 				}, done);
-
-
-			}, done);
+			});
 
 
 
@@ -765,6 +768,8 @@ describe("multi build", function(){
 	});
 
 	it("works with babel", function(done){
+        this.timeout(5000);
+
 		// this test seems broken.
 		rmdir(__dirname + "/babel/dist", function(error){
 			if(error) return done(error);
@@ -876,6 +881,31 @@ describe("multi build", function(){
 		});
 	});
 
+	it("sideBundle: true will move a module into a side bundle", function(done){
+		rmdir(__dirname+"/side_bundle/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/side_bundle/package.json!npm"
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/side_bundle/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						var loader = browser.window.System;
+
+						comparify(loader.bundles, {
+							"bundles/b": [ "d", "b" ]
+						}, true);
+
+						close();
+					}, close);
+				}, done);
+			});
+		});
+	});
+
 	it("returns a buildResult", function(done){
 		rmdir(__dirname+"/bundle/dist", function(error){
 			if(error){
@@ -897,10 +927,84 @@ describe("multi build", function(){
 		});
 	});
 
+	it("virtual modules can become bundles", function(done){
+		rmdir(__dirname+"/virtual/dist", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/virtual/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				assert(true, "it worked");
+				open("test/virtual/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						assert(typeof module.b, "undefined", "b module not included in the main bundle");
+
+						close();
+					}, close);
+				}, done);
+			}).then(null, done);
+		});
+	});
+
+	it("envs configuration works", function(done){
+		rmdir(__dirname+"/envs/dist", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/envs/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				open("test/envs/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						assert.equal(module.FOO, "bar", "envs configuration was set");
+
+						close();
+					}, close);
+				}, done);
+			}).then(null, done);
+		});
+	});
+
+	describe("bundleAssets", function(){
+        this.timeout(5000);
+
+		before(function(done){
+			asap(rmdir)(__dirname + "/bundle_assets/dist")
+				.then(function(){
+					done();
+				});
+		});
+
+		it("works", function(done){
+			multiBuild({
+				config: __dirname + "/bundle_assets/package.json!npm"
+			}, {
+				quiet: true,
+				bundleAssets: true
+			}).then(function(){
+				open("test/bundle_assets/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						assert(true, "page loaded correctly");
+						close();
+					}, close);
+				}, done);
+			});
+		});
+	});
 });
 
 describe("multi build with plugins", function(){
 	it("work on the client", function(done){
+        this.timeout(5000);
 		open("test/plugins/site.html", function(browser, close){
 
 			find(browser,"PLUGTEXT", function(plugText){
@@ -2015,6 +2119,8 @@ describe("importing into config", function(){
 });
 
 describe("npm package.json builds", function(){
+	this.timeout(5000);
+
 	beforeEach(function() {
 
 	});
@@ -2116,6 +2222,10 @@ describe("npm package.json builds", function(){
 				quiet: true,
 				minify: false
 			}).then(function(){
+				// Make sure they are named correctly.
+				assert(fs.existsSync(__dirname + "/npm/dist/bundles/two.js"),
+									 "two bundle in the right place");
+
 				// open the prod page and make sure
 				// and make sure the module loaded successfully
 				open("test/npm/prod-bundle.html", function(browser, close){
@@ -2176,7 +2286,27 @@ describe("npm package.json builds", function(){
 
 });
 
+describe("npm with directories.lib", function(){
+	beforeEach(function(done){
+		asap(rmdir)(__dirname + "/npm-directories/dist").then(function(){
+			done();
+		}, done);
+	});
+
+	it("builds and works", function(done){
+		multiBuild({
+			config: __dirname + "/npm-directories/package.json!npm"
+		}, {
+			quiet: true
+		}).then(function(){
+			done();
+		});
+	});
+});
+
 describe("Source Maps", function(){
+	this.timeout(5000);
+
 	describe("multi build", function(){
 		it("basics works", function(done){
 			rmdir(__dirname+"/bundle/dist", function(error){
@@ -2271,7 +2401,7 @@ describe("Source Maps", function(){
 
 		function verify() {
 			var globalJsMap = read("global/tabs.js.map");
-			assert.equal(globalJsMap.sources[1], "../../src/tabs.js", "Relative to source file");
+			assert.equal(globalJsMap.sources[1], path.join("..","..","src/tabs.js"), "Relative to source file");
 			assert.equal(globalJsMap.file, "tabs.js", "Refers to generated file");
 
 			var globalJs = read("global/tabs.js");
