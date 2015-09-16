@@ -8,6 +8,7 @@
     "web": "http://bitovi.com/"
   },
   "dependencies": {
+    "babel": "^5.8.23",
     "chokidar": "^1.0.1",
     "clean-css": "3.1.8",
     "colors": "^0.6.2",
@@ -19,7 +20,7 @@
     "moment": "^2.10.2",
     "pdenodeify": "^0.1.0",
     "source-map": "git://github.com/bitovi/source-map#0.4.2-bitovi.1",
-    "steal": "^0.11.0",
+    "steal": "^0.12.0-pre.0",
     "steal-bundler": "^0.2.0",
     "system-parse-amd": "0.0.2",
     "through2": "^2.0.0",
@@ -94,8 +95,8 @@
   "scripts": {
     "test": "grunt test && grunt test:browser",
     "mocha": "grunt simplemocha",
-	"bower-install": "bower install",
-	"install-engine-dependencies": "install-engine-dependencies"
+    "bower-install": "bower install",
+    "install-engine-dependencies": "install-engine-dependencies"
   },
   "engines": {
     "node": "0.10.x - 0.12.x || ^3.0.0"
