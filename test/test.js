@@ -1000,7 +1000,6 @@ describe("multi build", function(){
 			});
 		});
 	});
-
 });
 
 describe("multi build with plugins", function(){
