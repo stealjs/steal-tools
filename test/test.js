@@ -215,6 +215,44 @@ if(!isIOjs) {
 			depStream.write(config.main);
 
 		});
+
+		it("Works with a project using live-reload", function(done){
+			var config = {
+				config: __dirname + "/live_reload/package.json!npm",
+				logLevel: 3
+			};
+			var options = {
+				localStealConfig: {
+					env: "build-development"
+				}
+			};
+
+			var depStream = bundle.createBundleGraphStream(config, options);
+			var recycleStream = recycle(config, options);
+
+			depStream.pipe(recycleStream);
+
+			// Wait for it to initially finish loading.
+			recycleStream.once("data", function(data){
+				var node = data.graph.foo;
+				var mockOptions = {};
+				// Fake string as the source.
+				mockOptions[node.load.address.replace("file:", "")] = "module.exports = 'foo'";
+				mockFs(mockOptions);
+
+				recycleStream.once("data", function(data){
+					var node = data.graph.main;
+
+					assert(/foo/.test(node.load.source), "Source changed");
+					done();
+				});
+
+				recycleStream.write(node.load.name);
+			});
+
+			depStream.write(config.main);
+
+		});
 	});
 }
 
