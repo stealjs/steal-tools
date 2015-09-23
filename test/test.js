@@ -31,6 +31,12 @@ System.logLevel = 3;
 require("./test_cli");
 require("./grunt_tasks/steal_build");
 
+// Node 0.10 doesn't support Symbols so the live-reload tests will
+// not pass on it.
+if(typeof Symbol !== "undefined") {
+	require("./test_live");
+}
+
 (function(){
 
 
