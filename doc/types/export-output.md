@@ -25,6 +25,8 @@ location.
   @param {Load|Array<Load>} load The module load record, or module load records, being written by this output. 
   @param {Loader} System The System loader used by Steal to load all of these modules.  All configuration
   should be available on it.
+ 
+@option {Array<moduleName>|Boolean} [ignore] Modules that should be ignored and not included in the output. For the [steal-tools/lib/build/helpers/global] helper providing `false` for this option will not ignore modules defined in `node_modules` as is done by default.
 
 @body
 
