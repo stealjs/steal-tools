@@ -403,6 +403,39 @@ describe("multi build", function(){
 		});
 	});
 
+	it("should pass the babelOptions to transpile", function(done){
+		rmdir(__dirname + "/es6-loose/bundle", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/es6-loose/config.js",
+				main: "main",
+				transpiler: "babel"
+			}, {
+				quiet: true,
+				minify: false,
+				babelOptions: {
+					loose: 'es6.modules'
+				}
+			}).then(function(){
+				fs.readFile("test/es6-loose/dist/bundles/main.js", "utf8", function(err, data) {
+					if (err) {
+						done(err);
+					}
+
+					var noObjectDefineProperty = data.indexOf("Object.defineProperty") === -1;
+					var es6ModuleProperty = data.indexOf("exports.__esModule = true;") >= 0;
+
+					assert(noObjectDefineProperty, "loose mode does not use Object.defineProperty");
+					assert(es6ModuleProperty, "should assign __esModule as normal object property");
+					done();
+				});
+			}).catch(done);
+		});
+	});
+
 	it("doesn't include the traceur runtime if it's not being used", function(done){
 		rmdir(__dirname + "/simple-es6/dist", function(error){
 			if(error) {
