@@ -436,6 +436,37 @@ describe("multi build", function(){
 		});
 	});
 
+	it("should pass the traceurOptions to transpile", function(done){
+		console.log('starting test');
+		rmdir(__dirname + "/es6-loose/bundle", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/es6-loose/config.js",
+				main: "main",
+			}, {
+				quiet: true,
+				minify: false,
+				traceurOptions: {
+					properTailCalls: true
+				}
+			}).then(function(){
+				fs.readFile("test/es6-loose/dist/bundles/main.js", "utf8", function(err, data) {
+					if (err) {
+						done(err);
+					}
+
+					var noObjectDefineProperty = data.indexOf("Object.defineProperty") > 0;
+
+					assert(noObjectDefineProperty, "properTailCalls option should use Object.defineProperty");
+					done();
+				});
+			}).catch(done);
+		});
+	});
+
 	it("doesn't include the traceur runtime if it's not being used", function(done){
 		rmdir(__dirname + "/simple-es6/dist", function(error){
 			if(error) {
