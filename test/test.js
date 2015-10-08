@@ -1249,7 +1249,33 @@ describe("multi build with plugins", function(){
 				done(e);
 			});
 		});
-	})
+	});
+
+	it("plugins that are part of the main are part of the main bundle", function(done){
+		rmdir(__dirname+"/plugin_main_bundle/dist", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/plugin_main_bundle/config.js",
+				main: "main"
+			}, {
+				minify: false,
+				quiet: true
+			}).then(function(buildResult){
+				var mainBundle = buildResult.bundles[0];
+				var found = false;
+				for(var i = 0, len = mainBundle.nodes.length; i < len; i++) {
+					var node = mainBundle.nodes[i];
+					if(node.load.name === "plug") {
+						found = true;
+					}
+				}
+				assert.ok(found, "plugin was in the main bundle");
+			}).then(done, done);
+		});
+	});
 
 });
 
