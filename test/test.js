@@ -412,13 +412,13 @@ describe("multi build", function(){
 			multiBuild({
 				config: __dirname + "/es6-loose/config.js",
 				main: "main",
-				transpiler: "babel"
-			}, {
-				quiet: true,
-				minify: false,
+				transpiler: "babel",
 				babelOptions: {
 					loose: 'es6.modules'
 				}
+			}, {
+				quiet: true,
+				minify: false
 			}).then(function(){
 				fs.readFile("test/es6-loose/dist/bundles/main.js", "utf8", function(err, data) {
 					if (err) {
@@ -446,12 +446,12 @@ describe("multi build", function(){
 			multiBuild({
 				config: __dirname + "/es6-loose/config.js",
 				main: "main",
-			}, {
-				quiet: true,
-				minify: false,
 				traceurOptions: {
 					properTailCalls: true
 				}
+			}, {
+				quiet: true,
+				minify: false
 			}).then(function(){
 				fs.readFile("test/es6-loose/dist/bundles/main.js", "utf8", function(err, data) {
 					if (err) {
