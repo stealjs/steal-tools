@@ -404,6 +404,8 @@ describe("multi build", function(){
 	});
 
 	it("should pass the babelOptions to transpile", function(done){
+		this.timeout(20000);
+
 		rmdir(__dirname + "/es6-loose/bundle", function(error){
 			if(error) {
 				return done(error);
