@@ -5,6 +5,9 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
 	simplemocha: {
+    options: {
+      timeout: 30000
+    },
 		app: {
 			src: ['test/test.js']
 		}
