@@ -31,6 +31,12 @@ System.logLevel = 3;
 require("./test_cli");
 require("./grunt_tasks/steal_build");
 
+// Node 0.10 doesn't support Symbols so the live-reload tests will
+// not pass on it.
+if(typeof Symbol !== "undefined") {
+	require("./test_live");
+}
+
 (function(){
 
 
@@ -209,6 +215,89 @@ if(!isIOjs) {
 			depStream.write(config.main);
 
 		});
+
+		it("Works with a project using live-reload", function(done){
+			var config = {
+				config: __dirname + "/live_reload/package.json!npm",
+				logLevel: 3
+			};
+			var options = {
+				localStealConfig: {
+					env: "build-development"
+				}
+			};
+
+			var depStream = bundle.createBundleGraphStream(config, options);
+			var recycleStream = recycle(config, options);
+
+			depStream.pipe(recycleStream);
+
+			// Wait for it to initially finish loading.
+			recycleStream.once("data", function(data){
+				var node = data.graph.foo;
+				var mockOptions = {};
+				// Fake string as the source.
+				mockOptions[node.load.address.replace("file:", "")] = "module.exports = 'foo'";
+				mockFs(mockOptions);
+
+				recycleStream.once("data", function(data){
+					var node = data.graph.main;
+
+					assert(/foo/.test(node.load.source), "Source changed");
+					done();
+				});
+
+				recycleStream.write(node.load.name);
+			});
+
+			depStream.write(config.main);
+
+		});
+
+		it("Detects dynamic imports added when no static dependencies have changed", function(done){
+			var config = {
+				config: path.join(__dirname, "/recycle_dynamic/config.js"),
+				main: "something.txt!plug",
+				logLevel: 3,
+				map: { "@dev": "@empty" }
+			};
+
+			var depStream = bundle.createBundleGraphStream(config);
+			var recycleStream = recycle(config);
+
+			depStream.pipe(recycleStream);
+
+			// Wait for it to initially finish loading.
+			recycleStream.once("data", function(data){
+				var node = data.graph["something.txt!plug"];
+
+				// Update the module so that it has a dynamic import. This should
+				// be added to the loader's bundle and the graph reloaded.
+				var mockOptions = {};
+				Object.keys(data.graph).forEach(function(moduleName){
+					var load = data.graph[moduleName].load;
+					mockOptions[load.address.replace("file:", "")] = load.source;
+				});
+				mockOptions[node.load.address.replace("file:", "")] =
+					'System.import("another");';
+				mockOptions[path.resolve(__dirname + "/recycle_dynamic/another.js")]
+					= 'var dep = require("./dep");';
+				mockOptions[path.resolve(__dirname + "/recycle_dynamic/dep.js")]
+					= 'module.exports = "dep";';
+				mockFs(mockOptions);
+
+				recycleStream.write(node.load.name);
+				recycleStream.once("data", function(data){
+					var graph = data.graph;
+					assert(graph["another"], "this bundle was added to the graph");
+					assert(graph["dep"], "the bundle's dependency was also added");
+					done();
+				});
+			});
+
+			depStream.write(config.main);
+
+		});
 	});
 }
 
@@ -310,6 +399,41 @@ describe("multi build", function(){
 						close();
 					}, close);
 				}, done);
+			}).catch(done);
+		});
+	});
+
+	it("should pass the babelOptions to transpile", function(done){
+		this.timeout(20000);
+
+		rmdir(__dirname + "/es6-loose/bundle", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/es6-loose/config.js",
+				main: "main",
+				transpiler: "babel"
+			}, {
+				quiet: true,
+				minify: false,
+				babelOptions: {
+					loose: 'es6.modules'
+				}
+			}).then(function(){
+				fs.readFile("test/es6-loose/dist/bundles/main.js", "utf8", function(err, data) {
+					if (err) {
+						done(err);
+					}
+
+					var noObjectDefineProperty = data.indexOf("Object.defineProperty") === -1;
+					var es6ModuleProperty = data.indexOf("exports.__esModule = true;") >= 0;
+
+					assert(noObjectDefineProperty, "loose mode does not use Object.defineProperty");
+					assert(es6ModuleProperty, "should assign __esModule as normal object property");
+					done();
+				});
 			}).catch(done);
 		});
 	});
@@ -1960,6 +2084,34 @@ describe("export", function(){
 				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
 					find(browser,"WIDTH", function(width){
 						assert.equal(width, 200, "width of element");
+						assert.ok(browser.window.TABS, "got tabs");
+						close();
+					}, close);
+				}, done);
+			}, done);
+		});
+
+		it("ignore: false will not ignore node_modules for globals", function(done){
+			this.timeout(10000);
+			stealExport({
+				system: {
+					config: __dirname + "/pluginifier_builder_helpers/package.json!npm",
+					meta: {
+						jquery: { format: "global" }
+					}
+				},
+				options: { quiet: true },
+				outputs: {
+					"+global-js": {
+						ignore: false,
+						exports: {
+							"jquery": "jQuery"
+						}
+					}
+				}
+			}).then(function(){
+				open("test/pluginifier_builder_helpers/global-all.html", function(browser, close) {
+					find(browser, "TABS", function(width){
 						assert.ok(browser.window.TABS, "got tabs");
 						close();
 					}, close);
