@@ -1401,6 +1401,22 @@ describe("multi build with plugins", function(){
 		});
 	});
 
+	it("Errors that happen during transpile are reported with the name of the module that failed", function(done){
+
+		multiBuild({
+			config: __dirname + "/stealconfig.js",
+			main: "transpile_error/main"
+		}, {
+			minify: false,
+			quiet: true
+		}).then(function(){
+			assert(false, "Succeeded when it should not have");
+		}, function(err){
+			assert(/Unable to transpile transpile_error\/main:/.test(err.message),
+				   "Reports the module that had the transpile error");
+		}).then(done, done);
+	});
+
 });
 
 
