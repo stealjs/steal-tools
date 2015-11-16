@@ -19,7 +19,7 @@
     "lodash": "2.4.1",
     "moment": "^2.10.2",
     "pdenodeify": "^0.1.0",
-    "source-map": "git://github.com/stealjs/source-map#0.4.2-bitovi.1",
+    "source-map": "https://github.com/stealjs/source-map/archive/0.4.2-bitovi.1.tar.gz",
     "steal": "^0.12.1",
     "steal-bundler": "^0.2.0",
     "system-parse-amd": "0.0.2",
