@@ -414,13 +414,13 @@ describe("multi build", function(){
 			multiBuild({
 				config: __dirname + "/es6-loose/config.js",
 				main: "main",
-				transpiler: "babel"
-			}, {
-				quiet: true,
-				minify: false,
+				transpiler: "babel",
 				babelOptions: {
 					loose: 'es6.modules'
 				}
+			}, {
+				quiet: true,
+				minify: false
 			}).then(function(){
 				fs.readFile("test/es6-loose/dist/bundles/main.js", "utf8", function(err, data) {
 					if (err) {
@@ -432,6 +432,37 @@ describe("multi build", function(){
 
 					assert(noObjectDefineProperty, "loose mode does not use Object.defineProperty");
 					assert(es6ModuleProperty, "should assign __esModule as normal object property");
+					done();
+				});
+			}).catch(done);
+		});
+	});
+
+	it("should pass the traceurOptions to transpile", function(done){
+		console.log('starting test');
+		rmdir(__dirname + "/es6-loose/bundle", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/es6-loose/config.js",
+				main: "main",
+				traceurOptions: {
+					properTailCalls: true
+				}
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				fs.readFile("test/es6-loose/dist/bundles/main.js", "utf8", function(err, data) {
+					if (err) {
+						done(err);
+					}
+
+					var noObjectDefineProperty = data.indexOf("Object.defineProperty") > 0;
+
+					assert(noObjectDefineProperty, "properTailCalls option should use Object.defineProperty");
 					done();
 				});
 			}).catch(done);
