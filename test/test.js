@@ -2481,19 +2481,46 @@ describe("npm package.json builds", function(){
 });
 
 describe("npm with directories.lib", function(){
-	beforeEach(function(done){
-		asap(rmdir)(__dirname + "/npm-directories/dist").then(function(){
-			done();
-		}, done);
+	describe("With a JavaScript main", function(){
+		beforeEach(function(done){
+			asap(rmdir)(__dirname + "/npm-directories-main/dist").then(function(){
+				done();
+			}, done);
+		});
+
+		it("builds and works", function(done){
+			multiBuild({
+				config: __dirname + "/npm-directories-main/package.json!npm"
+			}, {
+				minify: false,
+				quiet: true
+			}).then(function(){
+				open("test/npm-directories-main/prod.html", function(browser, close){
+					find(browser,"MODULE", function(moduleValue){
+						assert.equal(moduleValue, "this is main", "Correctly loaded the main module");
+						close();
+					}, close);
+				}, done);
+			});
+		});
 	});
 
-	it("builds and works", function(done){
-		multiBuild({
-			config: __dirname + "/npm-directories/package.json!npm"
-		}, {
-			quiet: true
-		}).then(function(){
-			done();
+	describe("With a plugin main", function(){
+		beforeEach(function(done){
+			asap(rmdir)(__dirname + "/npm-directories/dist").then(function(){
+				done();
+			}, done);
+		});
+
+		it("builds and works", function(done){
+			multiBuild({
+				config: __dirname + "/npm-directories/package.json!npm"
+			}, {
+				minify: false,
+				quiet: true
+			}).then(function(){
+				done();
+			});
 		});
 	});
 });
