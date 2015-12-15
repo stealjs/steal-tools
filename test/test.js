@@ -647,6 +647,31 @@ describe("multi build", function(){
 
 	});
 
+	it("Works with bundlesPath and loading from a subfolder", function(done){
+		this.timeout(5000);
+
+		rmdir(__dirname + "/bundle_path/javascript/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/bundle_path/config.js",
+				main: "main",
+				bundlesPath: __dirname + "/bundle_path/javascript/dist"
+			}, {
+				minify: false,
+				quiet: true
+			}).then(function(){
+				open("test/bundle_path/subfolder/index.html",
+					 function(browser, close){
+					find(browser,"STYLE_CONTENT", function(styleContent){
+						assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
+						close();
+					}, close);
+				}, done);
+			});
+		});
+	});
+
 
 	it("supports bundling steal", function(done){
 
