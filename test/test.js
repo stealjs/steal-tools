@@ -37,268 +37,12 @@ if(typeof Symbol !== "undefined") {
 	require("./test_live");
 }
 
+require("./test_dependency_graph");
+require("./test_bundle");
+
 (function(){
 
-
-describe('dependency graph', function(){
-	beforeEach(function() {
-		logging.setup({ quiet: true });
-	});
-
-	it('should work', function(done){
-
-		dependencyGraph({
-			config: path.join(__dirname, "stealconfig.js"),
-			startId: "basics",
-			logLevel: 3
-		}).then(function(data){
-			var result = comparify(data.graph, {
-				"stealconfig.js": {
-					load: {}
-				},
-				'@dev': {
-					load: {
-						metadata: {
-							// ignore: true
-						}
-					}
-				},
-				'basics/basics': {
-					deps: ['basics/module/module'],
-					dependencies: ['basics/module/module']
-				},
-				'basics/module/module': {
-					deps: ["basics/es6module"],
-					dependencies:["basics/es6module"]
-				},
-				"basics/es6module": {
-					deps: ['basics/amdmodule'],
-					dependencies:["basics/amdmodule"]
-				}
-			}, true);
-
-
-			done();
-
-
-		}).catch(function(e){
-			done(e)
-		});
-    });
-
-	it("Should allow extra config options to be passed in", function(done){
-
-		dependencyGraph({
-			config: __dirname + "/stealconfig.js",
-			startId: "basics",
-			extra: "stuff",
-			logLevel: 3
-		}).then(function(data){
-			var steal = data.steal;
-			var extra = steal.config("extra");
-
-			assert.equal(extra, "stuff", "Extra config options added");
-		}).then(done);
-
-	});
-
-	describe("Utility functions", function(){
-		it("Map should work", function(done){
-			dependencyGraph({
-				config: __dirname + "/stealconfig.js",
-				startId: "basics",
-				logLevel: 3
-			}).then(function(data){
-				var graph = data.graph;
-
-				var modules = mapDeps(graph, 'basics/basics', function(name){
-					return name;
-				});
-
-				comparify(modules, [
-					"basics/basics", "basics/module/module",
-					"basics/es6module", "basics/amdmodule"
-				], true);
-
-			}).then(done);
-
-		});
-
-		describe("Order", function(){
-			it("works when a module is dependent on @empty", function(){
-				var graph = {
-					main: {
-						dependencies: ["@empty", "dep"]
-					},
-					dep: {
-						dependencies: []
-					}
-				};
-				orderGraph(graph, "main");
-				assert.equal(graph.dep.order, 0, "Dep is first");
-				assert.equal(graph.main.order, 1, "Main is second");
-			});
-		});
-	});
-});
-
-describe("bundle", function(){
-	it("should work", function(done){
-
-		bundle({
-			config: __dirname+"/bundle/stealconfig.js",
-			main: "bundle",
-			logLevel: 3
-		}).then(function(data){
-			var graphCompare = require('./bundle/bundle_graph');
-			comparify(data.graph, graphCompare, true);
-			done();
-
-		}).catch(function(e){
-			done(e)
-		});
-	});
-
-	it("works with globs", function(done){
-		bundle({
-			config: __dirname+"/bundle/stealconfig.js",
-			main: "bundle",
-			logLevel: 3,
-			bundle: "app_*"
-		}).then(function(data){
-			var graphCompare = require('./bundle/bundle_graph');
-			comparify(data.graph, graphCompare, true);
-			done();
-
-		}).catch(function(e){
-			done(e)
-		});
-	});
-});
-
 if(!isIOjs) {
-	describe("Recycle", function(){
-		beforeEach(function() {
-			logging.setup({ quiet: true });
-		});
-
-		afterEach(mockFs.restore);
-
-		it("Creates an error message when there is an es6 syntax error", function(done){
-			var config = {
-				config: path.join(__dirname, "stealconfig.js"),
-				main: "basics/basics",
-				logLevel: 3
-			};
-
-			var depStream = bundle.createBundleGraphStream(config);
-			var recycleStream = recycle(config);
-
-			depStream.pipe(recycleStream);
-
-			// Wait for it to initially finish loading.
-			recycleStream.once("data", function(data){
-				var node = data.graph["basics/es6module"];
-				var mockOptions = {};
-				// Fake string as the source.
-				mockOptions[node.load.address.replace("file:", "")] = "syntax error";
-				mockFs(mockOptions);
-
-				recycleStream.write(node.load.name);
-
-				recycleStream.once("error", function(err){
-					assert(err instanceof Error, "we got an error");
-					done();
-				});
-			});
-
-			depStream.write(config.main);
-
-		});
-
-		it("Works with a project using live-reload", function(done){
-			var config = {
-				config: __dirname + "/live_reload/package.json!npm",
-				logLevel: 3
-			};
-			var options = {
-				localStealConfig: {
-					env: "build-development"
-				}
-			};
-
-			var depStream = bundle.createBundleGraphStream(config, options);
-			var recycleStream = recycle(config, options);
-
-			depStream.pipe(recycleStream);
-
-			// Wait for it to initially finish loading.
-			recycleStream.once("data", function(data){
-				var node = data.graph.foo;
-				var mockOptions = {};
-				// Fake string as the source.
-				mockOptions[node.load.address.replace("file:", "")] = "module.exports = 'foo'";
-				mockFs(mockOptions);
-
-				recycleStream.once("data", function(data){
-					var node = data.graph.main;
-
-					assert(/foo/.test(node.load.source), "Source changed");
-					done();
-				});
-
-				recycleStream.write(node.load.name);
-			});
-
-			depStream.write(config.main);
-
-		});
-
-		it("Detects dynamic imports added when no static dependencies have changed", function(done){
-			var config = {
-				config: path.join(__dirname, "/recycle_dynamic/config.js"),
-				main: "something.txt!plug",
-				logLevel: 3,
-				map: { "@dev": "@empty" }
-			};
-
-			var depStream = bundle.createBundleGraphStream(config);
-			var recycleStream = recycle(config);
-
-			depStream.pipe(recycleStream);
-
-			// Wait for it to initially finish loading.
-			recycleStream.once("data", function(data){
-				var node = data.graph["something.txt!plug"];
-
-				// Update the module so that it has a dynamic import. This should
-				// be added to the loader's bundle and the graph reloaded.
-				var mockOptions = {};
-				Object.keys(data.graph).forEach(function(moduleName){
-					var load = data.graph[moduleName].load;
-					mockOptions[load.address.replace("file:", "")] = load.source;
-				});
-				mockOptions[node.load.address.replace("file:", "")] =
-					'System.import("another");';
-				mockOptions[path.resolve(__dirname + "/recycle_dynamic/another.js")]
-					= 'var dep = require("./dep");';
-				mockOptions[path.resolve(__dirname + "/recycle_dynamic/dep.js")]
-					= 'module.exports = "dep";';
-				mockFs(mockOptions);
-
-				recycleStream.write(node.load.name);
-				recycleStream.once("data", function(data){
-					var graph = data.graph;
-					assert(graph["another"], "this bundle was added to the graph");
-					assert(graph["dep"], "the bundle's dependency was also added");
-					done();
-				});
-			});
-
-			depStream.write(config.main);
-
-		});
-	});
 }
 
 describe("order", function(){
@@ -1951,41 +1695,36 @@ describe("export", function(){
 
 	describe("helpers", function(){
 		beforeEach(function(done) {
-			rmdir(path.join(__dirname, "pluginifier_builder_helpers", "node_modules"), function(error){
+			var rm = asap(rmdir);
+			var copy = asap(fs.copy);
 
-				if(error){ return done(error); }
-
-				rmdir(path.join(__dirname, "pluginifier_builder_helpers", "dist"), function(error){
-
-					if(error){ return done(error); }
-
-					fs.copy(
-						path.join(__dirname, "..", "node_modules","jquery"),
-						path.join(__dirname, "pluginifier_builder_helpers", "node_modules", "jquery"),
-						function(error){
-							if(error) { return done(error); }
-
-							fs.copy(
-								path.join(__dirname, "..", "node_modules","cssify"),
-								path.join(__dirname, "pluginifier_builder_helpers", "node_modules", "cssify"),
-								function(error){
-									if(error) { return done(error); }
-									done();
-								}
-							);
-						}
-					);
-
-				});
-
+			rm(path.join(__dirname, "pluginifier_builder_helpers", "node_modules"))
+			.then(function(){
+				return rm(path.join(__dirname, "pluginifier_builder_helpers", "dist"));
+			})
+			.then(function(){
+				return copy(
+					path.join(__dirname, "..", "node_modules","jquery"),
+					path.join(__dirname, "pluginifier_builder_helpers", "node_modules", "jquery")
+				);
+			})
+			.then(function(){
+				return copy(
+					path.join(__dirname, "..", "node_modules","cssify"),
+					path.join(__dirname, "pluginifier_builder_helpers", "node_modules", "cssify")
+				);
+			}).then(done, function(){
+				done();
 			});
 		});
 
-		it("+cjs", function(done){
+		it.only("+cjs", function(done){
 			this.timeout(10000);
 
 			stealExport({
-				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				system: {
+					config: __dirname+"/pluginifier_builder_helpers/package.json!npm"
+				},
 				options: { quiet: true },
 				"outputs": {
 					"+cjs": {}
@@ -1998,20 +1737,16 @@ describe("export", function(){
 				var out = fs.createWriteStream(path.join(__dirname, "pluginifier_builder_helpers/browserify-out.js"));
 				b.bundle().pipe(out);
 				out.on('finish', function(){
-					open("test/pluginifier_builder_helpers/browserify.html", function(browser, close) {
+					open("test/pluginifier_builder_helpers/browserify.html", function(browser, close){
 						find(browser,"WIDTH", function(width){
-
 							assert.equal(width, 200, "with of element");
 							close();
 						}, close);
 					}, done);
 				});
-
-
 			}, function(e) {
 				done(e);
 			});
-
 		});
 
 

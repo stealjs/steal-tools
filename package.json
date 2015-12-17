@@ -40,6 +40,7 @@
     "connect": "^2.14.4",
     "cssify": "^0.6.0",
     "engine-dependencies": "^0.2.0",
+    "exec-npm-install": "^1.0.4",
     "grunt": "~0.4.1",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-concat": "~0.3.0",
@@ -66,6 +67,11 @@
       "0.12.x": {
         "devDependencies": {
           "zombie": "^3.1.1"
+        }
+      },
+      "^5.0.0": {
+        "devDependencies": {
+          "zombie": "^4.1.0"
         }
       }
     },
