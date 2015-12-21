@@ -2,7 +2,7 @@
   "name": "steal-tools",
   "version": "0.13.0-pre.1",
   "devDependencies": {
-    "steal": "^0.13.0-pre.0",
+    "steal": "stealjs/steal#npm-043",
     "jquery": "~1.10.0",
     "less" : "^2.4.0"
   }
