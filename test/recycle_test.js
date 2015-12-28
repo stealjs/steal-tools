@@ -1,5 +1,6 @@
 var assert = require("assert"),
 	bundle = require("../lib/graph/make_graph_with_bundles"),
+	fs = require("fs-extra"),
 	logging = require("../lib/logger"),
 	mockFs = require("mock-fs"),
 	path = require("path"),
@@ -11,38 +12,6 @@ describe("Recycle", function(){
 	});
 
 	afterEach(mockFs.restore);
-
-	it("Creates an error message when there is an es6 syntax error", function(done){
-		var config = {
-			config: path.join(__dirname, "stealconfig.js"),
-			main: "basics/basics",
-			logLevel: 3
-		};
-
-		var depStream = bundle.createBundleGraphStream(config);
-		var recycleStream = recycle(config);
-
-		depStream.pipe(recycleStream);
-
-		// Wait for it to initially finish loading.
-		recycleStream.once("data", function(data){
-			var node = data.graph["basics/es6module"];
-			var mockOptions = {};
-			// Fake string as the source.
-			mockOptions[node.load.address.replace("file:", "")] = "syntax error";
-			mockFs(mockOptions);
-
-			recycleStream.write(node.load.name);
-
-			recycleStream.once("error", function(err){
-				assert(err instanceof Error, "we got an error");
-				done();
-			});
-		});
-
-		depStream.write(config.main);
-
-	});
 
 	it("Works with a project using live-reload", function(done){
 		var config = {
@@ -124,7 +93,72 @@ describe("Recycle", function(){
 		});
 
 		depStream.write(config.main);
+	});
+
+	it("Detects dependencies in virtual modules created", function(done){
+		var config = {
+			config: path.join(__dirname, "virtual_recycle/config.js"),
+			main: "main",
+			logLevel: 3
+		};
+		var fileSystem = {};
+
+		var depStream = bundle.createBundleGraphStream(config);
+		var recycleStream = recycle(config);
+
+		depStream.pipe(recycleStream);
+
+		function updateFileSystem(graph) {
+			Object.keys(graph).forEach(function(name) {
+				var node = graph[name];
+				if(node.load.address) {
+					var pth = path.resolve(node.load.address.replace("file:", ""));
+					if(!fileSystem[pth]) {
+						fileSystem[pth] = fs.readFileSync(pth, "utf8");
+					}
+				}
+			});
+		}
+
+		function updateDep(data) {
+			updateFileSystem(data.graph);
+
+			var node = data.graph["other.txt!comp"];
+			// Fake string as the source.
+			fileSystem[node.load.address.replace("file:", "")] = 
+				"require('bit-tabs');\nmodule.exports='hello';";
+			fileSystem[path.resolve(__dirname+"/virtual_recycle/tabs.js")] = 
+				"exports.tabs = function(){};";
+			mockFs(fileSystem);
+
+			recycleStream.write(node.load.name);
+
+			recycleStream.once("data", function(data){
+				assert(data.graph["tabs"], "tabs is now in the graph");
+				done();
+			});
+
+			recycleStream.once("error", function(err){
+				done(err);
+			});
+		}
+
+		function updateConfig(data){
+			var node = data.graph["config.js"];
+			fileSystem[node.load.address.replace("file:", "")] =
+				"System.config({ map: { 'bit-tabs': 'tabs' } });";
+			mockFs(fileSystem);
+
+			recycleStream.once("data", updateDep);
+			recycleStream.write(node.load.name);
+		}
+
+		// Wait for it to initially finish loading.
+		recycleStream.once("data", updateConfig);
+
+		depStream.write(config.main);
 
 	});
+
 });
 
