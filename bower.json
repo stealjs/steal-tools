@@ -1,6 +1,6 @@
 {
   "name": "steal-tools",
-  "version": "0.13.0-pre.2",
+  "version": "0.13.0-pre.3",
   "devDependencies": {
     "steal": "^0.13.0-pre.0",
     "jquery": "~1.10.0",
