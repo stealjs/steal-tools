@@ -1355,16 +1355,21 @@ describe("multi build", function(){
 	describe("npm with directories.lib", function(){
 		beforeEach(function(done){
 			asap(rmdir)(__dirname + "/npm-directories/dist").then(function(){
+				return multiBuild({
+					config: __dirname + "/npm-directories/package.json!npm"
+				}, {
+					quiet: true
+				});
+			}).then(function(){
 				done();
 			}, done);
 		});
 
-		it("builds and works", function(done){
-			multiBuild({
-				config: __dirname + "/npm-directories/package.json!npm"
-			}, {
-				quiet: true
-			}).then(function(){
+		it("creates pretty shared bundle names", function(done){
+			var sharedBundleName = __dirname+"/npm-directories/dist/bundles/" +
+				"category-home.js";
+			fs.exists(sharedBundleName, function(exists){
+				assert.ok(exists, "shared bundle name was created");
 				done();
 			});
 		});
