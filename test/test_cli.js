@@ -38,7 +38,7 @@ function stealTools(args){
 }
 
 describe("steal-tools cli", function () {
-    this.timeout(5000);
+    this.timeout(60000);
 
     describe("build", function () {
         describe("basics", function () {
@@ -69,8 +69,6 @@ describe("steal-tools cli", function () {
         });
 
         describe("without --config or --main", function () {
-            this.timeout(10000);
-
             beforeEach(function (done) {
                 this.cwd = process.cwd();
                 process.chdir(path.resolve(__dirname + "/npm"));

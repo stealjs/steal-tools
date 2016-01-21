@@ -8,7 +8,6 @@
     "web": "http://bitovi.com/"
   },
   "dependencies": {
-    "babel": "^5.8.23",
     "chokidar": "^1.0.1",
     "clean-css": "3.1.8",
     "colors": "^0.6.2",
@@ -20,13 +19,13 @@
     "moment": "^2.10.2",
     "pdenodeify": "^0.1.0",
     "source-map": "https://github.com/stealjs/source-map/archive/0.4.2-bitovi.1.tar.gz",
-    "steal": "^0.13.0",
+    "steal": "git://github.com/stealjs/steal#babel6",
     "steal-bundler": "^0.2.4",
     "system-parse-amd": "0.0.2",
     "through2": "^2.0.0",
     "tmp": "0.0.26",
     "traceur": "0.0.91",
-    "transpile": "^0.9.4",
+    "transpile": "git://github.com/stealjs/transpile#babel6",
     "uglify-js": "~2.4.13",
     "urix": "^0.1.0",
     "winston": "^0.7.3",

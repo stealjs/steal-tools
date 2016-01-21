@@ -371,6 +371,8 @@ describe("export", function(){
 	});
 
 	describe("npm package.json builds", function(){
+		this.timeout(60000);
+
 		describe("ignore", function(){
 			it("works with unnormalized names", function(done){
 				stealExport({
@@ -396,7 +398,7 @@ describe("export", function(){
 				function check() {
 					openPage(function(moduleValue){
 						var child = moduleValue.child;
-						assert.equal(child, undefined, "Child ignored in build");
+						assert.equal(child.default, undefined, "Child ignored in build");
 					}, done);
 				}
 
