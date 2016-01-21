@@ -1048,6 +1048,26 @@ describe("multi build", function(){
 			}).then(done, done);
 		});
 
+		it.only("buildConfig is not included in the build", function(done){
+			rmdir(__dirname+"/buildConfig/dist", function(error){
+				if(error) {
+					return done(error);
+				}
+
+				multiBuild({
+					config: __dirname + "/buildConfig/config.js",
+					main: "main"
+				}, {
+					quiet: true
+				}).then(function(){
+					// Verify that the buildConfig item is not included
+					var js = fs.readFileSync(__dirname+"/buildConfig/dist/" +
+											 "bundles/main.js", "utf8");
+					assert(!/define\('two/.test(js), "two not included");
+				})
+				.then(done, done);
+			});
+		});
 	});
 
 	describe("bundleAssets", function(){
