@@ -1,7 +1,7 @@
 {
   "name": "steal-tools",
   "description": "Futuristic build tools for ES6 Module applications.",
-  "version": "0.14.0-pre.1",
+  "version": "0.14.0-pre.2",
   "author": {
     "name": "Bitovi",
     "email": "contact@bitovi.com",
@@ -21,7 +21,7 @@
     "pdenodeify": "^0.1.0",
     "source-map": "https://github.com/stealjs/source-map/archive/0.4.2-bitovi.1.tar.gz",
     "steal": "^0.14.0-pre.5",
-    "steal-bundler": "^0.2.4",
+    "steal-bundler": "^0.2.6",
     "system-parse-amd": "0.0.2",
     "through2": "^2.0.0",
     "tmp": "0.0.26",
