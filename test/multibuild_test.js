@@ -103,6 +103,39 @@ describe("multi build", function(){
 		});
 	});
 
+	it("allows you to transpile modules on your own", function(done){
+		rmdir(__dirname + "/self_transpile/dist", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/self_transpile/config.js",
+				main: "index"
+			}, {
+				quiet: true,
+				minify: false,
+				transpile: function(source){
+					if(source.indexOf("import") >= 0) {
+						source = "require('two');";
+					} else {
+						source = '"format amd";';
+					}
+					return { code: source };
+				}
+			}).then(function(){
+				fs.readFile(__dirname + "/self_transpile/dist/bundles/index.js",
+					"utf8", function(error, contents){
+					if(error) return done(error);
+
+					var hasRequire = /require\('two'\)/.test(contents);
+					assert.ok(hasRequire, "converted the way my transpile does");
+					done();
+				});
+			});
+		});
+	});
+
 	it("doesn't include the traceur runtime if it's not being used", function(done){
 		rmdir(__dirname + "/simple-es6/dist", function(error){
 			if(error) {
@@ -1363,16 +1396,21 @@ describe("multi build", function(){
 	describe("npm with directories.lib", function(){
 		beforeEach(function(done){
 			asap(rmdir)(__dirname + "/npm-directories/dist").then(function(){
+				return multiBuild({
+					config: __dirname + "/npm-directories/package.json!npm"
+				}, {
+					quiet: true
+				});
+			}).then(function(){
 				done();
 			}, done);
 		});
 
-		it("builds and works", function(done){
-			multiBuild({
-				config: __dirname + "/npm-directories/package.json!npm"
-			}, {
-				quiet: true
-			}).then(function(){
+		it("creates pretty shared bundle names", function(done){
+			var sharedBundleName = __dirname+"/npm-directories/dist/bundles/" +
+				"category-home.js";
+			fs.exists(sharedBundleName, function(exists){
+				assert.ok(exists, "shared bundle name was created");
 				done();
 			});
 		});
