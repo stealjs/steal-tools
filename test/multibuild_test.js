@@ -828,6 +828,33 @@ describe("multi build", function(){
 		});
 	});
 
+	it("Is able to load progressively loaded app with progressively loaded pacakge.json data", function(done){
+		rmdir(__dirname+"/progressive_package/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/progressive_package/package.json!npm"
+			}, {
+				minify: false,
+				quiet: true
+			}).then(function(){
+				open("test/progressive_package/prod.html",
+					 function(browser, close){
+					find(browser, "MODULE", function(module){
+						var a = module.a;
+						var b = module.b;
+						assert.equal(a.name, "dep2", "loaded dep2");
+						assert.equal(a.dep3, "dep3", "loaded dep3");
+
+						assert.equal(b.name, "dep4", "loaded dep4");
+						assert.equal(b.dep5, "dep5", "loaded dep5");
+						close();
+					}, close);
+				}, done);
+			});
+		});
+	});
+
 	describe("with plugins", function(){
 		it("work on the client", function(done){
 			this.timeout(5000);
