@@ -8,7 +8,6 @@
     "web": "http://bitovi.com/"
   },
   "dependencies": {
-    "babel": "^5.8.23",
     "chokidar": "^1.0.1",
     "clean-css": "3.1.8",
     "colors": "^0.6.2",
