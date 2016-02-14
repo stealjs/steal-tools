@@ -628,6 +628,10 @@ describe("multi build", function(){
 				quiet: true,
 				minify: false
 			}).then(function(){
+				var code = fs.readFileSync(__dirname+"/babel/dist/bundles/main.js",
+										   "utf8");
+				assert(!/\*babel\*/.test(code), "babel not included in the code");
+
 				open("test/babel/prod.html",function(browser, close){
 					find(browser,"MODULE", function(module){
 						assert(true, "module");
