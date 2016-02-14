@@ -7,7 +7,9 @@
       "lib": "src"
     },
     "bundle": [
-      "npm-dependencies/other"
+      "npm-dependencies/other",
+	  "npm-dependencies/home",
+	  "npm-dependencies/category"
     ]
   }
 }
