@@ -5,6 +5,7 @@ var asap = require("pdenodeify"),
 	multiBuild = require("../lib/build/multi"),
 	rmdir = require("rimraf"),
 	path = require("path"),
+	stealTools = require("../index"),
 	testHelpers = require("./helpers");
 
 var find = testHelpers.find;
@@ -1679,6 +1680,31 @@ describe("multi build", function(){
 					done();
 				}, done);
 			});
+		});
+	});
+
+	describe("createMultiBuildStream", function(){
+		var through = require("through2");
+
+		it("Creates a stream of BuildResult", function(done){
+			var system = {
+				config: __dirname + "/bundle/stealconfig.js",
+				main: "bundle"
+			};
+			var options = { quiet: true };
+
+			var graphStream = stealTools.createGraphStream(system, options);
+			var buildStream = graphStream.pipe(
+				stealTools.createMultiBuildStream()
+			);
+
+			buildStream.pipe(through.obj(function(data){
+				assert(data.graph, "has the graph");
+				assert(data.bundles, "has the bundles");
+				assert(data.configuration, "has the configuration");
+
+				done();
+			}));
 		});
 	});
 });

@@ -46,9 +46,6 @@ describe("Recycle", function(){
 
 			recycleStream.write(node.load.name);
 		});
-
-		depStream.write(config.main);
-
 	});
 
 	it("Detects dynamic imports added when no static dependencies have changed", function(done){
@@ -91,8 +88,6 @@ describe("Recycle", function(){
 				done();
 			});
 		});
-
-		depStream.write(config.main);
 	});
 
 	it("Detects dependencies in virtual modules created", function(done){
@@ -155,9 +150,6 @@ describe("Recycle", function(){
 
 		// Wait for it to initially finish loading.
 		recycleStream.once("data", updateConfig);
-
-		depStream.write(config.main);
-
 	});
 
 });
