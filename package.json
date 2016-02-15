@@ -15,7 +15,7 @@
     "fs-extra": "~0.16.3",
     "glob": "^4.3.5",
     "less": "^2.4.0",
-    "lodash": "2.4.1",
+    "lodash": "^4.3.0",
     "moment": "^2.10.2",
     "pdenodeify": "^0.1.0",
     "source-map": "https://github.com/stealjs/source-map/archive/0.4.2-bitovi.1.tar.gz",
