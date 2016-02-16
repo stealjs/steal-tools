@@ -1,14 +1,13 @@
 {
   "name": "steal-tools",
   "description": "Futuristic build tools for ES6 Module applications.",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "author": {
     "name": "Bitovi",
     "email": "contact@bitovi.com",
     "web": "http://bitovi.com/"
   },
   "dependencies": {
-    "babel": "^5.8.23",
     "chokidar": "^1.0.1",
     "clean-css": "3.1.8",
     "colors": "^0.6.2",
@@ -16,7 +15,7 @@
     "fs-extra": "~0.16.3",
     "glob": "^4.3.5",
     "less": "^2.4.0",
-    "lodash": "2.4.1",
+    "lodash": "^4.3.0",
     "moment": "^2.10.2",
     "pdenodeify": "^0.1.0",
     "source-map": "https://github.com/stealjs/source-map/archive/0.4.2-bitovi.1.tar.gz",
