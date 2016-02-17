@@ -1109,7 +1109,7 @@ describe("multi build", function(){
 
 				multiBuild({
 					config: __dirname+"/multi-main/config.js",
-					main: mains
+					main: mains.slice()
 				}, {
 					quiet: true
 					//verbose: true
@@ -1149,6 +1149,79 @@ describe("multi build", function(){
 				});
 			});
 		});
+
+		it("works with npm plugin", function(done){
+			var mains = [
+				"app_a","app_b",
+				"app_c","app_d"
+			],
+				ab = {name: "a_b"},
+				cd = {name: "c_d"},
+				all = {name: "all"},
+				results = {
+					app_a: {
+						name: "a", ab: ab, all: all
+					},
+					app_b: {
+						name: "b", ab: ab, all: all
+					},
+					app_c:{
+						name: "b", cd: cd, all: all
+					},
+					app_d:{
+						name: "d", cd: cd, all: all
+					}
+				};
+
+			rmdir(__dirname+"/multi-main/dist", function(error){
+				if(error){
+					done(error);
+					return;
+				}
+
+				multiBuild({
+					config: __dirname+"/multi-main/package.json!npm",
+					main: mains.slice()
+				}, {
+					quiet: true,
+					minify: false
+				}).then(function(data){
+
+					var checkNext = function(next){
+						if(next) {
+							open("test/multi-main/npm_"+next+".html",function(browser, close){
+								find(browser,"app", function(app){
+
+									assert(true, "got app");
+									comparify(results[next], app);
+									close();
+
+								}, close);
+
+							}, function(err){
+								if(err) {
+									done(err);
+								} else {
+									var mynext = mains.shift();
+									if(mynext) {
+										setTimeout(function(){
+											checkNext(mynext)
+										},1);
+									} else {
+										done();
+									}
+								}
+							});
+						}
+					};
+					checkNext( mains.pop() );
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+
 
 		it("works with steal bundled", function(done){
 			var mains = ["app_a","app_b","app_c","app_d"],
