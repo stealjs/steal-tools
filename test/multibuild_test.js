@@ -918,7 +918,28 @@ describe("multi build", function(){
 		});
 	});
 
+	it("Circular refs works with Babel", function(done){
+		rmdir(__dirname+"/circular/dist", function(error){
+			if(error){
+				done(error);
+				return;
+			}
 
+			multiBuild({
+				config: __dirname+"/circular/package.json!npm",
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/circular/prod.html",function(browser, close){
+					find(browser,"circularWorks", function(result){
+						assert.equal(result, true, "circular refs worked");
+						close();
+					}, close);
+				}, done);
+			}, done);
+		});
+	});
 
 	describe("with plugins", function(){
 		this.timeout(60000);

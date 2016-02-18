@@ -1,0 +1,8 @@
+{
+	"name": "circular",
+	"main": "main.js",
+	"version": "1.0.0",
+	"system": {
+		"transpiler": "babel"
+	}
+}
