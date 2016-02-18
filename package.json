@@ -15,6 +15,7 @@
     "find-line-column": "^0.5.2",
     "fs-extra": "~0.16.3",
     "glob": "^4.3.5",
+    "is-appveyor": "^1.0.0",
     "less": "^2.4.0",
     "lodash": "2.4.1",
     "moment": "^2.10.2",
