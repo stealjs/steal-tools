@@ -157,6 +157,41 @@ describe("export", function(){
 		}, done);
 	});
 
+	describe("eachModule", function(){
+		it("works", function(done){
+			stealExport({
+				system: {
+					main: "pluginifier_builder/pluginify",
+					config: __dirname+"/stealconfig.js"
+				},
+				options: {
+					quiet: true
+				},
+				"outputs": {
+					"basics standalone": {
+						eachModule: ["basics/module/module"],
+						dest: function(){
+							return __dirname+"/out/basics.js"
+						},
+						minify: false
+					}
+				}
+			}).then(function(){
+				open("test/pluginifier_builder/index.html",
+					 function(browser, close){
+
+					find(browser,"RESULT", function(result){
+						assert.ok(result.module, "has module");
+						assert.ok(result.cjs,"has cjs module");
+						assert.equal(result.name, "pluginified");
+						close();
+					}, close);
+				}, done);
+			}, done);
+
+		});
+	});
+
 	describe("helpers", function(){
 		beforeEach(function(done) {
 			rmdir(path.join(__dirname, "pluginifier_builder_helpers", "node_modules"), function(error){
