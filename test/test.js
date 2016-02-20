@@ -21,6 +21,7 @@ if(!isIOjs) {
 require("./multibuild_test");
 require("./transform_test");
 require("./export_test");
+require("./continuous_test");
 require("./concat_test");
 require("./graph_stream_test");
 require("./transpile_test");

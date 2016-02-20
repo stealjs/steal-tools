@@ -18,6 +18,7 @@ describe("multi build", function(){
 		rmdir(__dirname+"/bundle/dist", function(error){
 			if(error){
 				done(error);
+				return;
 			}
 
 			multiBuild({

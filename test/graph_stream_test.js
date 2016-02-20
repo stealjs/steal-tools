@@ -5,7 +5,7 @@ var assert = require("assert");
 var rmdir = asap(require("rimraf"));
 var through = require("through2");
 
-describe("createGraphStream", function(){
+describe("streams.graph", function(){
 	it("Creates a stream containing the dependency graph", function(done){
 		var system = {
 			config: __dirname + "/bundle/stealconfig.js",
