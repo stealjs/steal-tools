@@ -1,12 +1,14 @@
-@function steal-tools.createGraphStream createGraphStream
+@function steal-tools.streams.graph graph
 @parent steal-tools.stream
 
 Create a [stream](https://nodejs.org/api/stream.html) that will result in a dependency graph.
 
-@signature `stealTools.createGraphStream(config, options)`
+@signature `stealTools.streams.graph(config, options)`
 
 ```
-var stream = stealTools.createGraphStream({
+var s = require("steal-tools").streams;
+
+var stream = s.graph({
 	config: __dirname + "/package.json!npm"
 }, {
 	minify: false

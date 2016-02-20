@@ -14,13 +14,17 @@ module.exports = {
 	},
 	"export": exporter,
 
-	// Streaming API
-	createGraphStream: require("./lib/graph/make_graph_with_bundles")
-		.createBundleGraphStream,
 
-	createMultiBuildStream: require("./lib/stream/build"),
-	createConcatStream: require("./lib/bundle/concat_stream"),
-	createWriteStream: require("./lib/bundle/write_bundles")
-		.createWriteStream
+	// Streaming API
+	streams: {
+		graph: require("./lib/graph/make_graph_with_bundles")
+			.createBundleGraphStream,
+
+		transpileAndBundle: require("./lib/stream/build"),
+		concat: require("./lib/bundle/concat_stream"),
+		write: require("./lib/bundle/write_bundles")
+			.createWriteStream
+
+	}
 
 };

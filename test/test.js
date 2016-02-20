@@ -23,4 +23,5 @@ require("./transform_test");
 require("./export_test");
 require("./concat_test");
 require("./graph_stream_test");
+require("./transpile_test");
 require("./write_stream_test");

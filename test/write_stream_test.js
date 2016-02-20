@@ -1,4 +1,4 @@
-var stealTools = require("../index");
+var s = require("../index").streams;
 var testHelpers = require("./helpers");
 
 var asap = require("pdenodeify");
@@ -9,7 +9,7 @@ var through = require("through2");
 var find = testHelpers.find;
 var open = testHelpers.open;
 
-describe("createWriteStream", function(){
+describe("streams.write", function(){
 	it("Creates a stream that writes out bundles to a destination bundles folder", function(done){
 		rmdir(__dirname + "/bundle/dist").then(function(){
 			var system = {
@@ -18,15 +18,10 @@ describe("createWriteStream", function(){
 			};
 			var options = { quiet: true };
 
-			var graph = stealTools.createGraphStream;
-			var multiBuild = stealTools.createMultiBuildStream;
-			var concat = stealTools.createConcatStream;
-			var write = stealTools.createWriteStream;
-
-			var buildStream = graph(system, options)
-				.pipe(multiBuild())
-				.pipe(concat())
-				.pipe(write());
+			var buildStream = s.graph(system, options)
+				.pipe(s.transpileAndBundle())
+				.pipe(s.concat())
+				.pipe(s.write());
 
 			buildStream.pipe(through.obj(function(data){
 				open("test/bundle/bundle.html#a",function(browser, close){

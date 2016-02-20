@@ -1,15 +1,14 @@
-var stealTools = require("../index");
-var createGraphStream = stealTools.createGraphStream;
-var createConcatStream = stealTools.createConcatStream;
-var createMultiBuildStream = stealTools.createMultiBuildStream;
-var createWriteStream = stealTools.createWriteStream;
+var s = require("../index").streams;
+var graph = s.graph;
+var transpileAndBundle = s.transpileAndBundle;
+var concat = s.concat;
 
 var asap = require("pdenodeify");
 var assert = require("assert");
 var rmdir = asap(require("rimraf"));
 var through = require("through2");
 
-describe("createConcatStream", function(){
+describe("streams.concat", function(){
 	it("Concats nodes in a bundle", function(done){
 		var system = {
 			config: __dirname + "/bundle/stealconfig.js",
@@ -17,9 +16,9 @@ describe("createConcatStream", function(){
 		};
 		var options = { minify: false, quiet: true };
 
-		var graphStream = createGraphStream(system, options);
-		var buildStream = graphStream.pipe(createMultiBuildStream());
-		var concatStream = buildStream.pipe(createConcatStream());
+		var graphStream = graph(system, options);
+		var buildStream = graphStream.pipe(transpileAndBundle());
+		var concatStream = buildStream.pipe(concat());
 
 		concatStream.pipe(through.obj(function(data){
 			var bundles = data.bundles;

@@ -1,4 +1,4 @@
-var stealTools = require("../index");
+var s = require("../index").streams;
 
 var asap = require("pdenodeify");
 var assert = require("assert");
@@ -13,7 +13,7 @@ describe("createGraphStream", function(){
 		};
 		var options = { quiet: true };
 
-		var graphStream = stealTools.createGraphStream(system, options);
+		var graphStream = s.graph(system, options);
 
 		graphStream.pipe(through.obj(function(data){
 			assert(data.graph, "has the graph");
