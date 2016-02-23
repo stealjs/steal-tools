@@ -8,6 +8,9 @@
 	"dep4": "1.0.0"
   },
   "system": {
-    "bundle": ["bundleA", "bundleB"]
+    "bundle": ["bundleA", "bundleB"],
+	"configDependencies": [
+      "config_dep"
+	]
   }
 }

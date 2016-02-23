@@ -828,7 +828,7 @@ describe("multi build", function(){
 		});
 	});
 
-	it("Is able to load progressively loaded app with progressively loaded pacakge.json data", function(done){
+	it("Is able to load progressively loaded app with progressively loaded package.json data", function(done){
 		rmdir(__dirname+"/progressive_package/dist", function(error){
 			if(error) return done(error);
 
@@ -848,6 +848,8 @@ describe("multi build", function(){
 
 						assert.equal(b.name, "dep4", "loaded dep4");
 						assert.equal(b.dep5, "dep5", "loaded dep5");
+
+						assert.equal(module.foo, "bar", "configDependency code ran");
 						close();
 					}, close);
 				}, done);
