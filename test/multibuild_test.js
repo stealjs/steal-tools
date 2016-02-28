@@ -1762,7 +1762,7 @@ describe("multi build", function(){
 		});
 
 
-		it.only("should not include src/dep and jqueryt into the bundled file", function(done){
+		it("should not include src/dep and jqueryt into the bundled file", function(done){
 			setup(function(error) {
 				if (error) {
 					return done(error);
