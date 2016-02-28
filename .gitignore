@@ -1,5 +1,6 @@
 .DS_Store
 .tmp*
+.idea
 dist
 test/myapp/production.js
 test/css_paths/bundles/
