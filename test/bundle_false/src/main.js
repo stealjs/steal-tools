@@ -5,7 +5,7 @@ window.app = {
   name: "main"
 };
 
-if($ === undefined){
+if(window.$ === undefined){
   window.$ = {};
 }
 window.MODULE = dep;
