@@ -1762,7 +1762,7 @@ describe("multi build", function(){
 		});
 
 
-		it.only("should not include src/dep and jqueryt into the bundled file", function(done){
+		it("should not include src/dep and jqueryt into the bundled file", function(done){
 			setup(function(error) {
 				if (error) {
 					return done(error);
@@ -1797,7 +1797,6 @@ describe("multi build", function(){
 						find(browser,"MODULE", function(module){
 							assert.ok(module);
 							assert.equal(typeof module.name, "undefined", "depending Module shouldn't have been loaded");
-							close();
 						}, close);
 
 						find(browser,"$", function(jqueryt){
