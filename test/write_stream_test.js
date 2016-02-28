@@ -19,7 +19,9 @@ describe("streams.write", function(){
 			var options = { quiet: true };
 
 			var buildStream = s.graph(system, options)
-				.pipe(s.transpileAndBundle())
+				.pipe(s.transpile())
+				.pipe(s.minify())
+				.pipe(s.bundle())
 				.pipe(s.concat())
 				.pipe(s.write());
 

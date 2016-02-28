@@ -20,7 +20,9 @@ module.exports = {
 		graph: require("./lib/graph/make_graph_with_bundles")
 			.createBundleGraphStream,
 
-		transpileAndBundle: require("./lib/stream/build"),
+		transpile: require("./lib/stream/transpile"),
+		minify: require("./lib/stream/minify"),
+		bundle: require("./lib/stream/bundle"),
 		concat: require("./lib/bundle/concat_stream"),
 		write: require("./lib/bundle/write_bundles")
 			.createWriteStream

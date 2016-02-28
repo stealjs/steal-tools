@@ -3,7 +3,7 @@ var through = require("through2");
 
 var s = require("../index").streams;
 
-describe("streams.transpileAndBundle", function(){
+describe("streams.transpile", function(){
 	var through = require("through2");
 
 	it("Creates a stream of BuildResult", function(done){
@@ -14,9 +14,10 @@ describe("streams.transpileAndBundle", function(){
 		var options = { quiet: true };
 
 		var graphStream = s.graph(system, options);
-		var buildStream = graphStream.pipe(
-			s.transpileAndBundle()
-		);
+		var buildStream = graphStream
+			.pipe(s.transpile())
+			.pipe(s.minify())
+			.pipe(s.bundle());
 
 		buildStream.pipe(through.obj(function(data){
 			assert(data.graph, "has the graph");

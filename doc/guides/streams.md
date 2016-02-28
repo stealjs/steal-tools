@@ -28,9 +28,9 @@ graphStream.pipe(through(function(data){
 }));
 ```
 
-## transpileAndBundle
+## transpile
 
-Given a graph stream, **transpileAndBundle** does data transformation on your dependency graph. This includes **transpiling** to AMD, **minifying** (if enabled in your options), and dividing into optimized **bundles**.
+Given a graph stream, **transpile** will transpile each module in the graph to AMD so that it can be bundled for production.
 
 ```
 var s = require("steal-tools").streams;
@@ -40,18 +40,46 @@ var system = {
 	config: __dirname + "/package.json!npm"
 };
 
-var buildStream = s.graph(system)
-	.pipe(s.transpileAndBundle());
+var transpileStream = s.graph(system)
+	.pipe(s.transpile());
 
-buildStream.pipe(through(function(data){
+transpileStream.pipe(through(function(data){
 	// data contains everything from the graphStream
-	// and also now a 'bundles' property.
+	// With the modules in data.dependencyGraph having
+	// been transpiled to AMD.
+}));
+```
+
+## minify
+
+A [steal-tools.streams.minify] stream will minify the source of each module in your graph individually. You'll want to do this after transpiling.
+
+## bundle
+
+The [steal-tools.streams.bundle] stream will analyze your dependency graph and split it into optimized bundles.
+
+```
+var s = require("steal-tools").streams;
+var through = require("through2");
+
+var system = {
+	config: __dirname + "/package.json!npm"
+};
+
+var bundleStream = s.graph(system)
+	.pipe(s.transpile())
+	.pipe(s.minify())
+	.pipe(s.bundle());
+
+bundleStream.pipe(through(function(data){
+	// data contains everything from the graphStream
+	// and also contains a .bundles property
 }));
 ```
 
 ## concat
 
-Once you've created the multi build stream that contains all of your application's bundles, you can pipe it into a concat stream. The concat stream will **concatenate** the source from all of the graph's dependencies into a single source code.
+Once you've created the stream that contains all of your application's bundles, you can pipe it into a concat stream. The concat stream will **concatenate** the source from all of the graph's dependencies into a single source code.
 
 The [steal-tools.BuildResult] object is what is returned from this stream, and each of the **bundles** within will now contain a `source` property.
 
@@ -73,12 +101,14 @@ var system = {
 };
 
 var stream = s.graph(system)
-	.pipe(s.transpileAndBundle())
+	.pipe(s.transpile())
+	.pipe(s.minify())
+	.pipe(s.bundle())
 	.pipe(s.concat())
 	.pipe(s.write());
 ```
 
-Now let's say we wanted to rerun [babel](https://babeljs.io/) to transpile non-es6 modules. We could do this by injecting a stream after *multiBuild* has completed:
+Now let's say we wanted to rerun [babel](https://babeljs.io/) to transpile non-es6 modules. We could do this by injecting a stream after *graph* has completed. This allows us to use our own transpile stream in place of the one StealTools provides:
 
 ```
 var s = require("steal-tools").streams;
@@ -94,7 +124,7 @@ var transform =	function(source){
 	});
 };
 
-var transform = function(){
+var transpile = function(){
 	return through.obj(function(data){
 		data.bundles.forEach(function(bundle){
 			bundle.nodes.forEach(function(node){
@@ -109,8 +139,9 @@ var system = {
 };
 
 var stream = s.graph(system)
-	.pipe(s.transpileAndBundle())
-	.pipe(transform())
+	.pipe(transpile())
+	.pipe(s.minify())
+	.pipe(s.bundle())
 	.pipe(s.concat())
 	.pipe(s.write());
 ```

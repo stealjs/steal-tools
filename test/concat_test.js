@@ -1,6 +1,8 @@
 var s = require("../index").streams;
 var graph = s.graph;
-var transpileAndBundle = s.transpileAndBundle;
+var transpile = s.transpile;
+var minify = s.minify;
+var bundle = s.bundle;
 var concat = s.concat;
 
 var asap = require("pdenodeify");
@@ -17,7 +19,8 @@ describe("streams.concat", function(){
 		var options = { minify: false, quiet: true };
 
 		var graphStream = graph(system, options);
-		var buildStream = graphStream.pipe(transpileAndBundle());
+		var buildStream = graphStream.pipe(transpile())
+			.pipe(minify()).pipe(bundle());
 		var concatStream = buildStream.pipe(concat());
 
 		concatStream.pipe(through.obj(function(data){
