@@ -1762,7 +1762,7 @@ describe("multi build", function(){
 		});
 
 
-		it("should not include src/dep and jqueryt into the bundled file", function(done){
+		it.only("should not include src/dep and jqueryt into the bundled file", function(done){
 			setup(function(error) {
 				if (error) {
 					return done(error);
@@ -1809,6 +1809,7 @@ describe("multi build", function(){
 							assert.strictEqual(jversion, false, "jqueryt Module shouldn't have been loaded");
 							close();
 						}, close);
+
 					}, done);
 				}).catch(done);
 			});
