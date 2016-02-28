@@ -11,7 +11,7 @@ var find = testHelpers.find;
 var open = testHelpers.open;
 
 describe("multi build", function(){
-    this.timeout(5000);
+	this.timeout(5000);
 
 	it("should work", function(done){
 		rmdir(__dirname+"/bundle/dist", function(error){
@@ -171,17 +171,21 @@ describe("multi build", function(){
 			}
 
 			multiBuild(config, { quiet: true }).then(function(){
-				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
+				var actualJS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
+				var actualCSS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8");
 
-				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
-				var hasGlobalLongVariable = actual.indexOf("anotherVeryLongName") !== -1;
-				var hasDevCode = actual.indexOf("remove this") !== -1;
+				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
+				var hasGlobalLongVariable = actualJS.indexOf("anotherVeryLongName") !== -1;
+				var hasDevCode = actualJS.indexOf("remove this") !== -1;
+				var hasDupCSSSelectors = actualCSS.match(/body/g).length > 1;
 
 				assert(!hasLongVariable, "Minified source renamed long variable.");
 				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
 				assert(!hasDevCode, "Minified source has dev code removed.");
+				assert(!hasDupCSSSelectors, "Minified CSS should not include duplicated selectors");
 
-			}).then(done);
+				done();
+			});
 		});
 
 	});
@@ -204,11 +208,14 @@ describe("multi build", function(){
 			}
 
 			multiBuild(config, options).then(function(){
-				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
+				var actualJS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
+				var actualCSS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8");
 
-				var hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1;
+				var hasDupCSSSelectors = actualCSS.match(/body/g).length > 1;
+				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
 
 				assert(hasLongVariable, "Source includes long variable name.");
+				assert(hasDupCSSSelectors, "Not minified CSS should include duplicated selectors");
 
 				done();
 			}).catch(function(e){
@@ -825,6 +832,35 @@ describe("multi build", function(){
 		});
 	});
 
+	it("Is able to load progressively loaded app with progressively loaded package.json data", function(done){
+		rmdir(__dirname+"/progressive_package/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/progressive_package/package.json!npm"
+			}, {
+				minify: false,
+				quiet: true
+			}).then(function(){
+				open("test/progressive_package/prod.html",
+					 function(browser, close){
+					find(browser, "MODULE", function(module){
+						var a = module.a;
+						var b = module.b;
+						assert.equal(a.name, "dep2", "loaded dep2");
+						assert.equal(a.dep3, "dep3", "loaded dep3");
+
+						assert.equal(b.name, "dep4", "loaded dep4");
+						assert.equal(b.dep5, "dep5", "loaded dep5");
+
+						assert.equal(module.foo, "bar", "configDependency code ran");
+						close();
+					}, close);
+				}, done);
+			});
+		});
+	});
+
 	describe("with plugins", function(){
 		it("work on the client", function(done){
 			this.timeout(5000);
@@ -998,7 +1034,8 @@ describe("multi build", function(){
 								assert.equal(part,"../../images/hero-ribbons.png", "reference is correct");
 								count++;
 							});
-							assert.equal(count, 3, "correct number of styles");
+							// the minifier will compact the selectors applying the same 'background-image' rule
+							assert.equal(count, 1, "correct number of styles");
 							close();
 						}, close);
 
