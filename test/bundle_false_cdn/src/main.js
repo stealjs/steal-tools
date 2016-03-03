@@ -4,4 +4,4 @@ window.app = {
   name: "main"
 };
 
-$('body',document).append('<h1>Hello World</h1>');
+$('body').append('<h1>Hello World</h1>');

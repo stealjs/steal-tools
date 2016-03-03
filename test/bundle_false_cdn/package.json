@@ -10,8 +10,8 @@
     },
     "envs": {
       "window-production": {
-        "map": {
-          "jqueryt": "//code.jquery.com/jquery-2.2.0"
+        "paths": {
+          "jqueryt": "https://code.jquery.com/jquery-2.2.0.js"
         }
       }
     }

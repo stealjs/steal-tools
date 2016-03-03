@@ -4,7 +4,6 @@ import dep from "src/dep";
 window.app = {
   name: "main"
 };
-
 if(window.$ === undefined){
   window.$ = {};
 }

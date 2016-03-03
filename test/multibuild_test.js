@@ -1780,7 +1780,7 @@ describe("multi build", function(){
 					]
 				}).then(function(data){
 
-					// npm production config should map to @empty
+					// in production config this module should map to @empty if it is not needed
 					// a feature can be, steal set automaticly @empty if the module is set with bundles:false in package.json
 					assert.equal(data.loader.envs['window-production'].map.jqueryt, '@empty', 'ignore modules must declare as @empty')
 
@@ -1800,6 +1800,7 @@ describe("multi build", function(){
 						}, close);
 
 						find(browser,"$", function(jqueryt){
+							// jqueryt is mapped to @empty
 							assert.ok(jqueryt);
 								var jversion = false;
 							try{
@@ -1831,7 +1832,7 @@ describe("multi build", function(){
 					]
 				}).then(function(data){
 
-					assert.equal(data.loader.envs['window-production'].map.jqueryt, '//code.jquery.com/jquery-2.2.0', 'CDN is set');
+					assert.equal(data.loader.envs['window-production'].paths.jqueryt, 'https://code.jquery.com/jquery-2.2.0.js', 'CDN is set');
 
 					// bundle exists
 					assert.ok(fs.existsSync(__dirname + "/bundle_false_cdn/dist/bundles/src/main.js"), "bundle main");
