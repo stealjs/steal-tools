@@ -11,7 +11,7 @@
     "envs": {
       "window-production": {
         "paths": {
-          "jqueryt": "https://code.jquery.com/jquery-2.2.0.js"
+          "jqueryt": "//code.jquery.com/jquery-2.2.0.js"
         }
       }
     }

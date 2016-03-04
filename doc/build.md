@@ -7,7 +7,7 @@ Build a module and all of its dependencies and, optionally, other bundles to pro
 
 @param {steal-tools.SystemConfig} config
 
-Specifies configuration values to set on the System loader.  In addition to the `main`, `config`, and `baseUrl` values 
+Specifies configuration values to set on the System loader.  In addition to the `main`, `config`, `baseUrl` and `meta` values 
 specified in [steal-tools.SystemConfig], an additional `bundlesPath` is sometimes provided.
 
 

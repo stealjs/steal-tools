@@ -1832,7 +1832,7 @@ describe("multi build", function(){
 					]
 				}).then(function(data){
 
-					assert.equal(data.loader.envs['window-production'].paths.jqueryt, 'https://code.jquery.com/jquery-2.2.0.js', 'CDN is set');
+					assert.equal(data.loader.envs['window-production'].paths.jqueryt, '//code.jquery.com/jquery-2.2.0.js', 'CDN is set');
 
 					// bundle exists
 					assert.ok(fs.existsSync(__dirname + "/bundle_false_cdn/dist/bundles/src/main.js"), "bundle main");
