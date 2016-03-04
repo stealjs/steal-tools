@@ -32,7 +32,7 @@ the module is:
     }
     ```
 
-* ... [configured to location of the module e.g. a CDN](http://stealjs.com/docs/steal.html)
+* ... [configured to the right location of the module e.g. a CDN](http://stealjs.com/docs/steal.html)
 
     ```
     "envs": {
