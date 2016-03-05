@@ -1643,7 +1643,7 @@ describe("multi build", function(){
 		});
 	});
 
-	describe("do not bundle ignored modules", function(){
+	describe("do not transpile and bundle ignored modules", function(){
 		this.timeout(5000);
 
 		beforeEach(function() {});
@@ -1848,6 +1848,46 @@ describe("multi build", function(){
 						close();
 					}, done);
 
+				}).catch(done);
+			});
+		});
+
+		it("should transpile src/dep and not jqueryt into AMD", function(done){
+			setup(function(error) {
+				if (error) {
+					return done(error);
+				}
+
+				multiBuild({
+					config: __dirname + "/bundle_false/package.json!npm",
+					main: "src/main"
+				}, {
+					quiet: true,
+					minify: false,
+					ignore: [
+						'jqueryt'
+					]
+				}).then(function(data){
+
+					// since we transpile all js files into a AMD format we can check
+					// * if source and amdSource is the same
+					// * amdSource begins not with "define(\'MODULENAME\',
+					// when bundle=false
+					var module = 'jqueryt@2.2.0#dist/jqueryt';
+					var source = data.graph[module].load.source;
+					var amdSource = data.graph[module].activeSource.code;
+
+					assert.equal(source, amdSource, "jquery is not transpiled into AMD");
+					assert.notEqual(amdSource.substr(0, 10+module.length), "define('"+module+"',");
+
+					module = 'src/dep';
+					source = data.graph[module].load.source;
+					amdSource = data.graph[module].activeSource.code;
+
+					assert.notEqual(source, amdSource, "src/dep is transpiled into AMD");
+					assert.equal(amdSource.substr(0, 10+module.length), "define('"+module+"',");
+
+					done();
 				}).catch(done);
 			});
 		});

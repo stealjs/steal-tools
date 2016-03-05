@@ -126,6 +126,40 @@ To load the bundles, a html page should have a script tag like:
 config file. Instead, it should be set when `.build` is called
 and as an attribute in the script that loads _steal.js_.
 
+## <a name="ignore"></a>ignore
+
+The `ignore` option specifies which modules exclude from being bundled.
+A typical scenario for using `ignore` is if you want a dependent module loaded from a CDN.
+The browser can load e.g. jQuery from the browsers cache. This saves traffic and also speed up your site.
+
+If you exclude a module from the bundled file, you have to make sure, that in the [production environment configuration](http://stealjs.com/docs/System.envs.html)
+the module is:
+
+* ... [mapped to the pseudo-module @empty](http://stealjs.com/docs/System.map.html#ignoring-optional-dependencies) if you don't need it in production environment
+
+    ```
+    "envs": {
+        "window-production": {
+            "map": {
+                "MODULENAME': "@empty"
+            }
+        }
+    }
+    ```
+
+* ... [configured](http://stealjs.com/docs/steal.html#path-configure) to the [right location](http://stealjs.com/docs/System.paths.html) of the module e.g. a CDN
+
+    ```
+    "envs": {
+        "production": {
+            "paths": {
+                "jquery': "//code.jquery.com/jquery-2.2.1.min.js"
+            }
+        }
+    }
+    ```
+
+
 ## Multi-page use
 
 The following uses steal-tool's `build` method to programatically build out the "login" and "homepage"

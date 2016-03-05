@@ -17,32 +17,7 @@ Options used to configure the build process.
 progressively loaded.
 
 @option {Array.<moduleName>} ignore An array of module names that should be ignored and not included in the bundled file. 
-If you exclude a module from the bundled file, you have to make sure, that in the [production environment configuration](http://stealjs.com/docs/System.envs.html)
-the module is:
-
-* ... [mapped to the pseudo-module @empty](http://stealjs.com/docs/System.map.html)
-
-    ```
-    "envs": {
-        "window-production": {
-            "map": {
-                "MODULENAME': "@empty"
-            }
-        }
-    }
-    ```
-
-* ... [configured to the right location of the module e.g. a CDN](http://stealjs.com/docs/steal.html)
-
-    ```
-    "envs": {
-        "window-production": {
-            "paths": {
-                "jquery': "//code.jquery.com/jquery-2.2.1.min.js"
-            }
-        }
-    }
-    ```
+For more information take a look at the `ignore` usage http://stealjs.com/docs/steal-tools.build.html#ignore
 
 
 @option {Number} [bundleDepth=3] The maximum number of bundles that need to be loaded
