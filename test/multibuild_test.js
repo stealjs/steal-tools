@@ -1891,6 +1891,30 @@ describe("multi build", function(){
 				}).catch(done);
 			});
 		});
+
+		it("buildConfig is not included in the build", function (done) {
+			rmdir(__dirname +"/build_config/dist", function (error) {
+				if (error) {
+					return done(error);
+				}
+
+				multiBuild({
+					config: __dirname + "/build_config/config.js",
+					main: "main"
+				}, {
+					minify: false,
+					quiet: true,
+					ignore: [
+						'two'
+					]
+				}).then(function () {
+					// Verify that the buildConfig item is not included
+					var js = fs.readFileSync(__dirname + "/build_config/dist/bundles/main.js", "utf8");
+					assert(!/define\('two/.test(js), "two not included");
+				})
+				.then(done, done);
+			});
+		});
 	});
 
 
