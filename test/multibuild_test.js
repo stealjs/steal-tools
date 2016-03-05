@@ -5,6 +5,7 @@ var asap = require("pdenodeify"),
 	multiBuild = require("../lib/build/multi"),
 	rmdir = require("rimraf"),
 	path = require("path"),
+	stealTools = require("../index"),
 	testHelpers = require("./helpers");
 
 var find = testHelpers.find;
@@ -17,6 +18,7 @@ describe("multi build", function(){
 		rmdir(__dirname+"/bundle/dist", function(error){
 			if(error){
 				done(error);
+				return;
 			}
 
 			multiBuild({
