@@ -10,6 +10,8 @@ imported.  This sets [System.main].
 @option {String} [config] The path to a configuration file. This
 will also specify `baseURL`, and sometimes `main`. This sets [System.configPath].
 
+@option {Object<moduleName,metadata>} [meta] A object of <moduleNames> that contain [metadata](http://stealjs.com/docs/System.meta.html)
+
 @option {String} [baseURL] If a configuration file is not used, 
 the [System.baseURL baseURL] value must be set.
 

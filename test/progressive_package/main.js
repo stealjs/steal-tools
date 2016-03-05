@@ -4,7 +4,8 @@ System.import("bundleA").then(function(a){
 	System.import("bundleB").then(function(b){
 		window.MODULE = {
 			a: a,
-			b: b
+			b: b,
+			foo: System.FOO
 		};
 
 		if(System.isEnv("development")) {
