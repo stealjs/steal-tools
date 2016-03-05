@@ -4,6 +4,7 @@ environment:
   # node.js
   - nodejs_version: "0.10"
   - nodejs_version: "0.12"
+  - nodejs_version: "5.5.0"
   # io.js
   - nodejs_version: "3.2.0"
 
