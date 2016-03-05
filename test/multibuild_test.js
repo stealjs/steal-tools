@@ -1729,9 +1729,10 @@ describe("multi build", function(){
 				}).then(function (data) {
 					assert.strictEqual(data.graph['src/dep'].load.metadata.bundle, false, 'set bundle=false to dependent module');
 					assert.strictEqual(data.graph['jqueryt@2.2.0#dist/jqueryt'].load.metadata.bundle, false, 'set bundle=false to normalized jquery');
+
 					assert.equal(data.buildLoader.meta['foobar']['foo'], "bar", "foobar should be also have 'foo'='bar'");
-					assert.equal(data.buildLoader.meta['jqueryt@2.2.0#dist/jqueryt']['foo'], "bar", "jqueryt@2.2.0#dist/jqueryt should be also have 'foo'='bar'");
-					assert.equal(data.graph['jqueryt@2.2.0#dist/jqueryt'].load.metadata.foo, "bar", "jqueryt@2.2.0#dist/jqueryt should be also have 'foo'='bar'");
+					assert.equal(data.buildLoader.meta['jqueryt@2.2.0#dist/jqueryt']['foo'], "bar", "jqueryt@2.2.0#dist/jqueryt should also have 'foo'='bar'");
+					assert.equal(data.graph['jqueryt@2.2.0#dist/jqueryt'].load.metadata.foo, "bar", "jqueryt@2.2.0#dist/jqueryt should also have 'foo'='bar'");
 					done();
 				}).catch(done);
 			});
