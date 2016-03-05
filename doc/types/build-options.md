@@ -16,6 +16,10 @@ Options used to configure the build process.
 @option {Array.<moduleName>} bundle An array of module names that should be
 progressively loaded.
 
+@option {Array.<moduleName>} ignore An array of module names that should be ignored and not included in the bundled file. 
+For more information take a look at the `ignore` usage http://stealjs.com/docs/steal-tools.build.html#ignore
+
+
 @option {Number} [bundleDepth=3] The maximum number of bundles that need to be loaded
 for any `bundle` module. Defaults to `3`.
 
