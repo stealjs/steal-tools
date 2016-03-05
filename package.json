@@ -104,7 +104,7 @@
     "install-engine-dependencies": "install-engine-dependencies"
   },
   "engines": {
-    "node": "0.10.x - 0.12.x || ^3.0.0 || ^5.0.0"
+    "node": "0.10.x - 0.12.x || ^3.0.0 || 4.x - 5.5.x"
   },
   "system": {
     "npmDependencies": [
