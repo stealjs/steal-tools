@@ -29,3 +29,4 @@ test/pluginifier_builder_helpers/cjs/
 test/pluginifier_builder_helpers/browserify-out.js
 test/6to5/dist
 test/bundle_assets/dist
+test/live_reload/out.js
