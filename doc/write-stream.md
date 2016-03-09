@@ -21,7 +21,8 @@ var system = {
 };
 
 var stream = s.graph(system)
-	.pipe(s.transpileAndBundle())
+	.pipe(s.transpile())
+	.pipe(s.bundle())
 	.pipe(s.concat())
 	.pipe(s.write());
 
