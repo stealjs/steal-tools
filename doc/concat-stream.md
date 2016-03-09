@@ -24,10 +24,9 @@ var graphStream = s.graph({
 	minify: false
 });
 
-var buildStream = graphStream.pipe(
-	s.transpile()
-	s.bundle()
-);
+var buildStream = graphStream
+	.pipe(s.transpile())
+ 	.pipe(s.bundle());
 
 var concatStream = buildStream.pipe(s.concat());
 
