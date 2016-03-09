@@ -222,5 +222,29 @@ describe("transformImport", function(){
 			});
 		});
 	});
+
+	it("Works with projects using live-reload", function(done){
+		rmdir(__dirname + "/live-reload/out.js", function(error){
+			if(error) { return done(error); }
+
+			transformImport({
+				config: __dirname + "/live_reload/package.json!npm"
+			}, {
+				quiet: true
+			}).then(function(transform){
+				var out = transform(null, { minify: false }).code;
+				fs.writeFile(__dirname + "/live_reload/out.js", out, function(error){
+					if(error) { return done(error); }
+
+					open("test/live_reload/plugin.html", function(browser, close){
+						find(browser, "MODULE", function(result){
+							assert.equal(result.foo, "bar", "works");
+							close();
+						}, close);
+					}, done);
+				});
+			});
+		});
+	});
 });
 
