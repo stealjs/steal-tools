@@ -3,13 +3,18 @@ var assert = require("assert"),
 	winston = require('winston'),
 	nameBundle = require("../lib/bundle/name");
 
+var cutting = function(dirName, module){
+	return (dirName + module.substr(module.lastIndexOf('/')+1)).substr(0,24);
+};
+
 var dirName = "bundles/";
 
 describe("bundle name without npm package", function() {
 	beforeEach(function () {
+		nameBundle.clearBundleCounter();
 	});
 
-	it("works with just a normal modulename", function () {
+	it("works with just a normal main modulename", function () {
 		var bundle = {
 			bundles: ["main"]
 		};
@@ -24,12 +29,9 @@ describe("bundle name without npm package", function() {
 		bundleName = nameBundle.getName({bundles: ["main/"]});
 		assert.equal(bundleName, dirName + 'main');
 
-		//bundleName = nameBundle.getName({bundles: ["foo@1.0.0#bar/"]});
-		//assert.equal(bundleName, dirName + 'bar');
-
 	});
 
-	it("works with multiple bundles", function(){
+	it("works with concatenate multiple bundles", function(){
 		var bundle = {
 			bundles: ["main/bar", "bar/foo"]
 		};
@@ -58,14 +60,26 @@ describe("bundle name without npm package", function() {
 		var count = 0;
 
 		var bundle = {
-			bundles: ["deep/folder/structure/with/very/very-very-long-name"]
+			bundles: ["deep/folder/structure/with/very/very-very-very-long-name"]
 		};
 		var bundleName = nameBundle.getName(bundle);
-		assert.equal(bundleName, dirName + 'deep/folder/structure/with/very/very-very-long-name');
+		assert.equal(bundleName, dirName + 'deep/folder/structure/with/very/very-very-very-long-name', "main modules will not cut");
 
-		// again...
+		var bundle = {
+			bundles: [
+				"deep/folder/structure/with/very/very-very-very-long-name",
+				"deep/space/nine/is/a/great-series/from-the-90s"
+			]
+		};
+
 		bundleName = nameBundle.getName(bundle);
-		assert.equal(bundleName, dirName + 'deep/folder/structure/with/very/very-very-long-nam-1-' + (count++));
+		assert.equal(bundleName, cutting(dirName, bundle.bundles[0]) + '-f802f7c2');
+
+		// again
+		bundleName = nameBundle.getName(bundle);
+		assert.equal(bundleName, cutting(dirName, bundle.bundles[0]) + '-f802f7c2-' + (count++));
+		assert.strictEqual(count, 1);
+
 
 		bundle = {
 			bundles: ["main/my-very-long-name", "bar/eman-gnol-yrev-ym"]
@@ -82,9 +96,22 @@ describe("bundle name without npm package", function() {
 		assert.equal(bundle.buildType, 'txt');
 		assert.equal(bundle.name, dirName + 'deep/folder/structure/with/very/very/very-long-name.txt!');
 
+
+		bundle = {
+			bundles: [
+				"deep/folder/structure/with/very/very-very-very-long-name",
+				"deep/space/nine/is/a/great-series/from-the-90s"
+			],
+			buildType: "txt"
+		};
+		nameBundle(bundle);
+		assert.equal(bundle.buildType, 'txt');
+		assert.equal(bundle.name, cutting(dirName, bundle.bundles[0]) + '-f802f7c2.txt!');
+
 		// again...
 		nameBundle(bundle);
-		assert.equal(bundle.name, dirName + 'deep/folder/structure/with/very/very/very-long-nam-1-'+ (count++) +'.txt!');
+		assert.equal(bundle.name, cutting(dirName, bundle.bundles[0]) + '-f802f7c2-' + (count++) +'.txt!');
+		assert.strictEqual(count, 2);
 
 	});
 
@@ -102,6 +129,14 @@ describe("bundle name without npm package", function() {
 		assert.equal(bundleName, dirName + 'main');
 	});
 
+	it("only return names with chars, numbers and -", function() {
+		bundle = {
+			bundles: ["main/bar0815.com.js", "bar/foo- bar"]
+		};
+		bundleName = nameBundle.getName(bundle);
+		assert.equal(bundleName, dirName + 'bar0815-com-foo-bar');
+	});
+
 });
 
 describe("bundle name with npm package", function() {
@@ -114,13 +149,15 @@ describe("bundle name with npm package", function() {
 		winston.warn = function(msg){
 			warns.push(msg);
 		};
+
+		nameBundle.clearBundleCounter();
 	});
 
 	afterEach(function(){
 		winston.warn = oldWinstonWarning;
 	});
 
-	it("works for a package module", function(){
+	it("works for a main package module", function(){
 		var bundle = {
 			bundles: ["foo@1.0.0#bar"]
 		};
@@ -128,12 +165,12 @@ describe("bundle name with npm package", function() {
 		assert.equal(bundleName, dirName + 'foo/bar');
 	});
 
-	it("works with multiple bundles", function(){
+	it("works with concatenate multiple bundles", function(){
 		var bundle = {
 			bundles: ["foo@1.0.0#component/my-component", "foo@1.0.0#foo"]
 		};
 		var bundleName = nameBundle.getName(bundle);
-		assert.equal(bundleName, dirName + 'foo/my-component-foo');
+		assert.equal(bundleName, dirName + 'my-component-foo');
 	});
 
 	it("remove trailing parts", function () {
@@ -141,7 +178,23 @@ describe("bundle name with npm package", function() {
 			bundles: ["foo@1.0.0#main/bar/", "foo@1.0.0#foo.js"]
 		};
 		var bundleName = nameBundle.getName(bundle);
-		assert.equal(bundleName, dirName + 'foo/bar-foo');
+		assert.equal(bundleName, dirName + 'bar-foo');
+	});
+
+	it("prevent file collisions", function() {
+		var bundle = {
+			bundles: ["pkg@1.0.0#foo", "pkg@1.0.0#bar"]
+		};
+		var bundleName = nameBundle.getName(bundle);
+		assert.equal(bundleName, dirName + 'foo-bar');
+
+		bundle = {
+			bundles: ["pkg@1.0.0#component/foo", "pkg@1.0.0#component/bar"]
+		};
+		bundleName = nameBundle.getName(bundle);
+		assert.notEqual(bundleName, dirName + 'foo-bar');
+		assert.equal(bundleName, dirName + 'foo-bar-0');
+
 	});
 
 	it("works with a plugin markup", function(){
@@ -159,26 +212,42 @@ describe("bundle name with npm package", function() {
 		assert.equal(bundleName, dirName + 'mypkg/main');
 	});
 
-	it("should show a warning if one of the bundles is not npm like", function(){
+	it("with different module structure", function(){
 		var bundle = {
 			bundles: ["foo@1.0.0#main", "main"]
 		};
 		var bundleName = nameBundle.getName(bundle);
-		assert.equal(bundleName, dirName + 'foo/main-main');
-		// check warning
-		assert.equal(warns.pop(), "There is two or more different package names inside the bundles array." +
-			"The destination folder is set to "+dirName+"/foo");
+		assert.equal(bundleName, dirName + 'main-main');
 	});
 
-	it("should show a warning if in bundles array are two or more diffrent package names", function(){
+	it("with different packages", function(){
 		var bundle = {
 			bundles: ["mypkg@1.0.0#main", "jquery@1.0.0#lib/index"]
 		};
 		var bundleName = nameBundle.getName(bundle);
-		assert.equal(bundleName, dirName + 'mypkg/main-index');
-		// check warning
-		assert.equal(warns.pop(), "There is two or more different package names inside the bundles array." +
-			"The destination folder is set to "+dirName+"/mypkg");
+		assert.equal(bundleName, dirName + 'main-index');
+	});
+
+	it('prevent file collisions with diffrent packages', function() {
+		var bundle = {
+			bundles: ["mypkg@1.0.0#main", "jquery@1.0.0#lib/index"]
+		};
+		var bundleName = nameBundle.getName(bundle);
+		assert.equal(bundleName, dirName + 'main-index');
+
+		bundle = {
+			bundles: ["otherpkg@1.0.0#main", "moment@1.0.0#lib/index"]
+		};
+		bundleName = nameBundle.getName(bundle);
+		assert.equal(bundleName, dirName + 'main-index-0');
+	});
+
+	it("packagename has a dot inside", function() {
+		var bundle = {
+			bundles: ["mypkg.com@1.0.0#main"]
+		};
+		var bundleName = nameBundle.getName(bundle);
+		assert.equal(bundleName, dirName + 'mypkg.com/main');
 	});
 
 });
