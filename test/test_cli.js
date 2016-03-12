@@ -15,7 +15,7 @@ function stealTools(args){
 	return new Promise(function(resolve, reject){
 		var cli = path.resolve(__dirname + "/../bin/steal");
 		args = args || [];
-		
+
 		if(isWin) {
 			args.unshift.apply(args, ["/c", "node", cli]);
 			cli = "cmd";
@@ -137,5 +137,195 @@ describe("steal-tools cli", function () {
 				});
 			});
 		});
+	});
+
+	describe("export", function() {
+
+		var distPath = path.join(
+			__dirname,
+			"pluginifier_builder_helpers",
+			"dist"
+		);
+
+		describe("with --cjs", function() {
+			beforeEach(function() {
+				this.cwd = process.cwd();
+
+				process.chdir(path.join(
+					__dirname,
+					"pluginifier_builder_helpers"
+				));
+
+				fs.removeSync(distPath);
+				return stealTools(["export", "--cjs"]);
+			});
+
+			afterEach(function() {
+				process.chdir(this.cwd);
+			});
+
+			it("+cjs", testCJS);
+
+			it("only outputs +cjs", function() {
+				assert(!fs.existsSync(path.join(distPath, "amd")),
+					"it should not output amd");
+
+				assert(!fs.existsSync(path.join(distPath, "global")),
+					"it should not output global-js");
+			});
+		});
+
+		describe("with --amd", function() {
+			beforeEach(function() {
+				this.cwd = process.cwd();
+
+				process.chdir(path.join(
+					__dirname,
+					"pluginifier_builder_helpers"
+				));
+
+				fs.removeSync(distPath);
+				return stealTools(["export", "--amd"]);
+			});
+
+			afterEach(function() {
+				process.chdir(this.cwd);
+			});
+
+			it("+amd", testAMD);
+
+			it("only outputs +amd", function() {
+				assert(!fs.existsSync(path.join(distPath, "cjs")),
+					"it should not output cjs");
+
+				assert(!fs.existsSync(path.join(distPath, "global")),
+					"it should not output global-js");
+			});
+		});
+
+		describe("with --global", function() {
+			beforeEach(function() {
+				this.cwd = process.cwd();
+
+				process.chdir(path.join(
+					__dirname,
+					"pluginifier_builder_helpers"
+				));
+
+				fs.removeSync(distPath);
+				return stealTools(["export", "--global"]);
+			});
+
+			afterEach(function() {
+				process.chdir(this.cwd);
+			});
+
+			it("+global-js, +global-css", testGlobal);
+
+			it("only outputs +global-js, +global-css", function() {
+				assert(!fs.existsSync(path.join(distPath, "cjs")),
+					"it should not output cjs");
+
+				assert(!fs.existsSync(path.join(distPath, "amd")),
+					"it should not output amd");
+			});
+		});
+
+		describe("with --all it outputs defaults", function() {
+			beforeEach(function() {
+				this.cwd = process.cwd();
+
+				process.chdir(path.join(
+					__dirname,
+					"pluginifier_builder_helpers"
+				));
+
+				fs.removeSync(distPath);
+				return stealTools(["export", "--all"]);
+			});
+
+			afterEach(function() {
+				process.chdir(this.cwd);
+			});
+
+			it("+cjs", testCJS);
+			it("+amd", testAMD);
+			it("+global-js", testGlobal);
+		});
+
+		describe("without options it outputs defaults", function() {
+			beforeEach(function() {
+				this.cwd = process.cwd();
+
+				process.chdir(path.join(
+					__dirname,
+					"pluginifier_builder_helpers"
+				));
+
+				fs.removeSync(distPath);
+				return stealTools(["export"]);
+			});
+
+			afterEach(function() {
+				process.chdir(this.cwd);
+			});
+
+			it("+cjs", testCJS);
+			it("+amd", testAMD);
+			it("+global-js", testGlobal);
+		});
+
+		function testCJS(done) {
+			var browserify = require("browserify")();
+
+			browserify.add(path.join(
+				__dirname,
+				"pluginifier_builder_helpers/browserify.js"
+			));
+
+			var out = fs.createWriteStream(path.join(
+				__dirname,
+				"pluginifier_builder_helpers/browserify-out.js"
+			));
+
+			browserify.bundle()
+				.on("error", done)
+				.pipe(out);
+
+			out.on("error", done);
+
+			out.on("finish", function() {
+				var page = "test/pluginifier_builder_helpers/browserify.html";
+
+				open(page,  function(browser, close) {
+					find(browser,"WIDTH", function(width) {
+						assert.equal(width, 200, "with of element");
+						close();
+					},  close);
+				}, done);
+			});
+		}
+
+		function testAMD(done) {
+			var page = "test/pluginifier_builder_helpers/amd.html";
+
+			open(page, function(browser, close) {
+				find(browser, "WIDTH", function(width) {
+					assert.equal(width, 200, "with of element");
+					close();
+				}, close);
+			}, done);
+		}
+
+		function testGlobal(done) {
+			var page = "test/pluginifier_builder_helpers/global.html";
+
+			open(page, function(browser, close) {
+				find(browser,"WIDTH", function() {
+					assert.ok(browser.window.TABS, "got tabs");
+					close();
+				}, close);
+			}, done);
+		}
 	});
 });

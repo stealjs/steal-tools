@@ -1,8 +1,15 @@
 #!/usr/bin/env node
 var winston = require('winston');
 var path = require("path");
+var _has = require('lodash/has');
+var _keys = require('lodash/keys');
+var _some = require('lodash/some');
+var _merge = require('lodash/merge');
+var _includes = require("lodash/includes");
+var commands = ["build", "transform", "export", "live-reload"];
+
 var yargs = require("yargs")
-	.usage("Usage: $0 [build|transform|live-reload] --main app --config path/to/stealconfig.js")
+	.usage("Usage: $0 [build|transform|export|live-reload] --main app --config path/to/stealconfig.js")
 	.describe("c", "Path to the config file")
 	.alias("c", "config")
 	.default("c", "package.json!npm")
@@ -23,6 +30,10 @@ var yargs = require("yargs")
 	.default("live-reload-port", 8012)
 	.describe("verbose", "Verbose output")
 	.describe("quiet", "Quiet output")
+	.describe("cjs", "For export, it sets default +cjs output")
+	.describe("amd", "For export, it sets default +amd output")
+	.describe("global", "For export, it sets default +global-js and +global-css outputs")
+	.describe("all", "For export, it sets outputs to +cjs, +amd, +global-js, and +global-css")
 	.version(require("../package.json").version, "version")
 	.help("h")
 	.alias("h", "help")
@@ -33,8 +44,7 @@ var yargs = require("yargs")
 			command = "build";
 		}
 
-		if(command !== "build" && command !== "transform" &&
-		  command !== "live-reload") {
+		if(!_includes(commands, command)) {
 			throw "Unknown command: " + command;
 		}
 
@@ -54,7 +64,6 @@ argv.config = argv.config;
 var config = argv.config[0] === "/" ?
 	argv.config : path.join(process.cwd(), argv.config);
 
-
 // Which command to run, either `build` or `transform`
 var command = argv._[0] || "build";
 
@@ -68,23 +77,22 @@ if(argv.main) {
 
 var options = argv;
 
-if(command === "build"){
+switch (command) {
+	case "build":
+		return build();
 
-	return build();
+	case "transform":
+		return transform();
 
-} else if(command === "transform") {
+	case "export":
+		return doExport();
 
-	return transform();
-
-} else if(command === "live-reload") {
-	var liveReload = require("../lib/stream/live");
-
-	options.liveReload = true;
-	liveReload(system, options);
+	case "liveReload":
+		doLiveReload(options);
+		break;
 }
 
 function build() {
-
 	var promise = stealTools.build(system, options);
 
 	// If this is watch mode this is actually a stream.
@@ -93,7 +101,6 @@ function build() {
 			winston.info('\nBuild completed successfully'.green);
 		});
 	}
-
 }
 
 function transform() {
@@ -119,5 +126,53 @@ function transform() {
 			fs.writeFileSync(argv.out+".map", map.toString(), "utf8");
 		}
 	});
+}
 
+function doExport() {
+	var outputs = makeExportOutputs(options);
+
+	var promise = stealTools.export({
+		system: system,
+		options: options,
+		outputs: outputs
+	});
+
+	return promise.then(function() {
+		winston.info('\nExport completed successfully'.green);
+	});
+}
+
+function doLiveReload(options) {
+	options |= {};
+	var liveReload = require("../lib/stream/live");
+
+	options.liveReload = true;
+	liveReload(system, options);
+}
+
+function makeExportOutputs(options) {
+	var result = {};
+
+	var outputs = {
+		cjs: { "+cjs": {} },
+		amd: { "+amd": {} },
+		global: {
+			"+global-css": {},
+			"+global-js": {
+				exports: { "jquery": "jQuery" }
+			}
+		}
+	};
+
+	var hasSetOptions = _some(_keys(outputs), function(out) {
+		return _has(options, out);
+	});
+
+	_keys(outputs).forEach(function(out) {
+		if (!hasSetOptions || options.all || options[out]) {
+			_merge(result, outputs[out]);
+		}
+	});
+
+	return result;
 }
