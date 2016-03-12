@@ -1518,18 +1518,19 @@ describe("multi build", function(){
 			var sharedBundleName = __dirname+"/npm-directories/dist/bundles/" +
 				"category-home.js";
 
-			fs.exists(sharedBundleName, function(exists){
-				assert.ok(exists, "shared bundle name was created in the right folder");
-				done();
-			});
-
-			sharedBundleName = __dirname+"/npm-directories/dist/bundles/npm-dependencies/" +
+			var mainBundleName = __dirname+"/npm-directories/dist/bundles/npm-dependencies/" +
 				"main.js";
 
 			fs.exists(sharedBundleName, function(exists){
-				assert.ok(exists, "main bundle was created in the package folder");
-				done();
+				assert.ok(exists, "shared bundle name was created in the right folder");
+
+				fs.exists(mainBundleName, function(exists){
+					assert.ok(exists, "main bundle was created in the package folder");
+					done();
+				});
+
 			});
+
 		});
 	});
 
@@ -1551,25 +1552,26 @@ describe("multi build", function(){
 					fs.copy(path.join(__dirname, "..", "node_modules","jquery"),
 						path.join(__dirname, "npm", "node_modules", "jquery"), function(error){
 
-						if(error){ return done(error); }
+						//if(error){ return done(error); }
+						//
+						//fs.copy(
+						//	path.join(__dirname, "..", "bower_components","steal"),
+						//	path.join(__dirname, "npm", "node_modules", "steal"), function(error){
+						//
+						//	if(error){ return done(error); }
+						//
+						//	fs.copy(
+						//		path.join(__dirname, "..", "bower_components","steal"),
+						//		__dirname+"/npm/node_modules/steal", function(error){
+						//
+						//		if(error){ return done(error); }
+						//
+						//		done()
+						//
+						//	});
+							done()
 
-						fs.copy(
-							path.join(__dirname, "..", "bower_components","steal"),
-							path.join(__dirname, "npm", "node_modules", "steal"), function(error){
-
-							if(error){ return done(error); }
-
-							fs.copy(
-								path.join(__dirname, "..", "bower_components","steal"),
-								__dirname+"/npm/node_modules/steal", function(error){
-
-								if(error){ return done(error); }
-
-								done()
-
-							});
-
-						});
+						//});
 					});
 				});
 			});
@@ -1638,7 +1640,7 @@ describe("multi build", function(){
 					minify: false
 				}).then(function(){
 					// Make sure they are named correctly.
-					assert(fs.existsSync(__dirname + "/npm/dist/bundles/two.js"),
+					assert(fs.existsSync(__dirname + "/npm/dist/bundles/npm-test/two.js"),
 										 "two bundle in the right place");
 
 					// open the prod page and make sure

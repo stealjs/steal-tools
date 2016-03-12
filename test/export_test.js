@@ -449,7 +449,7 @@ describe("export", function(){
 		});
 	});
 
-	describe("Source Maps", function(){
+	describe.only("Source Maps", function(){
 		this.timeout(5000);
 
 		beforeEach(function(done){
@@ -491,7 +491,7 @@ describe("export", function(){
 
 		function verify() {
 			var globalJsMap = read("global/tabs.js.map");
-			assert.equal(globalJsMap.sources[1], path.join("..","..","src/tabs.js"), "Relative to source file");
+			assert.equal(globalJsMap.sources[1], path.join("..","..","..","src/tabs.js"), "Relative to source file");
 			assert.equal(globalJsMap.file, "tabs.js", "Refers to generated file");
 
 			var globalJs = read("global/tabs.js");
