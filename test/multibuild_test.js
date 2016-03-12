@@ -1523,7 +1523,7 @@ describe("multi build", function(){
 				done();
 			});
 
-			sharedBundleName = __dirname+"/npm-directories/dist/bundles/npm-dependencies" +
+			sharedBundleName = __dirname+"/npm-directories/dist/bundles/npm-dependencies/" +
 				"main.js";
 
 			fs.exists(sharedBundleName, function(exists){
