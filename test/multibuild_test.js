@@ -1552,26 +1552,25 @@ describe("multi build", function(){
 					fs.copy(path.join(__dirname, "..", "node_modules","jquery"),
 						path.join(__dirname, "npm", "node_modules", "jquery"), function(error){
 
-						//if(error){ return done(error); }
-						//
-						//fs.copy(
-						//	path.join(__dirname, "..", "bower_components","steal"),
-						//	path.join(__dirname, "npm", "node_modules", "steal"), function(error){
-						//
-						//	if(error){ return done(error); }
-						//
-						//	fs.copy(
-						//		path.join(__dirname, "..", "bower_components","steal"),
-						//		__dirname+"/npm/node_modules/steal", function(error){
-						//
-						//		if(error){ return done(error); }
-						//
-						//		done()
-						//
-						//	});
-							done()
+						if(error){ return done(error); }
 
-						//});
+						fs.copy(
+							path.join(__dirname, "..", "bower_components","steal"),
+							path.join(__dirname, "npm", "node_modules", "steal"), function(error){
+
+							if(error){ return done(error); }
+
+							fs.copy(
+								path.join(__dirname, "..", "bower_components","steal"),
+								__dirname+"/npm/node_modules/steal", function(error){
+
+								if(error){ return done(error); }
+
+								done()
+
+							});
+
+						});
 					});
 				});
 			});
