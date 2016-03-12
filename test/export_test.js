@@ -449,7 +449,7 @@ describe("export", function(){
 		});
 	});
 
-	describe.only("Source Maps", function(){
+	describe("Source Maps", function(){
 		this.timeout(5000);
 
 		beforeEach(function(done){
