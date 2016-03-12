@@ -1509,7 +1509,7 @@ describe("multi build", function(){
 				}, {
 					quiet: true
 				});
-			}).then(function(){
+			}).then(function(buildResult){
 				done();
 			}, done);
 		});
@@ -1517,8 +1517,17 @@ describe("multi build", function(){
 		it("creates pretty shared bundle names", function(done){
 			var sharedBundleName = __dirname+"/npm-directories/dist/bundles/" +
 				"category-home.js";
+
 			fs.exists(sharedBundleName, function(exists){
-				assert.ok(exists, "shared bundle name was created");
+				assert.ok(exists, "shared bundle name was created in the right folder");
+				done();
+			});
+
+			sharedBundleName = __dirname+"/npm-directories/dist/bundles/npm-dependencies" +
+				"main.js";
+
+			fs.exists(sharedBundleName, function(exists){
+				assert.ok(exists, "main bundle was created in the package folder");
 				done();
 			});
 		});
