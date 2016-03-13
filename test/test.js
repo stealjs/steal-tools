@@ -9,6 +9,7 @@ if(typeof Symbol !== "undefined") {
 	require("./test_live");
 }
 
+require("./bundle_name_test");
 require("./dependencygraph_test");
 require("./bundle_test");
 require("./order_test");
