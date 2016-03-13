@@ -11,7 +11,6 @@ var dirName = "bundles/";
 
 describe("bundle name without npm package", function() {
 	beforeEach(function () {
-		nameBundle.clearBundleCounter();
 	});
 
 	it("works with just a normal main modulename", function () {
@@ -47,38 +46,21 @@ describe("bundle name without npm package", function() {
 	});
 
 	it("works if buildType is a extension", function(){
-		var bundle = {
+		var bundles = [{
 			bundles: ["main"],
 			buildType: "txt"
-		};
-		nameBundle(bundle);
-		assert.equal(bundle.buildType, 'txt');
-		assert.equal(bundle.name, dirName + 'main.txt!');
+		}];
+		nameBundle(bundles);
+		assert.equal(bundles[0].buildType, 'txt');
+		assert.equal(bundles[0].name, dirName + 'main.txt!');
 	});
 
-	it("with very long name", function(){
-		var count = 0;
-
+	it("with very long name", function() {
 		var bundle = {
 			bundles: ["deep/folder/structure/with/very/very-very-very-long-name"]
 		};
 		var bundleName = nameBundle.getName(bundle);
 		assert.equal(bundleName, dirName + 'deep/folder/structure/with/very/very-very-very-long-name', "main modules will not cut");
-
-		var bundle = {
-			bundles: [
-				"deep/folder/structure/with/very/very-very-very-long-name",
-				"deep/space/nine/is/a/great-series/from-the-90s"
-			]
-		};
-
-		bundleName = nameBundle.getName(bundle);
-		assert.equal(bundleName, cutting(dirName, bundle.bundles[0]) + '-f802f7c2');
-
-		// again
-		bundleName = nameBundle.getName(bundle);
-		assert.equal(bundleName, cutting(dirName, bundle.bundles[0]) + '-f802f7c2-' + (count++));
-		assert.strictEqual(count, 1);
 
 
 		bundle = {
@@ -88,30 +70,61 @@ describe("bundle name without npm package", function() {
 		assert.equal(bundleName, dirName + 'my-very-long-nam-34e05993');
 
 
-		bundle = {
-			bundles: ["deep/folder/structure/with/very/very/very-long-name"],
-			buildType: "txt"
-		};
-		nameBundle(bundle);
-		assert.equal(bundle.buildType, 'txt');
-		assert.equal(bundle.name, dirName + 'deep/folder/structure/with/very/very/very-long-name.txt!');
+		var bundles = [
+			{
+				bundles: ["deep/folder/structure/with/very/very/very-long-name"],
+				buildType: "txt"
+			}
+		];
+		nameBundle(bundles);
+		assert.equal(bundles[0].buildType, 'txt');
+		assert.equal(bundles[0].name, dirName + 'deep/folder/structure/with/very/very/very-long-name.txt!');
+
+	});
+
+	it("prevent file collisions", function(){
+		var allBundles = [
+			{
+				bundles: [
+					"deep/folder/structure/with/very/very-very-very-long-name",
+					"deep/space/nine/is/a/great-series/from-the-90s"
+				]
+			},
+			{
+				bundles: [
+					"deep/folder/structure/with/very/very-very-very-long-name",
+					"deep/space/nine/is/a/great-series/from-the-90s"
+				]
+			}
+		];
+
+		nameBundle(allBundles);
+
+		assert.equal(allBundles[0].name, cutting(dirName, allBundles[0].bundles[0]) + '-f802f7c2');
+		assert.equal(allBundles[1].name, cutting(dirName, allBundles[1].bundles[0]) + '-f802f7c2-0');
 
 
-		bundle = {
-			bundles: [
-				"deep/folder/structure/with/very/very-very-very-long-name",
-				"deep/space/nine/is/a/great-series/from-the-90s"
-			],
-			buildType: "txt"
-		};
-		nameBundle(bundle);
-		assert.equal(bundle.buildType, 'txt');
-		assert.equal(bundle.name, cutting(dirName, bundle.bundles[0]) + '-f802f7c2.txt!');
+		allBundles = [
+			{
+				bundles: [
+					"deep/folder/structure/with/very/very-very-very-long-name",
+					"deep/space/nine/is/a/great-series/from-the-90s"
+				],
+				buildType: "txt"
+			},
+			{
+				bundles: [
+					"deep/folder/structure/with/very/very-very-very-long-name",
+					"deep/space/nine/is/a/great-series/from-the-90s"
+				],
+				buildType: "txt"
+			}
+		];
 
-		// again...
-		nameBundle(bundle);
-		assert.equal(bundle.name, cutting(dirName, bundle.bundles[0]) + '-f802f7c2-' + (count++) +'.txt!');
-		assert.strictEqual(count, 2);
+		nameBundle(allBundles);
+		assert.equal(allBundles[0].buildType, 'txt');
+		assert.equal(allBundles[0].name, cutting(dirName, allBundles[0].bundles[0]) + '-f802f7c2.txt!');
+		assert.equal(allBundles[1].name, cutting(dirName, allBundles[1].bundles[0]) + '-f802f7c2-0.txt!');
 
 	});
 
@@ -140,21 +153,10 @@ describe("bundle name without npm package", function() {
 });
 
 describe("bundle name with npm package", function() {
-	var oldWinstonWarning,
-		warns;
 	beforeEach(function () {
-		oldWinstonWarning = winston.warn;
-		warns = [];
-
-		winston.warn = function(msg){
-			warns.push(msg);
-		};
-
-		nameBundle.clearBundleCounter();
 	});
 
 	afterEach(function(){
-		winston.warn = oldWinstonWarning;
 	});
 
 	it("works for a main package module", function(){
@@ -182,18 +184,19 @@ describe("bundle name with npm package", function() {
 	});
 
 	it("prevent file collisions", function() {
-		var bundle = {
-			bundles: ["pkg@1.0.0#foo", "pkg@1.0.0#bar"]
-		};
-		var bundleName = nameBundle.getName(bundle);
-		assert.equal(bundleName, dirName + 'foo-bar');
+		var allBundles = [
+			{
+				bundles: ["pkg@1.0.0#foo", "pkg@1.0.0#bar"]
+			},
+			{
+				bundles: ["pkg@1.0.0#component/foo", "pkg@1.0.0#component/bar"]
+			}
+		];
 
-		bundle = {
-			bundles: ["pkg@1.0.0#component/foo", "pkg@1.0.0#component/bar"]
-		};
-		bundleName = nameBundle.getName(bundle);
-		assert.notEqual(bundleName, dirName + 'foo-bar');
-		assert.equal(bundleName, dirName + 'foo-bar-0');
+		nameBundle(allBundles);
+		assert.equal(allBundles[0].name, dirName + 'foo-bar');
+		assert.notEqual(allBundles[1].name, dirName + 'foo-bar');
+		assert.equal(allBundles[1].name, dirName + 'foo-bar-0');
 
 	});
 
@@ -229,17 +232,19 @@ describe("bundle name with npm package", function() {
 	});
 
 	it('prevent file collisions with diffrent packages', function() {
-		var bundle = {
-			bundles: ["mypkg@1.0.0#main", "jquery@1.0.0#lib/index"]
-		};
-		var bundleName = nameBundle.getName(bundle);
-		assert.equal(bundleName, dirName + 'main-index');
 
-		bundle = {
-			bundles: ["otherpkg@1.0.0#main", "moment@1.0.0#lib/index"]
-		};
-		bundleName = nameBundle.getName(bundle);
-		assert.equal(bundleName, dirName + 'main-index-0');
+		var allBundles = [
+			{
+				bundles: ["mypkg@1.0.0#main", "jquery@1.0.0#lib/index"]
+			},
+			{
+				bundles: ["otherpkg@1.0.0#main", "moment@1.0.0#lib/index"]
+			}
+		];
+
+		nameBundle(allBundles);
+		assert.equal(allBundles[0].name, dirName + 'main-index');
+		assert.equal(allBundles[1].name, dirName + 'main-index-0');
 	});
 
 	it("packagename has a dot inside", function() {
