@@ -140,6 +140,7 @@ describe("steal-tools cli", function () {
 	});
 
 	describe("export", function() {
+		this.timeout(10000);
 
 		var distPath = path.join(
 			__dirname,
