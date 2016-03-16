@@ -1,0 +1,8 @@
+{
+	"name": "pnpm",
+	"main": "main.txt!plug",
+	"version": "1.0.0",
+	"dependencies": {
+		"plug": "1.0.0"
+	}
+}

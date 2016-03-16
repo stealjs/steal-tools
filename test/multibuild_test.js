@@ -1091,6 +1091,34 @@ describe("multi build", function(){
 			}).then(done, done);
 		});
 
+		describe.only("plugins that add npm dependencies to the main", function(){
+			before(function(done){
+				asap(rmdir)(__dirname + "/plugin_npm_main/dist")
+				.then(function(){
+					return multiBuild({
+						config: __dirname + "/plugin_npm_main/package.json!npm"
+					}, {
+						quiet: true,
+						minify: false
+					});
+				});
+			});
+
+			it.skip("Adds those packages to the build", function(){
+
+			});
+
+			it("Is able to load in production", function(done){
+				console.log("Running the test");
+				open("test/plugin_npm_main/prod.html", function(browser, close){
+					find(browser, "MODULE", function(module){
+						assert.equal(module.foo, "bar", "paged loaded");
+						close();
+					}, close);
+				}, done);
+			});
+		});
+
 	});
 
 	describe("bundleAssets", function(){
