@@ -1527,6 +1527,25 @@ describe("multi build", function(){
 	describe("npm package.json builds", function(){
 		this.timeout(5000);
 
+		var ab = {name: "a_b"},
+				cd = {name: "c_d"},
+				all = {name: "all"},
+				results = {
+					app_a: {
+						name: "a", ab: ab, all: all
+					},
+					app_b: {
+						name: "b", ab: ab, all: all
+					},
+					app_c:{
+						name: "b", cd: cd, all: all
+					},
+					app_d:{
+						name: "d", cd: cd, all: all
+					}
+				};
+
+
 		beforeEach(function() {
 
 		});
@@ -1641,6 +1660,68 @@ describe("multi build", function(){
 					}, done);
 
 				}).catch(done);
+			});
+		});
+
+		it("with a single package-module as main", function(done){
+			rmdir(__dirname+"/npm-multi-main/dist", function(error){
+				if(error){
+					done(error);
+					return;
+				}
+
+				multiBuild({
+					config: __dirname+"/npm-multi-main/package.json!npm",
+					main: "multi-main/app_a"
+				}, {
+					quiet: true,
+					minify: false,
+					//bundleSteal: true
+				}).then(function(data){
+
+					open("test/npm-multi-main/app_a.html",function(browser, close){
+						find(browser,"app", function(app){
+							assert(true, "app found");
+							assert.equal(app.name, "a", "app loaded");
+							assert.deepEqual(app, results.app_a, "deps are all loaded");
+							close();
+						}, close);
+					}, done);
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+
+		it.only("with a single array package-module as main", function(done){
+			rmdir(__dirname+"/npm-multi-main/dist", function(error){
+				if(error){
+					done(error);
+					return;
+				}
+
+				multiBuild({
+					config: __dirname+"/npm-multi-main/package.json!npm",
+					main: ["multi-main/app_b"]
+				}, {
+					quiet: true,
+					minify: false,
+					//bundleSteal: true
+				}).then(function(data){
+
+					open("test/npm-multi-main/app_b.html",function(browser, close){
+						find(browser,"app", function(app){
+							assert(true, "app found");
+							assert.equal(app.name, "b", "app loaded");
+							assert.deepEqual(app, results.app_b, "deps are all loaded");
+							close();
+						}, close);
+					}, done);
+
+				}).catch(function(e){
+					done(e);
+				});
 			});
 		});
 	});
@@ -1918,7 +1999,6 @@ describe("multi build", function(){
 			});
 		});
 	});
-
 
 	describe("with long bundle names", function(){
 
