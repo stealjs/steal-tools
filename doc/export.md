@@ -36,7 +36,7 @@ The basic use of `stealTools` export is to provide a "system" that is able to lo
 and several "outputs" that write out those modules in a new form:
 
 ```
-var stealTools = require("stealTools");
+var stealTools = require("steal-tools");
 stealTools.export({
   system: {
     main: "myproject",
@@ -71,7 +71,7 @@ As there are times when the same options may need to be set over and over again,
 contain default values each output can call:
 
 ```
-var stealTools = require("stealTools");
+var stealTools = require("steal-tools");
 stealTools.export({
   system: {
     main: "myproject",  config: __dirname+"/config.js"
@@ -99,7 +99,7 @@ stealTools.export({
 The [steal-tools/lib/build/helpers/cjs] and other export helpers can also be mixed in output names by default:
 
 ```
-var stealTools = require("stealTools");
+var stealTools = require("steal-tools");
 stealTools.export({
   system: {
     main: "myproject",  config: __dirname+"/config.js"
