@@ -3,6 +3,7 @@ node_js:
   - 0.10
   - 0.12
   - "iojs"
+  - 5.5
 before_script:
   - install-engine-dependencies
   - npm install -g bower

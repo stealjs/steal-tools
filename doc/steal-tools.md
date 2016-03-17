@@ -3,6 +3,7 @@
 @group steal-tools.JS JavaScript
 @group steal-tools.cmd Command Line
 @group steal-tools.grunt Grunt Tasks
+@group steal-tools.stream Streams
 @group steal-tools.types Types
 @group steal-tools.helpers Export Helpers
 
