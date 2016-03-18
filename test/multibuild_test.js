@@ -1827,8 +1827,8 @@ describe("multi build", function(){
 
 				multiBuild({
 					config: __dirname+"/npm-multi-main/package.json!npm",
-					//main: ["multi-main/app_a", "multi-main/app_b"]
-					main: "multi-main/app_a"
+					main: ["multi-main/app_a", "multi-main/app_b"]
+					//main: "multi-main/app_a"
 				}, {
 					quiet: true,
 					minify: false,
