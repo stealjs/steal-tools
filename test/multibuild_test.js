@@ -1694,7 +1694,7 @@ describe("multi build", function(){
 			});
 		});
 
-		it.only("with a single array package-module as main", function(done){
+		it("with a single array package-module as main", function(done){
 			rmdir(__dirname+"/npm-multi-main/dist", function(error){
 				if(error){
 					done(error);
@@ -1709,7 +1709,6 @@ describe("multi build", function(){
 					minify: false,
 					//bundleSteal: true
 				}).then(function(data){
-
 					open("test/npm-multi-main/app_b.html",function(browser, close){
 						find(browser,"app", function(app){
 							assert(true, "app found");
