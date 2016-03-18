@@ -1548,7 +1548,7 @@ describe("multi build", function(){
 						name: "b", ab: ab, all: all
 					},
 					app_c:{
-						name: "b", cd: cd, all: all
+						name: "c", cd: cd, all: all
 					},
 					app_d:{
 						name: "d", cd: cd, all: all
@@ -1673,7 +1673,7 @@ describe("multi build", function(){
 			});
 		});
 
-		it("with a single package-module as main", function(done){
+		it("with a single (string) package-module", function(done){
 			rmdir(__dirname+"/npm-multi-main/dist", function(error){
 				if(error){
 					done(error);
@@ -1704,7 +1704,7 @@ describe("multi build", function(){
 			});
 		});
 
-		it("with a single array package-module as main", function(done){
+		it("with a multimain (single) package-module", function(done){
 			rmdir(__dirname+"/npm-multi-main/dist", function(error){
 				if(error){
 					done(error);
@@ -1733,7 +1733,148 @@ describe("multi build", function(){
 				});
 			});
 		});
+
+		it("with a multimain and progressive loaded module", function(done){
+			rmdir(__dirname+"/npm-multi-main/dist", function(error){
+				if(error){
+					done(error);
+					return;
+				}
+
+				multiBuild({
+					config: __dirname+"/npm-multi-main/package.json!npm",
+					main: ["multi-main/app_a"],
+					bundle: ["multi-main/app_c"]
+				}, {
+					quiet: true,
+					minify: false,
+				}).then(function(data){
+
+					open("test/npm-multi-main/app_c.html",function(browser, close){
+						find(browser,"app", function(app){
+							assert(true, "app found");
+							assert.equal(app.name, "c", "app loaded");
+							assert.deepEqual(app, results.app_c, "dependencies are all loaded");
+							close();
+						}, close);
+					}, done);
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+
+		it("with multimain package-modules", function(done){
+			rmdir(__dirname+"/npm-multi-main/dist", function(error){
+				if(error){
+					done(error);
+					return;
+				}
+
+				multiBuild({
+					config: __dirname+"/npm-multi-main/package.json!npm",
+					main: ["multi-main/app_a", "multi-main/app_b"]
+				}, {
+					quiet: true,
+					minify: false
+				}).then(function(data){
+
+					var mains = ["multi-main/app_a", "multi-main/app_b"];
+
+					var checkNext = function(next){
+						if(next) {
+							open("test/npm-multi-main/"+ next.substr(11) +".html",function(browser, close){
+								find(browser,"app", function(app){
+
+									assert(true, "app found");
+									assert.equal(app.name, next.substr(-1), "main loaded");
+									assert.deepEqual(app, results[next.substr(-5)], "dependencies are all loaded");
+									close();
+
+								}, close);
+
+							}, function(err){
+								if(err) {
+									done(err);
+								} else {
+									var mynext = mains.shift();
+									if(mynext) {
+										setTimeout(function(){
+											checkNext(mynext)
+										},1);
+									} else {
+										done();
+									}
+								}
+							});
+						}
+					};
+					checkNext( mains.pop() );
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+
+		it("with multimain package-modules and bundled steal", function(done){
+			rmdir(__dirname+"/npm-multi-main/dist", function(error){
+				if(error){
+					done(error);
+					return;
+				}
+
+				multiBuild({
+					config: __dirname+"/npm-multi-main/package.json!npm",
+					//main: ["multi-main/app_a", "multi-main/app_b"]
+					main: "multi-main/app_a"
+				}, {
+					quiet: true,
+					minify: false,
+					bundleSteal: true
+				}).then(function(data){
+
+					var mains = ["multi-main/app_a", "multi-main/app_b"];
+
+					var checkNext = function(next){
+						if(next) {
+							open("test/npm-multi-main/"+ next.substr(11) +"_bundled.html",function(browser, close){
+								find(browser,"app", function(app){
+
+									assert(true, "app found");
+									assert.equal(app.name, next.substr(-1), "main loaded");
+									assert.deepEqual(app, results[next.substr(-5)], "dependencies are all loaded");
+									close();
+
+								}, close);
+
+							}, function(err){
+								if(err) {
+									done(err);
+								} else {
+									var mynext = mains.shift();
+									if(mynext) {
+										setTimeout(function(){
+											checkNext(mynext)
+										},1);
+									} else {
+										done();
+									}
+								}
+							});
+						}
+					};
+					checkNext( mains.pop() );
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
 	});
+
+
 
 	describe("do not transpile and bundle ignored modules", function(){
 		this.timeout(5000);
