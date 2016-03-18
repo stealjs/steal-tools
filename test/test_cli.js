@@ -4,6 +4,7 @@ var rmdir = require("rimraf");
 var spawn = require("child_process").spawn;
 var asap = require("pdenodeify");
 var fs = require("fs-extra");
+
 require("steal");
 
 var find = require("./helpers").find;
@@ -23,9 +24,9 @@ function stealTools(args){
 
 		var child = spawn(cli, args || []);
 
-		/*var print = function(d){ console.log(d+""); };
-		child.stdout.on("data", print);
-		child.stderr.on("data", print);*/
+		// var print = function(d){ console.log(d+""); };
+		// child.stdout.on("data", print);
+		// child.stderr.on("data", print);
 
 		child.on("close", function(code){
 			if(code === 1) {
@@ -147,6 +148,8 @@ describe("steal-tools cli", function () {
 			"pluginifier_builder_helpers",
 			"dist"
 		);
+
+		before(copyDependencies);
 
 		describe("with --cjs", function() {
 			beforeEach(function() {
@@ -275,6 +278,38 @@ describe("steal-tools cli", function () {
 			it("+amd", testAMD);
 			it("+global-js", testGlobal);
 		});
+
+		function copyDependencies(done) {
+			var prmdir = asap(rmdir);
+			var pcopy = asap(fs.copy);
+
+			var srcModulesPath = path.join(__dirname, "..", "node_modules");
+			var destModulesPath = path.join(
+				__dirname,
+				"pluginifier_builder_helpers",
+				"node_modules"
+			);
+
+			prmdir(destModulesPath)
+				.then(function() {
+					return pcopy(
+						path.join(srcModulesPath,"jquery"),
+						path.join(destModulesPath, "jquery")
+					);
+				})
+				.then(function() {
+					return pcopy(
+						path.join(srcModulesPath, "cssify"),
+						path.join(destModulesPath, "cssify")
+					);
+				})
+				.then(function() {
+					done();
+				})
+				.catch(function(error) {
+					done(error);
+				});
+		}
 
 		function testCJS(done) {
 			var browserify = require("browserify")();
