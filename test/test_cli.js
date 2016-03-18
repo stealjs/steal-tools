@@ -11,21 +11,22 @@ var open = require("./helpers").open;
 
 var isWin = /^win/.test(process.platform);
 
+function stealToolsC(args){
+	var cli = path.resolve(__dirname + "/../bin/steal");
+	args = args || [];
+	
+	if(isWin) {
+		args.unshift.apply(args, ["/c", "node", cli]);
+		cli = "cmd";
+	}
+	
+	var child = spawn(cli, args || []);
+	return child;
+}
+
 function stealTools(args){
 	return new Promise(function(resolve, reject){
-		var cli = path.resolve(__dirname + "/../bin/steal");
-		args = args || [];
-		
-		if(isWin) {
-			args.unshift.apply(args, ["/c", "node", cli]);
-			cli = "cmd";
-		}
-		
-		var child = spawn(cli, args || []);
-
-		/*var print = function(d){ console.log(d+""); };
-		child.stdout.on("data", print);
-		child.stderr.on("data", print);*/
+		var child = stealToolsC(args);
 
 		child.on("close", function(code){
 			if(code === 1) {
@@ -144,4 +145,60 @@ describe("steal-tools cli", function () {
             });
         });
     });
+
+	describe("live-reload", function(){
+		this.timeout(30000);
+
+		beforeEach(function () {
+			this.cwd = process.cwd();
+			process.chdir(__dirname);
+		});
+
+		afterEach(function () {
+			process.chdir(this.cwd);
+		});
+
+		var isListening = /Live-reload server listening/;
+
+		it("logs that it is listening to stderr", function(done){
+			var child = stealToolsC(["live-reload", "-c", "stealconfig.js",
+									"-m", "basics/basics"]);
+
+			child.stderr.setEncoding("utf8");
+			child.stderr.on("data", function(d){
+				if(isListening.test(d)) {
+					child.kill();
+					done();
+				}
+			});
+		});
+
+		it("fails if there is another process running on the same port",
+		   function(done){
+			var one = stealToolsC(["live-reload", "-c", "stealconfig.js",
+									"-m", "basics/basics"]);
+
+			one.stderr.setEncoding("utf8");
+			one.stderr.on("data", function(d){
+				if(isListening.test(d)) {
+					startSecond();
+				}
+			});
+
+			function startSecond() {
+				var two = stealToolsC(["live-reload", "-c", "stealconfig.js",
+									"-m", "basics/basics"]);
+
+				two.stderr.setEncoding("utf8");
+				two.stderr.on("data", function(d){
+					if(/Can not start live-reload/.test(d)) {
+						two.kill();
+						one.kill();
+						done();
+					}
+				});
+			}
+		});
+
+	});
 });
