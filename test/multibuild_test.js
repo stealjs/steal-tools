@@ -811,7 +811,7 @@ describe("multi build", function(){
 		});
 	});
 
-	it.only("envs configuration works", function(done){
+	it("envs configuration works", function(done){
 		rmdir(__dirname+"/envs/dist", function(error){
 			if(error) {
 				return done(error);
