@@ -741,29 +741,57 @@ describe("multi build", function(){
 		});
 	});
 
-	it("sideBundle: true will move a module into a side bundle", function(done){
-		rmdir(__dirname+"/side_bundle/dist", function(error){
-			if(error) return done(error);
+	describe("sideBundle", function(){
+		it("sideBundle: true will move a module into a side bundle", function(done){
+			rmdir(__dirname+"/side_bundle/dist", function(error){
+				if(error) return done(error);
 
-			multiBuild({
-				config: __dirname + "/side_bundle/package.json!npm"
-			}, {
-				quiet: true,
-				minify: false
-			}).then(function(){
-				open("test/side_bundle/prod.html", function(browser, close){
-					find(browser, "MODULE", function(module){
-						var loader = browser.window.System;
+				multiBuild({
+					config: __dirname + "/side_bundle/package.json!npm"
+				}, {
+					quiet: true,
+					minify: false
+				}).then(function(){
+					open("test/side_bundle/prod.html", function(browser, close){
+						find(browser, "MODULE", function(module){
+							var loader = browser.window.System;
 
-						comparify(loader.bundles, {
-							"bundles/b": [ "d", "b" ]
-						}, true);
+							comparify(loader.bundles, {
+								"bundles/b": [ "d", "b" ]
+							}, true);
 
-						close();
-					}, close);
-				}, done);
+							close();
+						}, close);
+					}, done);
+				});
 			});
 		});
+
+		it("can be declared in a child package", function(done){
+			rmdir(__dirname+"/side_bundle/dist", function(error){
+				if(error) return done(error);
+
+				multiBuild({
+					config: __dirname + "/side_bundle_dep/package.json!npm"
+				}, {
+					quiet: true,
+					minify: false
+				}).then(function(){
+					open("test/side_bundle_dep/prod.html", function(browser, close){
+						find(browser, "MODULE", function(module){
+							var loader = browser.window.System;
+
+							comparify(loader.bundles, {
+								"bundles/b": [ "dep@1.0.0#c","dep@1.0.0#d","dep@1.0.0#b" ]
+							}, true);
+
+							close();
+						}, close);
+					}, done);
+				});
+			});
+		});
+
 	});
 
 	it("returns a buildResult", function(done){
