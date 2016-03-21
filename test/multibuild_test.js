@@ -392,21 +392,14 @@ describe("multi build", function(){
 				main: "bundle"
 			},{
 				bundleSteal: true,
-				quiet: true,
-				minify: false
+				quiet: true
 			}).then(function(data){
 
 				open("test/bundle/packaged_steal.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
-						var loader = browser.window.System;
-
 						assert(true, "got A");
 						assert.equal(appA.name, "a", "got the module");
 						assert.equal(appA.ab.name, "a_b", "a got ab");
-
-						// environment is set to production
-						assert.equal(loader.env, 'window-production', "bundle steal is always production");
-
 						close();
 					}, close);
 				}, done);
@@ -436,21 +429,14 @@ describe("multi build", function(){
 				bundlesPath: __dirname + "/bundle/alternate/bundles"
 			},{
 				bundleSteal: true,
-				quiet: true,
-				minify: false
+				quiet: true
 			}).then(function(data){
 
 				open("test/bundle/folder/packaged_steal.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
-						var loader = browser.window.System;
-
 						assert(true, "got A");
 						assert.equal(appA.name, "a", "got the module");
 						assert.equal(appA.ab.name, "a_b", "a got ab");
-
-						// environment is set to production
-						assert.equal(loader.env, 'window-production', "bundle steal is always production");
-
 						close();
 					}, close);
 				}, done);
