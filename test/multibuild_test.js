@@ -1816,13 +1816,14 @@ describe("multi build", function(){
 
 				multiBuild({
 					config: __dirname+"/npm-multi-main/package.json!npm",
-					main: ["multi-main/app_a", "multi-main/app_b"]
+					main: ["multi-main/app_a", "multi-main/app_b"],
+					bundle: ["multi-main/app_c"]
 				}, {
 					quiet: true,
 					minify: false
 				}).then(function(data){
 
-					var mains = ["multi-main/app_a", "multi-main/app_b"];
+					var mains = ["multi-main/app_a", "multi-main/app_b", "multi-main/app_c"];
 
 					var checkNext = function(next){
 						if(next) {
@@ -1870,7 +1871,6 @@ describe("multi build", function(){
 				multiBuild({
 					config: __dirname+"/npm-multi-main/package.json!npm",
 					main: ["multi-main/app_a", "multi-main/app_b"]
-					//main: "multi-main/app_a"
 				}, {
 					quiet: true,
 					minify: false,
