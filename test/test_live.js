@@ -3,9 +3,14 @@ var live = require("../lib/stream/live");
 var fs = require("fs");
 var asap = require("pdenodeify");
 var WebSocket = require("ws");
+var isWindowsCI = require("is-appveyor");
 
 describe("live-reload", function(){
 	this.timeout(10000);
+
+	if(isWindowsCI) {
+		return;
+	}
 
 	var fooPath = __dirname + "/live_reload/foo.js";
 

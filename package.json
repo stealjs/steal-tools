@@ -14,7 +14,6 @@
     "find-line-column": "^0.5.2",
     "fs-extra": "~0.16.3",
     "glob": "^4.3.5",
-    "is-appveyor": "^1.0.0",
     "less": "^2.4.0",
     "lodash": "^4.3.0",
     "moment": "^2.10.2",
@@ -50,6 +49,7 @@
     "grunt-contrib-watch": "~0.3.0",
     "grunt-release": "^0.7.0",
     "grunt-simple-mocha": "^0.4.0",
+    "is-appveyor": "^1.0.0",
     "istanbul": "^0.4.2",
     "jquery": ">2.0",
     "mocha": "^2.2.5",
@@ -57,7 +57,8 @@
     "mock-fs": "^3.1.0",
     "rimraf": "2.1",
     "steal-qunit": "0.0.4",
-    "testee": "^0.2.0"
+    "testee": "^0.2.0",
+    "tree-kill": "^1.0.0"
   },
   "engineDependencies": {
     "node": {
