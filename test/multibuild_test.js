@@ -796,7 +796,7 @@ describe("multi build", function(){
 							var loader = browser.window.System;
 
 							comparify(loader.bundles, {
-								"bundles/b": [ "dep@1.0.0#c","dep@1.0.0#d","dep@1.0.0#b" ]
+								"bundles/dep/b": [ "dep@1.0.0#c","dep@1.0.0#d","dep@1.0.0#b" ]
 							}, true);
 
 							close();
