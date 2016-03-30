@@ -1,5 +1,4 @@
-define(['./dep_all','./dep_c_d'], function(all, cd){
-	// needed to make dep_a_b.js create its own package
+define(['multi-main/lib/dep_all','multi-main/lib/dep_c_d'], function(all, cd){
 	window.app = {
 		all: all,
 		name: "c",
