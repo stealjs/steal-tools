@@ -1,5 +1,10 @@
 var isIOjs = process.version.substr(0, 3) !== "v0.";
 
+// Unit tests
+require("../lib/bundle/bundle_test");
+
+// Integration tests
+
 require("./test_cli");
 require("./grunt_tasks/steal_build");
 
