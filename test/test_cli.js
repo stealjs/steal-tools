@@ -69,7 +69,7 @@ describe("steal-tools cli", function () {
 
 			it("uses build by default", function () {
 				return stealTools(["--config", "stealconfig.js",
-					"--main", "basics/basics", "--no-minify"]);
+								  "--main", "basics/basics", "--no-minify"]);
 			});
 		});
 

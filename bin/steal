@@ -1,179 +1,31 @@
 #!/usr/bin/env node
-var winston = require('winston');
-var path = require("path");
-var _includes = require("lodash/includes");
-var commands = ["build", "transform", "export", "live-reload"];
 
-var yargs = require("yargs")
-	.usage("Usage: $0 [build|transform|export|live-reload] --main app --config path/to/stealconfig.js")
-	.describe("c", "Path to the config file")
-	.alias("c", "config")
-	.default("c", "package.json!npm")
-	.describe("m", "The application's entry point module")
-	.alias("m", "main")
-	.describe("bundles-path", "Defaults to dist/bundles, a directory to save the bundles")
-	.describe("bundle-steal", "Include steal.js in your main bundled JavaScript")
-	.describe("ignore", "For transform, a comma-separated list of modules to not include in the output")
-	.describe("o", "For transform, specify an output file")
-	.alias("o", "out")
-	.describe("source-maps", "Generate source maps")
-	.describe("source-maps-content", "Include the original source contents with the source maps")
-	.describe("minify", "Minify the output. Defaults to true except when used with --watch")
-	.describe("no-minify", "Do not minify the output")
-	.describe("w", "Watch for file changes and rebuild")
-	.alias("w", "watch")
-	.describe("live-reload-port", "Specify a port to use for the websocket server")
-	.default("live-reload-port", 8012)
-	.describe("verbose", "Verbose output")
-	.describe("quiet", "Quiet output")
-	.describe("cjs", "For export, it sets default +cjs output")
-	.describe("amd", "For export, it sets default +amd output")
-	.describe("global", "For export, it sets default +global-js and +global-css outputs")
-	.describe("all", "For export, it sets outputs to +cjs, +amd, +global-js, and +global-css")
-	.version(require("../package.json").version, "version")
+var path = require("path");
+var cmdBuild = require("../lib/cli/cmd_build");
+var cmdExport = require("../lib/cli/cmd_export");
+var cmdTransform = require("../lib/cli/cmd_transform");
+var cmdLiveReload = require("../lib/cli/cmd_live_reload");
+
+var argv = require("yargs")
+	.command(cmdBuild)
+	.command(cmdTransform)
+	.command(cmdLiveReload)
+	.command(cmdExport)
+	.version(function() {
+		return require("../package.json").version;
+	})
 	.help("h")
 	.alias("h", "help")
-	.check(function(argv){
-		var command = argv._[0];
+	.argv;
 
-		if(!command) {
-			command = "build";
-		}
+// run `steal build` by default if no command was provided
+if (!argv._[0]) {
+	var spawn = require("child_process").spawn;
+	var binary = path.join(__dirname, "steal");
+	var rawArgs = ["build"].concat(process.argv.slice(2));
 
-		if(!_includes(commands, command)) {
-			throw "Unknown command: " + command;
-		}
-
-		if(command === "transform" && !argv.out) {
-			throw "When using transform, must specify an out file";
-		}
-
-	});
-
-// The command-line arguments
-var argv = yargs.argv;
-
-// Use package.json as the config by default.
-argv.config = argv.config;
-
-// Determine the location of the config file
-var config = argv.config[0] === "/" ?
-	argv.config : path.join(process.cwd(), argv.config);
-
-// Which command to run, either `build` or `transform`
-var command = argv._[0] || "build";
-
-// Load steal-tools
-var stealTools = require("../index");
-
-var system = { config: config };
-if(argv.main) {
-	system.main = argv.main;
+	spawn(binary, rawArgs, { stdio: "inherit" });
 }
 
-var options = argv;
+module.exports = argv;
 
-switch (command) {
-	case "build":
-		return build();
-
-	case "transform":
-		return transform();
-
-	case "export":
-		return doExport();
-
-	case "live-reload":
-		doLiveReload(options);
-		break;
-}
-
-function build() {
-	var promise = stealTools.build(system, options);
-
-	// If this is watch mode this is actually a stream.
-	if(promise.then) {
-		promise.then(function(){
-			winston.info('\nBuild completed successfully'.green);
-		});
-	}
-}
-
-function transform() {
-	var fs = require("fs");
-	var ignore = [];
-
-	// ignore would be a comma-separated list like jquery,underscore,moment
-	if(argv.ignore) {
-		ignore = argv.ignore.split(",");
-	}
-
-	stealTools.transform(system, options).then(function(transform){
-
-		var result = transform(null, {
-			ignore: ignore
-		});
-		var code = result.code;
-		var map = result.map;
-
-		// Write out the contents
-		fs.writeFileSync(argv.out, code, "utf8");
-		if(map) {
-			fs.writeFileSync(argv.out+".map", map.toString(), "utf8");
-		}
-	});
-}
-
-function doExport() {
-	var outputs = makeExportOutputs(options);
-
-	var promise = stealTools.export({
-		system: system,
-		options: options,
-		outputs: outputs
-	});
-
-	return promise.then(function() {
-		winston.info('\nExport completed successfully'.green);
-	});
-}
-
-function doLiveReload(options) {
-	options |= {};
-	var liveReload = require("../lib/stream/live");
-
-	options.liveReload = true;
-	liveReload(system, options);
-}
-
-function makeExportOutputs(options) {
-	var _has = require("lodash/has");
-	var _keys = require("lodash/keys");
-	var _some = require("lodash/some");
-	var _merge = require("lodash/merge");
-
-	var result = {};
-
-	var outputs = {
-		cjs: { "+cjs": {} },
-		amd: { "+amd": {} },
-		global: {
-			"+global-css": {},
-			"+global-js": {
-				exports: { "jquery": "jQuery" }
-			}
-		}
-	};
-
-	var hasSetOptions = _some(_keys(outputs), function(out) {
-		return _has(options, out);
-	});
-
-	_keys(outputs).forEach(function(out) {
-		if (!hasSetOptions || options.all || options[out]) {
-			_merge(result, outputs[out]);
-		}
-	});
-
-	return result;
-}
