@@ -1,7 +1,5 @@
 var assert = require("assert");
 var live = require("../lib/stream/live");
-var bundle = require("../lib/graph/make_graph_with_bundles");
-var s = require("../index").streams;
 var fs = require("fs");
 var asap = require("pdenodeify");
 var rmdir = asap(require("rimraf"));
