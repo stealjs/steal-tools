@@ -63,14 +63,15 @@ describe("live-reload", function(){
 });
 
 describe("build with live-reload", function(){
-	var system = {
-		config: __dirname + "/live_reload/package.json!npm"
-	};
-	var options = {
-		quiet: true
-	};
 	
 	it("should not be included in bundle", function(done){
+		var system = {
+			config: __dirname + "/live_reload/package.json!npm"
+		};
+		var options = {
+			quiet: true
+		};
+		
 		rmdir(__dirname + "/live_reload/dist").then(function(){
 			
 			var buildStream = s.graph(system, options)
