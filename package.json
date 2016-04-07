@@ -38,6 +38,7 @@
     "browserify": "~8.1.0",
     "comparify": "git://github.com/bitovi/comparify#master",
     "connect": "^2.14.4",
+    "coveralls-send": "0.0.2",
     "cssify": "^0.6.0",
     "engine-dependencies": "^0.2.0",
     "grunt": "~0.4.1",
@@ -49,8 +50,10 @@
     "grunt-contrib-watch": "~0.3.0",
     "grunt-release": "^0.7.0",
     "grunt-simple-mocha": "^0.4.0",
+    "istanbul": "^0.4.2",
     "jquery": ">2.0",
     "mocha": "^2.2.5",
+    "mocha-lcov-reporter": "^1.2.0",
     "mock-fs": "^3.1.0",
     "rimraf": "2.1",
     "steal-qunit": "0.0.4",
@@ -60,10 +63,16 @@
     "node": {
       "0.10.x": {
         "devDependencies": {
-          "zombie": "^3.1.1"
+          "zombie": "^3.1.1",
+          "es6-promise": "^2.0.0"
         }
       },
       "0.12.x": {
+        "devDependencies": {
+          "zombie": "^3.1.1"
+        }
+      },
+      "4.x.x": {
         "devDependencies": {
           "zombie": "^3.1.1"
         }
@@ -101,7 +110,9 @@
     "test": "grunt test && grunt test:browser",
     "mocha": "grunt simplemocha",
     "bower-install": "bower install",
-    "install-engine-dependencies": "install-engine-dependencies"
+    "install-engine-dependencies": "install-engine-dependencies",
+    "coverage": "istanbul cover _mocha -- test/test --timeout 600000",
+    "coverage:upload": "istanbul cover _mocha --report lcovonly -- test/test --timeout 600000 && cat ./coverage/lcov.info | ./node_modules/coveralls-send/bin/coveralls.js"
   },
   "engines": {
     "node": "0.10.x - 0.12.x || ^3.0.0 || 4.x - 5.5.x"
