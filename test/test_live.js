@@ -62,7 +62,7 @@ describe("live-reload", function(){
 	});
 });
 
-describe.only("build with live-reload", function(){
+describe("build with live-reload", function(){
 	var system = {
 		config: __dirname + "/live_reload/package.json!npm"
 	};
