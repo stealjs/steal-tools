@@ -1,6 +1,7 @@
 var assert = require("assert");
 var live = require("../lib/stream/live");
 var fs = require("fs");
+var s = require("../index").streams;
 var asap = require("pdenodeify");
 var rmdir = asap(require("rimraf"));
 var through = require("through2");
