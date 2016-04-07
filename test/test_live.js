@@ -1,8 +1,16 @@
 var assert = require("assert");
 var live = require("../lib/stream/live");
+var bundle = require("../lib/graph/make_graph_with_bundles");
+var s = require("../index").streams;
 var fs = require("fs");
 var asap = require("pdenodeify");
+var rmdir = asap(require("rimraf"));
+var through = require("through2");
+var testHelpers = require("./helpers");
 var WebSocket = require("ws");
+
+var find = testHelpers.find;
+var open = testHelpers.open;
 
 describe("live-reload", function(){
 	this.timeout(10000);
@@ -52,4 +60,39 @@ describe("live-reload", function(){
 			done(err);
 		});
 	});
+});
+
+describe.only("build with live-reload", function(){
+	var system = {
+		config: __dirname + "/live_reload/package.json!npm"
+	};
+	var options = {
+		quiet: true
+	};
+	
+	it("should not be included in bundle", function(done){
+		rmdir(__dirname + "/live_reload/dist").then(function(){
+			
+			var buildStream = s.graph(system, options)
+			.pipe(s.transpile())
+			.pipe(s.minify())
+			.pipe(s.bundle())
+			.pipe(s.concat())
+			.pipe(s.write());
+
+			buildStream.pipe(through.obj(function(data){
+				assert.equal('build', data.loader.getPlatform());
+
+				open("test/live_reload/prod.html",function(browser, close){
+					find(browser,"liveReloadFunction", function(lrf){
+						// empty function
+						assert.equal(lrf.substr(0,13), "function () {");
+						assert(lrf.length <= 20);
+						close();
+					}, close);
+				}, done);
+			}));
+		});
+	});
+
 });
