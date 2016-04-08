@@ -39,4 +39,20 @@ describe("bundle", function(){
 			done(e)
 		});
 	});
+
+	it("localSteal run in 'build' platform", function(done){
+		var system = {
+			config: __dirname + "/live_reload/package.json!npm"
+		};
+		var options = {
+			quiet: true
+		};
+		bundle(system, options).then(function(data){
+			assert.equal('build', data.loader.getPlatform());
+			done();
+		}).catch(function(e){
+			done(e)
+		});
+	});
+
 });
