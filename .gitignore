@@ -2,6 +2,7 @@
 .tmp*
 .idea
 dist
+coverage
 test/myapp/production.js
 test/css_paths/bundles/
 node_modules

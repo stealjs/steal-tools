@@ -1,4 +1,4 @@
-define(['./lib/dep_a_b', './lib/dep_all'], function(ab, all){
+define(['multi-main/lib/dep_a_b', 'multi-main/lib/dep_all'], function(ab, all){
 	window.app = {
 		ab: ab,
 		all: all,
