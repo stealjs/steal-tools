@@ -20,7 +20,7 @@ var argv = require("yargs")
 
 // run `steal build` by default if no command was provided
 if (!argv._[0]) {
-	var spawn = require("child_process").spawn;
+	var spawn = require("cross-spawn-async");
 	var binary = path.join(__dirname, "steal");
 	var rawArgs = ["build"].concat(process.argv.slice(2));
 

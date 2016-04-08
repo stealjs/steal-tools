@@ -74,7 +74,7 @@ describe("steal-tools cli", function () {
 		});
 
 		describe("without --config or --main", function () {
-			this.timeout(10000);
+			this.timeout(15000);
 
 			beforeEach(function (done) {
 				this.cwd = process.cwd();
