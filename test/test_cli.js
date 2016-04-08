@@ -69,12 +69,12 @@ describe("steal-tools cli", function () {
 
 			it("uses build by default", function () {
 				return stealTools(["--config", "stealconfig.js",
-					"--main", "basics/basics", "--no-minify"]);
+								  "--main", "basics/basics", "--no-minify"]);
 			});
 		});
 
 		describe("without --config or --main", function () {
-			this.timeout(10000);
+			this.timeout(15000);
 
 			beforeEach(function (done) {
 				this.cwd = process.cwd();
