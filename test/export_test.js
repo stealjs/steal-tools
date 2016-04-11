@@ -157,6 +157,40 @@ describe("export", function(){
 		}, done);
 	});
 
+	it("evaled globals do not have exports in their scope (#440)", function(done){
+
+		stealExport({
+
+			system: {
+				main: "pluginifier_builder_exports/pluginify",
+				config: __dirname+"/stealconfig.js"
+			},
+			options: {
+				quiet: true
+			},
+			"outputs": {
+				"pluginify without basics": {
+					modules: ["pluginifier_builder_exports/pluginify"],
+					dest: function(){
+						return __dirname+"/out/pluginify_exports.js"
+					},
+					minify: false,
+					format: "global"
+				}
+			}
+		}).then(function(){
+			open("test/pluginifier_builder_exports/index.html", function(browser, close){
+
+				find(browser,"RESULT", function(result){
+					assert.equal(result.name, "pluginified");
+					close();
+				}, close);
+
+			}, done);
+
+		}, done);
+	});
+
 	describe("eachModule", function(){
 		it("works", function(done){
 			stealExport({
@@ -506,4 +540,3 @@ describe("export", function(){
 
 	});
 });
-
