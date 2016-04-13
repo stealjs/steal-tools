@@ -796,7 +796,7 @@ describe("multi build", function(){
 							var loader = browser.window.System;
 
 							comparify(loader.bundles, {
-								"bundles/b": [ "dep@1.0.0#c","dep@1.0.0#d","dep@1.0.0#b" ]
+								"bundles/dep/b": [ "dep@1.0.0#c","dep@1.0.0#d","dep@1.0.0#b" ]
 							}, true);
 
 							close();
@@ -1551,7 +1551,7 @@ describe("multi build", function(){
 				}, {
 					quiet: true
 				});
-			}).then(function(){
+			}).then(function(buildResult){
 				done();
 			}, done);
 		});
@@ -1559,15 +1559,44 @@ describe("multi build", function(){
 		it("creates pretty shared bundle names", function(done){
 			var sharedBundleName = __dirname+"/npm-directories/dist/bundles/" +
 				"category-home.js";
+
+			var mainBundleName = __dirname+"/npm-directories/dist/bundles/npm-dependencies/" +
+				"main.js";
+
 			fs.exists(sharedBundleName, function(exists){
-				assert.ok(exists, "shared bundle name was created");
-				done();
+				assert.ok(exists, "shared bundle name was created in the right folder");
+
+				fs.exists(mainBundleName, function(exists){
+					assert.ok(exists, "main bundle was created in the package folder");
+					done();
+				});
+
 			});
+
 		});
 	});
 
 	describe("npm package.json builds", function(){
 		this.timeout(5000);
+
+		var ab = {name: "a_b"},
+				cd = {name: "c_d"},
+				all = {name: "all"},
+				results = {
+					app_a: {
+						name: "a", ab: ab, all: all
+					},
+					app_b: {
+						name: "b", ab: ab, all: all
+					},
+					app_c:{
+						name: "c", cd: cd, all: all
+					},
+					app_d:{
+						name: "d", cd: cd, all: all
+					}
+				};
+
 
 		beforeEach(function() {
 
@@ -1671,7 +1700,7 @@ describe("multi build", function(){
 					minify: false
 				}).then(function(){
 					// Make sure they are named correctly.
-					assert(fs.existsSync(__dirname + "/npm/dist/bundles/two.js"),
+					assert(fs.existsSync(__dirname + "/npm/dist/bundles/npm-test/two.js"),
 										 "two bundle in the right place");
 
 					// open the prod page and make sure
@@ -1685,7 +1714,209 @@ describe("multi build", function(){
 				}).catch(done);
 			});
 		});
+
+		it("with a single (string) package-module", function(done){
+			rmdir(__dirname+"/npm-multi-main/dist", function(error){
+				if(error){
+					done(error);
+					return;
+				}
+
+				multiBuild({
+					config: __dirname+"/npm-multi-main/package.json!npm",
+					main: "multi-main/app_a"
+				}, {
+					quiet: true,
+					minify: false,
+					//bundleSteal: true
+				}).then(function(data){
+
+					open("test/npm-multi-main/app_a.html",function(browser, close){
+						find(browser,"app", function(app){
+							assert(true, "app found");
+							assert.equal(app.name, "a", "app loaded");
+							assert.deepEqual(app, results.app_a, "deps are all loaded");
+							close();
+						}, close);
+					}, done);
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+
+		it("with a multimain (single) package-module", function(done){
+			rmdir(__dirname+"/npm-multi-main/dist", function(error){
+				if(error){
+					done(error);
+					return;
+				}
+
+				multiBuild({
+					config: __dirname+"/npm-multi-main/package.json!npm",
+					main: ["multi-main/app_b"]
+				}, {
+					quiet: true,
+					minify: false,
+					//bundleSteal: true
+				}).then(function(data){
+					open("test/npm-multi-main/app_b.html",function(browser, close){
+						find(browser,"app", function(app){
+							assert(true, "app found");
+							assert.equal(app.name, "b", "app loaded");
+							assert.deepEqual(app, results.app_b, "deps are all loaded");
+							close();
+						}, close);
+					}, done);
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+
+		it("with a multimain and progressive loaded module", function(done){
+			rmdir(__dirname+"/npm-multi-main/dist", function(error){
+				if(error){
+					done(error);
+					return;
+				}
+
+				multiBuild({
+					config: __dirname+"/npm-multi-main/package.json!npm",
+					main: ["multi-main/app_a"],
+					bundle: ["multi-main/app_c"]
+				}, {
+					quiet: true,
+					minify: false,
+				}).then(function(data){
+
+					open("test/npm-multi-main/app_c.html",function(browser, close){
+						find(browser,"app", function(app){
+							assert(true, "app found");
+							assert.equal(app.name, "c", "app loaded");
+							assert.deepEqual(app, results.app_c, "dependencies are all loaded");
+							close();
+						}, close);
+					}, done);
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+
+		it("with multimain package-modules", function(done){
+			rmdir(__dirname+"/npm-multi-main/dist", function(error){
+				if(error){
+					done(error);
+					return;
+				}
+
+				multiBuild({
+					config: __dirname+"/npm-multi-main/package.json!npm",
+					main: ["multi-main/app_a", "multi-main/app_b"],
+					bundle: ["multi-main/app_c"]
+				}, {
+					quiet: true,
+					minify: false
+				}).then(function(data){
+
+					var mains = ["multi-main/app_a", "multi-main/app_b", "multi-main/app_c"];
+
+					var checkNext = function(next){
+						if(next) {
+							open("test/npm-multi-main/"+ next.substr(11) +".html",function(browser, close){
+								find(browser,"app", function(app){
+
+									assert(true, "app found");
+									assert.equal(app.name, next.substr(-1), "main loaded");
+									assert.deepEqual(app, results[next.substr(-5)], "dependencies are all loaded");
+									close();
+
+								}, close);
+
+							}, function(err){
+								if(err) {
+									done(err);
+								} else {
+									var mynext = mains.shift();
+									if(mynext) {
+										setTimeout(function(){
+											checkNext(mynext)
+										},1);
+									} else {
+										done();
+									}
+								}
+							});
+						}
+					};
+					checkNext( mains.pop() );
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+
+		it("with multimain package-modules and bundled steal", function(done){
+			rmdir(__dirname+"/npm-multi-main/dist", function(error){
+				if(error){
+					done(error);
+					return;
+				}
+
+				multiBuild({
+					config: __dirname+"/npm-multi-main/package.json!npm",
+					main: ["multi-main/app_a", "multi-main/app_b"]
+				}, {
+					quiet: true,
+					minify: false,
+					bundleSteal: true
+				}).then(function(data){
+
+					var mains = ["multi-main/app_a", "multi-main/app_b"];
+
+					var checkNext = function(next){
+						if(next) {
+							open("test/npm-multi-main/"+ next.substr(11) +"_bundled.html",function(browser, close){
+								find(browser,"app", function(app){
+
+									assert(true, "app found");
+									assert.equal(app.name, next.substr(-1), "main loaded");
+									assert.deepEqual(app, results[next.substr(-5)], "dependencies are all loaded");
+									close();
+
+								}, close);
+
+							}, function(err){
+								if(err) {
+									done(err);
+								} else {
+									var mynext = mains.shift();
+									if(mynext) {
+										setTimeout(function(){
+											checkNext(mynext)
+										},1);
+									} else {
+										done();
+									}
+								}
+							});
+						}
+					};
+					checkNext( mains.pop() );
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
 	});
+
+
 
 	describe("do not transpile and bundle ignored modules", function(){
 		this.timeout(5000);
@@ -1960,7 +2191,6 @@ describe("multi build", function(){
 			});
 		});
 	});
-
 
 	describe("with long bundle names", function(){
 
