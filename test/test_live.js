@@ -7,7 +7,7 @@ var rmdir = asap(require("rimraf"));
 var through = require("through2");
 var testHelpers = require("./helpers");
 var WebSocket = require("ws");
-var isWindowsCI = require("is-appveyor");
+var isWindows = process.platform === "win32";
 
 var find = testHelpers.find;
 var open = testHelpers.open;
@@ -15,7 +15,7 @@ var open = testHelpers.open;
 describe("live-reload", function(){
 	this.timeout(10000);
 
-	if(isWindowsCI) {
+	if(isWindows) {
 		return;
 	}
 
