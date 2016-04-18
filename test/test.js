@@ -8,6 +8,7 @@ require("./cli/cmd_transform_test");
 require("./cli/make_system_test");
 require("./cli/cmd_export_test");
 require("./cli/make_outputs_test");
+require("./cli/cmd_live_test");
 require("./get_es_module_imports_test");
 
 // Integration tests
