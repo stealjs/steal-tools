@@ -53,4 +53,16 @@ describe("cmd build module", function() {
 
 		assert(buildArgs.options.minify);
 	});
+
+	it("bundles-path works", function(){
+		cmdBuild.handler({
+			config: "/stealconfig.js",
+			bundlesPath: "foo"
+		});
+
+		assert.deepEqual(buildArgs.system, {
+			config: "/stealconfig.js",
+			bundlesPath: "foo"
+		});
+	});
 });
