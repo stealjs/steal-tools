@@ -10,17 +10,11 @@ This guide is a step-by-step guide to create the app from scratch, or you can cl
 
 This basic single page app demonstrates progressive loading. It uses a common file structure, but Steal supports a wide variety of other configuration options which can be found [steal here].
 
-To get started, ensure [Node.js](http://nodejs.org/) and [bower](http://bower.io/) are properly installed on your computer, then initialize a `package.json` and install [steal-tools].
+To get started, ensure [Node.js](http://nodejs.org/)is properly installed on your computer, then initialize a **package.json** and install [steal-tools], jquery and steal.
 
 	> npm init
 	> npm install steal-tools --save-dev
-
-Next, initialize `bower` and install `jquery` and `steal`.
-
-	> bower init
-	> bower install jquery --save
-	> bower install steal --save
-
+	> npm install steal jquery --save
 
 If you already have a webserver running locally, you can skip this step. If you don't have a web server, install this simple command-line [http-server](https://www.npmjs.com/package/http-server) to help you get started.
 
@@ -30,13 +24,13 @@ If you already have a webserver running locally, you can skip this step. If you 
 
 Create a main module that loads only the bare minimum to determine what "page" you are on. A bare bones example might have a file structure like:
 
-    bower_components/
+    node_modules/
+      steal-tools/
       steal/
         steal.js
       jquery/
-        jquery.js
-    node_modules/
-      steal-tools/
+        dist/
+          jquery.js
     site/
       app.js
       config.js
@@ -46,24 +40,24 @@ Create a main module that loads only the bare minimum to determine what "page" y
       site.html
 
 
-Create `app.js` which imports jquery using ES6 module syntax. We'll use the `hashchange` as a simple mechanism to
+Create **site/app.js** which imports jquery using ES6 module syntax. We'll use the `hashchange` as a simple mechanism to
 track the state of our app. So create an event handler which listens to the `hashchange` event. The hashes`#login`, `signup` and `#homepage` coorespond to a state or "page". Steal-tools will load only the files needed for each state.
 
-`app.js`
+### app.js
 
 	import $ from 'jquery';
 	$(function(){
 	  var onhashchange = function(){
 		if(window.location.hash === "#login") {
-		  System.import("login").then(function(){
+		  System.import("app/login").then(function(){
 			$("#main").login();
 		  });
 		} else if(window.location.hash === "#signup" ) {
-		  System.import("signup").then(function(){
+		  System.import("app/signup").then(function(){
 			$("#main").signup();
 		  });
 		} else {
-		  System.import("homepage").then(function(){
+		  System.import("app/homepage").then(function(){
 			$("#main").homepage();
 		  });
 		}
@@ -72,7 +66,7 @@ track the state of our app. So create an event handler which listens to the `has
 	  onhashchange();
 	});
 
-`homepage.js`
+### homepage.js
 
 	define(['jquery'], function($){
 	  return $.fn.homepage = function(){
@@ -80,28 +74,57 @@ track the state of our app. So create an event handler which listens to the `has
 	  };
 	});
     
-`signup.js`
+### signup.js
 
 	module.exports = $.fn.signup = function(){
 	  this.html("<h1>Signup</h1>");
 	};
 
-`login.js`
+### login.js
 
 	module.exports = $.fn.login = function() {
 	  this.html("<h1>Login</h1>");
 	};
 
-`config.js`
+### package.json
 
-	System.bundle = ["homepage","signup","login"];
-	System.paths.jquery = "../bower_components/jquery/dist/jquery.js";
+```
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "build": "steal-tools",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    ...
+  },
+  "dependencies": {
+	...
+  },
+  "system": {
+    "npmAlgorithm": "flat",
+    "directories": {
+      "lib": "site"
+    },
+    "bundle": [
+      "app/homepage",
+      "app/signup",
+      "app/login"
+    ]
+  }
+}
+```
 
 ## Create your page
 
-Now we'll create the `site.html` page which loads `steal.js`. The `data-main` and `data-config` attributes tell steal to load `config.js`, and `app.js`.
+Now we'll create the **site.html** page which loads **steal.js**. The `main`attribute tells steal to load `app.js` as the application's main module.
 
-`site.html`
+### site.html
     
 	<div id="main"></div>
 
@@ -111,10 +134,8 @@ Now we'll create the `site.html` page which loads `steal.js`. The `data-main` an
 		<li><a href='#login'>log in</a></li>
 	</ul>
 
-	<script src="../bower_components/steal/steal.js"
-			data-main="app"
-			data-config="./config.js"
-			></script>
+	<script src="../node_modules/steal/steal.js"
+			main="app/app"></script>
 
 This is the development mode which progressively loads the scripts but doesn't use the concatenated or minified versions.
 
@@ -122,29 +143,25 @@ This is the development mode which progressively loads the scripts but doesn't u
 
 From your main folder, run:
 
-    > ./node_modules/steal-tools/bin/steal build --main=app --config=site/config.js
+    > npm run build
 
-The path to `config.js` must be relative to your cwd. This command generates a bundle `site/dist/bundles`.
-The directory should have a file structure like:
+This command generates a bundle `./dist/bundles`. The directory should have a file structure like:
 
-    site/dist/bundles/
+    dist/bundles/app/
       app.js
       homepage.js
       signup.js
       login.js
 
-Open site.html in your browser, and open the Network panel in the Developer Tools. As you click on the "home page", "sign up" and "log in" links you'll notice the individual scripts loading as needed. This is progressive loading in action. Only the necessary scripts were loaded initially, the remaining scripts are loaded as needed. If you want to control number of scripts in a bundle, you can configure it like:
-
-    > ./node_modules/steal-tools/bin/steal build --main=app --config=site/config.js --bundleDepth=3
+Open site.html in your browser, and open the Network panel in the Developer Tools. As you click on the "home page", "sign up" and "log in" links you'll notice the individual scripts loading as needed. This is progressive loading in action. Only the necessary scripts were loaded initially, the remaining scripts are loaded as needed.
 
 ## See it live
 
-For production, add `data-env="production"` attribute to your script tag. This tells Steal to use the concatenated and minified versions of the files:
+For production, add `env="production"` attribute to your script tag. This tells Steal to use the concatenated and minified versions of the files:
 
     <div id="main"></div>
-    <script src="../bower_components/steal/steal.js"
-            data-main="app"
-            data-config="./config"
-            data-env="production"></script>
+    <script src="../node_modules/steal/steal.js"
+            main="app/app"
+            env="production"></script>
 
 Again, open the `site.html` in a browser and view the Network tab in the Developer Tools. You notice `app.js` now contains a minified and concatenated version of jquery and config.js. And the `homepage.js`, `signup.js` and `login.js` are only loaded when needed.
