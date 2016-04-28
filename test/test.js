@@ -4,6 +4,7 @@ var isIOjs = process.version.substr(0, 3) !== "v0.";
 require("./clean_address_test");
 require("../lib/bundle/bundle_test");
 require("./cli/cmd_build_test");
+require("./cli/cmd_build_int_test");
 require("./cli/cmd_transform_test");
 require("./cli/make_system_test");
 require("./cli/cmd_export_test");
