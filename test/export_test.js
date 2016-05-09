@@ -425,6 +425,7 @@ describe("export", function(){
 				open("test/ignore_false/prod.html", function(browser, close) {
 					find(browser, "MODULE", function(mod){
 						assert.equal(mod.dep, "a dep");
+						assert.equal(mod.other, "other");
 						close();
 					}, close);
 				}, done);
