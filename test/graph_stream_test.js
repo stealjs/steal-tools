@@ -26,4 +26,19 @@ describe("streams.graph", function(){
 			done();
 		}));
 	});
+
+	it("Works with code using es6", function(done){
+		var system = {
+			config: __dirname + "/es_graph/package.json!npm"
+		};
+		var options = { quiet: false };
+
+		var graphStream = s.graph(system, options);
+
+		graphStream.pipe(through.obj(function(data){
+			var graph = data.graph;
+			assert(graph.main, "Got the main");
+			done();
+		}));
+	});
 });
