@@ -3,6 +3,6 @@ import foo from 'other';
  */
 // import bar from "dep";
 
-export default function(){}
+export * from './foo';
 
 slog('WEB-APP INIT', {...opts})

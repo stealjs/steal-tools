@@ -40,6 +40,7 @@ describe("streams.graph", function(){
 			assert(graph.main, "Got the main");
 			assert(!graph.dep, "There is no dep");
 			assert(!graph.other, "There is no other");
+			assert(graph.foo, "foo is part of the graph");
 			done();
 		}));
 	});
