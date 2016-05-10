@@ -38,6 +38,8 @@ describe("streams.graph", function(){
 		graphStream.pipe(through.obj(function(data){
 			var graph = data.graph;
 			assert(graph.main, "Got the main");
+			assert(!graph.dep, "There is no dep");
+			assert(!graph.other, "There is no other");
 			done();
 		}));
 	});
