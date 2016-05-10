@@ -31,7 +31,7 @@ describe("streams.graph", function(){
 		var system = {
 			config: __dirname + "/es_graph/package.json!npm"
 		};
-		var options = { quiet: false };
+		var options = { quiet: true };
 
 		var graphStream = s.graph(system, options);
 
