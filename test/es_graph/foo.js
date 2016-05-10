@@ -1,1 +1,1 @@
-module.exports = {};
+import './bar';
