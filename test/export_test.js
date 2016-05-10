@@ -413,24 +413,19 @@ describe("export", function(){
 			this.timeout(10000);
 			stealExport({
 				system: {
-					config: __dirname + "/pluginifier_builder_helpers/package.json!npm",
-					meta: {
-						jquery: { format: "global" }
-					}
+					config: __dirname + "/ignore_false/package.json!npm"
 				},
 				options: { quiet: true },
 				outputs: {
 					"+global-js": {
-						ignore: false,
-						exports: {
-							"jquery": "jQuery"
-						}
+						ignore: false
 					}
 				}
 			}).then(function(){
-				open("test/pluginifier_builder_helpers/global-all.html", function(browser, close) {
-					find(browser, "TABS", function(width){
-						assert.ok(browser.window.TABS, "got tabs");
+				open("test/ignore_false/prod.html", function(browser, close) {
+					find(browser, "MODULE", function(mod){
+						assert.equal(mod.dep, "a dep");
+						assert.equal(mod.other, "other");
 						close();
 					}, close);
 				}, done);
