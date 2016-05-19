@@ -37,14 +37,26 @@ The other possible format values are "steal","amd", and "cjs".
 This is so that the script can be run standalone. Setting _noGlobalShim_ to `true` prevents adding the shim.
 Excluding the shim means it will have to be run with an AMD loader like _requirejs_.
 
-@option {Object<moduleName,String>} exports A mapping of module names to their name on the
-global object.  For example, if an output depends on jQuery, but does not include it, you
-should include:
+@option {Object<moduleName,String>} [exports] A mapping of module names to their name on the global object (such as the `window`).  For example, if an output depends on jQuery, but does not include it, you should include:
 
     transform("mywidget",{exports: {"jquery": "jQuery"}})
 
-__note__ - In future releases, 
-these values will be taken directly from [System.shim] configuration values.
+Conversely you can also use exports to set values that should be exported from your module. For example, if you have a module **foo** that exports a value like:
+
+    module.exports = "foo bar";
+
+You can specify where this module should be set on the window:
+
+    transform("mywidget", {
+      exports: {
+        "foo": "foo.bar"
+	  }
+	});
+
+Which, when the script runs will result in:
+
+    window.foo.bar === "foo bar";
+
 
 @option {Boolean} [useNormalizedDependencies=true] Use normalized dependency names instead of
 relative module names.  For example "foo/bar" will be used instead of "./bar".

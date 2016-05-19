@@ -34,3 +34,5 @@ test/pluginifier_builder_helpers/browserify-out.js
 test/6to5/dist
 test/bundle_assets/dist
 test/live_reload/out.js
+test/transform_export/out.js
+test/exports_basics/out.js
