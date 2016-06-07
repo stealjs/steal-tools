@@ -1,123 +1,37 @@
 #!/usr/bin/env node
-var winston = require('winston');
+
 var path = require("path");
-var yargs = require("yargs")
-	.usage("Usage: $0 [build|transform|live-reload] --main app --config path/to/stealconfig.js")
-	.describe("c", "Path to the config file")
-	.alias("c", "config")
-	.default("c", "package.json!npm")
-	.describe("m", "The application's entry point module")
-	.alias("m", "main")
-	.describe("bundles-path", "Defaults to dist/bundles, a directory to save the bundles")
-	.describe("bundle-steal", "Include steal.js in your main bundled JavaScript")
-	.describe("ignore", "For transform, a comma-separated list of modules to not include in the output")
-	.describe("o", "For transform, specify an output file")
-	.alias("o", "out")
-	.describe("source-maps", "Generate source maps")
-	.describe("source-maps-content", "Include the original source contents with the source maps")
-	.describe("minify", "Minify the output. Defaults to true except when used with --watch")
-	.describe("no-minify", "Do not minify the output")
-	.describe("w", "Watch for file changes and rebuild")
-	.alias("w", "watch")
-	.describe("live-reload-port", "Specify a port to use for the websocket server")
-	.default("live-reload-port", 8012)
-	.describe("verbose", "Verbose output")
-	.describe("quiet", "Quiet output")
-	.version(require("../package.json").version, "version")
+var cmdBuild = require("../lib/cli/cmd_build");
+var cmdExport = require("../lib/cli/cmd_export");
+var cmdTransform = require("../lib/cli/cmd_transform");
+var cmdLiveReload = require("../lib/cli/cmd_live_reload");
+
+var argv = require("yargs")
+	.command(cmdBuild)
+	.command(cmdTransform)
+	.command(cmdLiveReload)
+	.command(cmdExport)
+	.version(function() {
+		return require("../package.json").version;
+	})
 	.help("h")
 	.alias("h", "help")
-	.check(function(argv){
-		var command = argv._[0];
+	.argv;
 
-		if(!command) {
-			command = "build";
-		}
-
-		if(command !== "build" && command !== "transform" &&
-		  command !== "live-reload") {
-			throw "Unknown command: " + command;
-		}
-
-		if(command === "transform" && !argv.out) {
-			throw "When using transform, must specify an out file";
-		}
-
-	});
-
-// The command-line arguments
-var argv = yargs.argv;
-
-// Use package.json as the config by default.
-argv.config = argv.config;
-
-// Determine the location of the config file
-var config = argv.config[0] === "/" ?
-	argv.config : path.join(process.cwd(), argv.config);
-
-
-// Which command to run, either `build` or `transform`
-var command = argv._[0] || "build";
-
-// Load steal-tools
-var stealTools = require("../index");
-
-var system = { config: config };
-if(argv.main) {
-	system.main = argv.main;
-}
-
-var options = argv;
-
-if(command === "build"){
-
-	return build();
-
-} else if(command === "transform") {
-
-	return transform();
-
-} else if(command === "live-reload") {
-	var liveReload = require("../lib/stream/live");
-
-	options.liveReload = true;
-	liveReload(system, options);
-}
-
-function build() {
-
-	var promise = stealTools.build(system, options);
-
-	// If this is watch mode this is actually a stream.
-	if(promise.then) {
-		promise.then(function(){
-			winston.info('\nBuild completed successfully'.green);
-		});
+// run `steal build` by default if no command was provided
+if (!argv._[0]) {
+	var isWin = /^win/.test(process.platform);
+	var spawn = require("child_process").spawn;
+	var binary = path.join(__dirname, "steal");
+	var rawArgs = ["build"].concat(process.argv.slice(2));
+	
+	if(isWin) {
+		rawArgs.unshift.apply(rawArgs, ["/c", "node", binary]);
+		binary = "cmd";
 	}
 
+	spawn(binary, rawArgs, { stdio: "inherit" });
 }
 
-function transform() {
-	var fs = require("fs");
-	var ignore = [];
+module.exports = argv;
 
-	// ignore would be a comma-separated list like jquery,underscore,moment
-	if(argv.ignore) {
-		ignore = argv.ignore.split(",");
-	}
-
-	stealTools.transform(system, options).then(function(transform){
-
-		var result = transform(null, {
-			ignore: ignore
-		});
-		var code = result.code;
-		var map = result.map;
-
-		// Write out the contents
-		fs.writeFileSync(argv.out, code, "utf8");
-		if(map) {
-			fs.writeFileSync(argv.out+".map", map.toString(), "utf8");
-		}
-	});
-
-}
