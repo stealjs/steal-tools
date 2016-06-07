@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/stealjs/steal-tools.svg?branch=master)](https://travis-ci.org/stealjs/steal-tools)
 [![Build status](https://ci.appveyor.com/api/projects/status/vqk3ybu6fo5jwptk/branch/master?svg=true)](https://ci.appveyor.com/project/matthewp/steal-tools-427/branch/master)
 [![npm version](https://badge.fury.io/js/steal-tools.svg)](http://badge.fury.io/js/steal-tools)
+[![Coverage Status](https://coveralls.io/repos/github/stealjs/steal-tools/badge.svg?branch=master)](https://coveralls.io/github/stealjs/steal-tools?branch=master)
 
 `steal-tools` is a collection of command-line utilities
 that:

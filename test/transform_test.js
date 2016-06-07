@@ -1,4 +1,5 @@
 var assert = require("assert"),
+	asap = require("pdenodeify"),
 	fs = require("fs-extra"),
 	rmdir = require("rimraf"),
 	testHelpers = require("./helpers"),
@@ -219,6 +220,62 @@ describe("transformImport", function(){
 						}, close);
 					}, done);
 				});
+			});
+		});
+	});
+
+	it("Works with projects using live-reload", function(done){
+		rmdir(__dirname + "/live-reload/out.js", function(error){
+			if(error) { return done(error); }
+
+			transformImport({
+				config: __dirname + "/live_reload/package.json!npm"
+			}, {
+				quiet: true
+			}).then(function(transform){
+				var out = transform(null, { minify: false }).code;
+				fs.writeFile(__dirname + "/live_reload/out.js", out, function(error){
+					if(error) { return done(error); }
+
+					open("test/live_reload/plugin.html", function(browser, close){
+						find(browser, "MODULE", function(result){
+							assert.equal(result.foo, "bar", "works");
+							close();
+						}, close);
+					}, done);
+				});
+			});
+		});
+	});
+
+	describe("exports", function(){
+		it("can be used to export a module's value", function(done){
+			asap(rmdir)(__dirname + "/transform_export/out.js")
+			.then(function(){
+				return transformImport({
+					config: __dirname + "/transform_export/package.json!npm"
+				}, {
+					quiet: true,
+					exports: {
+						"app/foo": "foo.bar",
+						"other": "other.thing"
+					}
+				});
+			})
+			.then(function(transform){
+				var out = transform(null, { minify: false }).code;
+
+				return asap(fs.writeFile)(__dirname + "/transform_export/out.js",
+										  out);
+			})
+			.then(function(){
+				open("test/transform_export/site.html", function(browser, close){
+					find(browser, "MODULE", function(mod){
+						assert.equal(mod.foo, "foo bar", "got foo");
+						assert.equal(mod.other, "other thing", "got other");
+						close();
+					}, close);
+				}, done);
 			});
 		});
 	});

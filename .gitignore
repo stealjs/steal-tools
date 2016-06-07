@@ -1,9 +1,13 @@
 .DS_Store
 .tmp*
+.idea
 dist
+coverage
 test/myapp/production.js
 test/css_paths/bundles/
 node_modules
+!test/bundle_false/node_modules
+!test/bundle_false_cdn/node_modules
 bower_components
 /packages/
 test/out/
@@ -29,3 +33,6 @@ test/pluginifier_builder_helpers/cjs/
 test/pluginifier_builder_helpers/browserify-out.js
 test/6to5/dist
 test/bundle_assets/dist
+test/live_reload/out.js
+test/transform_export/out.js
+test/exports_basics/out.js

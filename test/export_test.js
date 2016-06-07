@@ -157,6 +157,75 @@ describe("export", function(){
 		}, done);
 	});
 
+	it("evaled globals do not have exports in their scope (#440)", function(done){
+
+		stealExport({
+
+			system: {
+				main: "pluginifier_builder_exports/pluginify",
+				config: __dirname+"/stealconfig.js"
+			},
+			options: {
+				quiet: true
+			},
+			"outputs": {
+				"pluginify without basics": {
+					modules: ["pluginifier_builder_exports/pluginify"],
+					dest: function(){
+						return __dirname+"/out/pluginify_exports.js"
+					},
+					minify: false,
+					format: "global"
+				}
+			}
+		}).then(function(){
+			open("test/pluginifier_builder_exports/index.html", function(browser, close){
+
+				find(browser,"RESULT", function(result){
+					assert.equal(result.name, "pluginified");
+					close();
+				}, close);
+
+			}, done);
+
+		}, done);
+	});
+
+	describe("eachModule", function(){
+		it("works", function(done){
+			stealExport({
+				system: {
+					main: "pluginifier_builder/pluginify",
+					config: __dirname+"/stealconfig.js"
+				},
+				options: {
+					quiet: true
+				},
+				"outputs": {
+					"basics standalone": {
+						eachModule: ["basics/module/module"],
+						dest: function(){
+							return __dirname+"/out/basics.js"
+						},
+						minify: false
+					}
+				}
+			}).then(function(){
+				open("test/pluginifier_builder/index.html",
+					 function(browser, close){
+
+					find(browser,"RESULT", function(result){
+						assert.ok(result.module, "has module");
+						assert.ok(result.cjs,"has cjs module");
+						assert.equal(result.name, "pluginified");
+						close();
+					}, close);
+				}, done);
+			}, done);
+
+		});
+	});
+
 	describe("helpers", function(){
 		beforeEach(function(done) {
 			rmdir(path.join(__dirname, "pluginifier_builder_helpers", "node_modules"), function(error){
@@ -344,28 +413,53 @@ describe("export", function(){
 			this.timeout(10000);
 			stealExport({
 				system: {
-					config: __dirname + "/pluginifier_builder_helpers/package.json!npm",
-					meta: {
-						jquery: { format: "global" }
-					}
+					config: __dirname + "/ignore_false/package.json!npm"
 				},
 				options: { quiet: true },
 				outputs: {
 					"+global-js": {
-						ignore: false,
-						exports: {
-							"jquery": "jQuery"
-						}
+						ignore: false
 					}
 				}
 			}).then(function(){
-				open("test/pluginifier_builder_helpers/global-all.html", function(browser, close) {
-					find(browser, "TABS", function(width){
-						assert.ok(browser.window.TABS, "got tabs");
+				open("test/ignore_false/prod.html", function(browser, close) {
+					find(browser, "MODULE", function(mod){
+						assert.equal(mod.dep, "a dep");
+						assert.equal(mod.other, "other");
 						close();
 					}, close);
 				}, done);
 			}, done);
+		});
+
+		describe("+standalone", function(){
+			it("Works with exporting a module from a dependency", function(done){
+				this.timeout(10000);
+				stealExport({
+					system: {
+						config: __dirname+"/exports_basics/package.json!npm"
+					},
+					options: { quiet: true },
+					"outputs": {
+						"+standalone": {
+							exports: {
+								"foo": "FOO.foo"
+							},
+							dest: __dirname + "/exports_basics/out.js"
+						}
+					}
+				})
+				.then(function() {
+					open("test/exports_basics/global.html",
+						 function(browser, close) {
+						find(browser,"FOO", function(foo){
+							assert.equal(foo.foo.bar.name, "bar", "it worked");
+							close();
+						}, close);
+					}, done);
+				}, done);
+
+			});
 		});
 
 	});
@@ -458,7 +552,7 @@ describe("export", function(){
 
 		function verify() {
 			var globalJsMap = read("global/tabs.js.map");
-			assert.equal(globalJsMap.sources[1], path.join("..","..","src/tabs.js"), "Relative to source file");
+			assert.equal(globalJsMap.sources[1], "../../../src/tabs.js", "Relative to source file");
 			assert.equal(globalJsMap.file, "tabs.js", "Refers to generated file");
 
 			var globalJs = read("global/tabs.js");
@@ -473,4 +567,3 @@ describe("export", function(){
 
 	});
 });
-
