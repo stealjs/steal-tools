@@ -70,41 +70,6 @@ describe("multi build", function(){
 		});
 	});
 
-	it("should pass the babelOptions to transpile", function(done){
-		this.timeout(20000);
-
-		rmdir(__dirname + "/es6-loose/bundle", function(error){
-			if(error) {
-				return done(error);
-			}
-
-			multiBuild({
-				config: __dirname + "/es6-loose/config.js",
-				main: "main",
-				transpiler: "babel"
-			}, {
-				quiet: true,
-				minify: false,
-				babelOptions: {
-					loose: 'es6.modules'
-				}
-			}).then(function(){
-				fs.readFile("test/es6-loose/dist/bundles/main.js", "utf8", function(err, data) {
-					if (err) {
-						done(err);
-					}
-
-					var noObjectDefineProperty = data.indexOf("Object.defineProperty") === -1;
-					var es6ModuleProperty = data.indexOf("exports.__esModule = true;") >= 0;
-
-					assert(noObjectDefineProperty, "loose mode does not use Object.defineProperty");
-					assert(es6ModuleProperty, "should assign __esModule as normal object property");
-					done();
-				});
-			}).catch(done);
-		});
-	});
-
 	it("allows you to transpile modules on your own", function(done){
 		rmdir(__dirname + "/self_transpile/dist", function(error){
 			if(error) {
@@ -146,7 +111,8 @@ describe("multi build", function(){
 
 			multiBuild({
 				config: __dirname + "/simple-es6/config.js",
-				main: "main"
+				main: "main",
+				transpiler: "traceur"
 			}, {
 				quiet: true
 			}).then(function(){
@@ -161,9 +127,11 @@ describe("multi build", function(){
 	});
 
 	it("Should minify by default", function(done){
+		this.timeout(60000);
 		var config = {
 			config: __dirname + "/minify/config.js",
-			main: "minify"
+			main: "minify",
+			transpiler: "traceur"
 		};
 
 		rmdir(__dirname+"/minify/dist", function(error){
@@ -195,7 +163,8 @@ describe("multi build", function(){
 	it("Should allow minification to be turned off", function(done){
 		var config = {
 			config: __dirname + "/minify/config.js",
-			main: "minify"
+			main: "minify",
+			transpiler: "traceur"
 		};
 
 		var options = {
@@ -231,7 +200,8 @@ describe("multi build", function(){
 	it("Should allow setting uglify-js options", function(done) {
 		var config = {
 			config: __dirname + "/minify/config.js",
-			main: "minify"
+			main: "minify",
+			transpiler: "traceur"
 		};
 
 		var options = {
@@ -262,7 +232,8 @@ describe("multi build", function(){
 	it("Should allow setting clean-css options", function(done) {
 		var config = {
 			config: __dirname + "/minify/config.js",
-			main: "minify"
+			main: "minify",
+			transpiler: "traceur"
 		};
 
 		var options = {
@@ -468,6 +439,8 @@ describe("multi build", function(){
 	});
 
 	it("builds and can load transpiled ES6 modules", function(done){
+		this.timeout(60000);
+
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
 				done(error)
@@ -906,8 +879,9 @@ describe("multi build", function(){
 	});
 
 	describe("with plugins", function(){
+		this.timeout(60000);
+
 		it("work on the client", function(done){
-			this.timeout(5000);
 			open("test/plugins/site.html", function(browser, close){
 
 				find(browser,"PLUGTEXT", function(plugText){
@@ -1643,7 +1617,8 @@ describe("multi build", function(){
 				if(error){ return done(error); }
 
 				multiBuild({
-					config: path.join(__dirname, "npm", "package.json!npm")
+					config: path.join(__dirname, "npm", "package.json!npm"),
+					transpiler: "traceur"
 				}, {
 					quiet: true,
 					minify: false
@@ -2256,7 +2231,7 @@ describe("multi build", function(){
 	});
 
 	describe("Source Maps", function(){
-		this.timeout(5000);
+		this.timeout(60000);
 
 		it("basics works", function(done){
 			rmdir(__dirname+"/bundle/dist", function(error){
@@ -2267,7 +2242,7 @@ describe("multi build", function(){
 				multiBuild({
 					config: __dirname+"/stealconfig.js",
 					main: "basics/basics",
-					transpiler: "babel"
+					transpiler: "traceur"
 				}, {
 					quiet: true,
 					sourceMaps: true,
@@ -2292,7 +2267,7 @@ describe("multi build", function(){
 				multiBuild({
 					config: __dirname+"/stealconfig.js",
 					main: "sourcemaps/basics",
-					transpiler: "babel"
+					transpiler: "traceur"
 				}, {
 					quiet: true,
 					sourceMaps: true,
