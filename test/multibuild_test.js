@@ -878,6 +878,29 @@ describe("multi build", function(){
 		});
 	});
 
+	it("Loads an ES6 module that consumes CJS modules using {}", function(done){
+		rmdir(__dirname + "/es_cjs/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/es_cjs/package.json!npm"
+			}, {
+				minify: false,
+				quiet: true
+			}).then(function(){
+				open("test/es_cjs/prod.html", function(browser, close){
+						find(browser, "MODULE", function(mod){
+							assert.equal(mod.x, "foo", "got module that uses " +
+										 "{} for imports");
+							assert.equal(mod.y, "bar", "got module using default");
+
+							close();
+						}, close);
+				}, done);
+			});
+		});
+	});
+
 	describe("with plugins", function(){
 		this.timeout(60000);
 
@@ -1468,6 +1491,8 @@ describe("multi build", function(){
 				}).catch(done);
 			});
 		});
+
+
 	});
 
 	describe("importing into config", function(){
