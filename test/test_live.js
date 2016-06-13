@@ -53,7 +53,7 @@ describe("live-reload", function(){
 				var newSource = "module.exports = 'foo';";
 				asap(fs.writeFile)(fooPath, newSource, "utf8").then(function(){
 					liveStream.once("data", function(data){
-						assert(/foo/.test(data.graph.foo.load.source),
+						assert(/foo/.test(data.graph["live-app@1.0.0#foo"].load.source),
 							"New source contains 'foo'");
 						done();
 					});
