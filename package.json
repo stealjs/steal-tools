@@ -71,6 +71,9 @@
         }
       },
       "0.12.x": {
+        "dependencies": {
+          "fs-extra": "~0.16.3"
+        },
         "devDependencies": {
           "zombie": "^3.1.1"
         }
@@ -86,7 +89,9 @@
         }
       },
       "^6.0.0": {
-        "zombie": "^4.2.1"
+	    "devDependencies": {
+		  "zombie": "^4.2.1"
+        }
       }
     },
     "iojs": {
@@ -113,6 +118,7 @@
     }
   ],
   "scripts": {
+    "postinstall": "install-engine-dependencies",
     "test": "grunt test && grunt test:browser",
     "mocha": "grunt simplemocha",
     "bower-install": "bower install",
