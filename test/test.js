@@ -14,7 +14,6 @@ require("./get_es_module_imports_test");
 
 // Integration tests
 require("./test_cli");
-require("./grunt_tasks/steal_build");
 
 // Node 0.10 doesn't support Symbols so the live-reload tests will
 // not pass on it.

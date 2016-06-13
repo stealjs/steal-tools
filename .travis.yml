@@ -12,6 +12,6 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
 sudo: false
 script:
-  - grunt jshint
-  - grunt test:browser
+  - npm run jshint
+  - npm run test:browser
   - npm run coverage:upload
