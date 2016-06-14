@@ -2,7 +2,7 @@
   "name": "steal-tools",
   "version": "1.0.0-beta.0",
   "devDependencies": {
-    "steal": "^1.0.0-beta.0",
+    "steal": "https://github.com/stealjs/steal.git#startup-and-config",
     "jquery": "~1.10.0",
     "less" : "^2.4.0"
   }
