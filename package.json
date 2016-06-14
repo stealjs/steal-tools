@@ -113,7 +113,7 @@
     "postinstall": "install-engine-dependencies",
     "test": "npm run mocha && npm run test:browser",
     "test:browser": "npm run worker-test-build && testee test/browser/test.html --browsers firefox --reporter Spec",
-    "worker-test-build": "bin/steal build --main worker --config test/browser/webworker/stealconfig.js --bundle-steal --quiet",
+    "worker-test-build": "node bin/steal build --main worker --config test/browser/webworker/stealconfig.js --bundle-steal --quiet",
     "mocha": "mocha test/test.js",
     "jshint": "jshint lib/**/*.js Gruntfile.js --config",
     "bower-install": "bower install",

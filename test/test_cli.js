@@ -164,7 +164,7 @@ describe("steal-tools cli", function () {
 
 		var isListening = /Live-reload server listening/;
 
-		it("logs that it is listening to stderr", function(done){
+		it.skip("logs that it is listening to stderr", function(done){
 			var child = stealToolsC(["live-reload", "-c", "stealconfig.js",
 									"-m", "basics/basics"]);
 
