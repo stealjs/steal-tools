@@ -7,6 +7,8 @@ var testHelpers = require("./helpers");
 var multiBuild = require("../lib/build/multi");
 
 describe("build app using steal-conditional", function() {
+    this.timeout(30000);
+    
 	var find = testHelpers.find;
 	var open = testHelpers.open;
 	var prmdir = denodeify(rmdir);
