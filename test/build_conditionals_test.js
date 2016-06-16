@@ -25,7 +25,7 @@ describe("build app using steal-conditional", function() {
 
 		prmdir(path.join(basePath, "substitution", "dist"))
 			.then(function() {
-				return multiBuild(config);
+				return multiBuild(config, { minify: false, quiet: true });
 			})
 			.then(function() {
 				var bundlesPath = path.join(basePath, "substitution", "main.js");
@@ -51,17 +51,20 @@ describe("build app using steal-conditional", function() {
 	});
 
 	it("simple boolean conditional works", function(done) {
+		this.timeout(10000);
+
 		var options = {
 			config: path.join(basePath, "boolean", "package.json!npm")
 		};
 
 		prmdir(path.join(basePath, "boolean", "dist"))
 			.then(function() {
-				return multiBuild(options, { minify: false });
+				return multiBuild(options, { minify: false, quiet: true });
 			})
 			.then(function() {
 				var bundlesPath = path.join(
-					basePath, "boolean", "dist", "bundles", "main.js"
+					basePath, "boolean", "dist", "bundles", "conditionals",
+					"main.js"
 				);
 
 				if (!fs.existsSync(bundlesPath)) {

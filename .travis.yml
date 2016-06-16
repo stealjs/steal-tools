@@ -2,8 +2,8 @@ language: node_js
 node_js:
   - 0.12
   - 5.5
+  - 6.0
 before_script:
-  - install-engine-dependencies
   - npm install -g bower
   - bower install
   - npm dedupe
@@ -12,6 +12,6 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
 sudo: false
 script:
-  - grunt jshint
-  - grunt test:browser
+  - npm run jshint
+  - npm run test:browser
   - npm run coverage:upload

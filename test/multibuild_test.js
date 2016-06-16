@@ -494,11 +494,11 @@ describe("multi build", function(){
 				open("test/basics/prod-inst.html",function(browser, close){
 					find(browser,"MODULE", function(module){
 						assert(true, "module");
-
+				
 						// We marked stealconfig.js as instantiated so it shouldn't have it's properties
 						var System = browser.window.System;
 						assert.equal(System.map["mapd/mapd"], undefined, "Mapping not applied");
-
+				
 						close();
 					}, close);
 				}, done);
@@ -873,6 +873,29 @@ describe("multi build", function(){
 						assert.equal(module.foo, "bar", "configDependency code ran");
 						close();
 					}, close);
+				}, done);
+			});
+		});
+	});
+
+	it("Loads an ES6 module that consumes CJS modules using {}", function(done){
+		rmdir(__dirname + "/es_cjs/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/es_cjs/package.json!npm"
+			}, {
+				minify: false,
+				quiet: true
+			}).then(function(){
+				open("test/es_cjs/prod.html", function(browser, close){
+						find(browser, "MODULE", function(mod){
+							assert.equal(mod.x, "foo", "got module that uses " +
+										 "{} for imports");
+							assert.equal(mod.y, "bar", "got module using default");
+
+							close();
+						}, close);
 				}, done);
 			});
 		});
@@ -1468,6 +1491,8 @@ describe("multi build", function(){
 				}).catch(done);
 			});
 		});
+
+
 	});
 
 	describe("importing into config", function(){

@@ -1,7 +1,7 @@
 {
   "name": "steal-tools",
   "description": "Futuristic build tools for ES6 Module applications.",
-  "version": "1.0.0-pre.0",
+  "version": "1.0.0-beta.0",
   "author": {
     "name": "Bitovi",
     "email": "contact@bitovi.com",
@@ -12,7 +12,7 @@
     "clean-css": "3.1.8",
     "colors": "^0.6.2",
     "find-line-column": "^0.5.2",
-    "fs-extra": "~0.16.3",
+    "fs-extra": "~0.29.0",
     "glob": "^4.3.5",
     "is-appveyor": "^1.0.0",
     "less": "^2.4.0",
@@ -20,7 +20,7 @@
     "moment": "^2.10.2",
     "pdenodeify": "^0.1.0",
     "source-map": "https://github.com/stealjs/source-map/archive/0.4.2-bitovi.1.tar.gz",
-    "steal": "^1.0.0-pre.1",
+    "steal": "stealjs/steal#startup-and-config",
     "steal-bundler": "^0.2.4",
     "system-parse-amd": "0.0.2",
     "through2": "^2.0.0",
@@ -41,22 +41,14 @@
     "coveralls-send": "0.0.2",
     "cssify": "^0.6.0",
     "engine-dependencies": "^0.2.0",
-    "grunt": "~0.4.1",
-    "grunt-cli": "^0.1.13",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-copy": "~0.5.0",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-contrib-uglify": "~0.2.2",
-    "grunt-contrib-watch": "~0.3.0",
-    "grunt-release": "^0.7.0",
-    "grunt-simple-mocha": "^0.4.0",
+    "jshint": "~2.9.1",
     "istanbul": "^0.4.2",
-    "jquery": ">2.0",
+    "jquery": "^2.0.0",
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "^1.2.0",
     "mock-fs": "^3.1.0",
     "mockery": "^1.4.1",
-    "rimraf": "2.1",
+    "rimraf": "^2.5.2",
     "steal-conditional": "^0.1.3",
     "steal-qunit": "0.0.4",
     "testee": "^0.2.0",
@@ -71,6 +63,9 @@
         }
       },
       "0.12.x": {
+        "dependencies": {
+          "fs-extra": "~0.16.3"
+        },
         "devDependencies": {
           "zombie": "^3.1.1"
         }
@@ -83,6 +78,11 @@
       "^5.0.0": {
         "devDependencies": {
           "zombie": "^4.2.1"
+        }
+      },
+      "^6.0.0": {
+	    "devDependencies": {
+		  "zombie": "^4.2.1"
         }
       }
     },
@@ -110,15 +110,19 @@
     }
   ],
   "scripts": {
-    "test": "grunt test && grunt test:browser",
-    "mocha": "grunt simplemocha",
+    "postinstall": "install-engine-dependencies",
+    "test": "npm run mocha && npm run test:browser",
+    "test:browser": "npm run worker-test-build && testee test/browser/test.html --browsers firefox --reporter Spec",
+    "worker-test-build": "bin/steal build --main worker --config test/browser/webworker/stealconfig.js --bundle-steal --quiet",
+    "mocha": "mocha test/test.js",
+    "jshint": "jshint lib/**/*.js Gruntfile.js --config",
     "bower-install": "bower install",
     "install-engine-dependencies": "install-engine-dependencies",
     "coverage": "istanbul cover _mocha -- test/test --timeout 600000",
     "coverage:upload": "istanbul cover _mocha --report lcovonly -- test/test --timeout 600000 && cat ./coverage/lcov.info | ./node_modules/coveralls-send/bin/coveralls.js"
   },
   "engines": {
-    "node": "0.10.x - 0.12.x || ^3.0.0 || 4.x - 5.5.x"
+    "node": "0.10.x - 0.12.x || ^3.0.0 || 4.x - 6.0.x"
   },
   "system": {
     "npmDependencies": [
