@@ -292,7 +292,7 @@ describe("multi build", function(){
 	});
 
 
-	it.only("Allows specifying dist as the current folder", function(done){
+	it("Allows specifying dist as the current folder", function(done){
         this.timeout(5000);
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
