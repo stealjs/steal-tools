@@ -292,7 +292,7 @@ describe("multi build", function(){
 	});
 
 
-	it("Allows specifying dist as the current folder", function(done){
+	it.only("Allows specifying dist as the current folder", function(done){
         this.timeout(5000);
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
@@ -477,7 +477,7 @@ describe("multi build", function(){
 	});
 
 
-	it.only("System.instantiate works when bundling steal", function(done){
+	it("System.instantiate works when bundling steal", function(done){
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
 				return done(error)
