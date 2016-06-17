@@ -6,7 +6,7 @@ var assert = require("assert"),
 	orderGraph = require("../lib/graph/order"),
 	path = require("path");
 
-describe('dependency graph', function(){
+describe.only('dependency graph', function(){
 	beforeEach(function() {
 		logging.setup({ quiet: true });
 	});
@@ -15,7 +15,7 @@ describe('dependency graph', function(){
 
 		dependencyGraph({
 			config: path.join(__dirname, "stealconfig.js"),
-			startId: "basics",
+			main: "basics/basics",
 			logLevel: 3
 		}).then(function(data){
 			var result = comparify(data.graph, {
@@ -54,7 +54,7 @@ describe('dependency graph', function(){
 
 		dependencyGraph({
 			config: __dirname + "/stealconfig.js",
-			startId: "basics",
+			main: "basics/basics",
 			extra: "stuff",
 			logLevel: 3
 		}).then(function(data){
@@ -70,7 +70,7 @@ describe('dependency graph', function(){
 		it("Map should work", function(done){
 			dependencyGraph({
 				config: __dirname + "/stealconfig.js",
-				startId: "basics",
+				main: "basics/basics",
 				logLevel: 3
 			}).then(function(data){
 				var graph = data.graph;
