@@ -6,7 +6,7 @@ var assert = require("assert"),
 	orderGraph = require("../lib/graph/order"),
 	path = require("path");
 
-describe.only('dependency graph', function(){
+describe('dependency graph', function(){
 	beforeEach(function() {
 		logging.setup({ quiet: true });
 	});
