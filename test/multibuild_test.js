@@ -494,11 +494,11 @@ describe("multi build", function(){
 				open("test/basics/prod-inst.html",function(browser, close){
 					find(browser,"MODULE", function(module){
 						assert(true, "module");
-
+				
 						// We marked stealconfig.js as instantiated so it shouldn't have it's properties
 						var System = browser.window.System;
 						assert.equal(System.map["mapd/mapd"], undefined, "Mapping not applied");
-
+				
 						close();
 					}, close);
 				}, done);
