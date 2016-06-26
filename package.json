@@ -110,7 +110,8 @@
     }
   ],
   "scripts": {
-    "postinstall": "install-engine-dependencies",
+    "postinstall": "npm run install-engine-dependencies",
+    "install-engine-dependencies": "install-engine-dependencies",
     "test": "npm run mocha && npm run test:browser",
     "test:browser": "npm run worker-test-build && testee test/browser/test.html --browsers firefox --reporter Spec",
     "worker-test-build": "node bin/steal build --main worker --config test/browser/webworker/stealconfig.js --bundle-steal --quiet",
