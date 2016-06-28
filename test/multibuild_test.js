@@ -229,36 +229,6 @@ describe("multi build", function(){
 		});
 	});
 
-	it("Should allow setting clean-css options", function(done) {
-		var config = {
-			config: __dirname + "/minify/config.js",
-			main: "minify",
-			transpiler: "traceur"
-		};
-
-		var options = {
-			quiet: true,
-			cleanCSSOptions: {
-				keepSpecialComments: 0 // remove all, default '*'
-			}
-		};
-
-		rmdir(__dirname + "/minify/dist", function(error){
-			if(error) {
-				done(error);
-				return;
-			}
-
-			multiBuild(config, options).then(function(){
-				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8"),
-					lackSpecialComment = actual.indexOf("a special comment") === -1;
-
-				assert(lackSpecialComment, "clean-css set to remove special comments");
-				done();
-			}).catch(done);
-		});
-	});
-
 	it("Allows specifying an alternative dist directory", function(done){
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
@@ -290,7 +260,6 @@ describe("multi build", function(){
 		});
 
 	});
-
 
 	it("Allows specifying dist as the current folder", function(done){
         this.timeout(5000);
@@ -2309,4 +2278,83 @@ describe("multi build", function(){
 			});
 		});
 	});
+
+	describe("css-clean module", function(){
+		this.timeout(60000);
+		it("set clean-css options", function(done) {
+			var config = {
+				config: __dirname + "/minify/config.js",
+				main: "minify",
+				transpiler: "traceur"
+			};
+
+			var options = {
+				quiet: true,
+				cleanCSSOptions: {
+					keepSpecialComments: 0 // remove all, default '*'
+				}
+			};
+
+			rmdir(__dirname + "/minify/dist", function(error){
+				if(error) {
+					done(error);
+					return;
+				}
+
+				multiBuild(config, options).then(function(){
+					var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8"),
+						lackSpecialComment = actual.indexOf("a special comment") === -1;
+
+					assert(lackSpecialComment, "clean-css set to remove special comments");
+					done();
+				}).catch(done);
+			});
+		});
+
+		it.only("by default always import css dependencies", function(done){
+
+			var config = {
+				config: __dirname + "/css-import/package.json!npm"
+			};
+			var options = {
+				quiet: true,
+				minify: false
+			};
+
+			rmdir(__dirname+"/css-import/dist", function(error){
+				if(error) {
+					done(error);
+					return;
+				}
+
+				multiBuild(config, options).then(function(){
+
+					var actualCSS = fs.readFileSync(__dirname + "/css-import/dist/bundles/npm-css-import/main.css", "utf8");
+
+					var hasDupCSSSelectors = actualCSS.match(/body/g).length > 1;
+					var nestedCSS = actualCSS.indexOf('#myModule') !== -1;
+					var h1Style = actualCSS.indexOf('h1') !== -1;
+
+					assert.ok(!!hasDupCSSSelectors, "all files are imported without css optimizations");
+					assert.ok(!!h1Style, "import bar.css without ./ is working");
+					assert.ok(!!nestedCSS, "nested import rules are working");
+
+					// assert.ok(true);
+					// var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
+					// var hasGlobalLongVariable = actualJS.indexOf("anotherVeryLongName") !== -1;
+					// var hasDevCode = actualJS.indexOf("remove this") !== -1;
+					// var hasDupCSSSelectors = actualCSS.match(/body/g).length > 1;
+					//
+					// assert(!hasLongVariable, "Minified source renamed long variable.");
+					// assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
+					// assert(!hasDevCode, "Minified source has dev code removed.");
+					// assert(!hasDupCSSSelectors, "Minified CSS should not include duplicated selectors");
+
+					done();
+				}).catch(done);
+			});
+
+		});
+
+	})
 });

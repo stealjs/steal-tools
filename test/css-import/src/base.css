@@ -1,0 +1,13 @@
+/*@import url('./foo.css');*/
+body {
+    background-color: black;
+    /*
+    locate:/ only works in top level css file that is included in
+    stache, js or other files.
+    locate does not work in nested files that are imported by css itself.
+    the reason is, because we are importing css file via the clean-css module
+    and this module does not know about the locate scheme
+    This is a TODO !
+    */
+    background-image: url("locate://src/nested/steal.gif");
+}

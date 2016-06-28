@@ -1,0 +1,12 @@
+{
+  "name": "npm-css-import",
+  "version": "0.0.1",
+  "dependencies": {
+  },
+  "system": {
+    "main": "main",
+    "directories": {
+      "lib": "src"
+    }
+  }
+}

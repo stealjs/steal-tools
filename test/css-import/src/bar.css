@@ -1,0 +1,4 @@
+@import url('./nested/module.css');
+h1 {
+    font-size: 18px;
+}
