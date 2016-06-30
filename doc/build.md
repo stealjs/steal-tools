@@ -8,7 +8,7 @@ Build a module and all of its dependencies and, optionally, other bundles to pro
 @param {steal-tools.SystemConfig} config
 
 Specifies configuration values to set on the System loader.  In addition to the `main`, `config`, `baseUrl` and `meta` values 
-specified in [steal-tools.SystemConfig], an additional `bundlesPath` is sometimes provided.
+specified in [steal-tools.SystemConfig], an additional `bundlesPath` or `bundle` is sometimes provided.
 
 
   @option {String} [bundlesPath='dist/bundle']  Specifies the path where the production bundles should be 
@@ -20,6 +20,7 @@ specified in [steal-tools.SystemConfig], an additional `bundlesPath` is sometime
  - Relative to `process.cwd()` - bundlesPath starts with `./`, like `"./place"`.
  - Relative to [System.baseURL baseURL] - bundlesPath looks like: "packages", "foo/bar".
  
+  @option {Array.<moduleName>} bundle An array of module names that should be progressively loaded.
   
 @param {steal-tools.BuildOptions} [options]
 

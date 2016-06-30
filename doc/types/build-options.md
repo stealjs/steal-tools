@@ -13,9 +13,6 @@ Options used to configure the build process.
 
 @option {steal-tools.BundleAssetsOptions|Boolean} [bundleAssets=false] Set to true to have assets from your project bundled into your dist folder.
 
-@option {Array.<moduleName>} bundle An array of module names that should be
-progressively loaded.
-
 @option {Array.<moduleName>} ignore An array of module names that should be ignored and not included in the bundled file. 
 For more information take a look at the `ignore` usage http://stealjs.com/docs/steal-tools.build.html#ignore
 
