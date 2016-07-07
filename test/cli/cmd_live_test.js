@@ -6,7 +6,10 @@ describe("cmd live-reload module", function() {
 	var liveArgs;
 	var cmdBuildPath = "../../lib/cli/cmd_live_reload";
 
+	var exit;
 	beforeEach(function() {
+		exit = process.exit;
+
 		liveArgs = {};
 
 		mockery.enable({
@@ -26,6 +29,8 @@ describe("cmd live-reload module", function() {
 	});
 
 	afterEach(function() {
+		process.exit = exit;
+
 		mockery.disable();
 		mockery.deregisterAll();
 	});
@@ -35,5 +40,27 @@ describe("cmd live-reload module", function() {
 			config: "package.json!npm"
 		});
 		assert.ok(liveArgs.options.quiet, "defaults to quiet");
+	});
+
+	it("fails if ssl-cert is provided without ssl-key", function(done) {
+		process.exit = function(code) {
+			assert(code > 0, "Requires ssl-key config option if ssl-cert provided");
+			done();
+		};
+		cmdBuild.handler({
+			config: "",
+			sslCert: "./keys/cert.pem"
+		});
+	});
+
+	it("fails if ssl-key is provided without ssl-cert", function(done) {
+		process.exit = function(code) {
+			assert(code > 0, "Requires ssl-cert config option if ssl-key provided");
+			done();
+		};
+		cmdBuild.handler({
+			config: "",
+			sslKey: "./keys/key.pem"
+		});
 	});
 });
