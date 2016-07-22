@@ -20,12 +20,12 @@ describe("build app using steal-conditional", function() {
 
 	it("simple substitution works", function(done) {
 		var config = {
-			config: path.join(basePath, "substitution", "package.json!npm"),
+			config: path.join(basePath, "substitution", "package.json!npm")
 		};
 
 		prmdir(path.join(basePath, "substitution", "dist"))
 			.then(function() {
-				return multiBuild(config);
+				return multiBuild(config, { minify: false, quiet: true });
 			})
 			.then(function() {
 				var bundlesPath = path.join(basePath, "substitution", "main.js");
@@ -51,13 +51,15 @@ describe("build app using steal-conditional", function() {
 	});
 
 	it("simple boolean conditional works", function(done) {
+		this.timeout(20000);
+
 		var options = {
 			config: path.join(basePath, "boolean", "package.json!npm")
 		};
 
 		prmdir(path.join(basePath, "boolean", "dist"))
 			.then(function() {
-				return multiBuild(options, { minify: false });
+				return multiBuild(options, { minify: false, quiet: true });
 			})
 			.then(function() {
 				var bundlesPath = path.join(
