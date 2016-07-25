@@ -22,7 +22,7 @@ describe("build app using steal-conditional", function() {
 
 	it("simple substitution works", function(done) {
 		var config = {
-			config: path.join(basePath, "substitution", "package.json!npm"),
+			config: path.join(basePath, "substitution", "package.json!npm")
 		};
 
 		prmdir(path.join(basePath, "substitution", "dist"))
@@ -53,7 +53,7 @@ describe("build app using steal-conditional", function() {
 	});
 
 	it("simple boolean conditional works", function(done) {
-		this.timeout(10000);
+		this.timeout(20000);
 
 		var options = {
 			config: path.join(basePath, "boolean", "package.json!npm")

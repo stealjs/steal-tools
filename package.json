@@ -20,8 +20,13 @@
     "lodash": "^4.3.0",
     "moment": "^2.10.2",
     "pdenodeify": "^0.1.0",
+<<<<<<< HEAD
     "source-map": "https://github.com/stealjs/source-map/archive/0.4.2-bitovi.1.tar.gz",
     "steal": "^1.0.0-beta.0",
+=======
+    "bitovi-source-map": "0.4.2-bitovi.2",
+    "steal": "^0.16.9",
+>>>>>>> master
     "steal-bundler": "^0.2.4",
     "system-parse-amd": "0.0.2",
     "through2": "^2.0.0",
@@ -46,7 +51,7 @@
     "jquery": "^2.0.0",
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "^1.2.0",
-    "mock-fs": "^3.1.0",
+    "mock-fs": "3.1.0",
     "mockery": "^1.4.1",
     "rimraf": "^2.5.2",
     "steal-conditional": "^0.1.3",
