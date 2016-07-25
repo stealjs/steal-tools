@@ -26,7 +26,49 @@ location.
   @param {Loader} System The System loader used by Steal to load all of these modules.  All configuration
   should be available on it.
  
-@option {Array<moduleName>|Boolean} [ignore] Modules that should be ignored and not included in the output. For the [steal-tools/lib/build/helpers/global] helper providing `false` for this option will not ignore modules defined in `node_modules` as is done by default.
+@option {Array<moduleName|steal-tools.export.ignorer>|Boolean} [ignore] Modules that should be ignored and not included in the output.
+
+You can use it like:
+
+```js
+stealTools.export({
+	system: {
+		config: __dirname + "/package.json!npm"
+	},
+	options: {},
+	outputs: {
+		"+global-js": {
+			ignore: [
+				"jquery"
+			]
+		}
+	}
+})
+```
+
+Or alternatively you can provide an [steal-tools.export.ignorer] **function** that will be called with each [moduleName], giving you the opportunity to programmatically determine if a module should be ignored.
+
+```js
+stealTools.export({
+	system: {
+		config: __dirname + "/package.json!npm"
+	},
+	options: {},
+	outputs: {
+		"+global-js": {
+			ignore: [function(name){
+				if(name.indexOf("foobar") >= 0) {
+					return true;
+				} else {
+					return false;
+				}
+			}]
+		}
+	}
+})
+```
+
+For the [steal-tools/lib/build/helpers/global] helper providing `false` (instead of an Array) for this option will not ignore modules defined in `node_modules` as is done by default.
 
 @body
 
