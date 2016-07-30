@@ -70,41 +70,6 @@ describe("multi build", function(){
 		});
 	});
 
-	it("should pass the babelOptions to transpile", function(done){
-		this.timeout(20000);
-
-		rmdir(__dirname + "/es6-loose/bundle", function(error){
-			if(error) {
-				return done(error);
-			}
-
-			multiBuild({
-				config: __dirname + "/es6-loose/config.js",
-				main: "main",
-				transpiler: "babel"
-			}, {
-				quiet: true,
-				minify: false,
-				babelOptions: {
-					loose: 'es6.modules'
-				}
-			}).then(function(){
-				fs.readFile("test/es6-loose/dist/bundles/main.js", "utf8", function(err, data) {
-					if (err) {
-						done(err);
-					}
-
-					var noObjectDefineProperty = data.indexOf("Object.defineProperty") === -1;
-					var es6ModuleProperty = data.indexOf("exports.__esModule = true;") >= 0;
-
-					assert(noObjectDefineProperty, "loose mode does not use Object.defineProperty");
-					assert(es6ModuleProperty, "should assign __esModule as normal object property");
-					done();
-				});
-			}).catch(done);
-		});
-	});
-
 	it("allows you to transpile modules on your own", function(done){
 		rmdir(__dirname + "/self_transpile/dist", function(error){
 			if(error) {
@@ -146,7 +111,8 @@ describe("multi build", function(){
 
 			multiBuild({
 				config: __dirname + "/simple-es6/config.js",
-				main: "main"
+				main: "main",
+				transpiler: "traceur"
 			}, {
 				quiet: true
 			}).then(function(){
@@ -161,9 +127,11 @@ describe("multi build", function(){
 	});
 
 	it("Should minify by default", function(done){
+		this.timeout(60000);
 		var config = {
 			config: __dirname + "/minify/config.js",
-			main: "minify"
+			main: "minify",
+			transpiler: "traceur"
 		};
 
 		rmdir(__dirname+"/minify/dist", function(error){
@@ -195,7 +163,8 @@ describe("multi build", function(){
 	it("Should allow minification to be turned off", function(done){
 		var config = {
 			config: __dirname + "/minify/config.js",
-			main: "minify"
+			main: "minify",
+			transpiler: "traceur"
 		};
 
 		var options = {
@@ -231,7 +200,8 @@ describe("multi build", function(){
 	it("Should allow setting uglify-js options", function(done) {
 		var config = {
 			config: __dirname + "/minify/config.js",
-			main: "minify"
+			main: "minify",
+			transpiler: "traceur"
 		};
 
 		var options = {
@@ -262,7 +232,8 @@ describe("multi build", function(){
 	it("Should allow setting clean-css options", function(done) {
 		var config = {
 			config: __dirname + "/minify/config.js",
-			main: "minify"
+			main: "minify",
+			transpiler: "traceur"
 		};
 
 		var options = {
@@ -468,6 +439,8 @@ describe("multi build", function(){
 	});
 
 	it("builds and can load transpiled ES6 modules", function(done){
+		this.timeout(60000);
+
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
 				done(error)
@@ -521,11 +494,11 @@ describe("multi build", function(){
 				open("test/basics/prod-inst.html",function(browser, close){
 					find(browser,"MODULE", function(module){
 						assert(true, "module");
-
+				
 						// We marked stealconfig.js as instantiated so it shouldn't have it's properties
 						var System = browser.window.System;
 						assert.equal(System.map["mapd/mapd"], undefined, "Mapping not applied");
-
+				
 						close();
 					}, close);
 				}, done);
@@ -905,9 +878,33 @@ describe("multi build", function(){
 		});
 	});
 
+	it("Loads an ES6 module that consumes CJS modules using {}", function(done){
+		rmdir(__dirname + "/es_cjs/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/es_cjs/package.json!npm"
+			}, {
+				minify: false,
+				quiet: true
+			}).then(function(){
+				open("test/es_cjs/prod.html", function(browser, close){
+						find(browser, "MODULE", function(mod){
+							assert.equal(mod.x, "foo", "got module that uses " +
+										 "{} for imports");
+							assert.equal(mod.y, "bar", "got module using default");
+
+							close();
+						}, close);
+				}, done);
+			});
+		});
+	});
+
 	describe("with plugins", function(){
+		this.timeout(60000);
+
 		it("work on the client", function(done){
-			this.timeout(5000);
 			open("test/plugins/site.html", function(browser, close){
 
 				find(browser,"PLUGTEXT", function(plugText){
@@ -1494,6 +1491,8 @@ describe("multi build", function(){
 				}).catch(done);
 			});
 		});
+
+
 	});
 
 	describe("importing into config", function(){
@@ -1643,7 +1642,8 @@ describe("multi build", function(){
 				if(error){ return done(error); }
 
 				multiBuild({
-					config: path.join(__dirname, "npm", "package.json!npm")
+					config: path.join(__dirname, "npm", "package.json!npm"),
+					transpiler: "traceur"
 				}, {
 					quiet: true,
 					minify: false
@@ -2256,7 +2256,7 @@ describe("multi build", function(){
 	});
 
 	describe("Source Maps", function(){
-		this.timeout(5000);
+		this.timeout(60000);
 
 		it("basics works", function(done){
 			rmdir(__dirname+"/bundle/dist", function(error){
@@ -2267,7 +2267,7 @@ describe("multi build", function(){
 				multiBuild({
 					config: __dirname+"/stealconfig.js",
 					main: "basics/basics",
-					transpiler: "babel"
+					transpiler: "traceur"
 				}, {
 					quiet: true,
 					sourceMaps: true,
@@ -2292,7 +2292,7 @@ describe("multi build", function(){
 				multiBuild({
 					config: __dirname+"/stealconfig.js",
 					main: "sourcemaps/basics",
-					transpiler: "babel"
+					transpiler: "traceur"
 				}, {
 					quiet: true,
 					sourceMaps: true,
@@ -2306,6 +2306,61 @@ describe("multi build", function(){
 					}
 					done();
 				}, done);
+			});
+		});
+	});
+
+	describe("multi-main with bundled steal", function(){
+		it("set main automatically", function(done){
+			rmdir(__dirname+"/multi-main-bundled/dist", function(error){
+				if(error){
+					done(error)
+				}
+
+				multiBuild({
+					config: __dirname+"/multi-main-bundled/package.json!npm",
+					main: [
+						"multi-main-bundled/app_a",
+						"multi-main-bundled/app_b"
+					]
+				}, {
+					bundleSteal: true,
+					quiet: true,
+					minify: false
+				}).then(function(data){
+					open("test/multi-main-bundled/bundle_app_a.html",function(browser, close){
+						find(browser,"app", function(app){
+							assert(true, "got app");
+							assert.equal(app.name, "a", "got the module");
+							assert.equal(app.ab.name, "a_b", "a got ab");
+							assert.equal(app.all.name, "all", "a got all");
+
+							assert.equal(browser.window["System"]["main"], "multi-main-bundled@1.0.0#app_a");
+							close();
+						}, close);
+					}, function(err){
+						if(err) {
+							done(err);
+						} else {
+							open("test/multi-main-bundled/bundle_app_b.html",function(browser, close){
+								find(browser,"app", function(app){
+									assert(true, "got app");
+									assert.equal(app.name, "b", "got the module");
+									assert.equal(app.ab.name, "a_b", "a got ab");
+									assert.equal(app.all.name, "all", "a got all");
+
+									assert.equal(browser.window["System"]["main"], "multi-main-bundled@1.0.0#app_b");
+									close();
+								}, close);
+							}, done);
+						}
+					});
+
+
+
+				}).catch(function(e){
+					done(e);
+				});
 			});
 		});
 	});

@@ -26,4 +26,27 @@ describe("streams.graph", function(){
 			done();
 		}));
 	});
+
+	it("Works with code using es6", function(done){
+		var system = {
+			config: __dirname + "/es_graph/package.json!npm"
+		};
+		var options = { quiet: true };
+
+		function get(graph, modulePath) {
+			return graph["app@1.0.0#" + modulePath];
+		}
+
+		var graphStream = s.graph(system, options);
+
+		graphStream.pipe(through.obj(function(data){
+			var graph = data.graph;
+			assert(get(graph, "main"), "Got the main");
+			assert(!graph.dep, "There is no dep");
+			assert(!graph.other, "There is no other");
+			assert(get(graph, "foo"), "foo is part of the graph");
+			assert(get(graph, "bar"), "bar is part of the graph");
+			done();
+		}));
+	});
 });
