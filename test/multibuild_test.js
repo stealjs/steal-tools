@@ -2309,4 +2309,59 @@ describe("multi build", function(){
 			});
 		});
 	});
+
+	describe("multi-main with bundled steal", function(){
+		it("set main automatically", function(done){
+			rmdir(__dirname+"/multi-main-bundled/dist", function(error){
+				if(error){
+					done(error)
+				}
+
+				multiBuild({
+					config: __dirname+"/multi-main-bundled/package.json!npm",
+					main: [
+						"multi-main-bundled/app_a",
+						"multi-main-bundled/app_b"
+					]
+				}, {
+					bundleSteal: true,
+					quiet: true,
+					minify: false
+				}).then(function(data){
+					open("test/multi-main-bundled/bundle_app_a.html",function(browser, close){
+						find(browser,"app", function(app){
+							assert(true, "got app");
+							assert.equal(app.name, "a", "got the module");
+							assert.equal(app.ab.name, "a_b", "a got ab");
+							assert.equal(app.all.name, "all", "a got all");
+
+							assert.equal(browser.window["System"]["main"], "multi-main-bundled@1.0.0#app_a");
+							close();
+						}, close);
+					}, function(err){
+						if(err) {
+							done(err);
+						} else {
+							open("test/multi-main-bundled/bundle_app_b.html",function(browser, close){
+								find(browser,"app", function(app){
+									assert(true, "got app");
+									assert.equal(app.name, "b", "got the module");
+									assert.equal(app.ab.name, "a_b", "a got ab");
+									assert.equal(app.all.name, "all", "a got all");
+
+									assert.equal(browser.window["System"]["main"], "multi-main-bundled@1.0.0#app_b");
+									close();
+								}, close);
+							}, done);
+						}
+					});
+
+
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+	});
 });
