@@ -5,25 +5,10 @@ Build a module and all of its dependencies and, optionally, other bundles to pro
 
 @signature `stealTools.build(config, options)`
 
-@param {steal-tools.SystemConfig} config
-
-Specifies configuration values to set on the System loader.  In addition to the `main`, `config`, `baseUrl` and `meta` values 
-specified in [steal-tools.SystemConfig], an additional `bundlesPath` or `bundle` is sometimes provided.
-
-
-  @option {String} [bundlesPath='dist/bundle']  Specifies the path where the production bundles should be 
-  placed. Often, this is the same value as [System.bundlesPath]. By default, the location is `"dist/bundles"`.
-
-  The path can be specified in three ways:
-
- - Absolute path - bundlesPath starts with `/`, or matches _/^\w+:[\/\\]/_, like:  `__dirname+"/place"`, or `"c:\my\bundles"`.
- - Relative to `process.cwd()` - bundlesPath starts with `./`, like `"./place"`.
- - Relative to [System.baseURL baseURL] - bundlesPath looks like: "packages", "foo/bar".
- 
-  @option {Array.<moduleName>} bundle An array of module names that should be progressively loaded.
+@param {steal-tools.SystemConfig} config 
+Specifies configuration values to set on the System loader.
   
 @param {steal-tools.BuildOptions} [options]
-
 Specifies the behavior of the build.
   
 @return {(Promise<steal-tools.BuildResult>|Stream<steal-tools.BuildResult>)} Either a Promise that resolves when the build is complete or a Stream that will send `data` events every time a rebuild is complete. By default a Promise is returned, unless the `watch` option is enabled.
