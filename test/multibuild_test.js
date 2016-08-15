@@ -2308,6 +2308,28 @@ describe("multi build", function(){
 				}, done);
 			});
 		});
+
+		it("works with configDependencies", function(done){
+			asap(rmdir)(__dirname + "/npm-config-dep/dist")
+			.then(function(){
+				var p = multiBuild({
+					config: __dirname + "/npm-config-dep/package.json!npm"
+				}, {
+					quiet: true,
+					sourceMaps: true,
+					sourceMapsContent: true,
+					minify: false
+				});
+				return p;
+			})
+			.then(function(){
+				var str = fs.readFileSync(__dirname + "/npm-config-dep/dist/bundles/main.js.map", "utf8");
+				var data = JSON.parse(str);
+				var expected = "../../foo.js";
+				assert.equal(data.sources[2], expected);
+			})
+			.then(done, done);
+		});
 	});
 
 	describe("multi-main with bundled steal", function(){
