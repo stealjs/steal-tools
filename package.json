@@ -14,7 +14,7 @@
     "engine-dependencies": "^0.2.0",
     "find-line-column": "^0.5.2",
     "fs-extra": "~0.29.0",
-    "glob": "^4.3.5",
+    "glob": "^7.0.5",
     "is-appveyor": "^1.0.0",
     "less": "^2.4.0",
     "lodash": "^4.3.0",
