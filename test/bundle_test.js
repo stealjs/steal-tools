@@ -88,7 +88,7 @@ describe("find bundle", function () {
 
 });
 
-describe.only("find npm bundle", function () {
+describe("find npm bundle", function () {
 	it("with array and appname or tidle", function (done) {
 
 		bundle({
