@@ -12,11 +12,6 @@ describe("find bundle", function () {
 	};
 
 	it("with given string", function () {
-		// fakeLoader.bundle = [
-		// 	"**/*",
-		// 	"app_?"
-		// ];
-
 		fakeLoader.bundle = "app_a";
 
 		var bundles = findbundle(fakeLoader);
@@ -41,7 +36,7 @@ describe("find bundle", function () {
 		fakeLoader["bundle"] = "+(app_a.js|bundle.js)";
 
 		var bundles = findbundle(fakeLoader);
-		// assert.deepEqual(["app_a", "bundle"], bundles);
+		assert.deepEqual(["app_a", "bundle"], bundles);
 	});
 
 	it("with glob", function () {
