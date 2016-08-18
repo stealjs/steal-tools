@@ -33,6 +33,33 @@ describe("+standalone", function(){
 				}, close);
 			}, done);
 		}, done);
+	});
 
+	it("Works when using dest as a function", function(done){
+		this.timeout(10000);
+
+		stealExport({
+			system: {
+				config: __dirname + "/exports_basics/package.json!npm"
+			},
+			options: { quiet: true },
+			outputs: {
+				"+standalone": {
+					exports: { "foo": "FOO.foo" },
+					dest: function(){
+						return __dirname + "/exports_basics/out.js"
+					}
+				}
+			}
+		})
+		.then(function(){
+			open("test/exports_basics/global.html",
+				 function(browser, close) {
+				find(browser,"FOO", function(foo){
+					assert.equal(foo.foo.bar.name, "bar", "it worked");
+					close();
+				}, close);
+			}, done);
+		});
 	});
 });
