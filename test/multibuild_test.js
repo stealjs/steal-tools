@@ -2323,9 +2323,9 @@ describe("multi build", function(){
 				return p;
 			})
 			.then(function(){
-				var str = fs.readFileSync(__dirname + "/npm-config-dep/dist/bundles/main.js.map", "utf8");
+				var str = fs.readFileSync(__dirname + "/npm-config-dep/dist/bundles/npmc/main.js.map", "utf8");
 				var data = JSON.parse(str);
-				var expected = "../../foo.js";
+				var expected = "../../../foo.js";
 				assert.equal(data.sources[2], expected);
 			})
 			.then(done, done);
