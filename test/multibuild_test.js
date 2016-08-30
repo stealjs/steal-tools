@@ -2323,13 +2323,36 @@ describe("multi build", function(){
 				return p;
 			})
 			.then(function(){
-				var str = fs.readFileSync(__dirname + "/npm-config-dep/dist/bundles/main.js.map", "utf8");
+				var str = fs.readFileSync(__dirname + "/npm-config-dep/dist/bundles/npmc/main.js.map", "utf8");
 				var data = JSON.parse(str);
-				var expected = "../../foo.js";
+				var expected = "../../../foo.js";
 				assert.equal(data.sources[2], expected);
 			})
 			.then(done, done);
 		});
+
+		it("strip sourcemapping URL in all files", function (done) {
+			asap(rmdir)(__dirname + "/strip-sourcemap/dist")
+				.then(function () {
+					return multiBuild({
+						config: __dirname + "/strip-sourcemap/stealconfig.js",
+						main: "main"
+					}, {
+						minify: false,
+						sourceMaps: true,
+						bundleSteal: true
+					});
+				})
+				.then(function () {
+					var source = fs.readFileSync(__dirname + "/strip-sourcemap/dist/bundles/main.js", "utf8");
+					var soureMapRegex = /\/\/# sourceMappingURL=main.js.map/m;
+					assert.ok(/\/\/# sourceMappingURL=main.js.map/m.test(source), 'sourceMap found');
+
+					assert.ok(!/\/\/# sourceMappingURL=foobar.js.map/m.test(source), 'foobar.js.map should not be found');
+					assert.ok(!/\/\/# sourceMappingURL=Promise.js.map/m.test(source), 'foobar.js.map should not be found');
+				})
+				.then(done, done);
+		})
 	});
 
 	describe("multi-main with bundled steal", function(){
