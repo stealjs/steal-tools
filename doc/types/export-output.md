@@ -9,8 +9,16 @@ addition to [steal-tools.transform.options].
 with their dependencies. 
 
 
-@option {Array<moduleName|comparitor>|Boolean} [eachModule] Builds each module in the list 
-with its dependendencies individually.
+@option {Array<moduleName|comparitor>} [eachModule] Builds each module in the list with its dependendencies individually. Use this if you want to create separate builds for more than one module in your graph:
+
+```js
+stealTools.export({
+	system: {
+		config: __dirname + "/package.json!npm"
+	}
+
+});
+```
 
 @option {Array<moduleName|comparitor>} [graphs] Builds each item in the graph on its own. Each dependency is 
 built individually.
@@ -94,16 +102,28 @@ will also be included.
 
 Each module specified by `eachModule` will be exported, including its dependencies individually.  For example:
 
-```
-{
-  eachModule: ["foo","bar"],
-  format: "global"
-}
+**eachModule** is useful when you want to take a dependency graph and split it into separate builds that will be combined around certain modules within that graph.
+
+For example:
+
+```js
+stealTools.export({
+	system: {
+		config: __dirname + "/package.json!npm"
+	},
+	options: {},
+	outputs: {
+		"+standalone": {
+			eachModule: [
+				"app/a",
+				"app/b"
+			]
+		}
+	}
+});
 ```
 
-This will build a "foo" export and a "bar" export.  If "foo" and "bar" both depend on "zed", "zed" will
-be included in both exports.
-
+This will build out `dist/global/app/a.js` and `dist/global/app/b.js`, both as standalone builds.
 
 ## graphs
 

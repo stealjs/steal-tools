@@ -58,7 +58,7 @@ If you open [http://127.0.0.1:8080](http://127.0.0.1:8080) you'll now see a dire
 
 ## Create your modules
 
-Next we'll a main module that loads only the bare minimum to determine what "page" you are on. A bare bones example might have a file structure like:
+Next we'll create a main module that loads only the bare minimum to determine what "page" you are on. A bare bones example might have a file structure like:
 
     node_modules/
       steal-tools/
