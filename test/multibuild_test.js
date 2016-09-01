@@ -2331,4 +2331,28 @@ describe("multi build", function(){
 			.then(done, done);
 		});
 	});
+
+	describe("bundleDepth", function(){
+		it.only("can be set to 1", function(done){
+			asap(rmdir)(__dirname + "/bundleDepth/dist")
+			.then(function(){
+				var p = multiBuild({
+					config: __dirname + "/bundleDepth/package.json!npm",
+					bundleDepth: 1
+				}, {
+					quiet: true,
+					minify: false
+				});
+
+				return p;
+			})
+			.then(function(data){
+				console.log(data.bundles.map(function(b) { return b.name }))
+
+				// check the bundles
+				assert.equal(data.bundles.length, 3, "There are only 3 bundles in this project");
+			})
+			.then(done, done);
+		});
+	});
 });
