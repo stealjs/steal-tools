@@ -2411,22 +2411,21 @@ describe("multi build", function(){
 	});
 
 	describe("bundleDepth", function(){
-		it.only("can be set to 1", function(done){
+		it("can be set to 1", function(done){
 			asap(rmdir)(__dirname + "/bundleDepth/dist")
 			.then(function(){
 				var p = multiBuild({
-					config: __dirname + "/bundleDepth/package.json!npm",
-					bundleDepth: 1
+					config: __dirname + "/bundleDepth/package.json!npm"
 				}, {
 					quiet: true,
-					minify: false
+					minify: false,
+
+					bundleDepth: 1
 				});
 
 				return p;
 			})
 			.then(function(data){
-				console.log(data.bundles.map(function(b) { return b.name }))
-
 				// check the bundles
 				assert.equal(data.bundles.length, 3, "There are only 3 bundles in this project");
 			})
