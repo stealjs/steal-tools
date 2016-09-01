@@ -2409,4 +2409,27 @@ describe("multi build", function(){
 			});
 		});
 	});
+
+	describe("bundleDepth", function(){
+		it("can be set to 1", function(done){
+			asap(rmdir)(__dirname + "/bundleDepth/dist")
+			.then(function(){
+				var p = multiBuild({
+					config: __dirname + "/bundleDepth/package.json!npm"
+				}, {
+					quiet: true,
+					minify: false,
+
+					bundleDepth: 1
+				});
+
+				return p;
+			})
+			.then(function(data){
+				// check the bundles
+				assert.equal(data.bundles.length, 3, "There are only 3 bundles in this project");
+			})
+			.then(done, done);
+		});
+	});
 });
