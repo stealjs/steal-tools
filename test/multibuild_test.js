@@ -160,7 +160,7 @@ describe("multi build", function(){
 		});
 	});
 
-	it("Should minify by default", function(done){
+	it("Should minify by default using UglifyJS", function(done){
 		var config = {
 			config: __dirname + "/minify/config.js",
 			main: "minify"
@@ -286,6 +286,68 @@ describe("multi build", function(){
 				done();
 			}).catch(done);
 		});
+	});
+
+	it("should allow minification through closure compiler", function(done) {
+		this.timeout(10000);
+
+		var opts = { 
+			quiet: true, 
+			minify: "closureCompiler" 
+		};
+
+		var config = { 
+			main: "minify", 
+			config: __dirname + "/minify/config.js" 
+		};
+	
+		asap(rmdir)(__dirname + "/dist")
+			.then(function() {
+				return multiBuild(config, opts);
+			})
+			.then(function() {
+				var actualJS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
+
+				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
+				var hasGlobalLongVariable = actualJS.indexOf("anotherVeryLongName") !== -1;
+				var hasDevCode = actualJS.indexOf("remove this") !== -1;
+
+				assert(!hasLongVariable, "Minified source renamed long variable.");
+				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
+				assert(!hasDevCode, "Minified source has dev code removed.");
+				done();
+			})
+			.catch(done);
+	});
+
+	it("should allow setting closure compiler options", function(done) {
+		this.timeout(10000);
+
+		var opts = { 
+			quiet: true, 
+			minify: "closureCompiler",
+			closureCompilerOptions: {
+				checksOnly: true
+			}
+		};
+
+		var config = { 
+			main: "minify", 
+			config: __dirname + "/minify/config.js"
+		};
+	
+		asap(rmdir)(__dirname + "/dist")
+			.then(function() {
+				return multiBuild(config, opts);
+			})
+			.then(function() {
+				var actualJS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
+
+				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
+				assert(hasLongVariable, "should include long variable name");
+				done();
+			})
+			.catch(done);
 	});
 
 	it("Allows specifying an alternative dist directory", function(done){
