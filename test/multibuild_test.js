@@ -339,8 +339,9 @@ describe("multi build", function(){
 				minify: false,
 				quiet: true
 			}).then(function(){
-				open("test/bundle_path/subfolder/index.html",
-					 function(browser, close){
+				open("test/bundle_path/subfolder/index.html", function(browser, close){
+					browser.assert.element('#test-element');
+
 					find(browser,"STYLE_CONTENT", function(styleContent){
 						assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
 						close();

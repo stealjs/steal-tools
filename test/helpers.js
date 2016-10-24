@@ -28,6 +28,7 @@ exports.open = function(url, callback, done){
 	server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
 	//var browser = Browser.create();
 	var browser = new Browser();
+	// browser.debug();
 	browser.visit("http://localhost:8081/"+url)
 		.then(function(){
 			callback(browser, function(err){

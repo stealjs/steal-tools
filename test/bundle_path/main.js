@@ -1,4 +1,4 @@
-require("./style.css!");
+require("./style.css");
 
 function getFile(url, cb) {
 	var xhr = new XMLHttpRequest();
