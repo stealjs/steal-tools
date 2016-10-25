@@ -728,6 +728,23 @@ describe("multi build", function(){
 		});
 	});
 
+	it("can load projects that use require('./package'); convention", function(done){
+		rmdir(__dirname + "/pkg_json/dist", function(err){
+			if(err) return done(err);
+
+			var p = multiBuild({
+				config: __dirname + "/pkg_json/package.json!npm"
+			}, {
+				quiet: true,
+				minify: false
+			});
+
+			p.then(function(){
+				done();
+			});
+		});
+	});
+
 	describe("sideBundle", function(){
 		it("sideBundle: true will move a module into a side bundle", function(done){
 			rmdir(__dirname+"/side_bundle/dist", function(error){
@@ -900,6 +917,8 @@ describe("multi build", function(){
 			});
 		});
 	});
+
+
 
 	describe("with plugins", function(){
 		this.timeout(60000);
