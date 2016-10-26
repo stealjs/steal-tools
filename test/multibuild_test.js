@@ -1565,7 +1565,7 @@ describe("multi build", function(){
 		beforeEach(function(done){
 			asap(rmdir)(__dirname + "/npm-directories/dist").then(function(){
 				return multiBuild({
-					config: __dirname + "/npm-directories/package.json!npm"
+					baseURL: __dirname + "/npm-directories"
 				}, {
 					quiet: true
 				});
