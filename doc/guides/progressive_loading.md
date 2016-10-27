@@ -132,16 +132,13 @@ track the state of our app. So create an event handler which listens to the `has
   "main": "site/app.js",
   "scripts": {
     "start": "http-server",
-    "build": "steal-tools",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "steal-tools"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    ...
   },
   "dependencies": {
-	...
   },
   "system": {
     "npmAlgorithm": "flat",
