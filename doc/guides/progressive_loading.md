@@ -21,6 +21,8 @@ Once in the new folder, ensure [Node.js](http://nodejs.org/) is properly install
 
 This will ask you questions like the name of your application, the version, etc. You can just accept the defaults for now, we will change these later in the guide.
 
+<img src="https://cloud.githubusercontent.com/assets/361671/19776659/f67ee542-9c42-11e6-836c-6ac85fc71acb.png" alt="npm init" style="background: transparent; border: none;">
+
 Once you've gotten through these, install steal-tools, steal and jquery:
 
 	> npm install steal-tools --save-dev
