@@ -1,5 +1,5 @@
 @page steal-tools.guides.streams Streaming API
-@parent StealJS.guides 3
+@parent StealJS.topics
 
 In 0.14.0 StealTools added a new streaming API based on [Node streams](https://nodejs.org/api/stream.html). This gives you a greater ability to interject your own functionality in the middle of the build process, or to exclude parts you don't want (like if you didn't want to write the results to the filesystem.
 
