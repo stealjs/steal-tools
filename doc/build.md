@@ -5,8 +5,8 @@ Build a module and all of its dependencies and, optionally, other bundles to pro
 
 @signature `stealTools.build(config, options)`
 
-@param {steal-tools.SystemConfig} config 
-Specifies configuration values to set on the System loader.
+@param {steal-tools.StealConfig} config 
+Specifies configuration values to set on Steal's loader.
   
 @param {steal-tools.BuildOptions} [options]
 Specifies the behavior of the build.
@@ -48,7 +48,7 @@ To load the bundles, a html page should have a script tag like:
 
 ## bundleSteal
 
-Setting the `bundleSteal` option to `true` includes _steal.js_ and the [System.configMain] in each
+Setting the `bundleSteal` option to `true` includes _steal.js_ and the [config.configMain] in each
 main bundle.  This means one fewer http request.  
 
     var promise = stealTools.build({
@@ -71,8 +71,8 @@ To load the bundles, a html page should have a script tag like:
         config='../../package.json!npm'></script>
 ```
 
-The [System.configPath] must be given if a [System.configMain config file] is in the bundle;
-otherwise, [System.baseURL] should be set like:
+The [config.configPath] must be given if a [config.configMain config file] is in the bundle;
+otherwise, [config.baseURL] should be set like:
 
 ```
 <script src='./dist/bundles/my-app.js' 
@@ -83,7 +83,7 @@ otherwise, [System.baseURL] should be set like:
 ## bundlesPath
 
 The `bundlesPath` option specifies where the bundles should be looked for
-relative to [System.baseURL].  It will also change where the bundles are written out.
+relative to [config.baseURL].  It will also change where the bundles are written out.
 
     var promise = stealTools.build({
       main: "my-app",
@@ -118,10 +118,10 @@ The `ignore` option specifies which modules exclude from being bundled.
 A typical scenario for using `ignore` is if you want a dependent module loaded from a CDN.
 The browser can load e.g. jQuery from the browsers cache. This saves traffic and also speed up your site.
 
-If you exclude a module from the bundled file, you have to make sure, that in the [production environment configuration](http://stealjs.com/docs/System.envs.html)
+If you exclude a module from the bundled file, you have to make sure, that in the [production environment configuration](http://stealjs.com/docs/config.envs.html)
 the module is:
 
-* ... [mapped to the pseudo-module @empty](http://stealjs.com/docs/System.map.html#ignoring-optional-dependencies) if you don't need it in production environment
+* ... [mapped to the pseudo-module @empty](http://stealjs.com/docs/config.map.html#ignoring-optional-dependencies) if you don't need it in production environment
 
     ```
     "envs": {
@@ -133,7 +133,7 @@ the module is:
     }
     ```
 
-* ... [configured](http://stealjs.com/docs/steal.html#path-configure) to the [right location](http://stealjs.com/docs/System.paths.html) of the module e.g. a CDN
+* ... [configured](http://stealjs.com/docs/steal.html#path-configure) to the [right location](http://stealjs.com/docs/config.paths.html) of the module e.g. a CDN
 
     ```
     "envs": {

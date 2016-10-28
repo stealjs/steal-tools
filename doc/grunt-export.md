@@ -76,7 +76,7 @@ transpile it, and all of its dependencies (except jQuery), to AMD and CommonJS w
     
 Each [steal-tools.export.object] task is configured by three values:
 
- - system - describes the [System.config] values used to load modules; this is passed to [steal-tools.transformImport].
+ - system - describes the [config.config] values used to load modules; this is passed to [steal-tools.transformImport].
  - options - configures special behavior of the loader, such as logging.
  - outputs - configures the modules that should be written out, how they 
              should be written out, and where they should be written. 

@@ -31,7 +31,7 @@ location.
   out by this output.
   @param {Object|Array<Object>} moduleData Deprecated.
   @param {Load|Array<Load>} load The module load record, or module load records, being written by this output. 
-  @param {Loader} System The System loader used by Steal to load all of these modules.  All configuration
+  @param {Loader} loader The Steal loader used by Steal to load all of these modules.  All configuration
   should be available on it.
  
 @option {Array<moduleName|steal-tools.export.ignorer>|Boolean} [ignore] Modules that should be ignored and not included in the output.

@@ -4,12 +4,12 @@
 An object that specifies the modules to load and their outputs. This is used by
 [steal-tools.export] and [steal-tools.grunt.export].
 
-@option {steal-tools.SystemConfig} system Specifies the [System.config] values used 
-to load modules.  At a minimum, some set of [System.main main], [System.baseURL baseURL],
-or [System.configPath configPath] must be specified.
+@option {steal-tools.StealConfig} steal Specifies the [config.config] values used 
+to load modules.  At a minimum, some set of [config.main main], [config.baseURL baseURL],
+or [config.configPath configPath] must be specified.
 
 ```
-system: {
+steal: {
   main: ['mymodule'],
   config: __dirname+"/config.js"
 }
@@ -30,16 +30,16 @@ system: {
 
 Each ExportObject task is configured by three values:
 
- - system - Describes the [System.config] values used to load modules; this is passed to [steal-tools.transformImport].
+ - steal - Describes the [config.config] values used to load modules; this is passed to [steal-tools.transformImport].
  - options - Configures special behavior of the loader such as logging.
  - outputs - Configures the modules that should be written out, how they 
              should be written out, and where they should be written. 
 
-## system
+## steal
 
-A [steal-tools.SystemConfig] object that is used to load modules. Typically, you will want to specify at least the `config` and `main` options, like so:
+A [steal-tools.StealConfig] object that is used to load modules. Typically, you will want to specify at least the `config` and `main` options, like so:
 
-    system: {
+    steal: {
 	  config: __dirname + "/config.js",
       main: ["math/add", "math/subtract"]
     }
@@ -60,7 +60,7 @@ options: { quiet: true }
 
 ## outputs
 
-`outputs` specifies different ways the modules loaded by `system` are written out. It's
+`outputs` specifies different ways the modules loaded by `steal` are written out. It's
 an object of [steal-tools.export.output] objects.  Each [steal-tools.export.output]
 supports the following options:
 

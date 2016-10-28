@@ -1,37 +1,37 @@
-@typedef {{}} steal-tools.SystemConfig SystemConfig
+@typedef {{}} steal-tools.StealConfig StealConfig
 @parent steal-tools.types
 
 Configuration values needed for StealJS to load modules. Some set of the following
 values are required:
 
 @option {String|Array<moduleName>} [main] The module, or modules, that should be 
-imported.  This sets [System.main]. 
+imported.  This sets [config.main]. 
 
  - __It is optional if__ a `config` is provided.
 
 @option {String} [config] The path to a configuration file. This
-will also specify `baseURL`, and sometimes `main`. This sets [System.configPath].
+will also specify `baseURL`, and sometimes `main`. This sets [config.configPath].
 
  - __It is optional if__ `main` is provided and no other configurations are needed.
  - __It is required if__ you are using NPM.
 
-@option {Object<moduleName,metadata>} [meta] A object of <moduleNames> that contain [metadata](http://stealjs.com/docs/System.meta.html)
+@option {Object<moduleName,metadata>} [meta] A object of <moduleNames> that contain [metadata](http://stealjs.com/docs/config.meta.html)
 
 @option {String} [baseURL] If a configuration file is not used, 
-the [System.baseURL baseURL] value must be set.
+the [config.baseURL baseURL] value must be set.
 
 @option {String} [bundlesPath='dist/bundle']  Specifies the path where the production bundles should be 
-  placed. Often, this is the same value as [System.bundlesPath]. By default, the location is `"dist/bundles"`.
+  placed. Often, this is the same value as [config.bundlesPath]. By default, the location is `"dist/bundles"`.
 
   The path can be specified in three ways:
 
  - Absolute path - bundlesPath starts with `/`, or matches _/^\w+:[\/\\]/_, like:  `__dirname+"/place"`, or `"c:\my\bundles"`.
  - Relative to `process.cwd()` - bundlesPath starts with `./`, like `"./place"`.
- - Relative to [System.baseURL baseURL] - bundlesPath looks like: "packages", "foo/bar".
+ - Relative to [config.baseURL baseURL] - bundlesPath looks like: "packages", "foo/bar".
  
 @option {Array<moduleName>} [bundle] An array of <moduleNames> that should be progressively loaded.
   
-@option {Object<System.jsonOptions>} [jsonOptions] Provides options that can be applied to JSON loading.
+@option {Object<config.jsonOptions>} [jsonOptions] Provides options that can be applied to JSON loading.
   Using the `transform` method will run through all JSON files while building, also the `package.json`'s of loaded modules
   (if using NPM). 
 
@@ -40,12 +40,12 @@ the [System.baseURL baseURL] value must be set.
 ## Use
 
 [steal-tools.build], [steal-tools.export], and [steal-tools.transformImport] all
-take a `SystemConfig`, which configures the modules to load.
+take a `StealConfig`, which configures the modules to load.
 
 ```
-stealTools.build(SystemConfig, ...)
-stealTools.pluginifier(SystemConfig, ...)
-stealTools["export"]({system: SystemConfig, outputs: {...}});
+stealTools.build(StealConfig, ...)
+stealTools.pluginifier(StealConfig, ...)
+stealTools["export"]({system: StealConfig, outputs: {...}});
 ```
 
 If your `config` file specifies `main`, all that is needed is the `config` location:

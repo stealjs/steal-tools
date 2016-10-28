@@ -4,11 +4,11 @@
 The `steal-live-reload` options object's values.
 
 @option {Object} system Specifies the `config` argument in
-[steal-tools.build]. The [System.main main] option must be specified. Typically,
-[System.configPath configPath] is also specified, as that is used to set
-[System.baseURL baseURL].  Any System [System.config configuration] can be specified; however,
+[steal-tools.build]. The [config.main main] option must be specified. Typically,
+[config.configPath configPath] is also specified, as that is used to set
+[config.baseURL baseURL].  Any Steal [config.config configuration] can be specified; however,
 most other __build__ configuration values are specified
-by [System.buildConfig], in the config file.
+by [config.buildConfig], in the config file.
 
 @option {Object} liveReloadOptions Specifies the `options` argument
 to [steal-tools.cmd.live-reload steal-tools live-reload].
@@ -41,7 +41,7 @@ options: `system`, and `liveReloadOptions`.
 
 ## system
 
-These are [System.config] values that are used to
+These are [config.config] values that are used to
 load modules during the build process. Typically, you will want
 to specify at least the `config` and `main` options, like so:
 

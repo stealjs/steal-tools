@@ -87,15 +87,15 @@ track the state of our app. So create an event handler which listens to the `has
 	$(function(){
 	  var onhashchange = function(){
 		if(window.location.hash === "#login") {
-		  System.import("site/login").then(function(){
+		  steal.import("site/login").then(function(){
 			$("#main").login();
 		  });
 		} else if(window.location.hash === "#signup" ) {
-		  System.import("site/signup").then(function(){
+		  steal.import("site/signup").then(function(){
 			$("#main").signup();
 		  });
 		} else {
-		  System.import("site/homepage").then(function(){
+		  steal.import("site/homepage").then(function(){
 			$("#main").homepage();
 		  });
 		}
