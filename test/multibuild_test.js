@@ -2451,7 +2451,7 @@ describe("multi build", function(){
 	});
 
 	describe("bundleDepth", function(){
-		it("can be set to 1", function(done){
+		it.only("can be set to 1", function(done){
 			asap(rmdir)(__dirname + "/bundleDepth/dist")
 			.then(function(){
 				var p = multiBuild({
@@ -2468,6 +2468,19 @@ describe("multi build", function(){
 			.then(function(data){
 				// check the bundles
 				assert.equal(data.bundles.length, 3, "There are only 3 bundles in this project");
+
+				open("test/bundleDepth/prod.html",function(browser, close){
+					find(browser,"MODULEA", function(modA){
+						assert.equal(modA, "worked");
+
+						find(browser, "MODULEB", function(modB){
+							assert.equal(modB, "worked");
+
+							close();
+						}, close);
+					}, function(){});
+				}, done);
+
 			})
 			.then(done, done);
 		});
