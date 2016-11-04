@@ -163,8 +163,8 @@ modules as bundles.
       minify: true,
       debug: false,
       quiet: false,
-      bundleDepth: 3,
-      mainDepth: 3
+      maxBundleRequests: 3,
+      maxMainRequests: 3
     });
 
 Assuming that "login" and "homepage" need the same modules, the following bundles will be created:

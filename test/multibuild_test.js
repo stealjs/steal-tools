@@ -2450,7 +2450,7 @@ describe("multi build", function(){
 		});
 	});
 
-	describe("bundleDepth", function(){
+	describe("maxBundleRequests", function(){
 		it("can be set to 1", function(done){
 			asap(rmdir)(__dirname + "/bundleDepth/dist")
 			.then(function(){
@@ -2460,16 +2460,27 @@ describe("multi build", function(){
 					quiet: true,
 					minify: false,
 
-					bundleDepth: 1
+					maxBundleRequests: 1
 				});
 
 				return p;
 			})
 			.then(function(data){
+				assert.equal(data.bundles.length, 2, "there are two bundles because they were merged");
+
 				// check the bundles
-				assert.equal(data.bundles.length, 3, "There are only 3 bundles in this project");
-			})
-			.then(done, done);
+				open("test/bundleDepth/prod.html",function(browser, close){
+					find(browser,"MODULEA", function(modA){
+						assert.equal(modA, "worked");
+
+						find(browser, "MODULEB", function(modB){
+							assert.equal(modB, "worked");
+
+							close();
+						}, close);
+					}, function(){});
+				}, done);
+			});
 		});
 	});
 });

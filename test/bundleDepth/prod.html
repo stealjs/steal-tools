@@ -1,0 +1,10 @@
+<script src="../../node_modules/steal/steal.js"
+	config="./package.json!npm"
+	env="production"
+	main="bd/main"></script>
+<script>
+	steal.done().then(function(){
+		steal.import("bd/a");
+		steal.import("bd/b");
+	});
+</script>
