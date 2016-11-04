@@ -2450,7 +2450,7 @@ describe("multi build", function(){
 		});
 	});
 
-	describe("bundleDepth", function(){
+	describe("maxBundleRequests", function(){
 		it("can be set to 1", function(done){
 			asap(rmdir)(__dirname + "/bundleDepth/dist")
 			.then(function(){
@@ -2460,7 +2460,7 @@ describe("multi build", function(){
 					quiet: true,
 					minify: false,
 
-					bundleDepth: 1
+					maxBundleRequests: 1
 				});
 
 				return p;
@@ -2480,9 +2480,7 @@ describe("multi build", function(){
 						}, close);
 					}, function(){});
 				}, done);
-
-			})
-			.then(done, done);
+			});
 		});
 	});
 });

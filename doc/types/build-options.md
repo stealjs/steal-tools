@@ -17,10 +17,10 @@ Options used to configure the build process.
 For more information take a look at the `ignore` usage http://stealjs.com/docs/steal-tools.build.html#ignore
 
 
-@option {Number} [bundleDepth=3] The maximum number of bundles that need to be loaded
+@option {Number} [maxBundleRequests=3] The maximum number of bundles that need to be loaded
 for any `bundle` module. Defaults to `3`.
 
-@option {Number} [mainDepth=3] The maximum number of bundles that will be loaded for any `main`
+@option {Number} [maxMainRequests=3] The maximum number of bundles that will be loaded for any `main`
 module. Defaults to `3`.
 
 @option {Boolean} [removeDevelopmentCode=true] Remove any development code from the bundle specified 
