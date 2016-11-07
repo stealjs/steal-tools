@@ -262,11 +262,11 @@ describe("multi build", function(){
 	it("Allows specifying an alternative dist directory", function(done){
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
-			main: "bundle",
-			bundlesPath: __dirname + "/other_bundle/other_dist/bundles"
+			main: "bundle"
 		};
 
 		var options = {
+			dest: __dirname + "/other_bundle/other_dist",
 			quiet: true
 		};
 
@@ -288,7 +288,23 @@ describe("multi build", function(){
 			});
 
 		});
+	});
 
+	it("Throws if you use bundlesPath configuration", function(done){
+		multiBuild({
+			config: __dirname + "/some/fake/dir/package.json!npm",
+			bundlesPath: __dirname + "/some/fake/dir/bundles"
+		}, {
+			quiet: false	
+		})
+		.then(function(){
+			assert.ok(false, "This should not have succeeded");
+		}, function(err){
+			var msg = err.message;
+			assert.ok(/bundlesPath has been removed/.test(msg),
+					  "Rejected because bundlesPath is used");
+		})
+		.then(done);
 	});
 
 
@@ -296,11 +312,11 @@ describe("multi build", function(){
         this.timeout(5000);
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
-			main: "bundle",
-			bundlesPath: __dirname+"/other_bundle/bundles"
+			main: "bundle"
 		};
 
 		var options = {
+			dest: __dirname + "/other_bundle",
 			quiet: true
 		};
 
@@ -325,7 +341,7 @@ describe("multi build", function(){
 
 	});
 
-	it("Works with bundlesPath and loading from a subfolder", function(done){
+	it("Works with dest and loading from a subfolder", function(done){
 		this.timeout(5000);
 
 		rmdir(__dirname + "/bundle_path/javascript/dist", function(error){
@@ -333,9 +349,9 @@ describe("multi build", function(){
 
 			multiBuild({
 				config: __dirname + "/bundle_path/config.js",
-				main: "main",
-				bundlesPath: __dirname + "/bundle_path/javascript/dist"
+				main: "main"
 			}, {
+				dest: __dirname + "/bundle_path/javascript/dist",
 				minify: false,
 				quiet: true
 			}).then(function(){
@@ -403,10 +419,10 @@ describe("multi build", function(){
 
 			multiBuild({
 				config: __dirname+"/bundle/stealconfig.js",
-				main: "bundle",
-				bundlesPath: __dirname + "/bundle/alternate/bundles"
+				main: "bundle"
 			},{
 				bundleSteal: true,
+				dest: __dirname + "/bundle/alternate",
 				quiet: true,
 				minify: false
 			}).then(function(data){
@@ -1520,9 +1536,9 @@ describe("multi build", function(){
 				var second = multiBuild({
 						config: __dirname+"/bundle/stealconfig.js",
 						main: "bundle",
-						bundlesPath: __dirname+"/bundle_multiple_builds",
 						systemName: "2"
 					}, {
+						dest: __dirname + "/bundle_multiple_builds",
 						quiet: true
 					})
 

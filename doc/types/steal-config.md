@@ -19,15 +19,6 @@ will also specify `baseURL`, and sometimes `main`. This sets [config.configPath]
 
 @option {String} [baseURL] If a configuration file is not used, 
 the [config.baseURL baseURL] value must be set.
-
-@option {String} [bundlesPath='dist/bundle']  Specifies the path where the production bundles should be 
-  placed. Often, this is the same value as [config.bundlesPath]. By default, the location is `"dist/bundles"`.
-
-  The path can be specified in three ways:
-
- - Absolute path - bundlesPath starts with `/`, or matches _/^\w+:[\/\\]/_, like:  `__dirname+"/place"`, or `"c:\my\bundles"`.
- - Relative to `process.cwd()` - bundlesPath starts with `./`, like `"./place"`.
- - Relative to [config.baseURL baseURL] - bundlesPath looks like: "packages", "foo/bar".
  
 @option {Array<moduleName>} [bundle] An array of <moduleNames> that should be progressively loaded.
   
