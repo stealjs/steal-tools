@@ -11,7 +11,15 @@ Options used to configure the build process.
 
 @option {Boolean} [quiet=false] No logging.  Defaults to `false`.
 
-@option {steal-tools.BundleAssetsOptions|Boolean} [bundleAssets=false] Set to true to have assets from your project bundled into your dist folder.
+@option {String} [dest="dist"] Specifies the destination folder for the build. By default steal-tools will write to the `BASEURL + '/dist'` folder where BASEURL is the local Steal [config.baseUrl], usually the same folder that your package.json is located.
+
+  The path can be specified in three ways:
+
+ - Absolute path - dest starts with `/`, or matches _/^\w+:[\/\\]/_, like:  `__dirname+"/place"`, or `"c:\my\bundles"`.
+ - Relative to `process.cwd()` - dest starts with `./`, like `"./place"`.
+ - Relative to [config.baseURL baseURL] - dest looks like: "packages", "foo/bar".
+
+@option {steal-tools.BundleAssetsOptions|Boolean} [bundleAssets=false] Set to true to have assets from your project bundled into your dest folder.
 
 @option {Array.<moduleName>} ignore An array of module names that should be ignored and not included in the bundled file. 
 For more information take a look at the `ignore` usage http://stealjs.com/docs/steal-tools.build.html#ignore

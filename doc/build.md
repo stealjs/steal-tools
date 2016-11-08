@@ -80,16 +80,16 @@ otherwise, [config.baseURL] should be set like:
 ```
 
 
-## bundlesPath
+## dest
 
-The `bundlesPath` option specifies where the bundles should be looked for
-relative to [config.baseURL].  It will also change where the bundles are written out.
+The `dest` option specifies **a folder** where the distributables (which includes your bundles, a production version of Steal, and possibly other assets).
+
 
     var promise = stealTools.build({
       main: "my-app",
-      config: __dirname+"/package.json!npm",
-      bundlesPath: "mobile/assets"
+      config: __dirname+"/package.json!npm"
     },{
+	  dest: __dirname + "/mobile/assets",
       bundleSteal: true
     });
 
@@ -102,15 +102,8 @@ This will build bundles like:
 To load the bundles, a html page should have a script tag like:
 
 ```
-<script src='../mobile/assets/my-app.js' 
-        config='../package.json!npm'
-        bundles-path='mobile/assets'
-        ></script>
+<script src="../mobile/assets/steal.production.js"></script>
 ```
-
-> Notice: bundlesPath should typically not be set in your
-config file. Instead, it should be set when `.build` is called
-and as an attribute in the script that loads _steal.js_.
 
 ## <a name="ignore"></a>ignore
 
