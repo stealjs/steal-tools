@@ -17,6 +17,7 @@ test/pluginify/out.js.map
 test/nocallback/out.js
 test/dep_plugins/bundles
 test/bundles/
+test/other_bundle/steal.production.js
 test/other_bundle/other_dist/
 test/bundle/alternate/
 test/minify/bundles/

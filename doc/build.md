@@ -23,7 +23,6 @@ module as bundles.
     var stealTools = require("steal-tools");
     
     var promise = stealTools.build({
-      main: "my-app",
       config: __dirname+"/package.json!npm"
     },{
       // the following are the default values, so you don't need
@@ -41,9 +40,7 @@ This will build bundles like:
 To load the bundles, a html page should have a script tag like:
 
 ```
-<script src='./node_modules/steal/steal.production.js' 
-        main='my-app'
-        env='production'></script>
+<script src="./dist/steal.production.js"></script>
 ```
 
 ## bundleSteal
@@ -67,18 +64,8 @@ This will build bundles like:
 To load the bundles, a html page should have a script tag like:
 
 ```
-<script src='./dist/bundles/my-app.js' 
-        config='../../package.json!npm'></script>
+<script src="./dist/bundles/my-app.js"></script>
 ```
-
-The [config.configPath] must be given if a [config.configMain config file] is in the bundle;
-otherwise, [config.baseURL] should be set like:
-
-```
-<script src='./dist/bundles/my-app.js' 
-        base-url='../../'></script>
-```
-
 
 ## dest
 
@@ -86,7 +73,6 @@ The `dest` option specifies **a folder** where the distributables (which include
 
 
     var promise = stealTools.build({
-      main: "my-app",
       config: __dirname+"/package.json!npm"
     },{
 	  dest: __dirname + "/mobile/assets",
@@ -95,7 +81,7 @@ The `dest` option specifies **a folder** where the distributables (which include
 
 This will build bundles like:
 
-    /mobile/assets/
+    /mobile/assets/bundles
       my-app.js
       my-app.css
 
@@ -194,9 +180,7 @@ Source maps provide a way to debug your bundled application. Using steal-tool's 
 This will build out your application to `dist/bundles/app.js` and a corresponding source map will be at `dist/bundles/app.js.map`. Now load your application:
 
 ```html
-<script src="./node_modules/steal/steal.js"
-    env="production"
-    main="app"></script>
+<script src="./dist/steal.production.js"></script>
 ```
 
 And look in your debugger tools, the original sources should be shown and are debuggable.
