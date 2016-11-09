@@ -25,6 +25,7 @@ describe("multi build", function(){
 				config: __dirname+"/bundle/stealconfig.js",
 				main: "bundle"
 			}, {
+				minify: false,
 				quiet: true
 			}).then(function(data){
 				var exists = fs.existsSync(  path.join(__dirname,"bundle/dist/bundles/bundle.js")  );
@@ -969,7 +970,6 @@ describe("multi build", function(){
 				}, close);
 
 			}, done);
-
 		});
 
 		it("work built", function(done){
@@ -1003,7 +1003,6 @@ describe("multi build", function(){
 					done(e);
 				});
 			});
-
 		});
 
 		it("work built using steal", function(done){
@@ -1604,6 +1603,7 @@ describe("multi build", function(){
 				return multiBuild({
 					baseURL: __dirname + "/npm-directories"
 				}, {
+					minify: false,
 					quiet: true
 				});
 			}).then(function(buildResult){

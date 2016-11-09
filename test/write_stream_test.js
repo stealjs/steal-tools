@@ -23,7 +23,8 @@ describe("streams.write", function(){
 				.pipe(s.minify())
 				.pipe(s.bundle())
 				.pipe(s.concat())
-				.pipe(s.write());
+				.pipe(s.write())
+				.pipe(s.steal());
 
 			buildStream.pipe(through.obj(function(data){
 				open("test/bundle/bundle.html#a",function(browser, close){
