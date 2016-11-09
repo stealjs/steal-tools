@@ -17,7 +17,7 @@ describe("+global-js", function(){
 
 		it("Exports to an object if multiple exports are used", function(done){
 			stealExport({
-				system: {
+				steal: {
 					config: __dirname + "/exports_es/package.json!npm",
 					main: "app/multi"
 				},
@@ -44,7 +44,7 @@ describe("+global-js", function(){
 		it("Exports to a single value, if there is only a single default export (traceur)",
 		   function(done){
 			stealExport({
-				system: {
+				steal: {
 					config: __dirname + "/exports_es/package.json!npm",
 					main: "app/single",
 					transpiler: "traceur"
@@ -71,7 +71,7 @@ describe("+global-js", function(){
 		it("Exports to a single value, if there is only a single default export (babel)",
 		   function(done){
 			stealExport({
-				system: {
+				steal: {
 					config: __dirname + "/exports_es/package.json!npm",
 					main: "app/single",
 					transpiler: "babel"

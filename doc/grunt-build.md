@@ -3,7 +3,7 @@
 
 The `steal-build` options object's values.
 
-@option {Object} system Specifies the `config` argument in
+@option {Object} steal Specifies the `config` argument in
 [steal-tools.build]. The [config.main main] option must be specified. Typically,
 [config.configPath configPath] is also specified, as that is used to set 
 [config.baseURL baseURL].  Any Steal [config.config configuration] can be specified; however,
@@ -22,7 +22,7 @@ to [steal-tools.build stealTools.build].
 internally. This page documents the specifics of the Grunt task. Read
 [steal-tools.build steal-tools.build's documentation] for how to use
 the build in various workflows and detailed information
-on the system and options arguments.
+on the steal and options arguments.
 
 `"steal-build"` is registered as a Grunt multi-build task. Specify the
 default "steal-build" task options, as follows:
@@ -31,7 +31,7 @@ default "steal-build" task options, as follows:
       "steal-build": {
         default: {
           options: {
-            system: {
+            steal: {
               config: __dirname + "/app/config.js",
               main: "app/app"
             },
@@ -44,9 +44,9 @@ default "steal-build" task options, as follows:
     });
 
 The Grunt task takes 2 objects as its 
-options: `system`, and `buildOptions`.
+options: `steal`, and `buildOptions`.
 
-## system
+## steal
 
 These are [config.config] values that are used to 
 load modules during the build process. Typically, you will want 
