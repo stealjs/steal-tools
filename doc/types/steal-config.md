@@ -36,7 +36,7 @@ take a `StealConfig`, which configures the modules to load.
 ```
 stealTools.build(StealConfig, ...)
 stealTools.pluginifier(StealConfig, ...)
-stealTools["export"]({system: StealConfig, outputs: {...}});
+stealTools["export"]({steal: StealConfig, outputs: {...}});
 ```
 
 If your `config` file specifies `main`, all that is needed is the `config` location:
@@ -45,7 +45,7 @@ If your `config` file specifies `main`, all that is needed is the `config` locat
 stealTools.build({config: __dirname+"/package.json!npm"}, ...)
 stealTools.pluginifier({config: __dirname+"/package.json!npm"}, ...)
 stealTools.export({
-  system: {config: __dirname+"/package.json!npm"}, 
+  steal: {config: __dirname+"/package.json!npm"}, 
   outputs: {...}
 });
 ```
@@ -65,7 +65,7 @@ stealTools.pluginifier({
 }, ...);
 
 stealTools.export({
-  system: {
+  steal: {
     config: __dirname+"/config.js",
     main: "myproject"
   }, 

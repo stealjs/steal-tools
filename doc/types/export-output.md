@@ -13,7 +13,7 @@ with their dependencies.
 
 ```js
 stealTools.export({
-	system: {
+	steal: {
 		config: __dirname + "/package.json!npm"
 	}
 
@@ -40,7 +40,7 @@ You can use it like:
 
 ```js
 stealTools.export({
-	system: {
+	steal: {
 		config: __dirname + "/package.json!npm"
 	},
 	options: {},
@@ -58,7 +58,7 @@ Or alternatively you can provide an [steal-tools.export.ignorer] **function** th
 
 ```js
 stealTools.export({
-	system: {
+	steal: {
 		config: __dirname + "/package.json!npm"
 	},
 	options: {},
@@ -108,7 +108,7 @@ For example:
 
 ```js
 stealTools.export({
-	system: {
+	steal: {
 		config: __dirname + "/package.json!npm"
 	},
 	options: {},

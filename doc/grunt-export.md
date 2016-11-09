@@ -17,7 +17,7 @@ grunt.initConfig({
 
 Each [steal-tools.export.object] specifies:
 
- - A `system` object that specifies the modules to be loaded.
+ - A `steal` object that specifies the modules to be loaded.
  - An `options` object that specifies any special loading behavior, like turning logging.
  - An `outputs` object that specifies how the modules should be written out.
  
@@ -25,7 +25,7 @@ Each [steal-tools.export.object] specifies:
 grunt.initConfig({
   "steal-export": {
     taskName: {
-      system : { .. },
+      steal : { .. },
       options: { .. },
       outputs: { .. }
     }
@@ -42,7 +42,7 @@ grunt.initConfig({
 internally. This page documents the specifics of the Grunt task. Read
 [steal-tools.export steal-tools.export's documentation] for how to use
 the export in various workflows and detailed information
-on the system and options arguments.
+on the steal and options arguments.
 
 `steal-export` is a Grunt [multi-task](http://gruntjs.com/creating-tasks#multi-tasks) that is 
 used to build library projects to a variety of formats. For example, to load a "main" module and
@@ -51,7 +51,7 @@ transpile it, and all of its dependencies (except jQuery), to AMD and CommonJS w
     grunt.initConfig({
       "steal-export": {
         transpile: {
-          system: {
+          steal: {
             main: "main",
             config: __dirname + "/config.js"
           },
@@ -76,7 +76,7 @@ transpile it, and all of its dependencies (except jQuery), to AMD and CommonJS w
     
 Each [steal-tools.export.object] task is configured by three values:
 
- - system - describes the [config.config] values used to load modules; this is passed to [steal-tools.transformImport].
+ - steal - describes the [config.config] values used to load modules; this is passed to [steal-tools.transformImport].
  - options - configures special behavior of the loader, such as logging.
  - outputs - configures the modules that should be written out, how they 
              should be written out, and where they should be written. 
@@ -99,7 +99,7 @@ grunt.initConfig({
   },
   "steal-export": {
     transpile: {
-      system: { ... },
+      steal: { ... },
       outputs: {
         "amd +minify": {
           format: "amd"

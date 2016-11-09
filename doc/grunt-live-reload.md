@@ -3,7 +3,7 @@
 
 The `steal-live-reload` options object's values.
 
-@option {Object} system Specifies the `config` argument in
+@option {Object} steal Specifies the `config` argument in
 [steal-tools.build]. The [config.main main] option must be specified. Typically,
 [config.configPath configPath] is also specified, as that is used to set
 [config.baseURL baseURL].  Any Steal [config.config configuration] can be specified; however,
@@ -24,7 +24,7 @@ default "steal-live-reload" task options, as follows:
       "steal-live-reload": {
         default: {
           options: {
-            system: {
+            steal: {
               config: __dirname + "/app/config.js",
               main: "app/app"
             },
@@ -37,9 +37,9 @@ default "steal-live-reload" task options, as follows:
     });
 
 The Grunt task takes 2 objects as its
-options: `system`, and `liveReloadOptions`.
+options: `steal`, and `liveReloadOptions`.
 
-## system
+## steal
 
 These are [config.config] values that are used to
 load modules during the build process. Typically, you will want

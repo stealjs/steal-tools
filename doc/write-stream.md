@@ -11,16 +11,16 @@ Create a [stream](https://nodejs.org/api/stream.html) that takes a [steal-tools.
 
 # Use
 
-The write stream is used to write the result of a build to the file system.
+The write stream is used to write the result of a build to the filesystem.
 
 ```
 var s = require("steal-tools").streams;
 
-var system = {
+var steal = {
 	config: __dirname + "/package.json!npm"
 };
 
-var stream = s.graph(system)
+var stream = s.graph(steal)
 	.pipe(s.transpile())
 	.pipe(s.minify())
 	.pipe(s.bundle())
@@ -28,7 +28,7 @@ var stream = s.graph(system)
 	.pipe(s.write());
 
 stream.on("data", function(){
-	// Files were written to the file system
+	// Files were written to the filesystem
 });
 ```
 

@@ -13,7 +13,7 @@ describe("export", function(){
 
 		stealExport({
 
-			system: {
+			steal: {
 				main: "pluginifier_builder/pluginify",
 				config: __dirname+"/stealconfig.js"
 			},
@@ -55,7 +55,7 @@ describe("export", function(){
 	it("works with multiple mains", function(done){
 		stealExport({
 
-			system: {
+			steal: {
 				main: [
 					"pluginifier_builder/pluginify",
 					"pluginifier_builder/common"
@@ -102,7 +102,7 @@ describe("export", function(){
 
 		stealExport({
 
-			system: {
+			steal: {
 				main: "pluginifier_builder_load/main",
 				config: __dirname+"/stealconfig.js"
 			},
@@ -161,7 +161,7 @@ describe("export", function(){
 
 		stealExport({
 
-			system: {
+			steal: {
 				main: "pluginifier_builder_exports/pluginify",
 				config: __dirname+"/stealconfig.js"
 			},
@@ -194,7 +194,7 @@ describe("export", function(){
 	describe("eachModule", function(){
 		it("works", function(done){
 			stealExport({
-				system: {
+				steal: {
 					main: "pluginifier_builder/pluginify",
 					config: __dirname+"/stealconfig.js"
 				},
@@ -262,7 +262,7 @@ describe("export", function(){
 			this.timeout(10000);
 
 			stealExport({
-				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				steal: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
 					"+cjs": {}
@@ -297,7 +297,7 @@ describe("export", function(){
 
 			stealExport({
 
-				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				steal: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
 					"+cjs": {dest: __dirname+"/pluginifier_builder_helpers/cjs"}
@@ -334,7 +334,7 @@ describe("export", function(){
 
 			stealExport({
 
-				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				steal: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
 					"+amd": {}
@@ -358,7 +358,7 @@ describe("export", function(){
 
 			stealExport({
 
-				system: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
+				steal: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
 				options: { quiet: true },
 				"outputs": {
 					"+global-css": {},
@@ -381,7 +381,7 @@ describe("export", function(){
 		it("+cjs +amd +global-css +global-js using Babel", function(done){
 			this.timeout(10000);
 			stealExport({
-				system: {
+				steal: {
 					config: __dirname+"/pluginifier_builder_helpers/package.json!npm",
 					transpiler: "babel"
 				},
@@ -411,7 +411,7 @@ describe("export", function(){
 		it("ignore: false will not ignore node_modules for globals", function(done){
 			this.timeout(10000);
 			stealExport({
-				system: {
+				steal: {
 					config: __dirname + "/ignore_false/package.json!npm"
 				},
 				options: { quiet: true },
@@ -439,7 +439,7 @@ describe("export", function(){
 		describe("ignore", function(){
 			it("works with unnormalized names", function(done){
 				stealExport({
-					system: {
+					steal: {
 						config: __dirname+"/npm/package.json!npm",
 						main: "npm-test/main",
 						transpiler: "babel"
@@ -491,7 +491,7 @@ describe("export", function(){
 		it("+cjs +amd +global-css +global-js works", function(done){
 			this.timeout(10000);
 			stealExport({
-				system: {
+				steal: {
 					config: __dirname+"/pluginifier_builder_helpers/package.json!npm",
 					transpiler: "babel"
 				},
