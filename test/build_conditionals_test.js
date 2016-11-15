@@ -8,7 +8,7 @@ var multiBuild = require("../lib/build/multi");
 
 describe("build app using steal-conditional", function() {
     this.timeout(30000);
-    
+
 	var find = testHelpers.find;
 	var open = testHelpers.open;
 	var prmdir = denodeify(rmdir);
@@ -30,11 +30,14 @@ describe("build app using steal-conditional", function() {
 				return multiBuild(config, { minify: false, quiet: true });
 			})
 			.then(function() {
-				var bundlesPath = path.join(basePath, "substitution", "main.js");
+				var bundles = path.join(
+					basePath, "substitution", "dist", "bundles"
+				);
 
-				if (!fs.existsSync(bundlesPath)) {
-					throw new Error("No build files found");
-				}
+				// creates bundles for each possible string substitution
+				// exposed through the "cases" property in the condition module
+				assert.ok(fs.existsSync(path.join(bundles, "message", "en.js")));
+				assert.ok(fs.existsSync(path.join(bundles, "message", "es.js")));
 			})
 			.then(function() {
 				var page = path.join(
@@ -64,14 +67,14 @@ describe("build app using steal-conditional", function() {
 				return multiBuild(options, { minify: false, quiet: true });
 			})
 			.then(function() {
-				var bundlesPath = path.join(
-					basePath, "boolean", "dist", "bundles", "conditionals",
-					"main.js"
+				var bundles = path.join(
+					basePath, "boolean", "dist", "bundles"
 				);
 
-				if (!fs.existsSync(bundlesPath)) {
-					throw new Error("No build files found");
-				}
+				// each module that might be conditionally loaded once the
+				// built app is run on the browser gets its own module
+				assert.ok(fs.existsSync(path.join(bundles, "foo.js")));
+				assert.ok(fs.existsSync(path.join(bundles, "bar.js")));
 			})
 			.then(function() {
 				var page = path.join(
