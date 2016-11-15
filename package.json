@@ -50,6 +50,7 @@
     "mockery": "^1.4.1",
     "rimraf": "^2.5.2",
     "steal-conditional": "^0.2.0",
+    "steal-css": "^1.0.0-rc.0",
     "steal-qunit": "0.0.4",
     "testee": "^0.2.0",
     "tree-kill": "^1.0.0"
@@ -126,7 +127,8 @@
   },
   "system": {
     "npmDependencies": [
-      "steal-qunit"
+      "steal-qunit",
+      "steal-css"
     ]
   }
 }

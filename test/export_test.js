@@ -258,157 +258,8 @@ describe("export", function(){
 			});
 		});
 
-		it("+cjs", function(done){
-			this.timeout(10000);
-
-			stealExport({
-				steal: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
-				options: { quiet: true },
-				"outputs": {
-					"+cjs": {}
-				},
-			}).then(function(){
-				var browserify = require("browserify");
-
-				var b = browserify();
-				b.add(path.join(__dirname, "pluginifier_builder_helpers/browserify.js"));
-				var out = fs.createWriteStream(path.join(__dirname, "pluginifier_builder_helpers/browserify-out.js"));
-				b.bundle().pipe(out);
-				out.on('finish', function(){
-					open("test/pluginifier_builder_helpers/browserify.html", function(browser, close) {
-						find(browser,"WIDTH", function(width){
-
-							assert.equal(width, 200, "with of element");
-							close();
-						}, close);
-					}, done);
-				});
-
-
-			}, function(e) {
-				done(e);
-			});
-
-		});
-
-
-		it("+cjs with dest", function(done){
-			this.timeout(10000);
-
-			stealExport({
-
-				steal: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
-				options: { quiet: true },
-				"outputs": {
-					"+cjs": {dest: __dirname+"/pluginifier_builder_helpers/cjs"}
-				}
-			}).then(function(){
-
-				var browserify = require("browserify");
-
-				var b = browserify();
-				b.add(path.join(__dirname, "pluginifier_builder_helpers/browserify-cjs.js"));
-				var out = fs.createWriteStream(path.join(__dirname, "pluginifier_builder_helpers/browserify-out.js"));
-				b.bundle().pipe(out);
-				out.on('finish', function(){
-					open("test/pluginifier_builder_helpers/browserify.html", function(browser, close) {
-						find(browser,"WIDTH", function(width){
-
-							assert.equal(width, 200, "with of element");
-							close();
-						}, close);
-					}, done);
-				});
-
-
-			}, done);
-
-		});
-
-
-
-		// NOTICE: this test uses a modified version of the css plugin to better work
-		// in HTMLDOM
-		it("+amd", function(done){
-			this.timeout(10000);
-
-			stealExport({
-
-				steal: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
-				options: { quiet: true },
-				"outputs": {
-					"+amd": {}
-				}
-			}).then(function(){
-
-				open("test/pluginifier_builder_helpers/amd.html", function(browser, close) {
-					find(browser,"WIDTH", function(width){
-						assert.equal(width, 200, "with of element");
-						close();
-					}, close);
-				}, done);
-
-
-			}, done);
-
-		});
-
-		it("+global-css +global-js", function(done){
-			this.timeout(10000);
-
-			stealExport({
-
-				steal: { config: __dirname+"/pluginifier_builder_helpers/package.json!npm" },
-				options: { quiet: true },
-				"outputs": {
-					"+global-css": {},
-					"+global-js": { exports: {"jquery": "jQuery"} }
-				}
-			}).then(function(err){
-
-				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
-					find(browser,"WIDTH", function(width){
-						assert.equal(width, 200, "width of element");
-						assert.ok(browser.window.TABS, "got tabs");
-						close();
-					}, close);
-				}, done);
-
-
-			}, done);
-		});
-
-		it("+cjs +amd +global-css +global-js using Babel", function(done){
-			this.timeout(10000);
-			stealExport({
-				steal: {
-					config: __dirname+"/pluginifier_builder_helpers/package.json!npm",
-					transpiler: "babel"
-				},
-				options: { quiet: true },
-				"outputs": {
-					"+cjs": {},
-					"+amd": {},
-					"+global-js": {
-						exports: {
-							"jquery": "jQuery"
-						}
-					},
-					"+global-css": {}
-				}
-			})
-			.then(function() {
-				open("test/pluginifier_builder_helpers/global.html", function(browser, close) {
-					find(browser,"WIDTH", function(width){
-						assert.equal(width, 200, "width of element");
-						assert.ok(browser.window.TABS, "got tabs");
-						close();
-					}, close);
-				}, done);
-			}, done);
-		});
-
-		it("ignore: false will not ignore node_modules for globals", function(done){
+		it("ignore: false will not ignore node_modules for globals",
+		   function(done){
 			this.timeout(10000);
 			stealExport({
 				steal: {
@@ -430,7 +281,6 @@ describe("export", function(){
 				}, done);
 			}, done);
 		});
-
 	});
 
 	describe("npm package.json builds", function(){
@@ -473,66 +323,7 @@ describe("export", function(){
 						}, close);
 					}, done);
 				}
-
-
 			});
 		});
-	});
-
-	describe("Source Maps", function(){
-		this.timeout(5000);
-
-		beforeEach(function(done){
-			rmdir(__dirname+"/pluginifier_builder_helpers/dist", function(err){
-				done(err);
-			});
-		});
-
-		it("+cjs +amd +global-css +global-js works", function(done){
-			this.timeout(10000);
-			stealExport({
-				steal: {
-					config: __dirname+"/pluginifier_builder_helpers/package.json!npm",
-					transpiler: "babel"
-				},
-				options: {
-					quiet: true,
-					sourceMaps: true
-				},
-				"outputs": {
-					"+cjs": {},
-					"+amd": {},
-					"+global-js": { exports: {"jquery": "jQuery"} },
-					"+global-css": {}
-				}
-			})
-			.then(verify)
-			.then(done, done);
-		});
-
-		function read(filename){
-			var data = fs.readFileSync(__dirname +
-									   "/pluginifier_builder_helpers/dist/" +
-									   filename,
-			"utf8");
-			if(/\.map/.test(filename)) return JSON.parse(data);
-			return data;
-		}
-
-		function verify() {
-			var globalJsMap = read("global/tabs.js.map");
-			assert.equal(globalJsMap.sources[1], "../../../src/tabs.js", "Relative to source file");
-			assert.equal(globalJsMap.file, "tabs.js", "Refers to generated file");
-
-			var globalJs = read("global/tabs.js");
-			assert(globalJs.indexOf("//# sourceMappingURL=tabs.js.map") > 0, "sourceMappingURL comment included.");
-
-			var globalCssMap = read("global/tabs.css.map");
-			assert.equal(globalCssMap.file, "tabs.css", "Refers to generated css");
-
-			var globalCss = read("global/tabs.css");
-			assert(globalCss.indexOf("/*# sourceMappingURL=tabs.css.map */") > 0, "sourceMappingURL comment included");
-		}
-
 	});
 });

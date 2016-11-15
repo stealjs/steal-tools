@@ -127,139 +127,6 @@ describe("multi build", function(){
 		});
 	});
 
-	it("Should minify by default", function(done){
-		this.timeout(60000);
-		var config = {
-			config: __dirname + "/minify/config.js",
-			main: "minify",
-			transpiler: "traceur"
-		};
-
-		rmdir(__dirname+"/minify/dist", function(error){
-			if(error) {
-				done(error);
-				return;
-			}
-
-			multiBuild(config, { quiet: true }).then(function(){
-				var actualJS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
-				var actualCSS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8");
-
-				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
-				var hasGlobalLongVariable = actualJS.indexOf("anotherVeryLongName") !== -1;
-				var hasDevCode = actualJS.indexOf("remove this") !== -1;
-				var hasDupCSSSelectors = actualCSS.match(/body/g).length > 1;
-
-				assert(!hasLongVariable, "Minified source renamed long variable.");
-				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
-				assert(!hasDevCode, "Minified source has dev code removed.");
-				assert(!hasDupCSSSelectors, "Minified CSS should not include duplicated selectors");
-
-				done();
-			});
-		});
-
-	});
-
-	it("Should allow minification to be turned off", function(done){
-		var config = {
-			config: __dirname + "/minify/config.js",
-			main: "minify",
-			transpiler: "traceur"
-		};
-
-		var options = {
-			minify: false,
-			quiet: true
-		};
-
-		rmdir(__dirname+"/minify/dist", function(error){
-			if(error) {
-				done(error);
-				return;
-			}
-
-			multiBuild(config, options).then(function(){
-				var actualJS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
-				var actualCSS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8");
-
-				var hasDupCSSSelectors = actualCSS.match(/body/g).length > 1;
-				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
-
-				assert(hasLongVariable, "Source includes long variable name.");
-				assert(hasDupCSSSelectors, "Not minified CSS should include duplicated selectors");
-
-				done();
-			}).catch(function(e){
-				done(e);
-			});
-
-		});
-
-	});
-
-	it("Should allow setting uglify-js options", function(done) {
-		var config = {
-			config: __dirname + "/minify/config.js",
-			main: "minify",
-			transpiler: "traceur"
-		};
-
-		var options = {
-			quiet: true,
-			uglifyOptions: {
-				mangle: false // skip mangling names.
-			}
-		};
-
-		rmdir(__dirname + "/minify/dist", function(error){
-			if(error) {
-				done(error);
-				return;
-			}
-
-			multiBuild(config, options).then(function(){
-				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8"),
-					hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1,
-					hasAnotherLongVariable = actual.indexOf("anotherLongVariableName") !== -1;
-
-				assert(hasLongVariable, "Skip mangling names in dependencies graph files");
-				assert(hasAnotherLongVariable, "skip mangling names in stealconfig and main files");
-				done();
-			}).catch(done);
-		});
-	});
-
-	it("Should allow setting clean-css options", function(done) {
-		var config = {
-			config: __dirname + "/minify/config.js",
-			main: "minify",
-			transpiler: "traceur"
-		};
-
-		var options = {
-			quiet: true,
-			cleanCSSOptions: {
-				keepSpecialComments: 0 // remove all, default '*'
-			}
-		};
-
-		rmdir(__dirname + "/minify/dist", function(error){
-			if(error) {
-				done(error);
-				return;
-			}
-
-			multiBuild(config, options).then(function(){
-				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8"),
-					lackSpecialComment = actual.indexOf("a special comment") === -1;
-
-				assert(lackSpecialComment, "clean-css set to remove special comments");
-				done();
-			}).catch(done);
-		});
-	});
-
 	it("Allows specifying an alternative dist directory", function(done){
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
@@ -341,32 +208,6 @@ describe("multi build", function(){
 		});
 
 	});
-
-	it("Works with dest and loading from a subfolder", function(done){
-		this.timeout(5000);
-
-		rmdir(__dirname + "/bundle_path/javascript/dist", function(error){
-			if(error) return done(error);
-
-			multiBuild({
-				config: __dirname + "/bundle_path/config.js",
-				main: "main"
-			}, {
-				dest: __dirname + "/bundle_path/javascript/dist",
-				minify: false,
-				quiet: true
-			}).then(function(){
-				open("test/bundle_path/subfolder/index.html",
-					 function(browser, close){
-					find(browser,"STYLE_CONTENT", function(styleContent){
-						assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
-						close();
-					}, close);
-				}, done);
-			});
-		});
-	});
-
 
 	it("supports bundling steal", function(done){
 
@@ -1041,108 +882,6 @@ describe("multi build", function(){
 			});
 		});
 
-		it("work with css buildType", function(done){
-
-			rmdir(__dirname+"/build_types/dist", function(error){
-
-				if(error){
-					done(error)
-				}
-				// build the project that
-				// uses a plugin
-				multiBuild({
-					config: __dirname+"/build_types/config.js",
-					main: "main"
-				}, {
-					quiet: true
-				}).then(function(data){
-
-					// open the prod page and make sure
-					// the plugin processed the input correctly
-					open("test/build_types/prod.html", function(browser, close){
-
-						find(browser,"STYLE_CONTENT", function(styleContent){
-							assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
-							close();
-						}, close);
-
-					}, done);
-
-				}).catch(function(e){
-					done(e);
-				});
-			});
-		});
-
-		it("can build less", function(done){
-			rmdir(__dirname+"/dep_plugins/dist", function(error){
-
-				if(error){
-					done(error)
-				}
-				// build the project that
-				// uses a plugin
-				multiBuild({
-					config: __dirname+"/dep_plugins/config.js",
-					main: "main"
-				}, {
-					quiet: true
-				}).then(function(data){
-					// open the prod page and make sure
-					// the plugin processed the input correctly
-					open("test/dep_plugins/prod.html", function(browser, close){
-
-						find(browser,"STYLE_CONTENT", function(styleContent){
-							assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
-							close();
-						}, close);
-
-					}, done);
-
-				}).catch(function(e){
-					done(e);
-				});
-			});
-		});
-
-		it("builds paths correctly", function(done){
-			rmdir(__dirname+"/css_paths/dist", function(error){
-
-				if(error){
-					done(error)
-				}
-				// build the project that
-				// uses a plugin
-				multiBuild({
-					config: __dirname+"/css_paths/config.js",
-					main: "main"
-				}, {
-					quiet: true
-				}).then(function(data){
-					// open the prod page and make sure
-					// the plugin processed the input correctly
-					open("test/css_paths/prod.html", function(browser, close){
-
-						find(browser,"STYLE_CONTENT", function(styleContent){
-
-							var count = 0;
-							styleContent.replace(/url\(['"]?([^'"\)]*)['"]?\)/g, function(whole, part){
-								assert.equal(part,"../../images/hero-ribbons.png", "reference is correct");
-								count++;
-							});
-							// the minifier will compact the selectors applying the same 'background-image' rule
-							assert.equal(count, 1, "correct number of styles");
-							close();
-						}, close);
-
-					}, done);
-
-				}).catch(function(e){
-					done(e);
-				});
-			});
-		});
-
 		it("plugins that are part of the main are part of the main bundle", function(done){
 			rmdir(__dirname+"/plugin_main_bundle/dist", function(error){
 				if(error) {
@@ -1185,33 +924,6 @@ describe("multi build", function(){
 			}).then(done, done);
 		});
 
-	});
-
-	describe("bundleAssets", function(){
-        this.timeout(5000);
-
-		before(function(done){
-			asap(rmdir)(__dirname + "/bundle_assets/dist")
-				.then(function(){
-					done();
-				});
-		});
-
-		it("works", function(done){
-			multiBuild({
-				config: __dirname + "/bundle_assets/package.json!npm"
-			}, {
-				quiet: true,
-				bundleAssets: true
-			}).then(function(){
-				open("test/bundle_assets/prod.html", function(browser, close){
-					find(browser, "MODULE", function(module){
-						assert(true, "page loaded correctly");
-						close();
-					}, close);
-				}, done);
-			});
-		});
 	});
 
 	describe("multi-main", function(){
@@ -2330,32 +2042,6 @@ describe("multi build", function(){
 					minify: true
 				}).then(function(data){
 					var exists = fs.existsSync(path.join(__dirname,"dist/bundles/basics/basics.js.map"));
-					if(!exists) {
-						done(new Error("no bundle info"));
-						return;
-					}
-					done();
-				}, done);
-			});
-		});
-
-		it("works with clean and css", function(done){
-			rmdir(__dirname+"/bundle/dist", function(error){
-				if(error){
-					done(error);
-				}
-
-				multiBuild({
-					config: __dirname+"/stealconfig.js",
-					main: "sourcemaps/basics",
-					transpiler: "traceur"
-				}, {
-					quiet: true,
-					sourceMaps: true,
-					minify: false,
-					bundleSteal: true
-				}).then(function(data){
-					var exists = fs.existsSync(path.join(__dirname,"dist/bundles/sourcemaps/basics.js.map"));
 					if(!exists) {
 						done(new Error("no bundle info"));
 						return;
