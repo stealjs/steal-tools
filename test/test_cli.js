@@ -238,8 +238,6 @@ describe("steal-tools cli", function () {
 				process.chdir(this.cwd);
 			});
 
-			it("+cjs", testCJS);
-
 			it("only outputs +cjs", function() {
 				assert(!fs.existsSync(path.join(distPath, "amd")),
 					"it should not output amd");
@@ -266,8 +264,6 @@ describe("steal-tools cli", function () {
 				process.chdir(this.cwd);
 			});
 
-			it("+amd", testAMD);
-
 			it("only outputs +amd", function() {
 				assert(!fs.existsSync(path.join(distPath, "cjs")),
 					"it should not output cjs");
@@ -275,78 +271,6 @@ describe("steal-tools cli", function () {
 				assert(!fs.existsSync(path.join(distPath, "global")),
 					"it should not output global-js");
 			});
-		});
-
-		describe("with --global", function() {
-			beforeEach(function() {
-				this.cwd = process.cwd();
-
-				process.chdir(path.join(
-					__dirname,
-					"pluginifier_builder_helpers"
-				));
-
-				fs.removeSync(distPath);
-				return stealTools(["export", "--global"]);
-			});
-
-			afterEach(function() {
-				process.chdir(this.cwd);
-			});
-
-			it("+global-js, +global-css", testGlobal);
-
-			it("only outputs +global-js, +global-css", function() {
-				assert(!fs.existsSync(path.join(distPath, "cjs")),
-					"it should not output cjs");
-
-				assert(!fs.existsSync(path.join(distPath, "amd")),
-					"it should not output amd");
-			});
-		});
-
-		describe("with --all it outputs defaults", function() {
-			beforeEach(function() {
-				this.cwd = process.cwd();
-
-				process.chdir(path.join(
-					__dirname,
-					"pluginifier_builder_helpers"
-				));
-
-				fs.removeSync(distPath);
-				return stealTools(["export", "--all"]);
-			});
-
-			afterEach(function() {
-				process.chdir(this.cwd);
-			});
-
-			it("+cjs", testCJS);
-			it("+amd", testAMD);
-			it("+global-js", testGlobal);
-		});
-
-		describe("without options it outputs defaults", function() {
-			beforeEach(function() {
-				this.cwd = process.cwd();
-
-				process.chdir(path.join(
-					__dirname,
-					"pluginifier_builder_helpers"
-				));
-
-				fs.removeSync(distPath);
-				return stealTools(["export"]);
-			});
-
-			afterEach(function() {
-				process.chdir(this.cwd);
-			});
-
-			it("+cjs", testCJS);
-			it("+amd", testAMD);
-			it("+global-js", testGlobal);
 		});
 
 		function copyDependencies(done) {
