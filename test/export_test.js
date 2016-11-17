@@ -191,6 +191,36 @@ describe("export", function(){
 		}, done);
 	});
 
+	it("Gives an error if using the 'system' property that was removed in 1.0", function(done){
+		stealExport({
+			system:{},
+			options: {},
+			outputs: {}
+		})
+		.then(function(){
+			assert.ok(false, "This should have failed");	
+		}, function(err){
+			var correctError = /'system' option/.test(err.message);
+			assert.ok(correctError, "Logs that the system option was removed");
+		})
+		.then(done, done);
+	});
+
+	it("Gives an error if 'steal' option is missing", function(done){
+		stealExport({
+			options: {},
+			outputs: {}
+		})
+		.then(function(){
+			assert.ok(false, "This should have failed");	
+		}, function(err){
+			var correctError = /'steal' option/.test(err.message);
+			assert.ok(correctError, "Logs that steal is required");
+		})
+		.then(done, done);
+	});
+
+
 	describe("eachModule", function(){
 		it("works", function(done){
 			stealExport({
