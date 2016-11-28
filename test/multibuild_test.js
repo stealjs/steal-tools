@@ -163,7 +163,7 @@ describe("multi build", function(){
 			config: __dirname + "/some/fake/dir/package.json!npm",
 			bundlesPath: __dirname + "/some/fake/dir/bundles"
 		}, {
-			quiet: false	
+			quiet: false
 		})
 		.then(function(){
 			assert.ok(false, "This should not have succeeded");
@@ -352,11 +352,11 @@ describe("multi build", function(){
 				open("test/basics/prod-inst.html",function(browser, close){
 					find(browser,"MODULE", function(module){
 						assert(true, "module");
-				
+
 						// We marked stealconfig.js as instantiated so it shouldn't have it's properties
 						var System = browser.window.System;
 						assert.equal(System.map["mapd/mapd"], undefined, "Mapping not applied");
-				
+
 						close();
 					}, close);
 				}, done);
@@ -2069,6 +2069,33 @@ describe("multi build", function(){
 				var data = JSON.parse(str);
 				var expected = "../../../foo.js";
 				assert.equal(data.sources[2], expected);
+			})
+			.then(done, done);
+		});
+
+
+		it("removes dev code from configDependencies", function(done){
+			asap(rmdir)(path.join(__dirname, "npm-config-dep", "dist"))
+			.then(function() {
+				var config = {
+					config: path.join(__dirname, "npm-config-dep", "package.json!npm")
+				};
+
+				var options = {
+					quiet: true,
+					minify: false
+				};
+
+				return multiBuild(config, options);
+			})
+			.then(function() {
+				var mainBundle = path.join(__dirname, "npm-config-dep", "dist",
+					"bundles", "npmc", "main.js");
+
+				var str = fs.readFileSync(mainBundle, "utf8");
+				assert.equal(str.indexOf("devCodeInConfigDependencies"), -1,
+					"dev code should be removed");
+
 			})
 			.then(done, done);
 		});
