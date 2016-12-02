@@ -1743,8 +1743,8 @@ describe("multi build", function(){
 				quiet: true,
 				minify: false
 			}).then(function (data) {
-				assert.equal(data.buildLoader.meta['foobar']['bar'], "foo", "foobar should be also have 'bar' = 'foo'");
-				assert.equal(data.buildLoader.meta['jqueryt@2.2.0#dist/jqueryt']['bar'], "foo", "jqueryt@2.2.0#dist/jqueryt should be also have 'bar' = 'foo'");
+				assert.equal(data.loader.meta['foobar']['bar'], "foo", "foobar should be also have 'bar' = 'foo'");
+				assert.equal(data.loader.meta['jqueryt@2.2.0#dist/jqueryt']['bar'], "foo", "jqueryt@2.2.0#dist/jqueryt should be also have 'bar' = 'foo'");
 				done();
 			}).catch(done);
 		});
@@ -1773,8 +1773,8 @@ describe("multi build", function(){
 					assert.strictEqual(data.graph['src/dep'].load.metadata.bundle, false, 'set bundle=false to dependent module');
 					assert.strictEqual(data.graph['jqueryt@2.2.0#dist/jqueryt'].load.metadata.bundle, false, 'set bundle=false to normalized jquery');
 
-					assert.equal(data.buildLoader.meta['foobar']['foo'], "bar", "foobar should be also have 'foo'='bar'");
-					assert.equal(data.buildLoader.meta['jqueryt@2.2.0#dist/jqueryt']['foo'], "bar", "jqueryt@2.2.0#dist/jqueryt should also have 'foo'='bar'");
+					assert.equal(data.loader.meta['foobar']['foo'], "bar", "foobar should be also have 'foo'='bar'");
+					assert.equal(data.loader.meta['jqueryt@2.2.0#dist/jqueryt']['foo'], "bar", "jqueryt@2.2.0#dist/jqueryt should also have 'foo'='bar'");
 					assert.equal(data.graph['jqueryt@2.2.0#dist/jqueryt'].load.metadata.foo, "bar", "jqueryt@2.2.0#dist/jqueryt should also have 'foo'='bar'");
 					done();
 				}).catch(done);
@@ -1860,6 +1860,8 @@ describe("multi build", function(){
 		});
 
 		it("should jqueryt exclude from bundle and load it from CDN", function(done){
+			this.timeout(5000);
+
 			setupWithCDN(function(error) {
 				if (error) {
 					return done(error);
@@ -1872,7 +1874,7 @@ describe("multi build", function(){
 					quiet: true,
 					minify: false,
 					ignore: [
-						'jqueryt'
+						"jqueryt"
 					]
 				}).then(function(data){
 
