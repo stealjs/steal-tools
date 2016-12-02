@@ -16,7 +16,6 @@
     "fs-extra": "~0.29.0",
     "glob": "^4.3.5",
     "is-appveyor": "^1.0.0",
-    "less": "^2.4.0",
     "lodash": "^4.3.0",
     "moment": "^2.10.2",
     "pdenodeify": "^0.1.0",
