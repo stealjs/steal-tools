@@ -5,8 +5,8 @@
 
 	"system": {
 		"bundle": [
-			"a",
-			"b"
+			"bd/a",
+			"bd/b"
 		]
 	}
 }

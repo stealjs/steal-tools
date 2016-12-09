@@ -25,6 +25,7 @@ describe("multi build", function(){
 				config: __dirname+"/bundle/stealconfig.js",
 				main: "bundle"
 			}, {
+				minify: false,
 				quiet: true
 			}).then(function(data){
 				var exists = fs.existsSync(  path.join(__dirname,"bundle/dist/bundles/bundle.js")  );
@@ -70,41 +71,6 @@ describe("multi build", function(){
 		});
 	});
 
-	it("should pass the babelOptions to transpile", function(done){
-		this.timeout(20000);
-
-		rmdir(__dirname + "/es6-loose/bundle", function(error){
-			if(error) {
-				return done(error);
-			}
-
-			multiBuild({
-				config: __dirname + "/es6-loose/config.js",
-				main: "main",
-				transpiler: "babel"
-			}, {
-				quiet: true,
-				minify: false,
-				babelOptions: {
-					loose: 'es6.modules'
-				}
-			}).then(function(){
-				fs.readFile("test/es6-loose/dist/bundles/main.js", "utf8", function(err, data) {
-					if (err) {
-						done(err);
-					}
-
-					var noObjectDefineProperty = data.indexOf("Object.defineProperty") === -1;
-					var es6ModuleProperty = data.indexOf("exports.__esModule = true;") >= 0;
-
-					assert(noObjectDefineProperty, "loose mode does not use Object.defineProperty");
-					assert(es6ModuleProperty, "should assign __esModule as normal object property");
-					done();
-				});
-			}).catch(done);
-		});
-	});
-
 	it("allows you to transpile modules on your own", function(done){
 		rmdir(__dirname + "/self_transpile/dist", function(error){
 			if(error) {
@@ -146,7 +112,8 @@ describe("multi build", function(){
 
 			multiBuild({
 				config: __dirname + "/simple-es6/config.js",
-				main: "main"
+				main: "main",
+				transpiler: "traceur"
 			}, {
 				quiet: true
 			}).then(function(){
@@ -160,142 +127,14 @@ describe("multi build", function(){
 		});
 	});
 
-	it("Should minify by default", function(done){
-		var config = {
-			config: __dirname + "/minify/config.js",
-			main: "minify"
-		};
-
-		rmdir(__dirname+"/minify/dist", function(error){
-			if(error) {
-				done(error);
-				return;
-			}
-
-			multiBuild(config, { quiet: true }).then(function(){
-				var actualJS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
-				var actualCSS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8");
-
-				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
-				var hasGlobalLongVariable = actualJS.indexOf("anotherVeryLongName") !== -1;
-				var hasDevCode = actualJS.indexOf("remove this") !== -1;
-				var hasDupCSSSelectors = actualCSS.match(/body/g).length > 1;
-
-				assert(!hasLongVariable, "Minified source renamed long variable.");
-				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
-				assert(!hasDevCode, "Minified source has dev code removed.");
-				assert(!hasDupCSSSelectors, "Minified CSS should not include duplicated selectors");
-
-				done();
-			});
-		});
-
-	});
-
-	it("Should allow minification to be turned off", function(done){
-		var config = {
-			config: __dirname + "/minify/config.js",
-			main: "minify"
-		};
-
-		var options = {
-			minify: false,
-			quiet: true
-		};
-
-		rmdir(__dirname+"/minify/dist", function(error){
-			if(error) {
-				done(error);
-				return;
-			}
-
-			multiBuild(config, options).then(function(){
-				var actualJS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8");
-				var actualCSS = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8");
-
-				var hasDupCSSSelectors = actualCSS.match(/body/g).length > 1;
-				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
-
-				assert(hasLongVariable, "Source includes long variable name.");
-				assert(hasDupCSSSelectors, "Not minified CSS should include duplicated selectors");
-
-				done();
-			}).catch(function(e){
-				done(e);
-			});
-
-		});
-
-	});
-
-	it("Should allow setting uglify-js options", function(done) {
-		var config = {
-			config: __dirname + "/minify/config.js",
-			main: "minify"
-		};
-
-		var options = {
-			quiet: true,
-			uglifyOptions: {
-				mangle: false // skip mangling names.
-			}
-		};
-
-		rmdir(__dirname + "/minify/dist", function(error){
-			if(error) {
-				done(error);
-				return;
-			}
-
-			multiBuild(config, options).then(function(){
-				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.js", "utf8"),
-					hasLongVariable = actual.indexOf("thisObjectHasABigName") !== -1,
-					hasAnotherLongVariable = actual.indexOf("anotherLongVariableName") !== -1;
-
-				assert(hasLongVariable, "Skip mangling names in dependencies graph files");
-				assert(hasAnotherLongVariable, "skip mangling names in stealconfig and main files");
-				done();
-			}).catch(done);
-		});
-	});
-
-	it("Should allow setting clean-css options", function(done) {
-		var config = {
-			config: __dirname + "/minify/config.js",
-			main: "minify"
-		};
-
-		var options = {
-			quiet: true,
-			cleanCSSOptions: {
-				keepSpecialComments: 0 // remove all, default '*'
-			}
-		};
-
-		rmdir(__dirname + "/minify/dist", function(error){
-			if(error) {
-				done(error);
-				return;
-			}
-
-			multiBuild(config, options).then(function(){
-				var actual = fs.readFileSync(__dirname + "/minify/dist/bundles/minify.css", "utf8"),
-					lackSpecialComment = actual.indexOf("a special comment") === -1;
-
-				assert(lackSpecialComment, "clean-css set to remove special comments");
-				done();
-			}).catch(done);
-		});
-	});
-
 	it("Allows specifying an alternative dist directory", function(done){
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
-			main: "bundle",
-			bundlesPath: __dirname + "/other_bundle/other_dist/bundles"
+			main: "bundle"
 		};
 
 		var options = {
+			dest: __dirname + "/other_bundle/other_dist",
 			quiet: true
 		};
 
@@ -317,7 +156,23 @@ describe("multi build", function(){
 			});
 
 		});
+	});
 
+	it("Throws if you use bundlesPath configuration", function(done){
+		multiBuild({
+			config: __dirname + "/some/fake/dir/package.json!npm",
+			bundlesPath: __dirname + "/some/fake/dir/bundles"
+		}, {
+			quiet: false
+		})
+		.then(function(){
+			assert.ok(false, "This should not have succeeded");
+		}, function(err){
+			var msg = err.message;
+			assert.ok(/bundlesPath has been removed/.test(msg),
+					  "Rejected because bundlesPath is used");
+		})
+		.then(done);
 	});
 
 
@@ -325,11 +180,11 @@ describe("multi build", function(){
         this.timeout(5000);
 		var config = {
 			config: __dirname + "/other_bundle/stealconfig.js",
-			main: "bundle",
-			bundlesPath: __dirname+"/other_bundle/bundles"
+			main: "bundle"
 		};
 
 		var options = {
+			dest: __dirname + "/other_bundle",
 			quiet: true
 		};
 
@@ -353,32 +208,6 @@ describe("multi build", function(){
 		});
 
 	});
-
-	it("Works with bundlesPath and loading from a subfolder", function(done){
-		this.timeout(5000);
-
-		rmdir(__dirname + "/bundle_path/javascript/dist", function(error){
-			if(error) return done(error);
-
-			multiBuild({
-				config: __dirname + "/bundle_path/config.js",
-				main: "main",
-				bundlesPath: __dirname + "/bundle_path/javascript/dist"
-			}, {
-				minify: false,
-				quiet: true
-			}).then(function(){
-				open("test/bundle_path/subfolder/index.html",
-					 function(browser, close){
-					find(browser,"STYLE_CONTENT", function(styleContent){
-						assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
-						close();
-					}, close);
-				}, done);
-			});
-		});
-	});
-
 
 	it("supports bundling steal", function(done){
 
@@ -432,10 +261,10 @@ describe("multi build", function(){
 
 			multiBuild({
 				config: __dirname+"/bundle/stealconfig.js",
-				main: "bundle",
-				bundlesPath: __dirname + "/bundle/alternate/bundles"
+				main: "bundle"
 			},{
 				bundleSteal: true,
+				dest: __dirname + "/bundle/alternate",
 				quiet: true,
 				minify: false
 			}).then(function(data){
@@ -468,6 +297,8 @@ describe("multi build", function(){
 	});
 
 	it("builds and can load transpiled ES6 modules", function(done){
+		this.timeout(60000);
+
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
 				done(error)
@@ -755,6 +586,23 @@ describe("multi build", function(){
 		});
 	});
 
+	it("can load projects that use require('./package'); convention", function(done){
+		rmdir(__dirname + "/pkg_json/dist", function(err){
+			if(err) return done(err);
+
+			var p = multiBuild({
+				config: __dirname + "/pkg_json/package.json!npm"
+			}, {
+				quiet: true,
+				minify: false
+			});
+
+			p.then(function(){
+				done();
+			});
+		});
+	});
+
 	describe("sideBundle", function(){
 		it("sideBundle: true will move a module into a side bundle", function(done){
 			rmdir(__dirname+"/side_bundle/dist", function(error){
@@ -905,9 +753,56 @@ describe("multi build", function(){
 		});
 	});
 
+	it("Loads an ES6 module that consumes CJS modules using {}", function(done){
+		rmdir(__dirname + "/es_cjs/dist", function(error){
+			if(error) return done(error);
+
+			multiBuild({
+				config: __dirname + "/es_cjs/package.json!npm"
+			}, {
+				minify: false,
+				quiet: true
+			}).then(function(){
+				open("test/es_cjs/prod.html", function(browser, close){
+						find(browser, "MODULE", function(mod){
+							assert.equal(mod.x, "foo", "got module that uses " +
+										 "{} for imports");
+							assert.equal(mod.y, "bar", "got module using default");
+
+							close();
+						}, close);
+				}, done);
+			});
+		});
+	});
+
+	it("Circular refs works with Babel", function(done){
+		rmdir(__dirname+"/circular/dist", function(error){
+			if(error){
+				done(error);
+				return;
+			}
+
+			multiBuild({
+				config: __dirname+"/circular/package.json!npm",
+			}, {
+				quiet: true,
+				minify: false
+			}).then(function(){
+				open("test/circular/prod.html",function(browser, close){
+					find(browser,"circularWorks", function(result){
+						assert.equal(result, true, "circular refs worked");
+						close();
+					}, close);
+				}, done);
+			}, done);
+		});
+	});
+
 	describe("with plugins", function(){
+		this.timeout(60000);
+
 		it("work on the client", function(done){
-			this.timeout(5000);
 			open("test/plugins/site.html", function(browser, close){
 
 				find(browser,"PLUGTEXT", function(plugText){
@@ -916,7 +811,6 @@ describe("multi build", function(){
 				}, close);
 
 			}, done);
-
 		});
 
 		it("work built", function(done){
@@ -950,7 +844,6 @@ describe("multi build", function(){
 					done(e);
 				});
 			});
-
 		});
 
 		it("work built using steal", function(done){
@@ -979,108 +872,6 @@ describe("multi build", function(){
 						find(browser,"PLUGTEXT", function(plugText){
 								assert.equal(plugText, "server-Holler", "server can do plugins");
 								close();
-						}, close);
-
-					}, done);
-
-				}).catch(function(e){
-					done(e);
-				});
-			});
-		});
-
-		it("work with css buildType", function(done){
-
-			rmdir(__dirname+"/build_types/dist", function(error){
-
-				if(error){
-					done(error)
-				}
-				// build the project that
-				// uses a plugin
-				multiBuild({
-					config: __dirname+"/build_types/config.js",
-					main: "main"
-				}, {
-					quiet: true
-				}).then(function(data){
-
-					// open the prod page and make sure
-					// the plugin processed the input correctly
-					open("test/build_types/prod.html", function(browser, close){
-
-						find(browser,"STYLE_CONTENT", function(styleContent){
-							assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
-							close();
-						}, close);
-
-					}, done);
-
-				}).catch(function(e){
-					done(e);
-				});
-			});
-		});
-
-		it("can build less", function(done){
-			rmdir(__dirname+"/dep_plugins/dist", function(error){
-
-				if(error){
-					done(error)
-				}
-				// build the project that
-				// uses a plugin
-				multiBuild({
-					config: __dirname+"/dep_plugins/config.js",
-					main: "main"
-				}, {
-					quiet: true
-				}).then(function(data){
-					// open the prod page and make sure
-					// the plugin processed the input correctly
-					open("test/dep_plugins/prod.html", function(browser, close){
-
-						find(browser,"STYLE_CONTENT", function(styleContent){
-							assert(styleContent.indexOf("#test-element")>=0, "have correct style info");
-							close();
-						}, close);
-
-					}, done);
-
-				}).catch(function(e){
-					done(e);
-				});
-			});
-		});
-
-		it("builds paths correctly", function(done){
-			rmdir(__dirname+"/css_paths/dist", function(error){
-
-				if(error){
-					done(error)
-				}
-				// build the project that
-				// uses a plugin
-				multiBuild({
-					config: __dirname+"/css_paths/config.js",
-					main: "main"
-				}, {
-					quiet: true
-				}).then(function(data){
-					// open the prod page and make sure
-					// the plugin processed the input correctly
-					open("test/css_paths/prod.html", function(browser, close){
-
-						find(browser,"STYLE_CONTENT", function(styleContent){
-
-							var count = 0;
-							styleContent.replace(/url\(['"]?([^'"\)]*)['"]?\)/g, function(whole, part){
-								assert.equal(part,"../../images/hero-ribbons.png", "reference is correct");
-								count++;
-							});
-							// the minifier will compact the selectors applying the same 'background-image' rule
-							assert.equal(count, 1, "correct number of styles");
-							close();
 						}, close);
 
 					}, done);
@@ -1133,33 +924,6 @@ describe("multi build", function(){
 			}).then(done, done);
 		});
 
-	});
-
-	describe("bundleAssets", function(){
-        this.timeout(5000);
-
-		before(function(done){
-			asap(rmdir)(__dirname + "/bundle_assets/dist")
-				.then(function(){
-					done();
-				});
-		});
-
-		it("works", function(done){
-			multiBuild({
-				config: __dirname + "/bundle_assets/package.json!npm"
-			}, {
-				quiet: true,
-				bundleAssets: true
-			}).then(function(){
-				open("test/bundle_assets/prod.html", function(browser, close){
-					find(browser, "MODULE", function(module){
-						assert(true, "page loaded correctly");
-						close();
-					}, close);
-				}, done);
-			});
-		});
 	});
 
 	describe("multi-main", function(){
@@ -1483,9 +1247,9 @@ describe("multi build", function(){
 				var second = multiBuild({
 						config: __dirname+"/bundle/stealconfig.js",
 						main: "bundle",
-						bundlesPath: __dirname+"/bundle_multiple_builds",
 						systemName: "2"
 					}, {
+						dest: __dirname + "/bundle_multiple_builds",
 						quiet: true
 					})
 
@@ -1494,6 +1258,8 @@ describe("multi build", function(){
 				}).catch(done);
 			});
 		});
+
+
 	});
 
 	describe("importing into config", function(){
@@ -1547,8 +1313,9 @@ describe("multi build", function(){
 		beforeEach(function(done){
 			asap(rmdir)(__dirname + "/npm-directories/dist").then(function(){
 				return multiBuild({
-					config: __dirname + "/npm-directories/package.json!npm"
+					baseURL: __dirname + "/npm-directories"
 				}, {
+					minify: false,
 					quiet: true
 				});
 			}).then(function(buildResult){
@@ -1643,7 +1410,8 @@ describe("multi build", function(){
 				if(error){ return done(error); }
 
 				multiBuild({
-					config: path.join(__dirname, "npm", "package.json!npm")
+					config: path.join(__dirname, "npm", "package.json!npm"),
+					transpiler: "traceur"
 				}, {
 					quiet: true,
 					minify: false
@@ -1975,8 +1743,8 @@ describe("multi build", function(){
 				quiet: true,
 				minify: false
 			}).then(function (data) {
-				assert.equal(data.buildLoader.meta['foobar']['bar'], "foo", "foobar should be also have 'bar' = 'foo'");
-				assert.equal(data.buildLoader.meta['jqueryt@2.2.0#dist/jqueryt']['bar'], "foo", "jqueryt@2.2.0#dist/jqueryt should be also have 'bar' = 'foo'");
+				assert.equal(data.loader.meta['foobar']['bar'], "foo", "foobar should be also have 'bar' = 'foo'");
+				assert.equal(data.loader.meta['jqueryt@2.2.0#dist/jqueryt']['bar'], "foo", "jqueryt@2.2.0#dist/jqueryt should be also have 'bar' = 'foo'");
 				done();
 			}).catch(done);
 		});
@@ -2005,8 +1773,8 @@ describe("multi build", function(){
 					assert.strictEqual(data.graph['src/dep'].load.metadata.bundle, false, 'set bundle=false to dependent module');
 					assert.strictEqual(data.graph['jqueryt@2.2.0#dist/jqueryt'].load.metadata.bundle, false, 'set bundle=false to normalized jquery');
 
-					assert.equal(data.buildLoader.meta['foobar']['foo'], "bar", "foobar should be also have 'foo'='bar'");
-					assert.equal(data.buildLoader.meta['jqueryt@2.2.0#dist/jqueryt']['foo'], "bar", "jqueryt@2.2.0#dist/jqueryt should also have 'foo'='bar'");
+					assert.equal(data.loader.meta['foobar']['foo'], "bar", "foobar should be also have 'foo'='bar'");
+					assert.equal(data.loader.meta['jqueryt@2.2.0#dist/jqueryt']['foo'], "bar", "jqueryt@2.2.0#dist/jqueryt should also have 'foo'='bar'");
 					assert.equal(data.graph['jqueryt@2.2.0#dist/jqueryt'].load.metadata.foo, "bar", "jqueryt@2.2.0#dist/jqueryt should also have 'foo'='bar'");
 					done();
 				}).catch(done);
@@ -2092,6 +1860,8 @@ describe("multi build", function(){
 		});
 
 		it("should jqueryt exclude from bundle and load it from CDN", function(done){
+			this.timeout(5000);
+
 			setupWithCDN(function(error) {
 				if (error) {
 					return done(error);
@@ -2104,7 +1874,7 @@ describe("multi build", function(){
 					quiet: true,
 					minify: false,
 					ignore: [
-						'jqueryt'
+						"jqueryt"
 					]
 				}).then(function(data){
 
@@ -2256,7 +2026,7 @@ describe("multi build", function(){
 	});
 
 	describe("Source Maps", function(){
-		this.timeout(5000);
+		this.timeout(60000);
 
 		it("basics works", function(done){
 			rmdir(__dirname+"/bundle/dist", function(error){
@@ -2267,39 +2037,13 @@ describe("multi build", function(){
 				multiBuild({
 					config: __dirname+"/stealconfig.js",
 					main: "basics/basics",
-					transpiler: "babel"
+					transpiler: "traceur"
 				}, {
 					quiet: true,
 					sourceMaps: true,
 					minify: true
 				}).then(function(data){
 					var exists = fs.existsSync(path.join(__dirname,"dist/bundles/basics/basics.js.map"));
-					if(!exists) {
-						done(new Error("no bundle info"));
-						return;
-					}
-					done();
-				}, done);
-			});
-		});
-
-		it("works with clean and css", function(done){
-			rmdir(__dirname+"/bundle/dist", function(error){
-				if(error){
-					done(error);
-				}
-
-				multiBuild({
-					config: __dirname+"/stealconfig.js",
-					main: "sourcemaps/basics",
-					transpiler: "babel"
-				}, {
-					quiet: true,
-					sourceMaps: true,
-					minify: false,
-					bundleSteal: true
-				}).then(function(data){
-					var exists = fs.existsSync(path.join(__dirname,"dist/bundles/sourcemaps/basics.js.map"));
 					if(!exists) {
 						done(new Error("no bundle info"));
 						return;
@@ -2323,16 +2067,121 @@ describe("multi build", function(){
 				return p;
 			})
 			.then(function(){
-				var str = fs.readFileSync(__dirname + "/npm-config-dep/dist/bundles/main.js.map", "utf8");
+				var str = fs.readFileSync(__dirname + "/npm-config-dep/dist/bundles/npmc/main.js.map", "utf8");
 				var data = JSON.parse(str);
-				var expected = "../../foo.js";
+				var expected = "../../../foo.js";
 				assert.equal(data.sources[2], expected);
 			})
 			.then(done, done);
 		});
+
+
+		it("removes dev code from configDependencies", function(done){
+			asap(rmdir)(path.join(__dirname, "npm-config-dep", "dist"))
+			.then(function() {
+				var config = {
+					config: path.join(__dirname, "npm-config-dep", "package.json!npm")
+				};
+
+				var options = {
+					quiet: true,
+					minify: false
+				};
+
+				return multiBuild(config, options);
+			})
+			.then(function() {
+				var mainBundle = path.join(__dirname, "npm-config-dep", "dist",
+					"bundles", "npmc", "main.js");
+
+				var str = fs.readFileSync(mainBundle, "utf8");
+				assert.equal(str.indexOf("devCodeInConfigDependencies"), -1,
+					"dev code should be removed");
+
+			})
+			.then(done, done);
+		});
+
+		it("strip sourcemapping URL in all files", function (done) {
+			asap(rmdir)(__dirname + "/strip-sourcemap/dist")
+				.then(function () {
+					return multiBuild({
+						config: __dirname + "/strip-sourcemap/stealconfig.js",
+						main: "main"
+					}, {
+						minify: false,
+						sourceMaps: true,
+						bundleSteal: true
+					});
+				})
+				.then(function () {
+					var source = fs.readFileSync(__dirname + "/strip-sourcemap/dist/bundles/main.js", "utf8");
+					var soureMapRegex = /\/\/# sourceMappingURL=main.js.map/m;
+					assert.ok(/\/\/# sourceMappingURL=main.js.map/m.test(source), 'sourceMap found');
+
+					assert.ok(!/\/\/# sourceMappingURL=foobar.js.map/m.test(source), 'foobar.js.map should not be found');
+					assert.ok(!/\/\/# sourceMappingURL=Promise.js.map/m.test(source), 'foobar.js.map should not be found');
+				})
+				.then(done, done);
+		})
 	});
 
-	describe("bundleDepth", function(){
+	describe("multi-main with bundled steal", function(){
+		it("set main automatically", function(done){
+			rmdir(__dirname+"/multi-main-bundled/dist", function(error){
+				if(error){
+					done(error)
+				}
+
+				multiBuild({
+					config: __dirname+"/multi-main-bundled/package.json!npm",
+					main: [
+						"multi-main-bundled/app_a",
+						"multi-main-bundled/app_b"
+					]
+				}, {
+					bundleSteal: true,
+					quiet: true,
+					minify: false
+				}).then(function(data){
+					open("test/multi-main-bundled/bundle_app_a.html",function(browser, close){
+						find(browser,"app", function(app){
+							assert(true, "got app");
+							assert.equal(app.name, "a", "got the module");
+							assert.equal(app.ab.name, "a_b", "a got ab");
+							assert.equal(app.all.name, "all", "a got all");
+
+							assert.equal(browser.window["System"]["main"], "multi-main-bundled@1.0.0#app_a");
+							close();
+						}, close);
+					}, function(err){
+						if(err) {
+							done(err);
+						} else {
+							open("test/multi-main-bundled/bundle_app_b.html",function(browser, close){
+								find(browser,"app", function(app){
+									assert(true, "got app");
+									assert.equal(app.name, "b", "got the module");
+									assert.equal(app.ab.name, "a_b", "a got ab");
+									assert.equal(app.all.name, "all", "a got all");
+
+									assert.equal(browser.window["System"]["main"], "multi-main-bundled@1.0.0#app_b");
+									close();
+								}, close);
+							}, done);
+						}
+					});
+
+
+
+				}).catch(function(e){
+					done(e);
+				});
+			});
+		});
+	});
+
+	describe("maxBundleRequests", function(){
 		it("can be set to 1", function(done){
 			asap(rmdir)(__dirname + "/bundleDepth/dist")
 			.then(function(){
@@ -2342,16 +2191,27 @@ describe("multi build", function(){
 					quiet: true,
 					minify: false,
 
-					bundleDepth: 1
+					maxBundleRequests: 1
 				});
 
 				return p;
 			})
 			.then(function(data){
+				assert.equal(data.bundles.length, 2, "there are two bundles because they were merged");
+
 				// check the bundles
-				assert.equal(data.bundles.length, 3, "There are only 3 bundles in this project");
-			})
-			.then(done, done);
+				open("test/bundleDepth/prod.html",function(browser, close){
+					find(browser,"MODULEA", function(modA){
+						assert.equal(modA, "worked");
+
+						find(browser, "MODULEB", function(modB){
+							assert.equal(modB, "worked");
+
+							close();
+						}, close);
+					}, function(){});
+				}, done);
+			});
 		});
 	});
 });

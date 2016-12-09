@@ -24,7 +24,7 @@ If using [npm] simply type:
 To start a Web Socket server. Then in your `package.json` add:
 
     {
-      "system": {
+      "steal": {
         "configDependencies": [
           "live-reload"
         ]

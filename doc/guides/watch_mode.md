@@ -113,9 +113,7 @@ Now that we've got a basic application written let's check out the debugging exp
 ### index.html
 
 ```html
-<script src="node_modules/steal/steal.js"
-	env="production"
-	main="main"></script>
+<script src="./dist/steal.production.js"></script>
 ```
 
 Open the page in a browser and open your debug tools. With the watch mode source maps are enabled by default. You can see and debug your original code from your browser's debugging tools.

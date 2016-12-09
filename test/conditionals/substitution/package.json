@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "steal-conditional": "^0.1.2"
+    "steal-conditional": "^0.2.0"
   },
   "system": {
     "configDependencies": [

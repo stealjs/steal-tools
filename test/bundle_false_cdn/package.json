@@ -1,10 +1,11 @@
 {
   "name": "bundle-false-cdn",
   "main": "main",
+  "version": "1.0.1",
   "dependencies": {
     "jqueryt": "2.2.0"
   },
-  "system": {
+  "steal": {
     "directories": {
       "lib": "src"
     },

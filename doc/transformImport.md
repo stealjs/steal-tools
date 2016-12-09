@@ -10,20 +10,20 @@ Loads a module, and all of its dependencies, and returns a function that
 can write out all, or parts, of the module and its dependency graph,
 so that they don't depend on `steal.js`.
 
-@param {steal-tools.SystemConfig} config
+@param {steal-tools.StealConfig} config
 
 Specifies configuration values to set on 
-a System loader. The [System.main main] option must be specified. Typically,
-[System.configPath configPath] is also specified, as that is used to set 
-[System.baseURL baseURL].  Any System [System.config configuration] can be specified; however,
+a Steal loader. The [config.main main] option must be specified. Typically,
+[config.configPath configPath] is also specified, as that is used to set 
+[config.baseURL baseURL].  Any Steal [config.config configuration] can be specified; however,
 most other __build__ configuration values are specified
-by [System.buildConfig] in the config file.
+by [config.buildConfig] in the config file.
 
 @option {String} main The module whose dependencies should be built.
 @option {String} [config] The path to a configuration file. This
 will also specify `baseURL`.
 @option {String} [baseURL] If a configuration file is not used, 
-the [System.baseURL baseURL] value must be set.
+the [config.baseURL baseURL] value must be set.
 
 @param {{}} transformOptions
 
@@ -42,7 +42,7 @@ for the resulting [steal-tools.transform transform function's] options argument.
 ## Use
 
 `stealTools.transformImport` lets you transform modules to a different 
-format or form.  It's passed a [steal-tools.SystemConfig], which is used
+format or form.  It's passed a [steal-tools.StealConfig], which is used
 to load modules. Once all modules have been loaded, it provides a
 [steal-tools.transform] method that can write out modules:
 
@@ -80,8 +80,7 @@ its more advanced functionality:
       fs.writeFileSync("out_main.js", mainAlone, "utf8");
     });
 
-As you can see, transformImport takes an object containing the 
-System configuration and returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). 
+As you can see, transformImport takes an object containing the configuration and returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). 
 The promise will return another function (named "transform" in this example) that can be used to generate 
 a string containing a module and its dependencies. By default, the transform 
 function will return the main module; but it can be used to generate any dependency in the graph.

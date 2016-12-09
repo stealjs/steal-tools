@@ -201,7 +201,6 @@ describe("bundle name with npm package", function() {
 	});
 
 	it("works with a plugin markup", function(){
-
 		var bundle = {
 			bundles: ["mypkg@1.0.0#index.stache!done-autorender"]
 		};
@@ -253,6 +252,14 @@ describe("bundle name with npm package", function() {
 		};
 		var bundleName = nameBundle.getName(bundle);
 		assert.equal(bundleName, dirName + 'mypkg.com/main');
+	});
+
+	it("scoped package name", function(){
+		var bundle = {
+			bundles: ["@big-ab/bug-demo@1.0.0#main"]
+		};
+		var bundleName = nameBundle.getName(bundle);
+		assert.equal(bundleName, dirName + "@big-ab/bug-demo/main");
 	});
 
 });

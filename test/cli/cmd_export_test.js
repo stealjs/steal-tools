@@ -56,7 +56,7 @@ describe("cmd export module", function() {
 			config: "/stealconfig.js"
 		});
 
-		assert(_has(exportConfig, "system"), "should include system");
+		assert(_has(exportConfig, "steal"), "should include steal");
 		assert(_has(exportConfig, "options"), "should include options");
 		assert(_has(exportConfig, "outputs"), "should include outputs");
 	});
