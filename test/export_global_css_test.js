@@ -12,7 +12,7 @@ describe("+global-css", function(){
 			if(err) return done(err);
 
 			stealExport({
-				system: {
+				steal: {
 					config: __dirname + "/exports_basics/package.json!npm",
 					main: "app/main-no-css"
 				},

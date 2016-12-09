@@ -11,7 +11,7 @@ describe("+standalone", function(){
 	it("Works with exporting a module from a dependency", function(done){
 		this.timeout(10000);
 		stealExport({
-			system: {
+			steal: {
 				config: __dirname+"/exports_basics/package.json!npm"
 			},
 			options: { quiet: true },
@@ -39,7 +39,7 @@ describe("+standalone", function(){
 		this.timeout(10000);
 
 		stealExport({
-			system: {
+			steal: {
 				config: __dirname + "/exports_basics/package.json!npm"
 			},
 			options: { quiet: true },

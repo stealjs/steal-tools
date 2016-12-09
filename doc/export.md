@@ -7,7 +7,7 @@ Export a project's modules to other forms and formats declaratively.
 
 @param {steal-tools.export.object} exportTask An [steal-tools.export.object] with the following properties:
 
-  @option {steal-tools.SystemConfig} system `System.config` data needed to load
+  @option {steal-tools.StealConfig} Steal `config` data needed to load
   all the modules for export.
 
   @option {{}} [options] Options that configure logging.
@@ -32,13 +32,13 @@ that take place on an application's modules to make it distributable.  The
 [steal-tools/lib/build/helpers/global] _Export Helpers_ can be used to export censible versions
 of your project in those formats.
 
-The basic use of `stealTools` export is to provide a "system" that is able to load your project's modules,
+The basic use of `stealTools` export is to provide a "steal" that is able to load your project's modules,
 and several "outputs" that write out those modules in a new form:
 
 ```
 var stealTools = require("steal-tools");
 stealTools.export({
-  system: {
+  steal: {
     main: "myproject",
     config: __dirname+"/config.js"
   },
@@ -73,7 +73,7 @@ contain default values each output can call:
 ```
 var stealTools = require("steal-tools");
 stealTools.export({
-  system: {
+  steal: {
     main: "myproject",  config: __dirname+"/config.js"
   },
   outputs: {
@@ -101,7 +101,7 @@ The [steal-tools/lib/build/helpers/cjs] and other export helpers can also be mix
 ```
 var stealTools = require("steal-tools");
 stealTools.export({
-  system: {
+  steal: {
     main: "myproject",  config: __dirname+"/config.js"
   },
   outputs: {

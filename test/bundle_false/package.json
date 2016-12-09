@@ -1,6 +1,7 @@
 {
   "name": "bundle-false",
   "main": "main",
+  "version": "1.0.0",
   "dependencies": {
     "jqueryt": "2.2.0"
   },

@@ -25,7 +25,8 @@ module.exports = {
 		bundle: require("./lib/stream/bundle"),
 		concat: require("./lib/bundle/concat_stream"),
 		write: require("./lib/bundle/write_bundles")
-			.createWriteStream
+			.createWriteStream,
+		steal: require("./lib/stream/steal")
 
 	}
 

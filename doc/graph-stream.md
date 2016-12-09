@@ -19,7 +19,7 @@ stream.on("data", function(data){
 });
 ```
 
-@param {steal-tools.SystemConfig} config
+@param {steal-tools.StealConfig} config
 
 @param {steal-tools.BuildOptions} [options]
 

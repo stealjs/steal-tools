@@ -21,7 +21,8 @@ describe("Recycle", function(){
 		var options = {
 			localStealConfig: {
 				env: "build-development"
-			}
+			},
+			quiet: true
 		};
 
 		var depStream = bundle.createBundleGraphStream(config, options);
@@ -31,14 +32,14 @@ describe("Recycle", function(){
 
 		// Wait for it to initially finish loading.
 		recycleStream.once("data", function(data){
-			var node = data.graph.foo;
+			var node = data.graph["live-app@1.0.0#foo"];
 			var mockOptions = {};
 			// Fake string as the source.
 			mockOptions[node.load.address.replace("file:", "")] = "module.exports = 'foo'";
 			mockFs(mockOptions);
 
 			recycleStream.once("data", function(data){
-				var node = data.graph.main;
+				var node = data.graph["live-app@1.0.0#main"];
 
 				assert(/foo/.test(node.load.source), "Source changed");
 				done();
@@ -56,7 +57,7 @@ describe("Recycle", function(){
 			map: { "@dev": "@empty" }
 		};
 
-		var depStream = bundle.createBundleGraphStream(config);
+		var depStream = bundle.createBundleGraphStream(config, { quiet: true });
 		var recycleStream = recycle(config);
 
 		depStream.pipe(recycleStream);
@@ -98,7 +99,7 @@ describe("Recycle", function(){
 		};
 		var fileSystem = {};
 
-		var depStream = bundle.createBundleGraphStream(config);
+		var depStream = bundle.createBundleGraphStream(config, { quiet: true });
 		var recycleStream = recycle(config);
 
 		depStream.pipe(recycleStream);

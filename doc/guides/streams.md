@@ -1,5 +1,5 @@
 @page steal-tools.guides.streams Streaming API
-@parent StealJS.guides 3
+@parent StealJS.topics
 
 In 0.14.0 StealTools added a new streaming API based on [Node streams](https://nodejs.org/api/stream.html). This gives you a greater ability to interject your own functionality in the middle of the build process, or to exclude parts you don't want (like if you didn't want to write the results to the filesystem.
 
@@ -36,11 +36,11 @@ Given a graph stream, **transpile** will transpile each module in the graph to A
 var s = require("steal-tools").streams;
 var through = require("through2");
 
-var system = {
+var steal = {
 	config: __dirname + "/package.json!npm"
 };
 
-var transpileStream = s.graph(system)
+var transpileStream = s.graph(steal)
 	.pipe(s.transpile());
 
 transpileStream.pipe(through(function(data){
@@ -62,11 +62,11 @@ The [steal-tools.streams.bundle] stream will analyze your dependency graph and s
 var s = require("steal-tools").streams;
 var through = require("through2");
 
-var system = {
+var steal = {
 	config: __dirname + "/package.json!npm"
 };
 
-var bundleStream = s.graph(system)
+var bundleStream = s.graph(steal)
 	.pipe(s.transpile())
 	.pipe(s.minify())
 	.pipe(s.bundle());
@@ -96,11 +96,11 @@ Given these APIs you can construct your own build by piping the streams into eac
 ```
 var s = require("steal-tools").streams;
 
-var system = {
+var steal = {
 	config: __dirname + "/package.json!npm"
 };
 
-var stream = s.graph(system)
+var stream = s.graph(steal)
 	.pipe(s.transpile())
 	.pipe(s.minify())
 	.pipe(s.bundle())
@@ -134,11 +134,11 @@ var transpile = function(){
 	});
 };
 
-var system = {
+var steal = {
 	config: __dirname + "/package.json!npm"
 };
 
-var stream = s.graph(system)
+var stream = s.graph(steal)
 	.pipe(transpile())
 	.pipe(s.minify())
 	.pipe(s.bundle())

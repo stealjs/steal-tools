@@ -5,7 +5,7 @@ Export a project's modules to other forms and formats from the command line.
 
 @signature `steal-tools export [--OPTION_NAME OPTION_VALUE]...`
 
-@param {String} OPTION_NAME Any `system`, `options`, or `outputs` name in
+@param {String} OPTION_NAME Any `steal`, `options`, or `outputs` name in
 [steal-tools.export.object].
 
 @param {String} OPTION_VALUE The value of `OPTION_NAME`.  The `ignores` option
