@@ -20,7 +20,7 @@
     "lodash": "^4.3.0",
     "moment": "^2.10.2",
     "pdenodeify": "^0.1.0",
-    "steal": "github:stealjs/steal#refactor-extensions",
+    "steal": "stealjs/steal#refactor-extensions",
     "steal-bundler": "^0.3.0",
     "system-parse-amd": "0.0.2",
     "through2": "^2.0.0",
