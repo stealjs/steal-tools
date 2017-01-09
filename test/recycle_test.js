@@ -1,10 +1,12 @@
-var assert = require("assert"),
-	bundle = require("../lib/graph/make_graph_with_bundles"),
-	fs = require("fs-extra"),
-    logging = require("../lib/logger"),
-	mockFs = require("mock-fs"),
-	path = require("path"),
-	recycle = require("../lib/graph/recycle");
+var assert = require("assert");
+var bundle = require("../lib/graph/make_graph_with_bundles");
+var fs = require("fs-extra");
+var logging = require("../lib/logger");
+var mockFs = require("mock-fs");
+var path = require("path");
+var recycle = require("../lib/graph/recycle");
+var through = require("through2");
+var pluck = require("../lib/graph/pluck");
 
 describe("Recycle", function() {
 	beforeEach(function() {
@@ -13,6 +15,69 @@ describe("Recycle", function() {
 
 	afterEach(function() {
 		mockFs.restore();
+	});
+
+	it("clones stream data before piping into other streams", function(done) {
+		var failed = false;
+
+		var config = {
+			config: __dirname + "/live_reload/package.json!npm",
+			logLevel: 3
+		};
+
+		var options = {
+			localStealConfig: {
+				env: "build-development"
+			},
+			quiet: true
+		};
+
+		var mutateStream = function() {
+			return through.obj(function(data, enc, next) {
+				var dependencyGraph = data.graph;
+
+				if (!dependencyGraph[data.loader.configMain]) {
+					failed = true;
+					done(new Error("config should not be removed from the graph"));
+				}
+
+				pluck(dependencyGraph, data.loader.configMain || "@config");
+				next(null, data);
+			});
+		};
+
+		var depStream = bundle.createBundleGraphStream(config, { quiet: true });
+		var recycleStream = recycle(config, options);
+
+		depStream
+			.pipe(recycleStream)
+			.pipe(mutateStream());
+
+		recycleStream.once("data", function(data) {
+			var mockConfig = {};
+			var graph = data.graph;
+			var node = graph["live-app@1.0.0#foo"];
+
+			Object.keys(graph).forEach(function(moduleName){
+				var load = graph[moduleName].load;
+				mockConfig[load.address.replace("file:", "")] = load.source;
+			});
+
+			mockConfig[node.load.address.replace("file:", "")] =
+				"module.exports = 'foo';";
+			mockFs(mockConfig);
+
+			recycleStream.write(node.load.name);
+			recycleStream.once("data", function(data) {
+				var graph = data.graph;
+				var node = graph["live-app@1.0.0#foo"];
+
+				recycleStream.write(node.load.name);
+				recycleStream.once("data", function() {
+					if (!failed) done();
+				});
+			});
+		});
 	});
 
 	it("Works with a project using live-reload", function(done){
