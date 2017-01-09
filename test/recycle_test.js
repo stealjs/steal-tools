@@ -8,6 +8,11 @@ var recycle = require("../lib/graph/recycle");
 var through = require("through2");
 var pluck = require("../lib/graph/pluck");
 
+function urlPathToFSPath(pth) {
+	return pth.replace("file:", "")
+		.replace(/\//g, path.sep);
+}
+
 describe("Recycle", function() {
 	beforeEach(function() {
 		logging.setup({ quiet: true });
@@ -164,7 +169,7 @@ describe("Recycle", function() {
 
 	it("Detects dependencies in virtual modules created", function(done){
 		var config = {
-			config: path.join(__dirname, "virtual_recycle/config.js"),
+			config: path.join(__dirname, "virtual_recycle", "config.js"),
 			main: "main",
 			logLevel: 3
 		};
@@ -196,7 +201,7 @@ describe("Recycle", function() {
 
 			var node = data.graph["other.txt!comp"];
 			// Fake string as the source.
-			fileSystem[node.load.address.replace("file:", "")] =
+			fileSystem[urlPathToFSPath(node.load.address)] =
 				"require('bit-tabs');\nmodule.exports='hello';";
 			fileSystem[path.resolve(__dirname+"/virtual_recycle/tabs.js")] =
 				"exports.tabs = function(){};";
@@ -220,7 +225,7 @@ describe("Recycle", function() {
 
 		function updateConfig(data){
 			var node = data.graph["config.js"];
-			fileSystem[node.load.address.replace("file:", "")] =
+			fileSystem[urlPathToFSPath(node.load.address)] =
 				"System.config({ map: { 'bit-tabs': 'tabs' } });";
 			mockFs(fileSystem);
 
