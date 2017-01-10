@@ -1,4 +1,8 @@
-var isIOjs = process.version.substr(0, 3) !== "v0.";
+// TODO: Figure out why the recycle_test fails when (at least)
+// - cmd_build_int_test and
+// - test_live
+// tests are imported
+require("./recycle_test");
 
 // Unit tests
 require("./clean_address_test");
@@ -25,11 +29,6 @@ require("./bundle_name_test");
 require("./dependencygraph_test");
 require("./bundle_test");
 require("./order_test");
-
-// mock-fs doesn't work in iojs 3.0 right now so skipping until that is fixed.
-if(!isIOjs) {
-	require("./recycle_test");
-}
 
 require("./multibuild_test");
 require("./transform_test");
