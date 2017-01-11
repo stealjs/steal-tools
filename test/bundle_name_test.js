@@ -143,10 +143,10 @@ describe("bundle name without npm package", function() {
 	});
 
 	it("only return names with chars, numbers and -", function() {
-		bundle = {
+		var bundle = {
 			bundles: ["main/bar0815.com.js", "bar/foo- bar"]
 		};
-		bundleName = nameBundle.getName(bundle);
+		var bundleName = nameBundle.getName(bundle);
 		assert.equal(bundleName, dirName + 'bar0815-com-foo-bar');
 	});
 

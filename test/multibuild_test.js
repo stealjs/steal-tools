@@ -27,7 +27,7 @@ describe("multi build", function(){
 			}, {
 				minify: false,
 				quiet: true
-			}).then(function(data){
+			}).then(function(){
 				var exists = fs.existsSync(  path.join(__dirname,"bundle/dist/bundles/bundle.js")  );
 				if(!exists) {
 					done(new Error("no bundle info"));
@@ -213,7 +213,7 @@ describe("multi build", function(){
 
 		rmdir(__dirname+"/bundle/bundles", function(error){
 			if(error){
-				done(error)
+				done(error);
 			}
 
 			multiBuild({
@@ -223,7 +223,7 @@ describe("multi build", function(){
 				bundleSteal: true,
 				quiet: true,
 				minify: false
-			}).then(function(data){
+			}).then(function(){
 
 				open("test/bundle/packaged_steal.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
@@ -256,7 +256,7 @@ describe("multi build", function(){
 
 		rmdir(__dirname+"/bundle/alternate", function(error){
 			if(error){
-				done(error)
+				done(error);
 			}
 
 			multiBuild({
@@ -267,7 +267,7 @@ describe("multi build", function(){
 				dest: __dirname + "/bundle/alternate",
 				quiet: true,
 				minify: false
-			}).then(function(data){
+			}).then(function(){
 
 				open("test/bundle/folder/packaged_steal.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
@@ -301,7 +301,7 @@ describe("multi build", function(){
 
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
-				done(error)
+				done(error);
 			}
 
 			multiBuild({
@@ -310,7 +310,7 @@ describe("multi build", function(){
 			}, {
 				quiet: true,
 				minify: false
-			}).then(function(data){
+			}).then(function(){
 				open("test/basics/prod.html",function(browser, close){
 					find(browser,"MODULE", function(module){
 						assert(true, "module");
@@ -338,7 +338,7 @@ describe("multi build", function(){
 	it("System.instantiate works when bundling steal", function(done){
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
-				return done(error)
+				return done(error);
 			}
 
 			multiBuild({
@@ -348,9 +348,9 @@ describe("multi build", function(){
 				bundleSteal: true,
 				quiet: true,
 				minify: false
-			}).then(function(data){
+			}).then(function(){
 				open("test/basics/prod-inst.html",function(browser, close){
-					find(browser,"MODULE", function(module){
+					find(browser,"MODULE", function(){
 						assert(true, "module");
 
 						// We marked stealconfig.js as instantiated so it shouldn't have it's properties
@@ -501,7 +501,7 @@ describe("multi build", function(){
 	it("works with an unnormalized main", function(done){
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
-				done(error)
+				done(error);
 			}
 
 			multiBuild({
@@ -510,7 +510,7 @@ describe("multi build", function(){
 			}, {
 				quiet: true,
 				minify: false
-			}).then(function(data){
+			}).then(function(){
 				open("test/basics/prod.html",function(browser, close){
 					find(browser,"MODULE", function(module){
 						assert(true, "module");
@@ -615,7 +615,7 @@ describe("multi build", function(){
 					minify: false
 				}).then(function(){
 					open("test/side_bundle/prod.html", function(browser, close){
-						find(browser, "MODULE", function(module){
+						find(browser, "MODULE", function(){
 							var loader = browser.window.System;
 
 							comparify(loader.bundles, {
@@ -640,7 +640,7 @@ describe("multi build", function(){
 					minify: false
 				}).then(function(){
 					open("test/side_bundle_dep/prod.html", function(browser, close){
-						find(browser, "MODULE", function(module){
+						find(browser, "MODULE", function(){
 							var loader = browser.window.System;
 
 							comparify(loader.bundles, {
@@ -818,7 +818,7 @@ describe("multi build", function(){
 			rmdir(__dirname+"/plugins/dist/bundles", function(error){
 
 				if(error){
-					done(error)
+					done(error);
 				}
 				// build the project that
 				// uses a plugin
@@ -828,7 +828,7 @@ describe("multi build", function(){
 					main: "main"
 				}, {
 					quiet: true
-				}).then(function(data){
+				}).then(function(){
 					// open the prod page and make sure
 					// the plugin processed the input correctly
 					open("test/plugins/prod.html", function(browser, close){
@@ -851,7 +851,7 @@ describe("multi build", function(){
 			rmdir(__dirname+"/plugins/dist", function(error){
 
 				if(error){
-					done(error)
+					done(error);
 				}
 
 				// build the project that
@@ -864,7 +864,7 @@ describe("multi build", function(){
 					}
 				}, {
 					quiet: true
-				}).then(function(data){
+				}).then(function(){
 					// open the prod page and make sure
 					// the plugin processed the input correctly
 					open("test/plugins/prod-steal.html", function(browser, close){
@@ -949,7 +949,7 @@ describe("multi build", function(){
 
 			rmdir(__dirname+"/multi-main/dist", function(error){
 				if(error){
-					done(error)
+					done(error);
 				}
 
 				multiBuild({
@@ -958,7 +958,7 @@ describe("multi build", function(){
 				}, {
 					quiet: true
 					//verbose: true
-				}).then(function(data){
+				}).then(function(){
 
 					var checkNext = function(next){
 						if(next) {
@@ -978,7 +978,7 @@ describe("multi build", function(){
 									var mynext = mains.shift();
 									if(mynext) {
 										setTimeout(function(){
-											checkNext(mynext)
+											checkNext(mynext);
 										},1);
 									} else {
 										done();
@@ -1030,7 +1030,7 @@ describe("multi build", function(){
 				}, {
 					quiet: true,
 					minify: false
-				}).then(function(data){
+				}).then(function(){
 
 					var checkNext = function(next){
 						if(next) {
@@ -1050,7 +1050,7 @@ describe("multi build", function(){
 									var mynext = mains.shift();
 									if(mynext) {
 										setTimeout(function(){
-											checkNext(mynext)
+											checkNext(mynext);
 										},1);
 									} else {
 										done();
@@ -1090,7 +1090,7 @@ describe("multi build", function(){
 
 			rmdir(__dirname+"/multi-main/dist", function(error){
 				if(error){
-					done(error)
+					done(error);
 				}
 
 				multiBuild({
@@ -1100,7 +1100,7 @@ describe("multi build", function(){
 					bundleSteal: true,
 					quiet: true,
 					minify: false
-				}).then(function(data){
+				}).then(function(){
 					var checkNext = function(next){
 						if(next) {
 							open("test/multi-main/bundle_"+next+".html",function(browser, close){
@@ -1119,7 +1119,7 @@ describe("multi build", function(){
 									var mynext = mains.shift();
 									if(mynext) {
 										setTimeout(function(){
-											checkNext(mynext)
+											checkNext(mynext);
 										},1);
 									} else {
 										done();
@@ -1143,7 +1143,7 @@ describe("multi build", function(){
 
 			rmdir(__dirname+"/current-loader/dist", function(error){
 				if(error){
-					done(error)
+					done(error);
 				}
 				// build the project that uses @loader
 				multiBuild({
@@ -1175,7 +1175,7 @@ describe("multi build", function(){
 
 			rmdir(__dirname+"/current-loader/dist", function(error){
 				if(error){
-					done(error)
+					done(error);
 				}
 				// build the project that uses @loader
 				multiBuild({
@@ -1206,7 +1206,7 @@ describe("multi build", function(){
 		it("works with es6", function(done) {
 			rmdir(__dirname+"/current-loader/dist", function(error){
 				if(error){
-					done(error)
+					done(error);
 				}
 				// build the project that uses @loader
 				multiBuild({
@@ -1251,9 +1251,9 @@ describe("multi build", function(){
 					}, {
 						dest: __dirname + "/bundle_multiple_builds",
 						quiet: true
-					})
+					});
 
-				Promise.all([first, second]).then(function(data){
+				Promise.all([first, second]).then(function(){
 					done();
 				}).catch(done);
 			});
@@ -1318,7 +1318,7 @@ describe("multi build", function(){
 					minify: false,
 					quiet: true
 				});
-			}).then(function(buildResult){
+			}).then(function(){
 				done();
 			}, done);
 		});
@@ -1394,7 +1394,7 @@ describe("multi build", function(){
 
 								if(error){ return done(error); }
 
-								done()
+								done();
 
 							});
 
@@ -1497,7 +1497,7 @@ describe("multi build", function(){
 					quiet: true,
 					minify: false,
 					//bundleSteal: true
-				}).then(function(data){
+				}).then(function(){
 
 					open("test/npm-multi-main/app_a.html",function(browser, close){
 						find(browser,"app", function(app){
@@ -1528,7 +1528,7 @@ describe("multi build", function(){
 					quiet: true,
 					minify: false,
 					//bundleSteal: true
-				}).then(function(data){
+				}).then(function(){
 					open("test/npm-multi-main/app_b.html",function(browser, close){
 						find(browser,"app", function(app){
 							assert(true, "app found");
@@ -1558,7 +1558,7 @@ describe("multi build", function(){
 				}, {
 					quiet: true,
 					minify: false,
-				}).then(function(data){
+				}).then(function(){
 
 					open("test/npm-multi-main/app_c.html",function(browser, close){
 						find(browser,"app", function(app){
@@ -1589,7 +1589,7 @@ describe("multi build", function(){
 				}, {
 					quiet: true,
 					minify: false
-				}).then(function(data){
+				}).then(function(){
 
 					var mains = ["multi-main/app_a", "multi-main/app_b", "multi-main/app_c"];
 
@@ -1612,7 +1612,7 @@ describe("multi build", function(){
 									var mynext = mains.shift();
 									if(mynext) {
 										setTimeout(function(){
-											checkNext(mynext)
+											checkNext(mynext);
 										},1);
 									} else {
 										done();
@@ -1643,7 +1643,7 @@ describe("multi build", function(){
 					quiet: true,
 					minify: false,
 					bundleSteal: true
-				}).then(function(data){
+				}).then(function(){
 
 					var mains = ["multi-main/app_a", "multi-main/app_b"];
 
@@ -1666,7 +1666,7 @@ describe("multi build", function(){
 									var mynext = mains.shift();
 									if(mynext) {
 										setTimeout(function(){
-											checkNext(mynext)
+											checkNext(mynext);
 										},1);
 									} else {
 										done();
@@ -1826,7 +1826,7 @@ describe("multi build", function(){
 
 					// in production config this module should map to @empty if it is not needed
 					// a feature can be, steal set automaticly @empty if the module is set with bundles:false in package.json
-					assert.equal(data.loader.envs['window-production'].map.jqueryt, '@empty', 'ignore modules must declare as @empty')
+					assert.equal(data.loader.envs['window-production'].map.jqueryt, '@empty', 'ignore modules must declare as @empty');
 
 					// bundle exists
 					assert.ok(fs.existsSync(__dirname + "/bundle_false/dist/bundles/src/main.js"), "bundle main");
@@ -1967,7 +1967,7 @@ describe("multi build", function(){
 		it("should work", function(done){
 			rmdir(__dirname+"/long_bundle_names/dist", function(error){
 				if(error){
-					done(error)
+					done(error);
 				}
 
 				multiBuild({
@@ -1975,7 +1975,7 @@ describe("multi build", function(){
 					main: "bundle"
 				}, {
 					quiet: true
-				}).then(function(data){
+				}).then(function(){
 					open("test/long_bundle_names/bundle.html#a",function(browser, close){
 						find(browser,"appA", function(appA){
 								assert(true, "got A");
@@ -1995,7 +1995,7 @@ describe("multi build", function(){
 		it("should truncate and hash long bundle names", function(done){
 			rmdir(__dirname+"/long_bundle_names/dist", function(error){
 				if(error){
-					done(error)
+					done(error);
 				}
 
 				multiBuild({
@@ -2003,7 +2003,7 @@ describe("multi build", function(){
 					main: "bundle"
 				}, {
 					quiet: true
-				}).then(function(data){
+				}).then(function(){
 
 					assert(fs.existsSync("test/long_bundle_names/dist/bundles/app_a_with_a_ver-5797ef41.js"));
 					assert(fs.existsSync("test/long_bundle_names/dist/bundles/app_a_with_a_ver-8702980e.js"));
@@ -2042,7 +2042,7 @@ describe("multi build", function(){
 					quiet: true,
 					sourceMaps: true,
 					minify: true
-				}).then(function(data){
+				}).then(function(){
 					var exists = fs.existsSync(path.join(__dirname,"dist/bundles/basics/basics.js.map"));
 					if(!exists) {
 						done(new Error("no bundle info"));
@@ -2116,21 +2116,21 @@ describe("multi build", function(){
 				})
 				.then(function () {
 					var source = fs.readFileSync(__dirname + "/strip-sourcemap/dist/bundles/main.js", "utf8");
-					var soureMapRegex = /\/\/# sourceMappingURL=main.js.map/m;
+					//var soureMapRegex = /\/\/# sourceMappingURL=main.js.map/m;
 					assert.ok(/\/\/# sourceMappingURL=main.js.map/m.test(source), 'sourceMap found');
 
 					assert.ok(!/\/\/# sourceMappingURL=foobar.js.map/m.test(source), 'foobar.js.map should not be found');
 					assert.ok(!/\/\/# sourceMappingURL=Promise.js.map/m.test(source), 'foobar.js.map should not be found');
 				})
 				.then(done, done);
-		})
+		});
 	});
 
 	describe("multi-main with bundled steal", function(){
 		it("set main automatically", function(done){
 			rmdir(__dirname+"/multi-main-bundled/dist", function(error){
 				if(error){
-					done(error)
+					done(error);
 				}
 
 				multiBuild({
@@ -2143,7 +2143,7 @@ describe("multi build", function(){
 					bundleSteal: true,
 					quiet: true,
 					minify: false
-				}).then(function(data){
+				}).then(function(){
 					open("test/multi-main-bundled/bundle_app_a.html",function(browser, close){
 						find(browser,"app", function(app){
 							assert(true, "got app");
@@ -2214,4 +2214,28 @@ describe("multi build", function(){
 			});
 		});
 	});
+
+	it("should work with UMD produced by webpack (#579)", function(done){
+		rmdir(__dirname + "/umd/bundle", function(error){
+			if(error) {
+				return done(error);
+			}
+
+			multiBuild({
+				config: __dirname + "/umd/config.js",
+				main: "main"
+			}, {
+				quiet: true
+			}).then(function(){
+				open("test/umd/prod.html", function(browser, close){
+					find(browser, "umdExport", function(umdExport){
+						assert.equal(typeof umdExport, "function", "got umdExport");
+						close();
+					}, close);
+				}, done);
+			}).catch(done);
+		});
+	});
+
+
 });
