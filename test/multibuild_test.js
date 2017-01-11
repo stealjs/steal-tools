@@ -2215,7 +2215,7 @@ describe("multi build", function(){
 		});
 	});
 
-	it.only("should work with UMD produced by webpack (#579)", function(done){
+	it("should work with UMD produced by webpack (#579)", function(done){
 		rmdir(__dirname + "/umd/bundle", function(error){
 			if(error) {
 				return done(error);
