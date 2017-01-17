@@ -48,7 +48,7 @@
     "mock-fs": "^3.12.1",
     "mockery": "^1.4.1",
     "rimraf": "^2.5.2",
-    "steal-conditional": "^0.2.0",
+    "steal-conditional": "^0.3.2",
     "steal-css": "^1.0.0",
     "steal-qunit": "^1.0.0",
     "testee": "^0.2.0",
