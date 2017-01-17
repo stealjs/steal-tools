@@ -15,6 +15,7 @@ describe("build app using steal-conditional", function() {
 	var basePath = path.join(__dirname, "conditionals");
 	var booleanPath = path.join(basePath, "boolean", "node_modules");
 	var substitutionPath = path.join(basePath, "substitution", "node_modules");
+	var substitutionTildePath = path.join(basePath, "substitution-tilde", "node_modules");
 
 	before(function() {
 		return copyDependencies();
@@ -91,6 +92,47 @@ describe("build app using steal-conditional", function() {
 			.catch(done);
 	});
 
+	it("substitution using `~` lookup scheme works", function(done) {
+		var config = {
+			config: path.join(basePath, "substitution-tilde", "package.json!npm")
+		};
+
+		prmdir(path.join(basePath, "substitution-tilde", "dist"))
+			.then(function() {
+				return multiBuild(config, { minify: false, quiet: true });
+			})
+			.then(function() {
+				var bundles = path.join(
+					basePath, "substitution-tilde", "dist", "bundles", "conditionals"
+				);
+
+				// creates bundles for each possible string substitution
+				assert.ok(
+					fs.existsSync(path.join(bundles, "message", "en.js")),
+					"should create bundle for `en` variation"
+				);
+				assert.ok(
+					fs.existsSync(path.join(bundles, "message", "es.js")),
+					"should create bundle for `es` variation"
+				);
+			})
+			.then(function() {
+				var page = path.join(
+					"test", "conditionals", "substitution-tilde", "index.html"
+				);
+
+				open(page, function(browser, close) {
+					find(browser, "translations", function(translations) {
+						assert.equal(translations.es, "hola, mundo!");
+						assert.ok(!translations.en,
+							"only the `es` translation should be loaded");
+						close();
+					}, close);
+				}, done);
+			})
+			.catch(done);
+	});
+
 	function copyDependencies() {
 		var prmdir = denodeify(rmdir);
 		var pcopy = denodeify(fs.copy);
@@ -111,6 +153,12 @@ describe("build app using steal-conditional", function() {
 				return pcopy(
 					path.join(srcModulesPath, "steal-conditional"),
 					path.join(substitutionPath, "steal-conditional")
+				);
+			})
+			.then(function() {
+				return pcopy(
+					path.join(srcModulesPath, "steal-conditional"),
+					path.join(substitutionTildePath, "steal-conditional")
 				);
 			});
 	}
