@@ -3,7 +3,38 @@
 
 Options used to configure the build process.
 
-@option {Boolean} [minify=true] Sets whether the source code is minified prior to writing.
+@option {Boolean|Function} [minify=true] 
+
+**Boolean**
+
+Sets whether the source code is minified prior to writing.
+
+Minification is optional but on by default, you can turn it off by doing:
+
+```javascript
+stealtools.build(config, {
+	minify: false
+});
+```
+---
+**Function**
+
+A function can be provided to handle minification of each file in a bundle, e.g:
+
+```javascript
+stealtools.build(config, {
+	minify: function(source, options) {
+		// use your own library to minify source.code 
+		source.code = doCustomMinification(source.code);
+
+		// return the source object when minification is complete
+		return source;
+	}
+});
+```
+
+The function takes a `source` object as the first parameter, this object contains the `code` and its AST version after the transpilation
+process; the second parameter, `options`, is the [steal-tools.BuildOptions] object passed to configure the build process.
 
 @option {Boolean} [bundleSteal=false] Sets whether StealJS will be included in the built file. Enabling this option will allow you to limit the initial request to just one script.
 

@@ -2229,7 +2229,7 @@ describe("multi build", function(){
 			}).then(function(){
 				open("test/umd/prod.html", function(browser, close){
 					find(browser, "umdExport", function(umdExport){
-						assert.equal(typeof umdExport, "function", "got umdExport");
+                        assert.equal(typeof umdExport, "function", "got umdExport");
 						close();
 					}, close);
 				}, done);
@@ -2237,5 +2237,31 @@ describe("multi build", function(){
 		});
 	});
 
+	it("supports JS minification through custom function", function() {
+		function customMinify(source, options) {
+			assert.ok(source.code, "gets the source code");
+			assert.ok(options, "gets the options object");
 
+			source.code = "custom minification works!!";
+			return source;
+		}
+
+		return asap(rmdir)("test/basics/dist")
+			.then(function() {
+				return multiBuild({
+					config: path.join(__dirname, "stealconfig.js"),
+					main: "basics/basics"
+				}, {
+					minify: customMinify
+				});
+			})
+			.then(function() {
+				var source = fs.readFileSync(
+					path.join(__dirname, "dist", "bundles", "basics", "basics.js")
+				);
+
+				assert.ok(/custom minification works/.test(source),
+					"code was changed by custom minifier");
+			});
+	});
 });
