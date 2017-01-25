@@ -1,6 +1,7 @@
+var path = require("path");
 var Browser = require("zombie");
 var connect = require("connect");
-var path = require("path");
+var serveStatic = require("serve-static");
 
 // Helpers
 exports.find = function(browser, property, callback, done){
@@ -24,9 +25,11 @@ exports.open = function(url, callback, done){
 			exports.open(url, callback, done);
 		});
 	}
-	
-	server = connect().use(connect.static(path.join(__dirname,".."))).listen(8081);
-	//var browser = Browser.create();
+
+	server = connect()
+		.use(serveStatic(path.join(__dirname, "..")))
+		.listen(8081);
+
 	var browser = new Browser();
 	browser.visit("http://localhost:8081/"+url)
 		.then(function(){

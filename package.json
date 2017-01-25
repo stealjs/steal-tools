@@ -25,7 +25,7 @@
     "steal-parse-amd": "^1.0.0",
     "through2": "^2.0.0",
     "tmp": "0.0.31",
-    "traceur": "0.0.111",
+    "traceur": "0.0.91",
     "transpile": "^1.0.0",
     "uglify-js": "~2.7.5",
     "urix": "^0.1.0",
@@ -48,7 +48,7 @@
     "mock-fs": "3.12.1",
     "mockery": "^2.0.0",
     "rimraf": "^2.5.2",
-    "testee": "^0.3.0",
+    "serve-static": "^1.11.2",
     "steal-conditional": "^0.3.2",
     "steal-css": "^1.0.0",
     "steal-qunit": "^1.0.0",
@@ -129,6 +129,11 @@
     "npmDependencies": [
       "steal-qunit",
       "steal-css"
+    ]
+  },
+  "greenkeeper": {
+    "ignore": [
+      "traceur"
     ]
   }
 }
