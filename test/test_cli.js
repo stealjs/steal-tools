@@ -173,7 +173,7 @@ describe("steal-tools cli", function () {
 				if(isListening.test(d)) {
 					child.kill();
 					kill(child.pid).then(function(){
-					   done(); 
+					   done();
 					});
 				}
 			});
