@@ -5,7 +5,6 @@ var asap = require("pdenodeify"),
 	multiBuild = require("../lib/build/multi"),
 	rmdir = require("rimraf"),
 	path = require("path"),
-	stealTools = require("../index"),
 	testHelpers = require("./helpers");
 
 var find = testHelpers.find;
@@ -125,6 +124,83 @@ describe("multi build", function(){
 				});
 			}).catch(done);
 		});
+	});
+
+	it("should minify by default", function() {
+		var config = {
+			config: path.join(__dirname, "minify", "config.js"),
+			main: "minify"
+		};
+
+		return asap(rmdir)(path.join(__dirname, "minify", "dist"))
+			.then(function() {
+				return multiBuild(config, { quiet: true });
+			})
+			.then(function() {
+				var main = path.join(__dirname, "minify", "dist", "bundles", "minify.js");
+				var actualJS = fs.readFileSync(main, "utf8");
+
+				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
+				var hasGlobalLongVariable = actualJS.indexOf("anotherVeryLongName") !== -1;
+				var hasDevCode = actualJS.indexOf("remove this") !== -1;
+
+				assert(!hasDevCode, "Minified source has dev code removed.");
+				assert(!hasLongVariable, "Minified source renamed long variable.");
+				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
+			});
+	});
+
+	it("should allow minification to be turned off", function() {
+		var config = {
+			config: path.join(__dirname, "minify", "config.js"),
+			main: "minify"
+		};
+
+		var options = {
+			minify: false,
+			quiet: true
+		};
+
+		return asap(rmdir)(path.join(__dirname, "minify", "dist"))
+			.then(function() {
+				return multiBuild(config, options);
+			})
+			.then(function() {
+				var main = path.join(__dirname, "minify", "dist", "bundles", "minify.js");
+				var actualJS = fs.readFileSync(main, "utf8");
+
+				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
+				assert(hasLongVariable, "Source includes long variable name.");
+			});
+	});
+
+	it("should allow setting uglify-js options", function() {
+		var config = {
+			config: path.join(__dirname, "minify", "config.js"),
+			main: "minify"
+		};
+
+		var options = {
+			quiet: true,
+			uglifyOptions: {
+				mangle: false // skip mangling names.
+			}
+		};
+
+		return asap(rmdir)(path.join(__dirname, "minify", "dist"))
+			.then(function() {
+				return multiBuild(config, options);
+			})
+			.then(function() {
+				var main = path.join(__dirname, "minify", "dist", "bundles", "minify.js");
+				var actualJS = fs.readFileSync(main, "utf8");
+
+				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
+				var hasAnotherLongVariable = actualJS.indexOf("anotherLongVariableName") !== -1;
+
+				assert(hasLongVariable, "Skip mangling names in dependencies graph files");
+				assert(hasAnotherLongVariable, "skip mangling names in stealconfig and main files");
+			});
 	});
 
 	it("Allows specifying an alternative dist directory", function(done){
