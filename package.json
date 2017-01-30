@@ -30,7 +30,7 @@
     "uglify-js": "~2.7.5",
     "urix": "^0.1.0",
     "winston": "^2.2.0",
-    "ws": "^1.0.0",
+    "ws": "^2.0.0",
     "yargs": "^6.5.0"
   },
   "devDependencies": {
