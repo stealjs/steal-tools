@@ -26,7 +26,7 @@
     "through2": "^2.0.0",
     "tmp": "0.0.31",
     "traceur": "0.0.91",
-    "transpile": "^1.0.0",
+    "transpile": "^2.0.0",
     "uglify-js": "~2.7.5",
     "urix": "^0.1.0",
     "winston": "^2.2.0",
