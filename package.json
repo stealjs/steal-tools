@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "chokidar": "^1.0.1",
-    "clean-css": "4.0.3",
+    "clean-css": "4.0.4",
     "colors": "^1.1.2",
     "engine-dependencies": "^0.2.0",
     "find-line-column": "^0.5.2",
