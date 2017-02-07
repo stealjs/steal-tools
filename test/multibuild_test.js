@@ -2340,4 +2340,31 @@ describe("multi build", function(){
 					"code was changed by custom minifier");
 			});
 	});
+
+	it("should work with custom globals", function(done) {
+		var globals = path.join(__dirname, "globals");
+
+		asap(rmdir)(path.join(globals, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "main",
+					config: path.join(globals, "config.js")
+				}, {
+					minify: false
+				});
+			})
+			.then(function() {
+				var page = path.join("test", "globals", "index.html");
+
+				open(page, function(browser, close) {
+					find(browser, "$$$", function($$$) {
+						assert.deepEqual($$$, {}, "worked");
+						done();
+					}, close);
+				}, done);
+			})
+			.catch(function(err) {
+				assert.ok(!err, err.stack || err);
+			});
+	});
 });
