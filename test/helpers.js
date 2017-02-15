@@ -44,3 +44,25 @@ exports.open = function(url, callback, done){
 			});
 		});
 };
+
+// Uses promises instead of callbacks, better for chaining
+exports.popen = function(root, url) {
+	if (server && server.address()) {
+		return server.close(function() {
+			exports.popen(url);
+		});
+	}
+
+	server = connect()
+		.use(serveStatic(root))
+		.listen(8081);
+
+	var browser = new Browser();
+	return browser.visit("http://localhost:8081/" + url)
+		.then(function() {
+			return {
+				browser: browser,
+				close: server.close.bind(server)
+			};
+		});
+};
