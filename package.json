@@ -8,6 +8,7 @@
     "web": "http://bitovi.com/"
   },
   "dependencies": {
+    "bitovi-source-map": "0.4.2-bitovi.2",
     "chokidar": "^1.0.1",
     "clean-css": "^4.0.5",
     "colors": "^1.1.2",
@@ -17,9 +18,9 @@
     "glob": "^7.1.1",
     "is-appveyor": "^1.0.0",
     "lodash": "^4.3.0",
+    "minimatch": "^3.0.3",
     "moment": "^2.10.2",
     "pdenodeify": "^0.1.0",
-    "bitovi-source-map": "0.4.2-bitovi.2",
     "steal": "^1.2.4",
     "steal-bundler": "^0.3.0",
     "steal-parse-amd": "^1.0.0",
