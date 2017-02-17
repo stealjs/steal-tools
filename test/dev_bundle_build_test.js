@@ -1,3 +1,4 @@
+var _ = require("lodash");
 var path = require("path");
 var fs = require("fs-extra");
 var assert = require("assert");
@@ -6,37 +7,25 @@ var testHelpers = require("./helpers");
 var devBundleBuild = require("../lib/build/bundle");
 
 var open = testHelpers.popen;
+var readFile = denodeify(fs.readFile);
 var rmdir = denodeify(require("rimraf"));
 
 describe("dev bundle build", function() {
+	this.timeout(5000);
 
-	// what should I assert here?
-	it.skip("app without npm dependencies?", function() {
-		return rmdir(path.join(__dirname, "bundle", "dist"))
-			.then(function() {
-				return devBundleBuild({
-					config: path.join(__dirname, "bundle", "stealconfig.js"),
-					main: "bundle"
-				});
-			});
-	});
+	var baseOptions =  {
+		quiet: true,
+		minify: false
+	};
 
-	// what should I assert here?
-	it("should work", function() {
-		this.timeout(5000);
-
+	it("should work with defaults", function() {
 		var config = {
-			config: path.join(__dirname, "npm", "package.json!npm"),
-			main: "src/main"
-		};
-
-		var options = {
-			minify: false
+			config: path.join(__dirname, "npm", "package.json!npm")
 		};
 
 		var devBundlePath = path.join(__dirname, "npm", "dev-bundle.js");
 
-		return devBundleBuild(config, options)
+		return devBundleBuild(config, baseOptions)
 			.then(function() {
 				var exists = fs.existsSync(devBundlePath);
 				assert(exists, "dev bundle should be created");
@@ -44,7 +33,9 @@ describe("dev bundle build", function() {
 			.then(function() {
 				return open(path.join(__dirname, "npm"), "dev-bundle-main.html");
 			})
-			.then(function({ browser, close }) {
+			.then(function(params) {
+				var close = params.close;
+				var browser = params.browser;
 				var h1s = browser.window.document.getElementsByTagName('h1');
 				assert.equal(h1s.length, 1, "Wrote H!.");
 				close();
@@ -54,4 +45,76 @@ describe("dev bundle build", function() {
 			});
 	});
 
+	it("allows filtering modules through a glob pattern", function() {
+		var config = {
+			main: "bundle",
+			config: path.join(__dirname, "bundle", "stealconfig.js"),
+		};
+
+		var options = _.assign({}, baseOptions, {
+			filter: "/**/*"
+		});
+
+		var bundlePath = path.join(__dirname, "bundle", "dev-bundle.js");
+
+		return devBundleBuild(config, options)
+			.then(function() {
+				var exists = fs.existsSync(bundlePath);
+				assert(exists, "should create dev bundle");
+			})
+			.then(function() {
+				return rmdir(bundlePath);
+			});
+	});
+
+	it("allows setting the bundle destination", function() {
+		var config = {
+			main: "bundle",
+			config: path.join(__dirname, "bundle", "stealconfig.js"),
+		};
+
+		var options = _.assign({}, baseOptions, {
+			filter: "/**/*",
+			dest: "folder/"
+		});
+
+		var bundlePath = path.join(__dirname, "bundle", "folder", "dev-bundle.js");
+
+		return devBundleBuild(config, options)
+			.then(function() {
+				var exists = fs.existsSync(bundlePath);
+				assert(exists, "should create dev bundle");
+			})
+			.then(function() {
+				return rmdir(bundlePath);
+			});
+	});
+
+	it("includes plugins in the build", function() {
+		var config = {
+			main: "main",
+			config: path.join(__dirname, "plugins", "config.js")
+		};
+
+		var options = _.assign({}, baseOptions, {
+			filter: "/**/*"
+		});
+
+		var bundlePath = path.join(__dirname, "plugins", "dev-bundle.js");
+
+		return devBundleBuild(config, options)
+			.then(function() {
+				return readFile(bundlePath);
+			})
+			.then(function(contents) {
+				var empty = "define('plug', [], function(){ return {}; });";
+				var regexp = new RegExp(_.escapeRegExp(empty));
+
+				assert(!regexp.test(contents), "plugin code should be included");
+			})
+			.then(function() {
+				return rmdir(bundlePath);
+			});
+	});
 });
+
