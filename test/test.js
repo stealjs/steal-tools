@@ -8,6 +8,7 @@ require("./recycle_test");
 require("./clean_address_test");
 require("../lib/bundle/bundle_test");
 require("./cli/cmd_build_test");
+require("./cli/cmd_bundle_test");
 require("./cli/cmd_build_int_test");
 require("./cli/cmd_transform_test");
 require("./cli/make_steal_config_test");
