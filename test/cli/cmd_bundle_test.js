@@ -41,8 +41,8 @@ describe("cmd bundle module", function() {
 		var options = cmdBundle.builder;
 
 		assert.equal(options.dest.default, "");
+		assert.equal(options.filter.default, "**");
 		assert.equal(options.config.default, "package.json!npm");
-		assert.equal(options.filter.default, "node_modules/**/*");
 	});
 
 	it("handler calls steal.bundle", function() {
@@ -56,5 +56,14 @@ describe("cmd bundle module", function() {
 		});
 
 		assert(bundleArgs.options.minify);
+	});
+
+	it("dev flag defaults filter option to `node_modules/**/*`", function() {
+		cmdBundle.handler({
+			dev: true,
+			config: "/stealconfig.js"
+		});
+
+		assert.equal(bundleArgs.options.filter, "node_modules/**/*");
 	});
 });
