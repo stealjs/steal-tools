@@ -38,7 +38,7 @@ describe("cmd build module", function() {
 	});
 
 	it("defaults config option to package.json!npm", function() {
-		assert(cmdBuild.builder.config, "package.json!npm");
+		assert.equal(cmdBuild.builder.config.default, "package.json!npm");
 	});
 
 	it("handler calls steal.build", function() {
