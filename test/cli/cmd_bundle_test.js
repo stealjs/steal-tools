@@ -61,6 +61,7 @@ describe("cmd bundle module", function() {
 	it("dev flag defaults filter option to `node_modules/**/*`", function() {
 		cmdBundle.handler({
 			dev: true,
+			filter: "**", // default value
 			config: "/stealconfig.js"
 		});
 
