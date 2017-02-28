@@ -2,9 +2,11 @@ language: node_js
 node_js:
   - 5.5
   - 6.0
-before_script:
+install:
+  - npm install
   - npm install -g bower
   - bower install
+before_script:
   - npm dedupe
 before_install:
   - "export DISPLAY=:99.0"
