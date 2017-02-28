@@ -2196,7 +2196,7 @@ describe("multi build", function(){
 					assert.ok(/\/\/# sourceMappingURL=main.js.map/m.test(source), 'sourceMap found');
 
 					assert.ok(!/\/\/# sourceMappingURL=foobar.js.map/m.test(source), 'foobar.js.map should not be found');
-					assert.ok(!/\/\/# sourceMappingURL=Promise.js.map/m.test(source), 'foobar.js.map should not be found');
+					assert.ok(!/\/\/# sourceMappingURL=Promise.js.map/m.test(source), 'Promise.js.map should not be found');
 				})
 				.then(done, done);
 		});
