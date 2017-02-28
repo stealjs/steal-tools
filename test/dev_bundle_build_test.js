@@ -52,7 +52,7 @@ describe("dev bundle build", function() {
 		};
 
 		var options = _.assign({}, baseOptions, {
-			filter: "/**/*"
+			filter: "**/*"
 		});
 
 		var bundlePath = path.join(__dirname, "bundle", "dev-bundle.js");
@@ -67,6 +67,34 @@ describe("dev bundle build", function() {
 			});
 	});
 
+	it("allows filtering modules through multiple glob patterns", function() {
+		var config = {
+			main: "app_a",
+			config: path.join(__dirname, "bundle", "stealconfig.js"),
+		};
+
+		var options = _.assign({}, baseOptions, {
+			filter: [
+				"**/*.js",
+				"!dep_a_b.js",
+				"!dep_all.js"
+			]
+		});
+
+		var bundlePath = path.join(__dirname, "bundle", "dev-bundle.js");
+
+		return devBundleBuild(config, options)
+			.then(function(buildResult) {
+				var graph = buildResult.graph;
+
+				assert(_.isUndefined(graph['dep_a_b']), "should not be in the graph");
+				assert(_.isUndefined(graph['dep_all']), "should not be in the graph");
+			})
+			.then(function() {
+				return rmdir(bundlePath);
+			});
+	});
+
 	it("allows setting the bundle destination", function() {
 		var config = {
 			main: "bundle",
@@ -74,7 +102,7 @@ describe("dev bundle build", function() {
 		};
 
 		var options = _.assign({}, baseOptions, {
-			filter: "/**/*",
+			filter: "**/*",
 			dest: "folder/"
 		});
 
@@ -97,7 +125,7 @@ describe("dev bundle build", function() {
 		};
 
 		var options = _.assign({}, baseOptions, {
-			filter: "/**/*"
+			filter: "**/*"
 		});
 
 		var bundlePath = path.join(__dirname, "plugins", "dev-bundle.js");
