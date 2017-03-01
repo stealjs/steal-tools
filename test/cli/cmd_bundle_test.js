@@ -58,13 +58,23 @@ describe("cmd bundle module", function() {
 		assert(bundleArgs.options.minify);
 	});
 
-	it("dev flag defaults filter option to `node_modules/**/*`", function() {
+	it("--deps defaults filter option to `node_modules/**/*`", function() {
+		cmdBundle.handler({
+			deps: true,
+			filter: "**", // default value
+			config: "/stealconfig.js"
+		});
+
+		assert.equal(bundleArgs.options.filter, "node_modules/**/*");
+	});
+
+	it("--dev defaults filter to node_modules and package.json", function() {
 		cmdBundle.handler({
 			dev: true,
 			filter: "**", // default value
 			config: "/stealconfig.js"
 		});
 
-		assert.equal(bundleArgs.options.filter, "node_modules/**/*");
+		assert.deepEqual(bundleArgs.options.filter, ["node_modules/**/*", "package.json"]);
 	});
 });
