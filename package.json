@@ -32,7 +32,7 @@
     "urix": "^0.1.0",
     "winston": "^2.2.0",
     "ws": "^2.2.0",
-    "yargs": "^6.5.0"
+    "yargs": "^7.0.1"
   },
   "devDependencies": {
     "bower": "1.8.0",
