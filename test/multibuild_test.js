@@ -2367,4 +2367,25 @@ describe("multi build", function(){
 				assert.ok(!err, err.stack || err);
 			});
 	});
+
+	it("can build out buildTypes it is not aware of", function(done){
+		var buildTypesDir = path.join(__dirname, "build_types");
+		asap(rmdir)(path.join(buildTypesDir, "dist"))
+		.then(function(){
+			return multiBuild({
+				config: path.join(buildTypesDir, "config.js"),
+				main: "main"
+			}, {quiet: true});
+		})
+		.then(function(){
+			var page = path.join("test", "build_types", "prod.html");
+
+			open(page, function(browser, close){
+				find(browser, "ELEMENT", function(el){
+					assert.equal(el.id, "main", "element inserted");
+					done();
+				}, close);
+			}, done);
+		})
+	});
 });
