@@ -12,15 +12,16 @@ Specifies configuration values to set on Steal's loader.
 @param {steal-tools.BuildOptions} [options]
 Specifies the behavior of the build.
   
-@return {Promise<steal-tools.BuildResult} A Promise that resolves when the build is complete.
+@return {Promise<steal-tools.BuildResult>} A Promise that resolves when the build is complete.
 
 @body
 
 ## Use
 
-The following uses steal-tool's `bundle` method to programatically build out the "my-app"
+The following uses steal-tools `bundle` method to programatically build out the "my-app"
 dependencies in the `node_modules` folder.
 
+	```
     var path = require("path");
     var stealTools = require("steal-tools");
 
@@ -29,6 +30,7 @@ dependencies in the `node_modules` folder.
     }, {
       filter: "node_modules/**/*"
     });
+	```
 
 This will build bundles at the root of your project like:
 
@@ -49,6 +51,7 @@ The `filter` option specifies a glob pattern what modules are included in the bu
 
 It can be a string with a single pattern or an array if multiple patterns are needed; the [multimatch](https://github.com/sindresorhus/multimatch) library is used to support multiple patterns, check its docs to see how the matching works.
 
+    ```
     var path = require("path");
     var stealTools = require("steal-tools");
 
@@ -57,6 +60,7 @@ It can be a string with a single pattern or an array if multiple patterns are ne
     }, {
       filter: "node_modules/**/*"
     });
+    ```
 
 The `filter` value used in the example above will create a bundle of the modules loaded by the application which are located in the `node_modules` folder.
 
@@ -64,12 +68,14 @@ The `filter` value used in the example above will create a bundle of the modules
 
 The `dest` option specifies **a folder** where the bundles are written out.
 
+    ```
     var promise = stealTools.bundle({
       config: path.join(__dirname, "package.json!npm")
     }, {
       dest: path.join(__dirname, "my-bundle"),
       filter: "node_modules/**/*"
     });
+    ```
 
 This will build bundles like:
 
@@ -89,11 +95,13 @@ The main use case for custom bundles is to speed up the loading time of your app
 
 We call a **dependencies bundle** a bundle that only includes the application dependencies (all the modules in the `node_modules` folder if you are using `npm`), to generate it you would do something like:
 
+    ```
     var promise = stealTools.bundle({
       config: path.join(__dirname, "package.json!npm")
     }, {
       filter: "node_modules/**/*"
     });
+    ```
 
 In order to load a **dependencies bundle** you would need to add the `deps-bundle` attribute to the StealJS script tag, like this:
 
@@ -103,12 +111,14 @@ In order to load a **dependencies bundle** you would need to add the `deps-bundl
 
 We call a **development bundle** a **dependencies bundle** that also includes the [StealJS configMain](StealJS.config.configMain) module; in order to generate it you'd do something like:
 
+    ```
     var promise = stealTools.bundle({
       config: path.join(__dirname, "package.json!npm")
     }, {
       dest: path.join(__dirname, "my-dev-bundle"),
       filter: [ "node_modules/**/*", "package.json" ]
     });
+    ```
 
 Unlike a **dependencies bundle**, a **development bundle** has to be loaded before [StealJS configMain](StealJS.config.configMain) is loaded. In order to do that, StealJS provides a `dev-bundle` propert that you can set to the script tag so it loads the bundle correctly, like this:
 

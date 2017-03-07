@@ -144,5 +144,65 @@ describe("dev bundle build", function() {
 				return rmdir(bundlePath);
 			});
 	});
+
+	it("adds node to preload npm packages to deps bundles", function() {
+		var config = {
+			config: path.join(__dirname, "npm", "package.json!npm")
+		};
+
+		var options = _.assign({}, baseOptions, {
+			filter: "node_modules/**/*" // only bundle npm deps
+		});
+
+		var devBundlePath = path.join(__dirname, "npm", "dev-bundle.js");
+
+		return devBundleBuild(config, options)
+			.then(function() {
+				var exists = fs.existsSync(devBundlePath);
+				assert(exists, "dev bundle should be created");
+			})
+			.then(function() {
+				return readFile(devBundlePath);
+			})
+			.then(function(contents) {
+				var nodeName = "[steal-add-npm-packages]";
+				var regexp = new RegExp(_.escapeRegExp(nodeName));
+
+				assert(regexp.test(contents), "bundle should include npm node");
+			})
+			.then(function() {
+				return rmdir(devBundlePath);
+			});
+	});
+
+	it("DOES NOT add npm node to bundles including @config", function() {
+		var config = {
+			config: path.join(__dirname, "npm", "package.json!npm")
+		};
+
+		var options = _.assign({}, baseOptions, {
+			filter: [ "node_modules/**/*", "package.json" ]
+		});
+
+		var devBundlePath = path.join(__dirname, "npm", "dev-bundle.js");
+
+		return devBundleBuild(config, options)
+			.then(function() {
+				var exists = fs.existsSync(devBundlePath);
+				assert(exists, "dev bundle should be created");
+			})
+			.then(function() {
+				return readFile(devBundlePath);
+			})
+			.then(function(contents) {
+				var nodeName = "[steal-add-npm-packages]";
+				var regexp = new RegExp(_.escapeRegExp(nodeName));
+
+				assert(!regexp.test(contents), "bundle should include npm node");
+			})
+			.then(function() {
+				return rmdir(devBundlePath);
+			});
+	});
 });
 
