@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-var path = require("path");
 var cmdBuild = require("../lib/cli/cmd_build");
 var cmdBundle = require("../lib/cli/cmd_bundle");
 var cmdExport = require("../lib/cli/cmd_export");
@@ -21,19 +20,5 @@ var argv = require("yargs")
 	.argv;
 
 // run `steal build` by default if no command was provided
-if (!argv._[0]) {
-	var isWin = /^win/.test(process.platform);
-	var spawn = require("child_process").spawn;
-	var binary = path.join(__dirname, "steal");
-	var rawArgs = ["build"].concat(process.argv.slice(2));
-
-	if(isWin) {
-		rawArgs.unshift.apply(rawArgs, ["/c", "node", binary]);
-		binary = "cmd";
-	}
-
-	spawn(binary, rawArgs, { stdio: "inherit" });
-}
-
 module.exports = argv;
 

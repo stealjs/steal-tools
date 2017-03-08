@@ -34,7 +34,7 @@ describe("cmd build module", function() {
 	});
 
 	it("exposes the right command", function() {
-		assert.equal(cmdBuild.command, "build");
+		assert.deepEqual(cmdBuild.command, ["build", "*"]);
 	});
 
 	it("defaults config option to package.json!npm", function() {
