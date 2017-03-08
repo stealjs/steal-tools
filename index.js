@@ -1,8 +1,10 @@
 var multiBuild = require("./lib/build/multi");
 var transform = require("./lib/build/transform");
 var exporter = require("./lib/build/export");
+var bundle = require("./lib/build/bundle");
 
 module.exports = {
+	bundle: bundle,
 	build: multiBuild,
 	transform: transform,
 	graph: {
