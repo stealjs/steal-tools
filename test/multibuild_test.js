@@ -143,7 +143,43 @@ describe("multi build", function(){
 				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
 				var hasGlobalLongVariable = actualJS.indexOf("anotherVeryLongName") !== -1;
 				var hasDevCode = actualJS.indexOf("remove this") !== -1;
+				var hasEnvifyCode = actualJS.indexOf("when envify is turned on this should be removed") !== -1;
 
+				assert(hasEnvifyCode, "Minified source has envify test code removed.");
+				assert(!hasDevCode, "Minified source has dev code removed.");
+				assert(!hasLongVariable, "Minified source renamed long variable.");
+				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
+			});
+	});
+
+	it("should allow turning envify on", function() {
+		var config = {
+			config: path.join(__dirname, "minify", "config.js"),
+			main: "minify"
+		};
+
+		var options = {
+			quiet: true,
+			envify: true
+		};
+
+		return asap(rmdir)(path.join(__dirname, "minify", "dist"))
+			.then(function() {
+				process.env.ENVIFY_VAR = "test_value";
+				return multiBuild(config, options);
+			})
+			.then(function() {
+				delete process.env.ENVIFY_VAR;
+
+				var main = path.join(__dirname, "minify", "dist", "bundles", "minify.js");
+				var actualJS = fs.readFileSync(main, "utf8");
+
+				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
+				var hasGlobalLongVariable = actualJS.indexOf("anotherVeryLongName") !== -1;
+				var hasDevCode = actualJS.indexOf("remove this") !== -1;
+				var hasEnvifyCode = actualJS.indexOf("when envify is turned on this should be removed") !== -1;
+
+				assert(!hasEnvifyCode, "Minified source has kept envify test code.");
 				assert(!hasDevCode, "Minified source has dev code removed.");
 				assert(!hasLongVariable, "Minified source renamed long variable.");
 				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
