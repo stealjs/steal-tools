@@ -14,7 +14,7 @@
     "colors": "^1.1.2",
     "engine-dependencies": "^0.2.0",
     "find-line-column": "^0.5.2",
-    "fs-extra": "~1.0.0",
+    "fs-extra": "~2.1.2",
     "glob": "^7.1.1",
     "is-appveyor": "^1.0.0",
     "lodash": "^4.3.0",
