@@ -2412,4 +2412,60 @@ describe("multi build", function(){
 				}, done);
 			});
 	});
+
+	describe("building apps using custom npm babel plugins", function() {
+		var copy = asap(fs.copy);
+		var base = path.join(__dirname, "custom_npm_babel_plugins");
+
+		beforeEach(function() {
+			return copy(
+				path.join(__dirname, "..", "node_modules", "babel-plugin-steal-test"),
+				path.join(base, "node_modules", "babel-plugin-steal-test")
+			);
+		});
+
+		it("works", function(done) {
+			asap(rmdir)(path.join(base, "dist"))
+				.then(function() {
+					return multiBuild({
+						config: path.join(base, "package.json!npm")
+					}, {
+						quiet: true
+					});
+				})
+				.then(function() {
+					var page = path.join("test", "custom_npm_babel_plugins", "prod.html");
+
+					open(page, function(browser, close) {
+						find(browser, "foo", function(foo) {
+							assert.equal(foo, "default", "babel npm plugin should work");
+							done();
+						}, close);
+					}, done);
+				});
+		});
+	});
+
+	it("building apps using custom npm babel plugins", function(done) {
+		var base = path.join(__dirname, "custom_local_babel_plugins");
+
+		asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(base, "package.json!npm")
+				}, {
+					quiet: true
+				});
+			})
+			.then(function() {
+				var page = path.join("test", "custom_local_babel_plugins", "prod.html");
+
+				open(page, function(browser, close) {
+					find(browser, "foo", function(foo) {
+						assert.equal(foo, "bar", "local babel plugin should work");
+						done();
+					}, close);
+				}, done);
+			});
+	});
 });
