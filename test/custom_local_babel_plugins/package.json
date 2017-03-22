@@ -1,0 +1,15 @@
+{
+  "name": "steal-custom-babel-plugins-test",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "author": "Bitovi",
+  "license": "MIT",
+  "steal": {
+    "babelOptions": {
+      "plugins": [
+        ["./plugin", { "text": "bar" }]
+      ]
+    }
+  }
+}
