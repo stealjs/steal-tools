@@ -2386,6 +2386,30 @@ describe("multi build", function(){
 					done();
 				}, close);
 			}, done);
-		})
+		});
+	});
+
+	it("can build apps using babel-standalone decorator plugin", function(done) {
+		this.timeout(0);
+		var base = path.join(__dirname, "decorators");
+
+		asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(base, "package.json!npm")
+				}, {
+					quiet: true
+				});
+			})
+			.then(function() {
+				var page = path.join("test", "decorators", "prod.html");
+
+				open(page, function(browser, close) {
+					find(browser, "phone", function(phone) {
+						assert.equal(phone.brand, "Bitovi", "decorators should work");
+						done();
+					}, close);
+				}, done);
+			});
 	});
 });
