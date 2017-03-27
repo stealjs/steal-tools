@@ -2451,26 +2451,38 @@ describe("multi build", function(){
 
 	describe("building apps using custom npm babel plugins", function() {
 		var copy = asap(fs.copy);
-		var base = path.join(__dirname, "custom_npm_babel_plugins");
 
 		beforeEach(function() {
-			return copy(
-				path.join(__dirname, "..", "node_modules", "babel-plugin-steal-test"),
-				path.join(base, "node_modules", "babel-plugin-steal-test")
-			);
+			var paths = [
+				path.join(__dirname, "babel_npm_plugins"),
+				path.join(__dirname, "babel_env_plugins")
+			];
+
+			var plugin = path.join(__dirname, "..", "node_modules",
+				"babel-plugin-steal-test");
+
+			paths.forEach(function(base) {
+				return copy(
+					plugin,
+					path.join(base, "node_modules", "babel-plugin-steal-test")
+				);
+			});
 		});
 
-		it("works", function(done) {
+		it("works with default babel environment", function(done) {
+			var base = path.join(__dirname, "babel_npm_plugins");
+
 			asap(rmdir)(path.join(base, "dist"))
 				.then(function() {
 					return multiBuild({
 						config: path.join(base, "package.json!npm")
 					}, {
+						minify: false,
 						quiet: true
 					});
 				})
 				.then(function() {
-					var page = path.join("test", "custom_npm_babel_plugins", "prod.html");
+					var page = path.join("test", "babel_npm_plugins", "prod.html");
 
 					open(page, function(browser, close) {
 						find(browser, "foo", function(foo) {
@@ -2480,21 +2492,48 @@ describe("multi build", function(){
 					}, done);
 				});
 		});
+
+		it("works with others babel environments too", function(done) {
+			process.env.BABEL_ENV = "test";
+			var base = path.join(__dirname, "babel_env_plugins");
+
+			asap(rmdir)(path.join(base, "dist"))
+				.then(function() {
+					return multiBuild({
+						config: path.join(base, "package.json!npm")
+					}, {
+						minify: false,
+						quiet: true
+					});
+				})
+				.then(function() {
+					var page = path.join("test", "babel_env_plugins", "prod.html");
+
+					open(page, function(browser, close) {
+						find(browser, "foo", function(foo) {
+							assert.equal(foo, "default", "babel npm plugin should work");
+							delete process.env.BABEL_ENV;
+							done();
+						}, close);
+					}, done);
+				});
+		});
 	});
 
-	it("building apps using custom npm babel plugins", function(done) {
-		var base = path.join(__dirname, "custom_local_babel_plugins");
+	it("building apps using custom local babel plugins", function(done) {
+		var base = path.join(__dirname, "babel_local_plugins");
 
 		asap(rmdir)(path.join(base, "dist"))
 			.then(function() {
 				return multiBuild({
 					config: path.join(base, "package.json!npm")
 				}, {
+					minify: false,
 					quiet: true
 				});
 			})
 			.then(function() {
-				var page = path.join("test", "custom_local_babel_plugins", "prod.html");
+				var page = path.join("test", "babel_local_plugins", "prod.html");
 
 				open(page, function(browser, close) {
 					find(browser, "foo", function(foo) {
