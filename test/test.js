@@ -44,3 +44,4 @@ require("./transpile_test");
 require("./write_stream_test");
 require("./build_conditionals_test");
 require("./dev_bundle_build_test");
+require("./babel_presets_test");
