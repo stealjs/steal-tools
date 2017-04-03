@@ -1,0 +1,19 @@
+{
+  "name": "babel-env-custom-plugins-test",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "author": "Bitovi",
+  "license": "MIT",
+  "steal": {
+    "babelOptions": {
+      "env": {
+        "test": {
+          "plugins": [
+            "babel-plugin-steal-test"
+          ]
+        }
+      }
+    }
+  }
+}
