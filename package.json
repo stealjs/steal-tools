@@ -40,7 +40,7 @@
     "babel-plugin-steal-test": "0.0.2",
     "babel-preset-steal-test": "0.0.1",
     "bower": "1.8.0",
-    "browserify": "~14.1.0",
+    "browserify": "~14.2.0",
     "comparify": "git://github.com/bitovi/comparify#master",
     "connect": "^3.5.0",
     "coveralls-send": "0.0.2",
