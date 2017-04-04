@@ -2448,4 +2448,23 @@ describe("multi build", function(){
 				}, done);
 			});
 	});
+
+	it("can build apps using steal-clone", function() {
+		var base = path.join(__dirname, "steal_clone");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "steal_clone/index",
+					config: path.join(__dirname, "stealconfig.js")
+				}, {
+					dest: path.join(base, "dist"),
+					quiet: true,
+					minify: false
+				});
+			})
+			.then(function() {
+				assert.ok(true, "it works!");
+			});
+	});
 });
