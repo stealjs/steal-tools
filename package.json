@@ -23,7 +23,7 @@
     "moment": "^2.10.2",
     "multimatch": "^2.1.0",
     "pdenodeify": "^0.1.0",
-    "steal": "^1.4.1",
+    "steal": "supercache",
     "steal-bundler": "^0.3.0",
     "steal-parse-amd": "^1.0.0",
     "through2": "^2.0.0",
