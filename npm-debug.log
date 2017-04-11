@@ -1,0 +1,191 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/matthew/.nvm/versions/node/v7.7.4/bin/node',
+1 verbose cli   '/Users/matthew/.nvm/versions/node/v7.7.4/bin/npm',
+1 verbose cli   'publish',
+1 verbose cli   '--tag',
+1 verbose cli   'supercache' ]
+2 info using npm@4.1.2
+3 info using node@v7.7.4
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   escapedName: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/Users/matthew/dev/steal-tools',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /Users/matthew/.npm/steal-tools/1.3.0/package.tgz not in flight; packing
+9 verbose correctMkdir /Users/matthew/.npm correctMkdir not in flight; initializing
+10 info lifecycle steal-tools@1.3.0~prepublish: steal-tools@1.3.0
+11 silly lifecycle steal-tools@1.3.0~prepublish: no script for prepublish, continuing
+12 info lifecycle steal-tools@1.3.0~prepare: steal-tools@1.3.0
+13 silly lifecycle steal-tools@1.3.0~prepare: no script for prepare, continuing
+14 verbose tar pack [ '/Users/matthew/.npm/steal-tools/1.3.0/package.tgz',
+14 verbose tar pack   '/Users/matthew/dev/steal-tools' ]
+15 verbose tarball /Users/matthew/.npm/steal-tools/1.3.0/package.tgz
+16 verbose folder /Users/matthew/dev/steal-tools
+17 verbose addLocalTarball adding from inside cache /Users/matthew/.npm/steal-tools/1.3.0/package.tgz
+18 verbose correctMkdir /Users/matthew/.npm correctMkdir not in flight; initializing
+19 silly cache afterAdd steal-tools@1.3.0
+20 verbose afterAdd /Users/matthew/.npm/steal-tools/1.3.0/package/package.json not in flight; writing
+21 verbose correctMkdir /Users/matthew/.npm correctMkdir not in flight; initializing
+22 verbose afterAdd /Users/matthew/.npm/steal-tools/1.3.0/package/package.json written
+23 silly publish { name: 'steal-tools',
+23 silly publish   description: 'Futuristic build tools for ES6 Module applications.',
+23 silly publish   version: '1.3.0',
+23 silly publish   author:
+23 silly publish    { name: 'Bitovi',
+23 silly publish      email: 'contact@bitovi.com',
+23 silly publish      url: 'http://bitovi.com/' },
+23 silly publish   dependencies:
+23 silly publish    { 'babel-standalone': '^6.23.1',
+23 silly publish      'bitovi-source-map': '0.4.2-bitovi.2',
+23 silly publish      chokidar: '^1.0.1',
+23 silly publish      'clean-css': '^4.0.5',
+23 silly publish      colors: '^1.1.2',
+23 silly publish      'engine-dependencies': '^0.2.0',
+23 silly publish      'find-line-column': '^0.5.2',
+23 silly publish      'fs-extra': '~1.0.0',
+23 silly publish      glob: '^7.1.1',
+23 silly publish      'is-appveyor': '^1.0.0',
+23 silly publish      lodash: '^4.3.0',
+23 silly publish      'loose-envify': '^1.3.1',
+23 silly publish      moment: '^2.10.2',
+23 silly publish      multimatch: '^2.1.0',
+23 silly publish      pdenodeify: '^0.1.0',
+23 silly publish      steal: 'supercache',
+23 silly publish      'steal-bundler': '^0.3.0',
+23 silly publish      'steal-parse-amd': '^1.0.0',
+23 silly publish      through2: '^2.0.0',
+23 silly publish      tmp: '0.0.31',
+23 silly publish      traceur: '0.0.111',
+23 silly publish      transpile: '^2.3.0',
+23 silly publish      'uglify-js': '~2.8.9',
+23 silly publish      urix: '^0.1.0',
+23 silly publish      winston: '^2.2.0',
+23 silly publish      ws: '^2.2.0',
+23 silly publish      yargs: '^7.0.1' },
+23 silly publish   devDependencies:
+23 silly publish    { 'babel-plugin-steal-test': '0.0.2',
+23 silly publish      'babel-preset-steal-test': '0.0.1',
+23 silly publish      bower: '1.8.0',
+23 silly publish      browserify: '~14.1.0',
+23 silly publish      comparify: 'git://github.com/bitovi/comparify.git#master',
+23 silly publish      connect: '^3.5.0',
+23 silly publish      'coveralls-send': '0.0.2',
+23 silly publish      cssify: '^1.0.3',
+23 silly publish      istanbul: '^0.4.2',
+23 silly publish      jquery: '^3.1.1',
+23 silly publish      jshint: '~2.9.1',
+23 silly publish      mocha: '^3.2.0',
+23 silly publish      'mocha-lcov-reporter': '^1.2.0',
+23 silly publish      'mock-fs': '4.1.0',
+23 silly publish      mockery: '^2.0.0',
+23 silly publish      rimraf: '^2.5.2',
+23 silly publish      'serve-static': '^1.11.2',
+23 silly publish      'steal-conditional': '^0.3.2',
+23 silly publish      'steal-css': '^1.0.0',
+23 silly publish      'steal-qunit': '^1.0.0',
+23 silly publish      testee: '^0.3.1',
+23 silly publish      'tree-kill': '^1.0.0' },
+23 silly publish   engineDependencies:
+23 silly publish    { node:
+23 silly publish       { '0.10.x': [Object],
+23 silly publish         '0.12.x': [Object],
+23 silly publish         '4.x.x': [Object],
+23 silly publish         '^5.0.0': [Object],
+23 silly publish         '^6.0.0': [Object],
+23 silly publish         '^7.0.0': [Object] },
+23 silly publish      iojs: { '^3.0.0': [Object] } },
+23 silly publish   bin: { 'steal-tools': 'bin/steal' },
+23 silly publish   main: 'index',
+23 silly publish   homepage: 'http://stealjs.com/',
+23 silly publish   repository: { type: 'git', url: 'git://github.com/stealjs/steal-tools.git' },
+23 silly publish   licenses:
+23 silly publish    [ { type: 'MIT',
+23 silly publish        url: 'http://opensource.org/licenses/mit-license.php' } ],
+23 silly publish   scripts:
+23 silly publish    { postinstall: 'install-engine-dependencies',
+23 silly publish      test: 'npm run mocha && npm run test:browser',
+23 silly publish      'test:browser': 'npm run worker-test-build && testee test/browser/test.html --browsers firefox --reporter Spec',
+23 silly publish      'worker-test-build': 'node bin/steal build --main worker --config test/browser/webworker/stealconfig.js --bundle-steal --quiet',
+23 silly publish      mocha: 'mocha test/test.js',
+23 silly publish      jshint: 'jshint lib/**/*.js Gruntfile.js --config',
+23 silly publish      'bower-install': 'bower install',
+23 silly publish      'install-engine-dependencies': 'install-engine-dependencies',
+23 silly publish      coverage: 'istanbul cover _mocha -- test/test --timeout 600000',
+23 silly publish      'coverage:upload': 'istanbul cover _mocha --report lcovonly -- test/test --timeout 600000 && cat ./coverage/lcov.info | ./node_modules/coveralls-send/bin/coveralls.js' },
+23 silly publish   engines: { node: '0.10.x - 0.12.x || ^3.0.0 || 4.x - 6.0.x' },
+23 silly publish   system: { npmDependencies: [ 'steal-qunit', 'steal-css' ] },
+23 silly publish   greenkeeper: { ignore: [ 'traceur' ] },
+23 silly publish   readme: '# steal-tools\n\n[![Build Status](https://travis-ci.org/stealjs/steal-tools.svg?branch=master)](https://travis-ci.org/stealjs/steal-tools)\n[![Build status](https://ci.appveyor.com/api/projects/status/vqk3ybu6fo5jwptk/branch/master?svg=true)](https://ci.appveyor.com/project/matthewp/steal-tools-427/branch/master)\n[![npm version](https://badge.fury.io/js/steal-tools.svg)](http://badge.fury.io/js/steal-tools)\n[![Coverage Status](https://coveralls.io/repos/github/stealjs/steal-tools/badge.svg?branch=master)](https://coveralls.io/github/stealjs/steal-tools?branch=master)\n\n`steal-tools` is a collection of command-line utilities\nthat:\n \n - makes building ES6, CommonJS, AMD, applications and plugins _easy_, and \n - writes those builds so your apps load _fast_.\n\nIt is one half of the [StealJS](http://stealjs.com) project.  It\'s other half,\n[steal](https://github.com/stealjs/steal) provides client-side dependency management.\n\nFor more information on `steal-tools`, visit [stealjs.com](http://stealjs.com).\n\nFor information on contributing and developing `steal-tools`, go [here](http://stealjs.com/docs/guides.Contributing.html).\n',
+23 silly publish   readmeFilename: 'README.md',
+23 silly publish   gitHead: 'c94d1a4a06b97afa240b82fc42b4301820bfc5f7',
+23 silly publish   bugs: { url: 'https://github.com/stealjs/steal-tools/issues' },
+23 silly publish   _id: 'steal-tools@1.3.0',
+23 silly publish   _shasum: 'ef9ae8ad3846f7d16d8bd7ab93d2477623806fe8',
+23 silly publish   _from: '.' }
+24 info lifecycle steal-tools@1.3.0~prepublishOnly: steal-tools@1.3.0
+25 silly lifecycle steal-tools@1.3.0~prepublishOnly: no script for prepublishOnly, continuing
+26 verbose getPublishConfig undefined
+27 silly mapToRegistry name steal-tools
+28 silly mapToRegistry using default registry
+29 silly mapToRegistry registry https://registry.npmjs.org/
+30 silly mapToRegistry data Result {
+30 silly mapToRegistry   raw: 'steal-tools',
+30 silly mapToRegistry   scope: null,
+30 silly mapToRegistry   escapedName: 'steal-tools',
+30 silly mapToRegistry   name: 'steal-tools',
+30 silly mapToRegistry   rawSpec: '',
+30 silly mapToRegistry   spec: 'latest',
+30 silly mapToRegistry   type: 'tag' }
+31 silly mapToRegistry uri https://registry.npmjs.org/steal-tools
+32 verbose publish registryBase https://registry.npmjs.org/
+33 silly publish uploading /Users/matthew/.npm/steal-tools/1.3.0/package.tgz
+34 verbose request uri https://registry.npmjs.org/steal-tools
+35 verbose request sending authorization for write operation
+36 info attempt registry request try #1 at 8:42:41 AM
+37 verbose request using bearer token for auth
+38 verbose request id e4186ca408d4bdcb
+39 http request PUT https://registry.npmjs.org/steal-tools
+40 http 403 https://registry.npmjs.org/steal-tools
+41 verbose headers { 'content-type': 'application/json',
+41 verbose headers   'cache-control': 'max-age=300',
+41 verbose headers   'content-length': '95',
+41 verbose headers   'accept-ranges': 'bytes',
+41 verbose headers   date: 'Tue, 11 Apr 2017 12:42:44 GMT',
+41 verbose headers   via: '1.1 varnish',
+41 verbose headers   connection: 'keep-alive',
+41 verbose headers   'x-served-by': 'cache-iad2622-IAD',
+41 verbose headers   'x-cache': 'MISS',
+41 verbose headers   'x-cache-hits': '0',
+41 verbose headers   'x-timer': 'S1491914563.224492,VS0,VE1403',
+41 verbose headers   vary: 'Accept-Encoding' }
+42 verbose request invalidating /Users/matthew/.npm/registry.npmjs.org/steal-tools on PUT
+43 error publish Failed PUT 403
+44 verbose stack Error: "You cannot publish over the previously published version 1.3.0." : steal-tools
+44 verbose stack     at makeError (/Users/matthew/.nvm/versions/node/v7.7.4/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:304:12)
+44 verbose stack     at CachingRegistryClient.<anonymous> (/Users/matthew/.nvm/versions/node/v7.7.4/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:292:14)
+44 verbose stack     at Request._callback (/Users/matthew/.nvm/versions/node/v7.7.4/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:212:14)
+44 verbose stack     at Request.self.callback (/Users/matthew/.nvm/versions/node/v7.7.4/lib/node_modules/npm/node_modules/request/request.js:186:22)
+44 verbose stack     at emitTwo (events.js:106:13)
+44 verbose stack     at Request.emit (events.js:194:7)
+44 verbose stack     at Request.<anonymous> (/Users/matthew/.nvm/versions/node/v7.7.4/lib/node_modules/npm/node_modules/request/request.js:1081:10)
+44 verbose stack     at emitOne (events.js:96:13)
+44 verbose stack     at Request.emit (events.js:191:7)
+44 verbose stack     at IncomingMessage.<anonymous> (/Users/matthew/.nvm/versions/node/v7.7.4/lib/node_modules/npm/node_modules/request/request.js:1001:12)
+45 verbose statusCode 403
+46 verbose pkgid steal-tools
+47 verbose cwd /Users/matthew/dev/steal-tools
+48 error Darwin 16.5.0
+49 error argv "/Users/matthew/.nvm/versions/node/v7.7.4/bin/node" "/Users/matthew/.nvm/versions/node/v7.7.4/bin/npm" "publish" "--tag" "supercache"
+50 error node v7.7.4
+51 error npm  v4.1.2
+52 error code E403
+53 error "You cannot publish over the previously published version 1.3.0." : steal-tools
+54 error If you need help, you may report this error at:
+54 error     <https://github.com/npm/npm/issues>
+55 verbose exit [ 1, true ]
