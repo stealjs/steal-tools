@@ -55,7 +55,7 @@
     "rimraf": "^2.5.2",
     "serve-static": "^1.11.2",
     "steal-conditional": "^0.3.2",
-    "steal-css": "^1.0.0",
+    "steal-css": "1.2.1",
     "steal-qunit": "^1.0.0",
     "testee": "^0.3.1",
     "tree-kill": "^1.0.0"
