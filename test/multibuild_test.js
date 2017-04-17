@@ -2467,4 +2467,29 @@ describe("multi build", function(){
 				assert.ok(true, "it works!");
 			});
 	});
+
+	it("writes out UTF-8 correctly", function(done) {
+		var base = path.join(__dirname, "utf8");
+
+		asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "utf8/main",
+					config: path.join(__dirname, "stealconfig.js")
+				}, {
+					quiet: true,
+					dest: path.join(base, "dist")
+				});
+			})
+			.then(function() {
+				var page = path.join("test", "utf8", "prod.html");
+
+				open(page, function(browser, close) {
+					find(browser, "foo", function(foo) {
+						assert.equal(foo, "捕");
+						done();
+					}, close);
+				}, done);
+			});
+	});
 });
