@@ -47,9 +47,20 @@ exports.open = function(url, callback, done){
 
 // Uses promises instead of callbacks, better for chaining
 exports.popen = function(root, url) {
+	// if a single argument is passed assume `root` as steal-tools root folder
+	if (url == null) {
+		url = root;
+		root = path.join(__dirname, "..");
+	}
+
 	if (server && server.address()) {
-		return server.close(function() {
-			exports.popen(url);
+		return new Promise(function(resolve, reject) {
+			server.close(function(err) {
+				if (err) {
+					reject(err);
+				}
+				resolve(exports.popen(root, url));
+			});
 		});
 	}
 
@@ -65,4 +76,26 @@ exports.popen = function(root, url) {
 				close: server.close.bind(server)
 			};
 		});
+};
+
+// Uses promises instead of callbacks, better for chaining
+exports.pfind = function(browser, property) {
+	return new Promise(function(resolve, reject) {
+		var start = new Date();
+
+		var check = function() {
+			if (browser.window && browser.window[property]) {
+				resolve(browser.window[property]);
+			}
+			else if(new Date() - start < 2000) {
+				setTimeout(check, 20);
+			}
+			else {
+				reject(new Error("Failed to find '" + property + "' in " +
+					browser.window.location.href));
+			}
+		};
+
+		check();
+	});
 };

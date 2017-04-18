@@ -32,6 +32,7 @@ require("./bundle_test");
 require("./order_test");
 
 require("./multibuild_test");
+require("./multi_main_build_test");
 require("./transform_test");
 require("./export_test");
 require("./export_global_js_test");
