@@ -1,5 +1,6 @@
 var path = require("path");
 var assert = require("assert");
+var comparify = require("comparify");
 var denodeify = require("pdenodeify");
 var rmdir = denodeify(require("rimraf"));
 var multiBuild = require("../lib/build/multi");
@@ -8,8 +9,184 @@ var testHelpers = require("./helpers");
 var open = testHelpers.popen;
 var find = testHelpers.pfind;
 
+/**
+ * Pipes promises in a waterfall pattern
+ * @param {Array.<string>} main An array of main module identifiers
+ * @param {Function} cb A function to be called for each main
+ * @return {Promise} A promise that resolves when all mains are processed
+ */
+function waterfall(mains, cb) {
+	return mains.reduce(
+		function(promise, main) {
+			return promise.then(function() {
+				return cb(main);
+			});
+		},
+		Promise.resolve()
+	);
+}
+
 describe("multi main builds", function() {
 	this.timeout(5000);
+
+	it("should work", function(done) {
+		var mains = ["app_a", "app_b", "app_c", "app_d"];
+		var ab = { name: "a_b" };
+		var cd = { name: "c_d" };
+		var all = {name: "all"};
+		var results = {
+			app_a: {
+				name: "a", ab: ab, all: all
+			},
+			app_b: {
+				name: "b", ab: ab, all: all
+			},
+			app_c:{
+				name: "b", cd: cd, all: all
+			},
+			app_d:{
+				name: "d", cd: cd, all: all
+			}
+		};
+
+		rmdir(path.join(__dirname, "multi-main", "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(__dirname, "multi-main", "config.js"),
+					main: mains.slice()
+				}, {
+					quiet: true,
+					minify: false
+				});
+			})
+			.then(function() {
+				var checkMain = function(main) {
+					var close;
+					var page = main + ".html";
+
+					return open(path.join("test", "multi-main", page))
+						.then(function(args) {
+							close = args.close;
+
+							return find(args.browser, "app");
+						})
+						.then(function(app) {
+							assert(!!app, "got app");
+							comparify(results[main], app);
+							close();
+						});
+				};
+
+				return waterfall(mains, checkMain);
+			})
+			.then(done, done);
+	});
+
+	it("works with npm plugin", function(done) {
+		var mains = ["app_a", "app_b", "app_c", "app_d"];
+		var ab = { name: "a_b" };
+		var cd = { name: "c_d" };
+		var all = { name: "all" };
+		var results = {
+			app_a: {
+				name: "a", ab: ab, all: all
+			},
+			app_b: {
+				name: "b", ab: ab, all: all
+			},
+			app_c:{
+				name: "b", cd: cd, all: all
+			},
+			app_d:{
+				name: "d", cd: cd, all: all
+			}
+		};
+
+		rmdir(path.join(__dirname, "multi-main", "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(__dirname, "multi-main", "package.json!npm"),
+					main: mains.slice()
+				}, {
+					quiet: true,
+					minify: false
+				});
+			})
+			.then(function() {
+				var checkMain = function(main) {
+					var close;
+					var page = "npm_" + main + ".html";
+
+					return open(path.join("test", "multi-main", page))
+						.then(function(args) {
+							close = args.close;
+							return find(args.browser, "app");
+						})
+						.then(function(app) {
+							assert(!!app, "got app");
+							comparify(results[main], app);
+							close();
+						});
+				};
+
+				return waterfall(mains, checkMain);
+			})
+			.then(done, done);
+	});
+
+	it("works with steal bundled", function(done) {
+		var mains = ["app_a", "app_b", "app_c", "app_d"];
+		var ab = { name: "a_b" };
+		var cd = { name: "c_d" };
+		var all = { name: "all"};
+		var results = {
+			app_a: {
+				name: "a", ab: ab, all: all
+			},
+			app_b: {
+				name: "b", ab: ab, all: all
+			},
+			app_c:{
+				name: "b", cd: cd, all: all
+			},
+			app_d:{
+				name: "d", cd: cd, all: all
+			}
+		};
+
+		rmdir(path.join(__dirname, "multi-main", "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(__dirname, "multi-main", "config.js"),
+					main: mains.slice(0)
+				}, {
+					bundleSteal: true,
+					quiet: true,
+					minify: false
+				});
+			})
+			.then(function() {
+				var checkMain = function(main) {
+					var close;
+					var page = "bundle_" + main + ".html";
+
+					return open(path.join("test", "multi-main", page))
+						.then(function(args) {
+							close = args.close;
+
+							return find(args.browser, "app");
+						})
+						.then(function(app) {
+							assert(!!app, "got app");
+							comparify(results[main], app);
+							close();
+						});
+				};
+
+				return waterfall(mains, checkMain);
+			})
+			.then(done, done);
+	});
 
 	describe("package.json builds", function() {
 		var ab = { name: "a_b" };
