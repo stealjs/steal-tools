@@ -1,5 +1,6 @@
 @typedef {{}} steal-tools.export.object ExportObject
 @parent steal-tools.types
+@templateRender true
 
 An object that specifies the modules to load and their outputs. This is used by
 [steal-tools.export] and [steal-tools.grunt.export].
@@ -17,9 +18,8 @@ steal: {
 
 @option {{}} options Options that configure the following:
 
-  @option {Boolean} [debug=false] `true` turns on debug messages. Defaults to `false`.
-  
-  @option {Boolean} [quiet=false] No logging.  Defaults to `false`.
+ - [debug=false] `true` turns on debug messages. Defaults to `false`.
+ - [quiet=false] No logging.  Defaults to `false`.
 
 
 @option {Object<String,steal-tools.export.output>} outputs Configures output files to be written.

@@ -38,7 +38,7 @@ process; the second parameter, `options`, is the [steal-tools.BuildOptions] obje
 
 @option {Boolean} [bundleSteal=false] Sets whether StealJS will be included in the built file. Enabling this option will allow you to limit the initial request to just one script.
 
-@option {Boolean} [debug=false] `true` turns on debug messages. Defaults to `false`.
+@option {Boolean} [verbose=false] `true` turns on verbose output. Defaults to `false`.
 
 @option {Boolean} [quiet=false] No logging.  Defaults to `false`.
 
