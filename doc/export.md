@@ -10,8 +10,8 @@ Export a project's modules to other forms and formats declaratively.
   @option {steal-tools.StealConfig} Steal `config` data needed to load
   all the modules for export.
 
-  @option {{}} [options] Options that configure logging.
-  
+  @option {steal-tools.export.object} Options that configure logging.
+
   @option {Object<String,steal-tools.export.output>} outputs Configures output files to be written.
 
 @param {Object<String,steal-tools.export.output>} [defaults] An object of names and default ExportOutput
