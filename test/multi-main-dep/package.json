@@ -1,0 +1,7 @@
+{
+	"name": "multi-main-dep",
+	"main": "main1",
+	"version": "1.0.0",
+	"steal": {
+	}
+}
