@@ -2055,4 +2055,21 @@ describe("multi build", function(){
 				}, done);
 			});
 	});
+
+	// related to https://github.com/stealjs/steal-tools/issues/602
+	it("works with a bundle that depends on main", function() {
+		var base = path.join(__dirname, "multi-main-dep");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "multi-main-dep/main1",
+					bundle: ["multi-main-dep/main2"],
+					config: path.join(__dirname, "stealconfig.js")
+				}, {
+					quiet: true,
+					dest: path.join(base, "dist")
+				});
+			});
+	});
 });

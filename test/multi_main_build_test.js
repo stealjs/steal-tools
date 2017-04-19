@@ -344,6 +344,24 @@ describe("multi main builds", function() {
 				})
 				.then(done, done);
 		});
+
+		it("with a main that depends on another main", function() {
+			var base = path.join(__dirname, "multi-main-dep");
+
+			return rmdir(path.join(base, "dist"))
+				.then(function() {
+					return multiBuild({
+						config: path.join(base, "package.json!npm"),
+						main: ["multi-main-dep/main1", "multi-main-dep/main2"]
+					}, {
+						quiet: true,
+						minify: false
+					});
+				})
+				.then(function() {
+					assert.ok(true, "build should be successful");
+				});
+		});
 	});
 
 	describe("multi-main with bundled steal", function() {
