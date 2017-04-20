@@ -3,7 +3,8 @@ var assert = require("assert"),
 	path = require("path"),
 	rmdir = require("rimraf"),
 	stealExport = require("../lib/build/export"),
-	testHelpers = require("./helpers");
+	testHelpers = require("./helpers"),
+	denodeify = require("pdenodeify");
 
 var find = testHelpers.find;
 var open = testHelpers.open;
@@ -198,7 +199,7 @@ describe("export", function(){
 			outputs: {}
 		})
 		.then(function(){
-			assert.ok(false, "This should have failed");	
+			assert.ok(false, "This should have failed");
 		}, function(err){
 			var correctError = /'system' option/.test(err.message);
 			assert.ok(correctError, "Logs that the system option was removed");
@@ -212,7 +213,7 @@ describe("export", function(){
 			outputs: {}
 		})
 		.then(function(){
-			assert.ok(false, "This should have failed");	
+			assert.ok(false, "This should have failed");
 		}, function(err){
 			var correctError = /'steal' option/.test(err.message);
 			assert.ok(correctError, "Logs that steal is required");
@@ -220,6 +221,31 @@ describe("export", function(){
 		.then(done, done);
 	});
 
+	it("works with circular dependencies", function() {
+		var base = path.join(__dirname, "circular");
+
+		return denodeify(rmdir)(path.join(base, "amd.js"))
+			.then(function() {
+				return stealExport({
+					steal: {
+						config: path.join(__dirname, "circular", "package.json!npm")
+					},
+					options: {
+						quiet: true
+					},
+					outputs: {
+						"+amd": { // the "+amd" is needed to make the test fail
+							minify: false,
+							modules: ["circular/main"],
+							dest: path.join(base, "export")
+						}
+					}
+				});
+			})
+			.then(function() {
+				assert.ok(true, "export should be successful");
+			});
+	});
 
 	describe("eachModule", function(){
 		it("works", function(done){
