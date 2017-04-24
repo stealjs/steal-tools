@@ -2072,4 +2072,29 @@ describe("multi build", function(){
 				});
 			});
 	});
+
+	it("does not swallow clean-css errors", function(done) {
+		var base = path.join(__dirname, "broken_css_build");
+
+		asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "main",
+					config: path.join(base, "stealconfig.js")
+				}, {
+					quiet: true,
+					cleanCSSOptions: {
+						inline: ["all"] // set inline @import to trigger build error
+					}
+				});
+			})
+			.then(function() {
+				assert.ok(false, "build promise should not resolve");
+				done();
+			})
+			.catch(function(err) {
+				assert.ok(!!err, "build promise should be rejected");
+				done();
+			});
+	});
 });
