@@ -2097,4 +2097,24 @@ describe("multi build", function(){
 				done();
 			});
 	});
+
+	it("css imports are not inlined by default", function() {
+		var base = path.join(__dirname, "css_imports");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "main",
+					config: path.join(base, "stealconfig.js")
+				}, {
+					quiet: true
+				});
+			})
+			.then(function() {
+				var source = fs.readFileSync(path.join(base, "dist", "bundles",
+					"main.css"));
+
+				assert.ok(/\@import/.test(source), "@imports are not inlined");
+			});
+	});
 });
