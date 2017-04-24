@@ -37,3 +37,4 @@ test/bundle_assets/dist
 test/live_reload/out.js
 test/transform_export/out.js
 test/exports_basics/out.js
+test/circular/export/
