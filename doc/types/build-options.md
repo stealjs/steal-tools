@@ -42,7 +42,7 @@ process; the second parameter, `options`, is the [steal-tools.BuildOptions] obje
 
 @option {Boolean} [quiet=false] No logging.  Defaults to `false`.
 
-@option {String} [dest="dist"] Specifies the destination folder for the build. By default steal-tools will write to the `BASEURL + '/dist'` folder where BASEURL is the local Steal [config.baseUrl], usually the same folder that your package.json is located.
+@option {String} [dest="dist"] Specifies the destination folder for the build. By default steal-tools will write to the `BASEURL + '/dist'` folder where BASEURL is the local Steal [config.baseURL baseURL], usually the same folder that your package.json is located.
 
   The path can be specified in three ways:
 
