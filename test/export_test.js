@@ -247,6 +247,34 @@ describe("export", function(){
 			});
 	});
 
+	it("errors out when 'dest' is not provided", function(done) {
+		var exportPromise = stealExport({
+			steal: {
+				config: path.join(__dirname, "circular", "package.json!npm")
+			},
+			options: {
+				quiet: true
+			},
+			outputs: {
+				amd: {
+					minify: false,
+					format: "amd",
+					modules: ["circular/main"]
+				}
+			}
+		});
+
+		exportPromise
+			.then(function() {
+				assert(false, "should fail, 'dest' is missing");
+			})
+			.then(done, function(err) {
+				assert(/Attribute 'dest' is required/.test(err.message),
+					"should fail with a nice error");
+				done();
+			});
+	});
+
 	describe("eachModule", function(){
 		it("works", function(done){
 			stealExport({
