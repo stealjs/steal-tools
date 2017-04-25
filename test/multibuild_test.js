@@ -2117,4 +2117,26 @@ describe("multi build", function(){
 				assert.ok(/\@import/.test(source), "@imports are not inlined");
 			});
 	});
+
+	it("error message when main is missing", function(done) {
+		var base = path.join(__dirname, "bundle");
+
+		var buildPromise = multiBuild({
+			config: path.join(base, "stealconfig.js")
+		}, {
+			quiet: true,
+			minify: false
+		});
+
+		buildPromise
+			.then(function() {
+				assert.ok(false, "'main' is missing");
+				done();
+			})
+			.catch(function(err) {
+				assert(/Attribute 'main' is required/.test(err.message),
+					"should fail with a nice error message");
+				done();
+			});
+	});
 });
