@@ -126,6 +126,52 @@ describe("build app using steal-conditional", function() {
 			.catch(done);
 	});
 
+	it("substitution and steal plugins (less, stache, etc...)", function() {
+		var base = path.join(basePath, "substitution-ext");
+		var bundle = path.join(base, "dist", "bundles", "conditionals");
+
+		return prmdir(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(base, "package.json!npm")
+				}, {
+					quiet: true,
+					minify: false
+				});
+			})
+			.then(function() {
+				// make sure each variation is detected
+				return exists(path.join(bundle, "blue.css"));
+			})
+			.then(function() {
+				// make sure each variation is detected
+				return exists(path.join(bundle, "red.css"));
+			});
+	});
+
+	it("substitution and subfolders", function() {
+		var base = path.join(basePath, "substitution-folders");
+		var bundle = path.join(base, "dist", "bundles", "conditionals");
+
+		return prmdir(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(base, "package.json!npm")
+				}, {
+					quiet: true,
+					minify: false
+				});
+			})
+			.then(function() {
+				// make sure each variation is detected
+				return exists(path.join(bundle, "en", "message.js"));
+			})
+			.then(function() {
+				// make sure each variation is detected
+				return exists(path.join(bundle, "es", "message.js"));
+			});
+	});
+
 	function copyDependencies() {
 		var copy = denodeify(fs.copy);
 		var src = path.join(__dirname, "..", "node_modules");
@@ -133,7 +179,9 @@ describe("build app using steal-conditional", function() {
 		var folders = [
 			path.join(basePath, "boolean"),
 			path.join(basePath, "substitution"),
-			path.join(basePath, "substitution-tilde")
+			path.join(basePath, "substitution-ext"),
+			path.join(basePath, "substitution-tilde"),
+			path.join(basePath, "substitution-folders")
 		];
 
 		var promises = folders.map(function(dest) {

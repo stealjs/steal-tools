@@ -1,0 +1,21 @@
+{
+  "name": "conditionals",
+  "version": "0.0.1",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+  },
+  "dependencies": {
+    "steal-conditional": "^0.3.0"
+  },
+  "steal": {
+    "paths": {
+      "css": "../../steal-css.js"
+    },
+    "configDependencies": [
+      "./node_modules/steal-conditional/conditional"
+    ]
+  },
+  "author": "Bitovi",
+  "license": "MIT"
+}
