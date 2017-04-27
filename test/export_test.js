@@ -158,6 +158,66 @@ describe("export", function(){
 		}, done);
 	});
 
+	it("passes the load objects to normalize and dest (+cjs)", function(done) {
+		var destCalls = 0;
+
+		stealExport({
+
+			steal: {
+				main: "pluginifier_builder_load/main",
+				config: __dirname + "/stealconfig.js"
+			},
+			options: {
+				quiet: true
+			},
+			"outputs": {
+				"+cjs": {
+					graphs: ["pluginifier_builder_load/main"],
+					useNormalizedDependencies: false,
+					format: "cjs",
+					normalize: function(name, load, curName, curLoad, loader) {
+						assert.equal(name, "./bar");
+						assert.equal(load.name, "pluginifier_builder_load/bar");
+						assert.equal(curName, "pluginifier_builder_load/main");
+						assert.equal(curLoad.name, "pluginifier_builder_load/main");
+						assert.equal(loader.main, "pluginifier_builder_load/main");
+						return name;
+					},
+					ignore: function(moduleName, load){
+						switch(destCalls++) {
+							case 0:
+								assert.equal(load.name, "pluginifier_builder_load/main");
+								break;
+							case 2:
+								assert.equal(load.name, "pluginifier_builder_load/bar");
+								return true;
+								break;
+							default:
+								assert.ok(false, "should not be called "+moduleName+"."+destCalls);
+								break;
+						}
+					},
+					dest: function(moduleName, moduleData, load){
+						switch(destCalls++) {
+							case 1:
+								assert.equal(load.name, "pluginifier_builder_load/main");
+								break;
+							default:
+								assert.ok(false, "should not be called "+moduleName+"."+destCalls);
+								break;
+						}
+						return __dirname+"/out/"+moduleName+".js"
+					},
+					minify: false
+				}
+			}
+		}).then(function(err){
+
+			done();
+
+		}, done);
+	});
+
 	it("evaled globals do not have exports in their scope (#440)", function(done){
 
 		stealExport({
