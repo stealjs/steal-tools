@@ -200,6 +200,6 @@ describe("build app using steal-conditional", function() {
 	 * @return {Promise} Resolves if the file exists, rejects otherwise.
 	 */
 	function exists(path) {
-		return denodeify(fs.access)(path, fs.constants.F_OK);
+		return denodeify(fs.access)(path, fs.F_OK);
 	}
 });
