@@ -14,7 +14,7 @@
     "clean-css": "^4.0.5",
     "colors": "^1.1.2",
     "find-line-column": "^0.5.2",
-    "fs-extra": "~2.1.2",
+    "fs-extra": "~3.0.0",
     "glob": "^7.1.1",
     "is-appveyor": "^1.0.0",
     "lodash": "^4.3.0",
