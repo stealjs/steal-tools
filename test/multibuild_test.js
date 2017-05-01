@@ -6,6 +6,7 @@ var multiBuild = require("../lib/build/multi");
 var rmdir = require("rimraf");
 var path = require("path");
 var testHelpers = require("./helpers");
+var _escapeRegExp = require("lodash/escapeRegExp");
 
 var find = testHelpers.find;
 var open = testHelpers.open;
@@ -2147,6 +2148,7 @@ describe("multi build", function(){
 				return multiBuild({
 					main: "bundle",
 					config: path.join(__dirname, "bundle", "stealconfig.js")
+
 				}, {
 					quiet: true
 				});
@@ -2164,6 +2166,29 @@ describe("multi build", function(){
 				// matches /*bundle*/ comment
 				assert.ok(!/\/\*bundle\*\//.test(bundle),
 					"node name comment is removed when the bundle is minified");
+			});
+	});
+
+	it("clean-css should not rebase urls by default", function() {
+		var base = path.join(__dirname, "css_image_urls");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "main",
+					config: path.join(base, "stealconfig.js")
+				}, {
+					quiet: true
+				});
+			})
+			.then(function() {
+				return asap(fs.readFile)(
+					path.join(base, "dist", "bundles", "main.css")
+				);
+			})
+			.then(function(source) {
+				var rx = new RegExp(_escapeRegExp("url(../../../../../topbanner.png)"));
+				assert.ok(rx.test(source), "image url should be relative to 'dist'");
 			});
 	});
 });
