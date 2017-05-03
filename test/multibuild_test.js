@@ -1,11 +1,11 @@
-var asap = require("pdenodeify"),
-	assert = require("assert"),
-	comparify = require("comparify"),
-	fs = require("fs-extra"),
-	multiBuild = require("../lib/build/multi"),
-	rmdir = require("rimraf"),
-	path = require("path"),
-	testHelpers = require("./helpers");
+var asap = require("pdenodeify");
+var assert = require("assert");
+var comparify = require("comparify");
+var fs = require("fs-extra");
+var multiBuild = require("../lib/build/multi");
+var rmdir = require("rimraf");
+var path = require("path");
+var testHelpers = require("./helpers");
 
 var find = testHelpers.find;
 var open = testHelpers.open;
@@ -232,7 +232,7 @@ describe("multi build", function(){
 				var actualJS = fs.readFileSync(main, "utf8");
 
 				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
-				var hasAnotherLongVariable = actualJS.indexOf("anotherLongVariableName") !== -1;
+				var hasAnotherLongVariable = actualJS.indexOf("anotherLongObjectName") !== -1;
 
 				assert(hasLongVariable, "Skip mangling names in dependencies graph files");
 				assert(hasAnotherLongVariable, "skip mangling names in stealconfig and main files");
@@ -1205,7 +1205,8 @@ describe("multi build", function(){
 						}, close);
 
 					}, done);
-				}).catch(done);
+				})
+				.catch(done);
 			});
 		});
 	});
@@ -2137,6 +2138,32 @@ describe("multi build", function(){
 				assert(/Attribute 'main' is required/.test(err.message),
 					"should fail with a nice error message");
 				done();
+			});
+	});
+
+	it("minifies the whole bundle", function() {
+		return asap(rmdir)(path.join(__dirname, "bundle", "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "bundle",
+					config: path.join(__dirname, "bundle", "stealconfig.js")
+				}, {
+					quiet: true
+				});
+			})
+			.then(function() {
+				return asap(fs.readFile)(
+					path.join(__dirname, "bundle", "dist", "bundles", "bundle.js")
+				);
+			})
+			.then(function(bundle) {
+				// matches /*stealconfig.js*/ comment
+				assert.ok(!/\/\*stealconfig.js\*\//.test(bundle),
+					"node name comment is removed when the bundle is minified");
+
+				// matches /*bundle*/ comment
+				assert.ok(!/\/\*bundle\*\//.test(bundle),
+					"node name comment is removed when the bundle is minified");
 			});
 	});
 });
