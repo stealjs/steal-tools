@@ -1,0 +1,2 @@
+require("./#{folder/color}.css!");
+

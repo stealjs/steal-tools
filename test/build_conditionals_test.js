@@ -13,15 +13,14 @@ describe("build app using steal-conditional", function() {
 	var open = testHelpers.open;
 	var prmdir = denodeify(rmdir);
 	var basePath = path.join(__dirname, "conditionals");
-	var booleanPath = path.join(basePath, "boolean", "node_modules");
-	var substitutionPath = path.join(basePath, "substitution", "node_modules");
-	var substitutionTildePath = path.join(basePath, "substitution-tilde", "node_modules");
 
 	before(function() {
 		return copyDependencies();
 	});
 
 	it("simple substitution works", function(done) {
+		var bundles = path.join(basePath, "substitution", "dist", "bundles");
+
 		var config = {
 			config: path.join(basePath, "substitution", "package.json!npm")
 		};
@@ -31,14 +30,12 @@ describe("build app using steal-conditional", function() {
 				return multiBuild(config, { minify: false, quiet: true });
 			})
 			.then(function() {
-				var bundles = path.join(
-					basePath, "substitution", "dist", "bundles"
-				);
-
 				// creates bundles for each possible string substitution
-				// exposed through the "cases" property in the condition module
-				assert.ok(fs.existsSync(path.join(bundles, "message", "en.js")));
-				assert.ok(fs.existsSync(path.join(bundles, "message", "es.js")));
+				return exists(path.join(bundles, "message", "en.js"));
+			})
+			.then(function() {
+				// creates bundles for each possible string substitution
+				return exists(path.join(bundles, "message", "es.js"));
 			})
 			.then(function() {
 				var page = path.join(
@@ -58,24 +55,23 @@ describe("build app using steal-conditional", function() {
 
 	it("simple boolean conditional works", function(done) {
 		this.timeout(20000);
+		var bundles = path.join(basePath, "boolean", "dist", "bundles");
 
-		var options = {
+		var config = {
 			config: path.join(basePath, "boolean", "package.json!npm")
 		};
 
 		prmdir(path.join(basePath, "boolean", "dist"))
 			.then(function() {
-				return multiBuild(options, { minify: false, quiet: true });
+				return multiBuild(config, { minify: false, quiet: true });
 			})
 			.then(function() {
-				var bundles = path.join(
-					basePath, "boolean", "dist", "bundles"
-				);
-
 				// each module that might be conditionally loaded once the
 				// built app is run on the browser gets its own module
-				assert.ok(fs.existsSync(path.join(bundles, "foo.js")));
-				assert.ok(fs.existsSync(path.join(bundles, "bar.js")));
+				return exists(path.join(bundles, "foo.js"));
+			})
+			.then(function() {
+				return exists(path.join(bundles, "bar.js"));
 			})
 			.then(function() {
 				var page = path.join(
@@ -97,24 +93,21 @@ describe("build app using steal-conditional", function() {
 			config: path.join(basePath, "substitution-tilde", "package.json!npm")
 		};
 
+		var bundles = path.join(
+			basePath, "substitution-tilde", "dist", "bundles", "conditionals"
+		);
+
 		prmdir(path.join(basePath, "substitution-tilde", "dist"))
 			.then(function() {
 				return multiBuild(config, { minify: false, quiet: true });
 			})
 			.then(function() {
-				var bundles = path.join(
-					basePath, "substitution-tilde", "dist", "bundles", "conditionals"
-				);
-
-				// creates bundles for each possible string substitution
-				assert.ok(
-					fs.existsSync(path.join(bundles, "message", "en.js")),
-					"should create bundle for `en` variation"
-				);
-				assert.ok(
-					fs.existsSync(path.join(bundles, "message", "es.js")),
-					"should create bundle for `es` variation"
-				);
+				// should create bundle for `en` variation
+				return exists(path.join(bundles, "message", "en.js"));
+			})
+			.then(function() {
+				// should create bundle for `es` variation
+				return exists(path.join(bundles, "message", "es.js"));
 			})
 			.then(function() {
 				var page = path.join(
@@ -133,33 +126,80 @@ describe("build app using steal-conditional", function() {
 			.catch(done);
 	});
 
-	function copyDependencies() {
-		var prmdir = denodeify(rmdir);
-		var pcopy = denodeify(fs.copy);
+	it("substitution and steal plugins (less, stache, etc...)", function() {
+		var base = path.join(basePath, "substitution-ext");
+		var bundle = path.join(base, "dist", "bundles", "conditionals");
 
-		var srcModulesPath = path.join(__dirname, "..", "node_modules");
-
-		return prmdir(booleanPath)
+		return prmdir(path.join(base, "dist"))
 			.then(function() {
-				return prmdir(substitutionPath);
+				return multiBuild({
+					config: path.join(base, "package.json!npm")
+				}, {
+					quiet: true,
+					minify: false
+				});
 			})
 			.then(function() {
-				return pcopy(
-					path.join(srcModulesPath, "steal-conditional"),
-					path.join(booleanPath, "steal-conditional")
-				);
+				// make sure each variation is detected
+				return exists(path.join(bundle, "blue.css"));
 			})
 			.then(function() {
-				return pcopy(
-					path.join(srcModulesPath, "steal-conditional"),
-					path.join(substitutionPath, "steal-conditional")
-				);
-			})
-			.then(function() {
-				return pcopy(
-					path.join(srcModulesPath, "steal-conditional"),
-					path.join(substitutionTildePath, "steal-conditional")
-				);
+				// make sure each variation is detected
+				return exists(path.join(bundle, "red.css"));
 			});
+	});
+
+	it("substitution and subfolders", function() {
+		var base = path.join(basePath, "substitution-folders");
+		var bundle = path.join(base, "dist", "bundles", "conditionals");
+
+		return prmdir(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(base, "package.json!npm")
+				}, {
+					quiet: true,
+					minify: false
+				});
+			})
+			.then(function() {
+				// make sure each variation is detected
+				return exists(path.join(bundle, "en", "message.js"));
+			})
+			.then(function() {
+				// make sure each variation is detected
+				return exists(path.join(bundle, "es", "message.js"));
+			});
+	});
+
+	function copyDependencies() {
+		var copy = denodeify(fs.copy);
+		var src = path.join(__dirname, "..", "node_modules");
+
+		var folders = [
+			path.join(basePath, "boolean"),
+			path.join(basePath, "substitution"),
+			path.join(basePath, "substitution-ext"),
+			path.join(basePath, "substitution-tilde"),
+			path.join(basePath, "substitution-folders")
+		];
+
+		var promises = folders.map(function(dest) {
+			return copy(
+				path.join(src, "steal-conditional"),
+				path.join(dest, "node_modules", "steal-conditional")
+			);
+		});
+
+		return Promise.all(promises);
+	}
+
+	/**
+	 * Check if the file path exists
+	 * @param {string} path The file path
+	 * @return {Promise} Resolves if the file exists, rejects otherwise.
+	 */
+	function exists(path) {
+		return denodeify(fs.access)(path, fs.F_OK);
 	}
 });
