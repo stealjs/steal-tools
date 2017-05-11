@@ -47,3 +47,4 @@ require("./build_conditionals_test");
 require("./dev_bundle_build_test");
 require("./babel_presets_test");
 require("./babel_plugins_test");
+require("./slim_build_test");
