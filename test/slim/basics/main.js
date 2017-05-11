@@ -1,0 +1,1 @@
+window.text = "hello world!";
