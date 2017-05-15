@@ -8,10 +8,10 @@ can be provided to filter out module during the build.
 
 @param {steal-tools.StealConfig} config 
 Specifies configuration values to set on Steal's loader.
-  
+
 @param {steal-tools.BuildOptions} [options]
 Specifies the behavior of the build.
-  
+ 
 @return {Promise<steal-tools.BuildResult>} A Promise that resolves when the build is complete.
 
 @body
@@ -60,7 +60,7 @@ It can be a string with a single pattern or an array if multiple patterns are ne
     }, {
       filter: "node_modules/**/*"
     });
-    
+
 
 The `filter` value used in the example above will create a bundle of the modules loaded by the application which are located in the `node_modules` folder.
 
@@ -75,7 +75,7 @@ The `dest` option specifies **a folder** where the bundles are written out.
       dest: path.join(__dirname, "my-bundle"),
       filter: "node_modules/**/*"
     });
-    
+
 
 This will build bundles like:
 
@@ -86,7 +86,8 @@ This will build bundles like:
 To load the bundles, a html page should have a script tag like:
 
 ```
-<script src="./node_modules/steal/steal.js" deps-bundle deps-bundle-dest="my-bundle/"></script>
+<script src="./node_modules/steal/steal.js" 
+		deps-bundle="my-bundle/dev-bundle"></script>
 ```
 
 ## Dependencies bundle and development bundles
@@ -123,7 +124,8 @@ We call a **development bundle** a **dependencies bundle** that also includes th
 Unlike a **dependencies bundle**, a **development bundle** has to be loaded before [StealJS configMain](StealJS.config.configMain) is loaded. In order to do that, StealJS provides a `dev-bundle` propert that you can set to the script tag so it loads the bundle correctly, like this:
 
 ```
-<script src="./node_modules/steal/steal.js" dev-bundle dev-bundle-dest="my-dev-bundle/"></script>
+<script src="./node_modules/steal/steal.js" 
+		dev-bundle="my-dev-bundle/dev-bundle"></script>
 ```
 
 You will get faster load times with **development bundles**, with the downside that you will need to generate the bundle each time your config module changes or your application might no load at all.
