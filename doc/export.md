@@ -1,5 +1,5 @@
 @function steal-tools.export export
-@parent steal-tools.JS 
+@parent steal-tools.JS
 
 Export a project's modules to other forms and formats declaratively.  
 
@@ -20,7 +20,7 @@ values.
 @param {Array<{}>} [modules] An array of module data that an [steal-tools.export.output]'s
 `modules`, `eachModule`, `graphs`, or `ignore` can be filtered against.
 
-@return {Promise} A promise that resolves when all outputs have been written out.
+@return {(Promise<steal-tools.BuildResult>)} A Promise that resolves when all outputs have been written out.
 
 @body
 
@@ -67,7 +67,7 @@ The first argument is an [steal-tools.export.object].  Details about its API and
 
 ## defaults
 
-As there are times when the same options may need to be set over and over again, the `defaults` option can 
+As there are times when the same options may need to be set over and over again, the `defaults` option can
 contain default values each output can call:
 
 ```

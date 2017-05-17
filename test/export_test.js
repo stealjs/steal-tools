@@ -11,7 +11,6 @@ var open = testHelpers.open;
 
 describe("export", function(){
 	it("basics work", function(done){
-
 		stealExport({
 
 			steal: {
@@ -38,7 +37,13 @@ describe("export", function(){
 					minify: false
 				}
 			}
-		}).then(function(){
+		}).then(function(data){
+			// Includes all buildResult fields
+			assert(!!data.configuration, "configuration");
+			assert(!!data.graph, "graph");
+			assert(!!data.loader, "loader");
+			assert(!!data.steal, "steal");
+
 			open("test/pluginifier_builder/index.html", function(browser, close){
 
 				find(browser,"RESULT", function(result){
@@ -55,7 +60,6 @@ describe("export", function(){
 
 	it("works with multiple mains", function(done){
 		stealExport({
-
 			steal: {
 				main: [
 					"pluginifier_builder/pluginify",
