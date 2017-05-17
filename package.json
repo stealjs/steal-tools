@@ -95,7 +95,8 @@
   },
   "greenkeeper": {
     "ignore": [
-      "traceur"
+      "traceur",
+      "uglify-js"
     ]
   }
 }
