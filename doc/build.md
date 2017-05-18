@@ -159,9 +159,9 @@ Assuming that "login" and "homepage" need the same modules, the following bundle
 To load the homepage JS, CSS and the shared JS and CSS, an html page should have a script tag like:
 
 ```
-<script src='./node_modules/steal/steal.js' 
-        main='homepage'
-        env='production'>
+<script src="./node_modules/steal/steal.js" 
+        main="homepage"
+        env="production"><script>
 ```
 
 ## Source Maps
