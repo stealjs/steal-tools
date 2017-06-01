@@ -18,5 +18,6 @@
   "node": true,
   "unused": true,
   "undef": true,
-  "evil": true
+  "evil": true,
+  "esversion": 6
 }
