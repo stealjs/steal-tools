@@ -36,12 +36,19 @@ function stealToolsC(args){
 
 function stealTools(args){
 	return new Promise(function(resolve, reject){
+		var error = "";
 		var child = stealToolsC(args);
+
+		child.stderr.on("data", function(data) {
+			error += data.toString();
+		});
 
 		child.on("close", function(code){
 			if(code === 1) {
-				var error = new Error("Exited with status " + code);
-				return reject(error);
+				return reject(error ?
+					new Error(error) :
+					new Error("Exited with status 1")
+				);
 			}
 			return resolve();
 		});

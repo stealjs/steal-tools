@@ -1,2 +1,1 @@
-export default function bar() {
-};
+module.exports = function bar() {};

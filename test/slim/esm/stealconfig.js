@@ -1,3 +1,0 @@
-steal.config({
-	main: "main"
-});
