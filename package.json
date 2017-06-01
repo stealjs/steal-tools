@@ -31,7 +31,7 @@
     "through2": "^2.0.0",
     "tmp": "0.0.31",
     "traceur": "0.0.111",
-    "transpile": "^2.3.0",
+    "transpile": "stealjs/transpile#slim",
     "uglify-js": "~2.8.22",
     "urix": "^0.1.0",
     "winston": "^2.2.0",

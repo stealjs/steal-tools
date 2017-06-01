@@ -1,7 +1,8 @@
-import bar from "./bar";
-import steal from "@steal";
+var bar = require("./bar");
 
 bar();
 
-steal.import("./baz")
-	.then(() => console.log('baz loaded'));
+steal.import("baz").then(function(baz) {
+	console.log("baz loaded");
+	baz();
+});

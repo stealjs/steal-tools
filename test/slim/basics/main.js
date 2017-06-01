@@ -1,1 +1,3 @@
-window.text = "hello world!";
+var foo = require("./foo");
+
+window.foo = foo;
