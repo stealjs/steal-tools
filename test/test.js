@@ -1,8 +1,9 @@
-// TODO: Figure out why the recycle_test fails when (at least)
-// - cmd_build_int_test and
-// - test_live
-// tests are imported
-require("./recycle_test");
+var semver = require("semver");
+
+// mock-fs 4.3 does not work on Node 8
+if (semver.lt(process.version, "8.0.0")) {
+	require("./recycle_test");
+}
 
 // Unit tests
 require("./clean_address_test");
