@@ -17,6 +17,7 @@ require("./cli/cmd_export_test");
 require("./cli/make_outputs_test");
 require("./cli/cmd_live_test");
 require("./get_es_module_imports_test");
+require("./cli/make_build_options_test");
 
 // Integration tests
 require("./test_cli");
