@@ -65,4 +65,18 @@ describe("cmd build module", function() {
 			bundlesPath: "foo"
 		});
 	});
+
+	it("watch mode defaults minify to false", function() {
+		cmdBuild.handler({ config: "/stealconfig.js", watch: true });
+		assert.equal(buildArgs.options.minify, false);
+	});
+
+	it("watch mode should still minify if flag provided", function() {
+		cmdBuild.handler({
+			config: "/stealconfig.js",
+			watch: true,
+			minify: true
+		});
+		assert.equal(buildArgs.options.minify, true);
+	});
 });
