@@ -41,4 +41,26 @@ describe("makeBuildConfig", function() {
 			"cannot be true if 'no-minify' is true"
 		);
 	});
+
+	it("sets 'quiet' value appropiately", function() {
+		assert.equal(makeBuildOptions({}).quiet, false, "defaults to false");
+
+		assert.equal(
+			makeBuildOptions({ watch: true }).quiet,
+			true,
+			"should default to true for watch mode"
+		);
+
+		assert.equal(
+			makeBuildOptions({ watch: true, quiet: false }).quiet,
+			false,
+			"should not be mutated if set"
+		);
+
+		assert.equal(
+			makeBuildOptions({ watch: true, verbose: true }).quiet,
+			false,
+			"cannot be true if verbose output is set"
+		);
+	});
 });
