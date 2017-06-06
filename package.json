@@ -34,7 +34,7 @@
     "uglify-js": "~2.8.22",
     "urix": "^0.1.0",
     "winston": "^2.2.0",
-    "ws": "^2.2.3",
+    "ws": "^3.0.0",
     "yargs": "^8.0.1"
   },
   "devDependencies": {
