@@ -89,4 +89,24 @@ describe("slim builds", function() {
 
 		return slim(config, options);
 	});
+
+	it("does not wrap non JS build types", function() {
+		var options = { quiet: true };
+		var base = path.join(__dirname, "slim", "build_types");
+		var config = { config: path.join(base, "package.json!npm") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return slim(config, options);
+			})
+			.then(function() {
+				return readFile(
+					path.join(base, "dist", "bundles", "build_types", "main.css")
+				);
+			})
+			.then(function(data) {
+				var bundle = data.toString();
+				assert.ok(!/__steal_bundles__/.test(bundle));
+			});
+	});
 });
