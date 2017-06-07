@@ -81,4 +81,12 @@ describe("slim builds", function() {
 				close();
 			});
 	});
+
+	it("can build apps using npm plugin", function() {
+		var options = { quiet: true };
+		var base = path.join(__dirname, "slim", "npm");
+		var config = { config: path.join(base, "package.json!npm") };
+
+		return slim(config, options);
+	});
 });
