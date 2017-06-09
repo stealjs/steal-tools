@@ -127,7 +127,10 @@ describe("slim builds", function() {
 			})
 			.then(function(result) {
 				result[0](); // close
-				assert.equal(result[1], "dist/bundles/plugins/main.css");
+				assert.deepEqual(
+					result[1].split(path.sep).join("/"), // normalize windows path
+					"dist/bundles/plugins/main.css"
+				);
 			});
 	});
 });
