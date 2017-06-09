@@ -109,4 +109,25 @@ describe("slim builds", function() {
 				assert.ok(!/__steal_bundles__/.test(bundle));
 			});
 	});
+
+	it("plugins work", function() {
+		var options = { quiet: true };
+		var base = path.join(__dirname, "slim", "plugins");
+		var config = { config: path.join(base, "package.json!npm") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return slim(config, options);
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "plugins", "index.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "bundleAddress")]);
+			})
+			.then(function(result) {
+				result[0](); // close
+				assert.equal(result[1], "dist/bundles/plugins/main.css");
+			});
+	});
 });
