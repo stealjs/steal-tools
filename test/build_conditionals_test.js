@@ -172,6 +172,26 @@ describe("build app using steal-conditional", function() {
 			});
 	});
 
+	it("condition module should not be evaluated during build", function() {
+		this.timeout(20000);
+
+		var bundles = path.join(basePath, "condition-module", "dist", "bundles");
+
+		var config = {
+			config: path.join(basePath, "condition-module", "package.json!npm")
+		};
+
+		return prmdir(path.join(basePath, "boolean", "dist"))
+			.then(function() {
+				return multiBuild(config, { minify: false, quiet: true });
+			})
+			.then(function() {
+				// each module that might be conditionally loaded once the
+				// built app is run on the browser gets its own module
+				return exists(path.join(bundles, "foo.js"));
+			});
+	});
+
 	function copyDependencies() {
 		var copy = denodeify(fs.copy);
 		var src = path.join(__dirname, "..", "node_modules");
@@ -181,7 +201,8 @@ describe("build app using steal-conditional", function() {
 			path.join(basePath, "substitution"),
 			path.join(basePath, "substitution-ext"),
 			path.join(basePath, "substitution-tilde"),
-			path.join(basePath, "substitution-folders")
+			path.join(basePath, "substitution-folders"),
+			path.join(basePath, "condition-module")
 		];
 
 		var promises = folders.map(function(dest) {
