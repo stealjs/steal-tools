@@ -1,9 +1,6 @@
 var semver = require("semver");
 
-// mock-fs 4.3 does not work on Node 8
-if (semver.lt(process.version, "8.0.0")) {
-	require("./recycle_test");
-}
+require("./recycle_test");
 
 // Unit tests
 require("./clean_address_test");
