@@ -1,7 +1,7 @@
 var assert = require("assert");
-var clean = require("./clean");
+var clean = require("../lib/build/clean");
 
-describe("cleanAddress", function() {
+describe("build/clean", function() {
 	var source = "123\n//!steal-remove-start\n456\n//!steal-remove-end\n789";
 	var source2 = "123\n//! steal-remove-start\n456\n//! steal-remove-end\n789";
 	
