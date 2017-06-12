@@ -7,6 +7,7 @@ if (semver.lt(process.version, "8.0.0")) {
 
 // Unit tests
 require("./clean_address_test");
+require("./clean_test");
 require("../lib/bundle/bundle_test");
 require("./cli/cmd_build_test");
 require("./cli/cmd_bundle_test");
