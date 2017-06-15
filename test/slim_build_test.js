@@ -133,4 +133,36 @@ describe("slim builds", function() {
 				);
 			});
 	});
+
+	it("writes bundle manifest when option is passed in", function() {
+		var base = path.join(__dirname, "slim", "progressive");
+		var config = { config: path.join(base, "stealconfig.js") };
+		var options = { quiet: true, bundleManifest: true };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return slim(config, options);
+			})
+			.then(function() {
+				return readFile(path.join(base, "dist", "bundles.json"));
+			})
+			.then(function(data) {
+				assert.deepEqual(JSON.parse(data.toString()), {
+					main: {
+						"dist/bundles/main.js": {
+							weight: 2,
+							type: "script"
+						}
+					},
+					baz: {
+						"dist/bundles/baz.js": {
+							weight: 2,
+							type: "script"
+						}
+					}
+				});
+
+				return rmdir(path.join(base, "dist"));
+			});
+	});
 });
