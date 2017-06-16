@@ -1,0 +1,14 @@
+{
+  "name": "conditionals",
+  "version": "0.0.1",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "steal-conditional": "^0.3.4"
+  },
+  "system": {
+    "configDependencies": [
+      "./node_modules/steal-conditional/conditional"
+    ]
+  }
+}

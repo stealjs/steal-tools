@@ -5,7 +5,7 @@ var testHelpers = require("./helpers");
 var slim = require("../lib/build/slim");
 var escapeRegExp = require("lodash/escapeRegExp");
 
-var fs = require("fs");
+var fs = require("fs-extra");
 var rimraf = require("rimraf");
 var rmdir = denodeify(rimraf);
 var readFile = denodeify(fs.readFile);
@@ -90,26 +90,6 @@ describe("slim builds", function() {
 		return slim(config, options);
 	});
 
-	it("does not wrap non JS build types", function() {
-		var options = { quiet: true };
-		var base = path.join(__dirname, "slim", "build_types");
-		var config = { config: path.join(base, "package.json!npm") };
-
-		return rmdir(path.join(base, "dist"))
-			.then(function() {
-				return slim(config, options);
-			})
-			.then(function() {
-				return readFile(
-					path.join(base, "dist", "bundles", "build_types", "main.css")
-				);
-			})
-			.then(function(data) {
-				var bundle = data.toString();
-				assert.ok(!/__steal_bundles__/.test(bundle));
-			});
-	});
-
 	it("plugins work", function() {
 		var options = { quiet: true };
 		var base = path.join(__dirname, "slim", "plugins");
@@ -163,6 +143,44 @@ describe("slim builds", function() {
 				});
 
 				return rmdir(path.join(base, "dist"));
+			});
+	});
+
+	it("errors out with apps using steal-conditional", function(done) {
+		var copy = denodeify(fs.copy);
+		var base = path.join(__dirname, "slim", "conditionals");
+		var config = { config: path.join(base, "package.json!npm") };
+
+		rmdir(path.join(base, "dist"))
+			.then(function() {
+				return copy(
+					path.join(__dirname, "..", "node_modules", "steal-conditional"),
+					path.join(base, "node_modules", "steal-conditional")
+				);
+			})
+			.then(function() {
+				return slim(config, { minify: false, quiet: true });
+			})
+			.then(null, function(err) {
+				assert(/Cannot create slim build/.test(err.message));
+				done();
+			});
+	});
+
+	it("errors out with apps using window-production config", function(done) {
+		var base = path.join(__dirname, "slim", "config");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		rmdir(path.join(base, "dist"))
+			.then(function() {
+				return slim(config, { minify: false, quiet: true });
+			})
+			.then(function() {
+				done(new Error("should not build the app"));
+			})
+			.catch(function(err) {
+				assert(/"window-production" config is not supported/.test(err));
+				done();
 			});
 	});
 });
