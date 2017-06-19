@@ -41,7 +41,6 @@ describe("slim builds", function() {
 		var base = path.join(__dirname, "slim", "progressive");
 		var config = { config: path.join(base, "stealconfig.js") };
 		var options = { quiet: true };
-		var close;
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
@@ -73,12 +72,11 @@ describe("slim builds", function() {
 				return open(path.join("test", "slim", "progressive", "index.html"));
 			})
 			.then(function(args) {
-				close = args.close;
-				return find(args.browser, "baz");
+				return Promise.all([args.close, find(args.browser, "baz")]);
 			})
-			.then(function(baz) {
-				assert.equal(baz, "baz", "progressively loaded baz correctly");
-				close();
+			.then(function(data) {
+				assert.equal(data[1], "baz", "progressively loaded baz correctly");
+				data[0]();
 			});
 	});
 
@@ -181,6 +179,27 @@ describe("slim builds", function() {
 			.catch(function(err) {
 				assert(/"window-production" config is not supported/.test(err));
 				done();
+			});
+	});
+
+	it("loader code can be put in its own bundle", function() {
+		var base = path.join(__dirname, "slim", "progressive");
+		var config = { config: path.join(base, "stealconfig.js") };
+		var options = { quiet: true, splitLoader: true };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return slim(config, options);
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "progressive", "split.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "baz")]);
+			})
+			.then(function(data) {
+				assert.equal(data[1], "baz", "progressively loaded baz correctly");
+				data[0]();
 			});
 	});
 });
