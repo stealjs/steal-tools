@@ -17,34 +17,81 @@ describe("slim builds", function() {
 	it("basics + cjs source", function() {
 		var base = path.join(__dirname, "slim", "basics");
 		var config = { config: path.join(base, "stealconfig.js") };
-		var options = { quiet: true };
-		var close;
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, options);
+				return slim(config, { quiet: true, minify: false });
 			})
 			.then(function() {
 				return open(path.join("test", "slim", "basics", "index.html"));
 			})
 			.then(function(args) {
-				close = args.close;
-				return find(args.browser, "foo");
+				return Promise.all([args.close, find(args.browser, "foo")]);
 			})
-			.then(function(foo) {
-				assert.equal(foo, "foo");
-				close();
+			.then(function(data) {
+				assert.equal(data[1], "foo");
+				data[0]();
+			});
+	});
+
+	it("filters out configMain from the graph", function() {
+		var base = path.join(__dirname, "slim", "basics");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return slim(config, { quiet: true, minify: false });
+			})
+			.then(function() {
+				return readFile(path.join(base, "dist", "bundles", "main.js"));
+			})
+			.then(function(data) {
+				var rx = new RegExp(escapeRegExp("stealconfig.js"));
+				assert(
+					!rx.test(data.toString()),
+					"configMain should be removed"
+				);
+			});
+	});
+
+	it("minification is on by default", function() {
+		var base = path.join(__dirname, "slim", "basics");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return slim(config, { quiet: true });
+			})
+			.then(function() {
+				return readFile(path.join(base, "dist", "bundles", "main.js"));
+			})
+			.then(function(data) {
+				var rx = new RegExp(escapeRegExp("/*[slim-loader-config]*/"));
+
+				assert(
+					!rx.test(data.toString()),
+					"module name comments should be removed"
+				);
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "basics", "index.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "foo")]);
+			})
+			.then(function(data) {
+				assert.equal(data[1], "foo");
+				data[0]();
 			});
 	});
 
 	it("works with progressively loaded bundles", function() {
 		var base = path.join(__dirname, "slim", "progressive");
 		var config = { config: path.join(base, "stealconfig.js") };
-		var options = { quiet: true };
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, options);
+				return slim(config, { quiet: true, minify: false });
 			})
 			.then(function() {
 				return Promise.all([
@@ -81,7 +128,7 @@ describe("slim builds", function() {
 	});
 
 	it("can build apps using npm plugin", function() {
-		var options = { quiet: true };
+		var options = { quiet: true, minify: false };
 		var base = path.join(__dirname, "slim", "npm");
 		var config = { config: path.join(base, "package.json!npm") };
 
@@ -89,7 +136,7 @@ describe("slim builds", function() {
 	});
 
 	it("plugins work", function() {
-		var options = { quiet: true };
+		var options = { quiet: true, minify: false };
 		var base = path.join(__dirname, "slim", "plugins");
 		var config = { config: path.join(base, "package.json!npm") };
 
@@ -115,7 +162,7 @@ describe("slim builds", function() {
 	it("writes bundle manifest when option is passed in", function() {
 		var base = path.join(__dirname, "slim", "progressive");
 		var config = { config: path.join(base, "stealconfig.js") };
-		var options = { quiet: true, bundleManifest: true };
+		var options = { quiet: true, bundleManifest: true, minify: false };
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
