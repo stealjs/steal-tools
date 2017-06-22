@@ -249,4 +249,27 @@ describe("slim builds", function() {
 				data[0]();
 			});
 	});
+
+	it("loader serves module from cache correctly", function() {
+		var base = path.join(__dirname, "slim", "cache");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return slim(config, { quiet: true, minify: false });
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "cache", "index.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "_props")]);
+			})
+			.then(function(data) {
+				assert.deepEqual(data[1], {
+					foo: "foo",
+					bar: "bar"
+				}, "module cache works");
+				data[0]();
+			});
+	});
 });
