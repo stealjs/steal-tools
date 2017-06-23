@@ -294,4 +294,23 @@ describe("slim builds", function() {
 				data[0]();
 			});
 	});
+
+	it("remove nodes flagged from the build", function() {
+		var base = path.join(__dirname, "slim", "exclude");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return slim(config, { quiet: true, minify: false });
+			})
+			.then(function() {
+				return readFile(path.join(base, "dist", "bundles", "main.js"));
+			})
+			.then(function(data) {
+				assert(
+					!/thisShouldNotBeInTheBundle/.test(data.toString()),
+					"should remove plugin code from build"
+				);
+			});
+	});
 });
