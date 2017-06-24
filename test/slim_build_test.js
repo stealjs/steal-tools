@@ -47,10 +47,7 @@ describe("slim builds", function() {
 			})
 			.then(function(data) {
 				var rx = new RegExp(escapeRegExp("stealconfig.js"));
-				assert(
-					!rx.test(data.toString()),
-					"configMain should be removed"
-				);
+				assert(!rx.test(data.toString()), "configMain should be removed");
 			});
 	});
 
@@ -230,13 +227,18 @@ describe("slim builds", function() {
 	});
 
 	it("loader code can be put in its own bundle", function() {
+		this.timeout(1000);
+
 		var base = path.join(__dirname, "slim", "progressive");
 		var config = { config: path.join(base, "stealconfig.js") };
-		var options = { quiet: true, splitLoader: true };
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, options);
+				return slim(config, {
+					quiet: true,
+					minify: false,
+					splitLoader: true
+				});
 			})
 			.then(function() {
 				return open(path.join("test", "slim", "progressive", "split.html"));
@@ -269,6 +271,26 @@ describe("slim builds", function() {
 					foo: "foo",
 					bar: "bar"
 				}, "module cache works");
+				data[0]();
+			});
+	});
+
+	it("can build globals correctly", function() {
+		var base = path.join(__dirname, "slim", "globals");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return slim(config, { quiet: true, minify: false });
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "globals", "index.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "selector")]);
+			})
+			.then(function(data) {
+				assert.equal(data[1], "#container", "globals work");
 				data[0]();
 			});
 	});
