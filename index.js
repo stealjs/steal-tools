@@ -7,6 +7,7 @@ module.exports = {
 	bundle: bundle,
 	build: multiBuild,
 	transform: transform,
+	optimize: require("./lib/build/slim"),
 	graph: {
 		each: require("./lib/graph/each_dependencies"),
 		map: require("./lib/graph/map_dependencies"),
