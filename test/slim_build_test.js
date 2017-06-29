@@ -313,4 +313,27 @@ describe("slim builds", function() {
 				);
 			});
 	});
+
+	it("works with async progressively loaded bundles", function() {
+		var base = path.join(__dirname, "slim", "async");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		// allow `find` to reject before mocha timeout kicks in
+		this.timeout(3000);
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return slim(config, { quiet: true, minify: false });
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "async", "index.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "baz")]);
+			})
+			.then(function(data) {
+				assert.equal(data[1], "baz", "progressively loaded baz correctly");
+				data[0]();
+			});
+	});
 });
