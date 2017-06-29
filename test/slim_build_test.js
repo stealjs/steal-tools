@@ -2,7 +2,7 @@ var path = require("path");
 var assert = require("assert");
 var denodeify = require("pdenodeify");
 var testHelpers = require("./helpers");
-var slim = require("../lib/build/slim");
+var optimize = require("../index").optimize;
 var escapeRegExp = require("lodash/escapeRegExp");
 
 var fs = require("fs-extra");
@@ -20,7 +20,7 @@ describe("slim builds", function() {
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, { quiet: true, minify: false });
+				return optimize(config, { quiet: true, minify: false });
 			})
 			.then(function() {
 				return open(path.join("test", "slim", "basics", "index.html"));
@@ -40,7 +40,7 @@ describe("slim builds", function() {
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, { quiet: true, minify: false });
+				return optimize(config, { quiet: true, minify: false });
 			})
 			.then(function() {
 				return readFile(path.join(base, "dist", "bundles", "main.js"));
@@ -57,7 +57,7 @@ describe("slim builds", function() {
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, { quiet: true });
+				return optimize(config, { quiet: true });
 			})
 			.then(function() {
 				return readFile(path.join(base, "dist", "bundles", "main.js"));
@@ -88,7 +88,7 @@ describe("slim builds", function() {
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, { quiet: true, minify: false });
+				return optimize(config, { quiet: true, minify: false });
 			})
 			.then(function() {
 				return Promise.all([
@@ -129,7 +129,7 @@ describe("slim builds", function() {
 		var base = path.join(__dirname, "slim", "npm");
 		var config = { config: path.join(base, "package.json!npm") };
 
-		return slim(config, options);
+		return optimize(config, options);
 	});
 
 	it("plugins work", function() {
@@ -139,7 +139,7 @@ describe("slim builds", function() {
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, options);
+				return optimize(config, options);
 			})
 			.then(function() {
 				return open(path.join("test", "slim", "plugins", "index.html"));
@@ -163,7 +163,7 @@ describe("slim builds", function() {
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, options);
+				return optimize(config, options);
 			})
 			.then(function() {
 				return readFile(path.join(base, "dist", "bundles.json"));
@@ -201,7 +201,7 @@ describe("slim builds", function() {
 				);
 			})
 			.then(function() {
-				return slim(config, { minify: false, quiet: true });
+				return optimize(config, { minify: false, quiet: true });
 			})
 			.then(null, function(err) {
 				assert(/Cannot create slim build/.test(err.message));
@@ -215,7 +215,7 @@ describe("slim builds", function() {
 
 		rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, { minify: false, quiet: true });
+				return optimize(config, { minify: false, quiet: true });
 			})
 			.then(function() {
 				done(new Error("should not build the app"));
@@ -234,7 +234,7 @@ describe("slim builds", function() {
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, {
+				return optimize(config, {
 					quiet: true,
 					minify: false,
 					splitLoader: true
@@ -258,7 +258,7 @@ describe("slim builds", function() {
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, { quiet: true, minify: false });
+				return optimize(config, { quiet: true, minify: false });
 			})
 			.then(function() {
 				return open(path.join("test", "slim", "cache", "index.html"));
@@ -281,7 +281,7 @@ describe("slim builds", function() {
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, { quiet: true, minify: false });
+				return optimize(config, { quiet: true, minify: false });
 			})
 			.then(function() {
 				return open(path.join("test", "slim", "globals", "index.html"));
@@ -301,7 +301,7 @@ describe("slim builds", function() {
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, { quiet: true, minify: false });
+				return optimize(config, { quiet: true, minify: false });
 			})
 			.then(function() {
 				return readFile(path.join(base, "dist", "bundles", "main.js"));
@@ -323,7 +323,7 @@ describe("slim builds", function() {
 
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
-				return slim(config, { quiet: true, minify: false });
+				return optimize(config, { quiet: true, minify: false });
 			})
 			.then(function() {
 				return open(path.join("test", "slim", "async", "index.html"));
