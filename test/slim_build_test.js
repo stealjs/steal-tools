@@ -267,10 +267,14 @@ describe("slim builds", function() {
 				return Promise.all([args.close, find(args.browser, "_props")]);
 			})
 			.then(function(data) {
-				assert.deepEqual(data[1], {
-					foo: "foo",
-					bar: "bar"
-				}, "module cache works");
+				assert.deepEqual(
+					data[1],
+					{
+						foo: "foo",
+						bar: "bar"
+					},
+					"module cache works"
+				);
 				data[0]();
 			});
 	});
@@ -334,6 +338,23 @@ describe("slim builds", function() {
 			.then(function(data) {
 				assert.equal(data[1], "baz", "progressively loaded baz correctly");
 				data[0]();
+			});
+	});
+
+	it("errors out with circular dependencies", function(done) {
+		var base = path.join(__dirname, "circular");
+		var config = { config: path.join(base, "package.json!npm") };
+
+		rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { minify: false, quiet: true });
+			})
+			.then(function() {
+				done(new Error("should not build the app"));
+			})
+			.catch(function(err) {
+				assert(/Cannot create slim build/.test(err.message));
+				done();
 			});
 	});
 });
