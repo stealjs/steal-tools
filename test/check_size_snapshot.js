@@ -1,11 +1,17 @@
 var path = require("path");
 var fs = require("fs-extra");
 var colors = require("colors");
+var range = require("lodash/range");
 var gzipSize = require("gzip-size");
 var denodeify = require("pdenodeify");
+var includes = require("lodash/includes");
 
 var readFile = denodeify(fs.readFile);
 var writeFile = denodeify(fs.writeFile);
+
+// the bundle size might change depending on the platformat used to create it,
+// the offset is to account for these differences
+var sizeOffset = 5;
 
 /**
  * Validates bundle size snapshot or creates it if missing
@@ -28,14 +34,15 @@ module.exports = function(bundle, dest) {
 			.then(function(data) {
 				var oldSize = data[1];
 				var newSize = gzipSize.sync(data[0]);
+				var sizeRange = range(oldSize, oldSize + sizeOffset);
 
 				// just resolve if the bundle size did not change
-				if (oldSize === newSize) {
+				if (includes(sizeRange, newSize)) {
 					return resolve(newSize);
 				}
 
 				// reject promise if size has increased
-				if (oldSize != null && newSize > oldSize) {
+				if (oldSize != null && newSize > (oldSize + sizeOffset)) {
 					return reject(
 						new Error(`Bundle size has increased, before: ${oldSize} now: ${newSize}`)
 					);
