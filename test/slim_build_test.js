@@ -342,20 +342,23 @@ describe("slim builds", function() {
 			});
 	});
 
-	it("errors out with circular dependencies", function(done) {
+	it("*supports circular dependencies", function() {
 		var base = path.join(__dirname, "circular");
 		var config = { config: path.join(base, "package.json!npm") };
 
-		rmdir(path.join(base, "dist"))
+		return rmdir(path.join(base, "dist"))
 			.then(function() {
 				return optimize(config, { minify: false, quiet: true });
 			})
 			.then(function() {
-				done(new Error("should not build the app"));
+				return open(path.join("test", "circular", "slim.html"));
 			})
-			.catch(function(err) {
-				assert(/Cannot create slim build/.test(err.message));
-				done();
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "circularWorks")]);
+			})
+			.then(function(data) {
+				assert.ok(data[1], "circularWork should be true");
+				data[0](); // close();
 			});
 	});
 
@@ -386,8 +389,14 @@ describe("slim builds", function() {
 				})
 				.then(function() {
 					return Promise.all([
-						checkSizeSnapshot(path.join(base, "dist", "bundles", "main.js"), base),
-						checkSizeSnapshot(path.join(base, "dist", "bundles", "baz.js"), base)
+						checkSizeSnapshot(
+							path.join(base, "dist", "bundles", "main.js"),
+							base
+						),
+						checkSizeSnapshot(
+							path.join(base, "dist", "bundles", "baz.js"),
+							base
+						)
 					]);
 				});
 		});
@@ -421,7 +430,9 @@ describe("slim builds", function() {
 				return optimize(config, { minify: false, quiet: true });
 			})
 			.then(function() {
-				return open(path.join("test", "slim", "esm_named_imports", "index.html"));
+				return open(
+					path.join("test", "slim", "esm_named_imports", "index.html")
+				);
 			})
 			.then(function(args) {
 				return Promise.all([args.close, find(args.browser, "result")]);
