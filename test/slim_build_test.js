@@ -408,4 +408,27 @@ describe("slim builds", function() {
 				});
 		});
 	});
+
+	it("ESM named imports work", function() {
+		var base = path.join(__dirname, "slim", "esm_named_imports");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		// allow `find` to reject before mocha timeout kicks in
+		this.timeout(3000);
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { minify: false, quiet: true });
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "esm_named_imports", "index.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "result")]);
+			})
+			.then(function(data) {
+				assert.equal(data[1], 2, "should work");
+				data[0](); // close();
+			});
+	});
 });
