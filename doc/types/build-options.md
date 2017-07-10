@@ -22,7 +22,7 @@ stealtools.build(config, {
 A function can be provided to handle minification of each file in a bundle, e.g:
 
 ```javascript
-stealtools.build(config, {
+stealTools.build(config, {
 	minify: function(source, options) {
 		// use your own library to minify source.code 
 		source.code = doCustomMinification(source.code);
@@ -89,3 +89,38 @@ stealTools.build(config, {
 @option {steal-tools.BuildOptions.transpile} [transpile] A function that handles the transpiling of ES6 source to a format for production.
 
 @option {Boolean} [watch=false] Actives watch mode which will continuously build as you develop your application.
+
+@option {Boolean|String} [bundleManifest=false] Generates an HTTP2-push like manifest of the application bundles for server-side preload.
+
+When set to `true` a `bundles.json` file will be written at the top level of the folder where the built assets are located (see the property`dest` above). 
+
+A full path to the desired JSON filename can be provided, too. e.g:
+
+```js
+stealTools.build(config, { 
+  bundleManifest: path.join(__dirname, "dist", "my-manifest.json")
+});
+```
+
+The manifest has the following shape:
+
+```json
+{
+  "[ENTRY-POINT-BUNDLE-NAME]": {
+    "[SHARED-BUNDLE-NAME]": {
+      "type": "style",
+      "weight": 1
+    },
+    "[SHARED-BUNDLE-NAME]": {
+      "type": "script",
+      "weight": 2
+    }
+  }
+}
+```
+
+The top-level objects correspond to _entry level bundles_; these are the bundles needed to start up individual "pages" of the application and  progressively loaded bundles.
+
+The nested objects are _shared bundles_, these are created by `steal-tools` to minimize the number of HTTP requests needed to load the application code. 
+
+Each _shared bundle_ has two properties, `type`, an string that indicates whether the bundle contains script code or styles and `weight`, a number indicating loading priority; a bundle with lower weight should be loaded before other bundles, e.g: style bundles have `weight` of `1` and should be loaded before script bundles.

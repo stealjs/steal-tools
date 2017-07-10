@@ -4,6 +4,7 @@ var rmdir = require("rimraf");
 var assert = require("assert");
 var denodeify = require("pdenodeify");
 var testHelpers = require("./helpers");
+var fileExists = require("./file_exists");
 var multiBuild = require("../lib/build/multi");
 
 describe("build app using steal-conditional", function() {
@@ -31,11 +32,11 @@ describe("build app using steal-conditional", function() {
 			})
 			.then(function() {
 				// creates bundles for each possible string substitution
-				return exists(path.join(bundles, "message", "en.js"));
+				return fileExists(path.join(bundles, "message", "en.js"));
 			})
 			.then(function() {
 				// creates bundles for each possible string substitution
-				return exists(path.join(bundles, "message", "es.js"));
+				return fileExists(path.join(bundles, "message", "es.js"));
 			})
 			.then(function() {
 				var page = path.join(
@@ -68,10 +69,10 @@ describe("build app using steal-conditional", function() {
 			.then(function() {
 				// each module that might be conditionally loaded once the
 				// built app is run on the browser gets its own module
-				return exists(path.join(bundles, "foo.js"));
+				return fileExists(path.join(bundles, "foo.js"));
 			})
 			.then(function() {
-				return exists(path.join(bundles, "bar.js"));
+				return fileExists(path.join(bundles, "bar.js"));
 			})
 			.then(function() {
 				var page = path.join(
@@ -103,11 +104,11 @@ describe("build app using steal-conditional", function() {
 			})
 			.then(function() {
 				// should create bundle for `en` variation
-				return exists(path.join(bundles, "message", "en.js"));
+				return fileExists(path.join(bundles, "message", "en.js"));
 			})
 			.then(function() {
 				// should create bundle for `es` variation
-				return exists(path.join(bundles, "message", "es.js"));
+				return fileExists(path.join(bundles, "message", "es.js"));
 			})
 			.then(function() {
 				var page = path.join(
@@ -141,11 +142,11 @@ describe("build app using steal-conditional", function() {
 			})
 			.then(function() {
 				// make sure each variation is detected
-				return exists(path.join(bundle, "blue.css"));
+				return fileExists(path.join(bundle, "blue.css"));
 			})
 			.then(function() {
 				// make sure each variation is detected
-				return exists(path.join(bundle, "red.css"));
+				return fileExists(path.join(bundle, "red.css"));
 			});
 	});
 
@@ -164,11 +165,11 @@ describe("build app using steal-conditional", function() {
 			})
 			.then(function() {
 				// make sure each variation is detected
-				return exists(path.join(bundle, "en", "message.js"));
+				return fileExists(path.join(bundle, "en", "message.js"));
 			})
 			.then(function() {
 				// make sure each variation is detected
-				return exists(path.join(bundle, "es", "message.js"));
+				return fileExists(path.join(bundle, "es", "message.js"));
 			});
 	});
 
@@ -188,7 +189,7 @@ describe("build app using steal-conditional", function() {
 			.then(function() {
 				// each module that might be conditionally loaded once the
 				// built app is run on the browser gets its own module
-				return exists(path.join(bundles, "foo.js"));
+				return fileExists(path.join(bundles, "foo.js"));
 			});
 	});
 
@@ -213,14 +214,5 @@ describe("build app using steal-conditional", function() {
 		});
 
 		return Promise.all(promises);
-	}
-
-	/**
-	 * Check if the file path exists
-	 * @param {string} path The file path
-	 * @return {Promise} Resolves if the file exists, rejects otherwise.
-	 */
-	function exists(path) {
-		return denodeify(fs.access)(path, fs.F_OK);
 	}
 });

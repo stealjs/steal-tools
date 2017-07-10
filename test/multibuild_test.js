@@ -6,6 +6,7 @@ var multiBuild = require("../lib/build/multi");
 var rmdir = require("rimraf");
 var path = require("path");
 var testHelpers = require("./helpers");
+var fileExists = require("./file_exists");
 var _escapeRegExp = require("lodash/escapeRegExp");
 
 var find = testHelpers.find;
@@ -2189,6 +2190,49 @@ describe("multi build", function(){
 			.then(function(source) {
 				var rx = new RegExp(_escapeRegExp("url(../../../../../topbanner.png)"));
 				assert.ok(rx.test(source), "image url should be relative to 'dist'");
+			});
+	});
+
+
+	it("writes bundles manifiest if option is passed in", function() {
+		var base = path.join(__dirname, "progressive_package");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(base, "package.json!npm")
+				}, {
+					minify: false,
+					quiet: true,
+					bundleManifest: true
+				});
+			})
+			.then(function() {
+				return fileExists(path.join(base, "dist", "bundles.json"));
+			})
+			.then(function() {
+				return asap(rmdir)(path.join(base, "dist"));
+			});
+	});
+
+	it("bundle manifest path can be provided", function() {
+		var base = path.join(__dirname, "progressive_package");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(base, "package.json!npm")
+				}, {
+					minify: false,
+					quiet: true,
+					bundleManifest: path.join(base, "dist", "bundle-manifest.json")
+				});
+			})
+			.then(function() {
+				return fileExists(path.join(base, "dist", "bundle-manifest.json"));
+			})
+			.then(function() {
+				return asap(rmdir)(path.join(base, "dist"));
 			});
 	});
 });

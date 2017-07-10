@@ -16,6 +16,7 @@ require("./cli/make_outputs_test");
 require("./cli/cmd_live_test");
 require("./get_es_module_imports_test");
 require("./cli/make_build_options_test");
+require("./slim_support_checks_test");
 
 // Integration tests
 require("./test_cli");
@@ -47,3 +48,4 @@ require("./build_conditionals_test");
 require("./dev_bundle_build_test");
 require("./babel_presets_test");
 require("./babel_plugins_test");
+require("./slim_build_test");
