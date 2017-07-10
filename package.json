@@ -89,7 +89,7 @@
     "coverage:upload": "istanbul cover _mocha --report lcovonly -- test/test --timeout 600000 && cat ./coverage/lcov.info | ./node_modules/coveralls-send/bin/coveralls.js"
   },
   "engines": {
-    "node": "4.x - 7.x"
+    "node": "4.x - 8.x"
   },
   "system": {
     "npmDependencies": [

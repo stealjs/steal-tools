@@ -72,6 +72,16 @@ All available options are listed in the [clean-css documentation](https://github
 top-level `minify` function of uglify-js, and the available options are listed [here](https://github.com/mishoo/UglifyJS2#the-simple-way).
 The option `fromString` is used internally and will always be `true`; any other value will be ignored.
 
+For example, to not uglify function names you can use [keep_fnames option](https://github.com/mishoo/UglifyJS2#mangle-options):
+
+```javascript
+stealTools.build(config, {
+  uglifyOptions: {
+    mangle: { "keep_fnames": true }
+  }
+});
+```
+
 @option {Boolean} [sourceMaps=false] Generate source maps alongside your bundles.
 
 @option {Boolean} [sourceMapsContent=false] Include the original source contents in the generated source maps. Use this option if your production environment doesn't have access to the source files. Will result in a larger source maps size but will cause fewer requests.
