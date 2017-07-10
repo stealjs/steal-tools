@@ -15,6 +15,9 @@ describe("slim builds", function() {
 	var open = testHelpers.popen;
 	var find = testHelpers.pfind;
 
+	// allow `find` to reject before mocha timeout kicks in
+	this.timeout(3000);
+
 	it("basics + cjs source", function() {
 		var base = path.join(__dirname, "slim", "basics");
 		var config = { config: path.join(base, "stealconfig.js") };
@@ -206,23 +209,6 @@ describe("slim builds", function() {
 			})
 			.then(null, function(err) {
 				assert(/Cannot create slim build/.test(err.message));
-				done();
-			});
-	});
-
-	it("errors out with apps using window-production config", function(done) {
-		var base = path.join(__dirname, "slim", "config");
-		var config = { config: path.join(base, "stealconfig.js") };
-
-		rmdir(path.join(base, "dist"))
-			.then(function() {
-				return optimize(config, { minify: false, quiet: true });
-			})
-			.then(function() {
-				done(new Error("should not build the app"));
-			})
-			.catch(function(err) {
-				assert(/"window-production" config is not supported/.test(err));
 				done();
 			});
 	});
@@ -422,9 +408,6 @@ describe("slim builds", function() {
 		var base = path.join(__dirname, "slim", "esm_named_imports");
 		var config = { config: path.join(base, "stealconfig.js") };
 
-		// allow `find` to reject before mocha timeout kicks in
-		this.timeout(3000);
-
 		return rmdir(path.join(base, "dist"))
 			.then(function() {
 				return optimize(config, { minify: false, quiet: true });
@@ -440,6 +423,32 @@ describe("slim builds", function() {
 			.then(function(data) {
 				assert.equal(data[1], 2, "should work");
 				data[0](); // close();
+			});
+	});
+
+	it("has partial support for @loader usage", function() {
+		var base = path.join(__dirname, "slim", "at_loader");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { minify: false, quiet: true });
+			})
+			.then(function() {
+				return open(
+					path.join("test", "slim", "at_loader", "index.html")
+				);
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "window")]);
+			})
+			.then(function(data) {
+				var w = data[1];
+				var close = data[0];
+				assert.ok(w.paths == null, "should be filtered out");
+				assert.ok(w.stealPath == null, "should be filtered out");
+				assert.equal(w.serviceBaseUrl, "/api/production", "should work");
+				close();
 			});
 	});
 });

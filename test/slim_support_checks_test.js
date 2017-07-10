@@ -1,86 +1,13 @@
 var assert = require("assert");
 
 describe("slim support checks", function() {
-	describe("checkProductionEnvConfig", function() {
-		var checkProductionConfig = require("../lib/slim/checks/production_env_config");
-
-		it("throws if 'window-production' config found", function() {
-			assert.throws(
-				function() {
-					checkProductionConfig({
-						config: function(prop) {
-							if (prop === "envs") {
-								return {
-									"window-production": {
-										paths: {
-											foo: "bar"
-										}
-									}
-								};
-							}
-						}
-					});
-				},
-				function(err) {
-					return /"window-production" config is not supported/.test(
-						err.message
-					);
-				}
-			);
-		});
-
-		it("does not throw if config found but empty", function() {
-			assert.equal(
-				checkProductionConfig({
-					config: function(prop) {
-						if (prop === "envs") {
-							return {
-								"window-production": {}
-							};
-						}
-					}
-				}),
-				undefined
-			);
-		});
-
-		it("does not throw if config missing at all", function() {
-			assert.equal(
-				checkProductionConfig({
-					config: function(prop) {
-						if (prop === "envs") {
-							return;
-						}
-					}
-				}),
-				undefined
-			);
-		});
-	});
-
-	describe("checkStealAndLoader", function() {
-		var checkStealAndLoader = require("../lib/slim/checks/steal_and_loader");
-
-		it("throws if @loader is in the graph", function() {
-			assert.throws(
-				function() {
-					checkStealAndLoader("stealconfig.js", {
-						main: {
-							dependencies: ["@loader"]
-						},
-						"stealconfig.js": {}
-					});
-				},
-				function(err) {
-					return /"@loader" module is not supported/.test(err.message);
-				}
-			);
-		});
+	describe("checkSteal", function() {
+		var checkSteal = require("../lib/slim/checks/steal");
 
 		it("throws if @steal is in the graph", function() {
 			assert.throws(
 				function() {
-					checkStealAndLoader("stealconfig.js", {
+					checkSteal("stealconfig.js", {
 						main: {
 							dependencies: ["@steal"]
 						},
@@ -93,8 +20,8 @@ describe("slim support checks", function() {
 			);
 		});
 
-		it("does not throw if @loader/@steal missing from graph", function() {
-			assert.equal(checkStealAndLoader({}), undefined);
+		it("does not throw if @steal missing from graph", function() {
+			assert.equal(checkSteal({}), undefined);
 		});
 	});
 
