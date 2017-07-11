@@ -8,7 +8,7 @@ as the default way of creating a build of a module and all of its dependencies; 
 
 Unlike regular [builds](steal-tools.build), optimized builds don't need to load or bundle StealJS at all; a thin wrapper is added instead to the main bundle so the browser can load and execute the modules correctly. 
 
-> The **optimize** API is still a work in progress, some StealJS features are still not supported.
+> The **optimize** API is a work in progress, some StealJS features are not supported yet.
 
 In this guide, we'll go through the steps required to create and use an optimized build. We'll be using the
 `myhub` application created in the [Progressive Loading](./StealJS.guides.progressive_loading) guide.
@@ -38,7 +38,7 @@ Run the following command:
 ### Install dependencies
 
 As mentioned before, the **optimize** API is still in its early days, for that reason 
-we need to use the pre-release packages of `steal-tools` and `steal-css`.
+we need to use some pre-release packages.
 
 Edit your `package.json` like:
 
@@ -46,27 +46,11 @@ Edit your `package.json` like:
 "devDependencies": {
   ...
   "steal-css": "^1.3.0-pre.0",
-  "steal-tools": "^1.4.0-pre.1"
+  "steal-tools": "^1.4.0"
 }
 ```
 
 Run `npm install` to install all the application dependencies.
-
-### Update dynamic module identifiers
-
-One limitation of the optimized loader is that unlike StealJS's loader it does not normalize
-module identifiers on runtime. For static imports that's not a problem, but it's an issue for 
-dynamic imports (through `steal.import`), a workaround for that is to use the full module
-name.
-
-Edit the dynamic import in `myhub.js` to:
-
-```js
-steal.import(`myhub@1.0.0#${hash}/${hash}`).then(function(moduleOrPlugin) {
-```
-
-where "myhub" is the package name, the number after the "@" symbol is the package version and
-the rest of the string after the "#" is the actual module identifier.
 
 ### Make an optimize build script
 
@@ -89,6 +73,8 @@ Run the build script with:
 
 Now, start an http server by running `npm start` and open `http://127.0.0.1:8080/`
 in a web browser. You should see myhub's home page.
+
+> One limitation of the optimized loader is that unlike StealJS' loader it does not normalize module identifiers on runtime. For static imports that's not a problem, but it's an issue for dynamic imports (through steal.import), the module identifier needs to match the name set in [config.bundle].
 
 ### Performance comparison
 
@@ -119,7 +105,7 @@ Edit `index.html` to asynchronously load the bundles of the other two pages like
 ```html
 <body>
   <div class="container">Hello World.</div>
-  <script src="./dist/bundles/myhub/myhub.js"></script>
+  <script async src="./dist/bundles/myhub/myhub.js"></script>
   <script async src="./dist/bundles/myhub/weather/weather.js"></script>
   <script async src="./dist/bundles/myhub/puppies/puppies.js"></script>
 </body>
