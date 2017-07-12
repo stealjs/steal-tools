@@ -69,8 +69,7 @@ using `//!steal-remove-start`, and `//!steal-remove-end` comments.
 All available options are listed in the [clean-css documentation](https://github.com/jakubpawlowicz/clean-css#how-to-use-clean-css-programmatically).
 
 @option {Object} [uglifyOptions] A hash of options to customize the minification of JavaScript files. StealTools uses the 
-top-level `minify` function of uglify-js, and the available options are listed [here](https://github.com/mishoo/UglifyJS2#the-simple-way).
-The option `fromString` is used internally and will always be `true`; any other value will be ignored.
+top-level `minify` function of uglify-js, and the available options are listed [here](https://github.com/mishoo/UglifyJS2#minify-options).
 
 For example, to not uglify function names you can use [keep_fnames option](https://github.com/mishoo/UglifyJS2#mangle-options):
 

@@ -7,7 +7,7 @@ var rmdir = require("rimraf");
 var path = require("path");
 var testHelpers = require("./helpers");
 var fileExists = require("./file_exists");
-var _escapeRegExp = require("lodash/escapeRegExp");
+var escapeRegExp = require("lodash/escapeRegExp");
 
 var find = testHelpers.find;
 var open = testHelpers.open;
@@ -1761,53 +1761,54 @@ describe("multi build", function(){
 	describe("Source Maps", function(){
 		this.timeout(60000);
 
-		it("basics works", function(done){
-			rmdir(__dirname+"/bundle/dist", function(error){
-				if(error){
-					done(error);
-				}
-
-				multiBuild({
-					config: __dirname+"/stealconfig.js",
-					main: "basics/basics",
-					transpiler: "traceur"
-				}, {
-					quiet: true,
-					sourceMaps: true,
-					minify: true
-				}).then(function(){
-					var exists = fs.existsSync(path.join(__dirname,"dist/bundles/basics/basics.js.map"));
-					if(!exists) {
-						done(new Error("no bundle info"));
-						return;
-					}
-					done();
-				}, done);
-			});
-		});
-
-		it("works with configDependencies", function(done){
-			asap(rmdir)(__dirname + "/npm-config-dep/dist")
-			.then(function(){
-				var p = multiBuild({
-					config: __dirname + "/npm-config-dep/package.json!npm"
-				}, {
-					quiet: true,
-					sourceMaps: true,
-					sourceMapsContent: true,
-					minify: false
+		it("basics works", function() {
+			return asap(rmdir)(path.join(__dirname, "bundle", "dist"))
+				.then(function() {
+					return multiBuild({
+						config: __dirname+"/stealconfig.js",
+						main: "basics/basics",
+						transpiler: "traceur"
+					}, {
+						quiet: true,
+						sourceMaps: true,
+						minify: true
+					});
+				})
+				.then(function() {
+					return fileExists(path.join(__dirname, "dist", "bundles", "basics", "basics.js.map"));
 				});
-				return p;
-			})
-			.then(function(){
-				var str = fs.readFileSync(__dirname + "/npm-config-dep/dist/bundles/npmc/main.js.map", "utf8");
-				var data = JSON.parse(str);
-				var expected = "../../../foo.js";
-				assert.equal(data.sources[2], expected);
-			})
-			.then(done, done);
 		});
 
+		it("works with configDependencies", function() {
+			var readFile = asap(fs.readFile);
+			var base = path.join(__dirname, "npm-config-dep");
+
+			return asap(rmdir)(path.join(base, "dist"))
+				.then(function(){
+					return multiBuild({
+						config: path.join(base, "package.json!npm")
+					}, {
+						quiet: true,
+						sourceMaps: true,
+						sourceMapsContent: true,
+						minify: false
+					});
+				})
+				.then(function() {
+					return readFile(path.join(base, "dist", "bundles", "npmc", "main.js.map"))
+						.then(function(data) {
+							return JSON.parse(data.toString());
+						});
+				})
+				.then(function(sourceMap) {
+					assert.equal(sourceMap.sources[2], "../../../foo.js");
+					assert.equal(
+						sourceMap.sources.length,
+						sourceMap.sourcesContent.length,
+						"The source content should be included"
+					);
+				});
+		});
 
 		it("removes dev code from configDependencies", function(done){
 			asap(rmdir)(path.join(__dirname, "npm-config-dep", "dist"))
@@ -1842,6 +1843,7 @@ describe("multi build", function(){
 						config: __dirname + "/strip-sourcemap/stealconfig.js",
 						main: "main"
 					}, {
+						quiet: true,
 						minify: false,
 						sourceMaps: true,
 						bundleSteal: true
@@ -2188,7 +2190,7 @@ describe("multi build", function(){
 				);
 			})
 			.then(function(source) {
-				var rx = new RegExp(_escapeRegExp("url(../../../../../topbanner.png)"));
+				var rx = new RegExp(escapeRegExp("url(../../../../../topbanner.png)"));
 				assert.ok(rx.test(source), "image url should be relative to 'dist'");
 			});
 	});
@@ -2233,6 +2235,21 @@ describe("multi build", function(){
 			})
 			.then(function() {
 				return asap(rmdir)(path.join(base, "dist"));
+			});
+	});
+
+	it("can minify non-transpiled ES2015 code", function() {
+		var base = path.join(__dirname, "cjs_and_es6");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "main",
+					config: path.join(base, "stealconfig.js")
+				}, {
+					quiet: true,
+					dest: path.join(base, "dist")
+				});
 			});
 	});
 });
