@@ -11,13 +11,17 @@
 	<script src="../../../../node_modules/qunitjs/qunit/qunit.js"></script>
 	<script>
 		QUnit.test("slim progressive loader works on web workers", function(assert) {
-			var done = assert.async();
-			var worker = new Worker("dist/bundles/worker/main.js");
+			if (window.Worker) {
+				var done = assert.async();
+				var worker = new Worker("dist/bundles/worker/main.js");
 
-			worker.addEventListener("message", function(evt) {
-				assert.equal(evt.data, "foo", "got the message");
-				done();
-			});
+				worker.addEventListener("message", function(evt) {
+					assert.equal(evt.data, "foo", "got the message");
+					done();
+				});
+			} else {
+				assert.ok(true, "skipping browser with no Worker support");
+			}
 		});
 	</script>
 </body>
