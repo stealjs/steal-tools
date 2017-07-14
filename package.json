@@ -79,14 +79,16 @@
     }
   ],
   "scripts": {
-    "test": "npm run mocha && npm run test:browser",
+    "test": "npm run mocha && npm run test:browser && npm run test:slim-worker-single && npm run test:slim-worker-progressive",
     "test:browser": "npm run worker-test-build && testee test/browser/test.html --browsers firefox --reporter Spec",
     "worker-test-build": "node bin/steal build --main worker --config test/browser/webworker/stealconfig.js --bundle-steal --quiet",
     "mocha": "mocha test/test.js",
     "jshint": "jshint lib/**/*.js Gruntfile.js --config",
     "bower-install": "bower install",
     "coverage": "istanbul cover _mocha -- test/test --timeout 600000",
-    "coverage:upload": "istanbul cover _mocha --report lcovonly -- test/test --timeout 600000 && cat ./coverage/lcov.info | ./node_modules/coveralls-send/bin/coveralls.js"
+    "coverage:upload": "istanbul cover _mocha --report lcovonly -- test/test --timeout 600000 && cat ./coverage/lcov.info | ./node_modules/coveralls-send/bin/coveralls.js",
+    "test:slim-worker-single": "node test/slim/worker/single/build.js && testee test/slim/worker/single/worker.html --browsers firefox --reporter Spec",
+    "test:slim-worker-progressive":  "node test/slim/worker/progressive/build.js && testee test/slim/worker/progressive/worker.html --browsers firefox --reporter Spec"
   },
   "engines": {
     "node": "4.x - 8.x"
