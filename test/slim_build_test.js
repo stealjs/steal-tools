@@ -1,8 +1,10 @@
 var path = require("path");
 var assert = require("assert");
+var keys = require("lodash/keys");
 var denodeify = require("pdenodeify");
 var testHelpers = require("./helpers");
 var optimize = require("../index").optimize;
+var intersection = require("lodash/intersection");
 var escapeRegExp = require("lodash/escapeRegExp");
 var checkSizeSnapshot = require("./check_size_snapshot");
 
@@ -435,9 +437,7 @@ describe("slim builds", function() {
 				return optimize(config, { minify: false, quiet: true });
 			})
 			.then(function() {
-				return open(
-					path.join("test", "slim", "at_loader", "index.html")
-				);
+				return open(path.join("test", "slim", "at_loader", "index.html"));
 			})
 			.then(function(args) {
 				return Promise.all([args.close, find(args.browser, "window")]);
@@ -449,6 +449,165 @@ describe("slim builds", function() {
 				assert.ok(w.stealPath == null, "should be filtered out");
 				assert.equal(w.serviceBaseUrl, "/api/production", "should work");
 				close();
+			});
+	});
+
+	it("writes targets in folders matching the target name", function() {
+		var base = path.join(__dirname, "slim", "basics");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, {
+					quiet: true,
+					minify: false,
+					target: "web"
+				});
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "basics", "web.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "foo")]);
+			})
+			.then(function(data) {
+				assert.equal(data[1], "foo");
+				data[0]();
+			});
+	});
+
+	it("target can be passed as an array", function() {
+		var base = path.join(__dirname, "slim", "basics");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, {
+					quiet: true,
+					minify: false,
+					target: ["web"]
+				});
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "basics", "web.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "foo")]);
+			})
+			.then(function(data) {
+				assert.equal(data[1], "foo");
+				data[0]();
+			});
+	});
+
+	it("single bundle nodejs build", function() {
+		var base = path.join(__dirname, "slim", "node", "single");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, {
+					quiet: true,
+					minify: false,
+					target: "node"
+				});
+			})
+			.then(function() {
+				var main = require(path.join(base, "dist", "bundles", "node", "main"));
+
+				assert.deepEqual(main, { foo: "foo" });
+			});
+	});
+
+	it("progressively loaded bundles nodejs build", function() {
+		var base = path.join(__dirname, "slim", "node", "progressive");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, {
+					quiet: true,
+					minify: false,
+					target: "node"
+				});
+			})
+			.then(function() {
+				var main = require(path.join(base, "dist", "bundles", "node", "main"));
+				return main.foo; // dynamic import promise
+			})
+			.then(function(foo) {
+				assert.equal(foo, "foo");
+			});
+	});
+
+	it("can write multiple targets", function() {
+		var base = path.join(__dirname, "slim", "node", "single");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, {
+					quiet: true,
+					minify: false,
+					target: ["web", "node"]
+				});
+			})
+			.then(function() {
+				return Promise.all([
+					readFile(path.join(base, "dist", "bundles", "node", "main.js")),
+					readFile(path.join(base, "dist", "bundles", "web", "main.js"))
+				]);
+			})
+			.then(function(mains) {
+				var rx = new RegExp(escapeRegExp("module.exports = stealRequire"));
+
+				assert(rx.test(mains[0]), "node build should export main");
+				assert(!rx.test(mains[1]), "web build should not use module.exports");
+			});
+	});
+
+	it("buildResult returned from slim build with no target", function() {
+		var base = path.join(__dirname, "slim", "basics");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { quiet: true, minify: false });
+			})
+			.then(function(buildResult) {
+				assert(
+					intersection(keys(buildResult), [
+						"bundles",
+						"graph",
+						"loader",
+						"steal"
+					]).length > 0
+				);
+			});
+	});
+
+	it("buildResult is labeled with the target name", function() {
+		var base = path.join(__dirname, "slim", "basics");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, {
+					quiet: true,
+					minify: false,
+					target: "web"
+				});
+			})
+			.then(function(targets) {
+				assert.deepEqual(keys(targets), ["web"]);
+				assert(
+					intersection(keys(targets.web), [
+						"bundles",
+						"graph",
+						"loader",
+						"steal"
+					]).length > 0
+				);
 			});
 	});
 });
