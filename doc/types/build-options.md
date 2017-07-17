@@ -89,6 +89,53 @@ stealTools.build(config, {
 
 @option {Boolean} [watch=false] Actives watch mode which will continuously build as you develop your application.
 
+@option {Boolean} [splitLoader=false] Writes the optimized loader in its own bundle.
+
+By default the, [steal-tools.optimize] will add the loader code to the main bundle, if `splitLoader` is set to true, a bundle called `loader.js` will be created; in order to load the application the loader has to be loaded
+like any other bundle.
+
+```html
+<script src="./dist/bundles/loader.js" async></script>
+<script src="./dist/bundles/my-app.js" async></script>
+```
+
+> This option is only available for the [steal-tools.optimize] command.
+
+@option {String|Array.<String>} [target] Specifies the platform where the application is going to be deployed.
+
+Usage:
+
+```js
+stealTools.build({}, { 
+  target: "node"
+});
+```
+
+Setting target to `node` makes the loader suitable to run on Node.js environments (`require` is used to load bundles instead of script tags); currently the targets supported are: `node`, `web`, and `worker` (Web Workers).
+
+Multiple targets can be set by passing an array of supported targets, e.g:
+
+```js
+stealTools.build({}, { 
+  target: ["node", "web"]
+});
+```
+
+When `target` is not set the bundle will be written out to its default location (See `dest` property above), but when single or multiple targets are provided, the build assets will be written out inside folders matching the target name.
+
+For example, a build targeting both node and web will look like the tree below:
+
+```
+├── dist
+    │   └── bundles
+    │       ├── node
+    │       │   └── (... application assets)
+    │       └── web
+    │           └── (... application assets)
+```
+
+> This option is only available for the [steal-tools.optimize] command.
+
 @option {Boolean|String} [bundleManifest=false] Generates an HTTP2-push like manifest of the application bundles for server-side preload.
 
 When set to `true` a `bundles.json` file will be written at the top level of the folder where the built assets are located (see the property`dest` above). 
