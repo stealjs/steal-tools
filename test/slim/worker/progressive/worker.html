@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link rel="stylesheet" href="../../../../node_modules/qunitjs/qunit/qunit.css">
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	<script src="../../../../node_modules/qunitjs/qunit/qunit.js"></script>
+	<script>
+		QUnit.test("slim progressive loader works on web workers", function(assert) {
+			if (window.Worker) {
+				var done = assert.async();
+				var worker = new Worker("dist/bundles/worker/main.js");
+
+				worker.addEventListener("message", function(evt) {
+					assert.equal(evt.data, "foo", "got the message");
+					done();
+				});
+			} else {
+				assert.ok(true, "skipping browser with no Worker support");
+			}
+		});
+	</script>
+</body>
+</html>

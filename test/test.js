@@ -1,5 +1,3 @@
-var semver = require("semver");
-
 require("./recycle_test");
 
 // Unit tests
@@ -49,3 +47,4 @@ require("./dev_bundle_build_test");
 require("./babel_presets_test");
 require("./babel_plugins_test");
 require("./slim_build_test");
+require("./slim_loader_size_test");
