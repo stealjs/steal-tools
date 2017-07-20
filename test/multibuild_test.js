@@ -2252,4 +2252,19 @@ describe("multi build", function(){
 				});
 			});
 	});
+
+    // https://github.com/stealjs/steal-tools/issues/563#issuecomment-316367213
+	it("collapsed require statements with unbalance quotes", function() {
+		var base = path.join(__dirname, "collapsed_vars");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(base, "stealconfig.js")
+				}, {
+					quiet: true,
+					dest: path.join(base, "dist")
+				});
+			});
+	});
 });
