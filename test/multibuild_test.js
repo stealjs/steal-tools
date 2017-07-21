@@ -413,41 +413,45 @@ describe("multi build", function(){
 	it("builds and can load transpiled ES6 modules", function(done){
 		this.timeout(60000);
 
-		rmdir(__dirname+"/dist", function(error){
-			if(error){
-				done(error);
-			}
+		var base = path.join(__dirname, "basics");
 
-			multiBuild({
-				config: __dirname+"/stealconfig.js",
-				main: "basics/basics"
-			}, {
-				quiet: true,
-				minify: false
-			}).then(function(){
+		asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(__dirname, "stealconfig.js"),
+					main: "basics/basics"
+				}, {
+					quiet: true,
+					minify: false,
+					dest: path.join(base, "dist")
+				});
+			})
+			.then(function() {
 				open("test/basics/prod.html",function(browser, close){
 					find(browser,"MODULE", function(module){
-						assert(true, "module");
+						assert.equal(
+							module.name,
+							"module",
+							"module name is right"
+						);
 
-						assert.equal(module.name, "module", "module name is right");
+						assert.equal(
+							module.es6module.name,
+							"es6Module",
+							"steal loads ES6"
+						);
 
-						assert.equal(module.es6module.name, "es6Module", "steal loads ES6");
-
-						assert.equal(module.es6module.amdModule.name, "amdmodule", "ES6 loads amd");
+						assert.equal(
+							module.es6module.amdModule.name,
+							"amdmodule",
+							"ES6 loads amd"
+						);
 
 						close();
 					}, close);
 				}, done);
-
-
 			}, done);
-
-
-
-		});
-
 	});
-
 
 	it("System.instantiate works when bundling steal", function(done){
 		rmdir(__dirname+"/dist", function(error){
