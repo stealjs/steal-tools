@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>exports output on web workers</title>
+	<link rel="stylesheet" href="../../../node_modules/qunitjs/qunit/qunit.css">
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	<script src="../../../node_modules/qunitjs/qunit/qunit.js"></script>
+	<script>
+		QUnit.test("exports output works on web workers", function(assert) {
+			if (window.Worker) {
+				var done = assert.async();
+				var worker = new Worker("dist/out.js");
+
+				worker.addEventListener("message", function(evt) {
+					assert.equal(evt.data, "foo", "got the message");
+					done();
+				});
+
+				worker.addEventListener("error", done);
+			} else {
+				assert.ok(true, "skipping browser without Worker support");
+			}
+		});
+	</script>
+</body>
+</html>
