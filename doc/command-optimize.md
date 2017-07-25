@@ -34,7 +34,7 @@ Or, you can access `steal-tools` in _node_modules/.bin_, like:
           --config app/config.js \
           --main app/app
 
-To provide build targets passed any of the supported options separated by space, like:
+To provide build targets pass any of the supported options separated by a space, like:
 
     > steal-tools build --config app/config.js --main app/app --target web node
 
