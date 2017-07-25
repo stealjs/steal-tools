@@ -89,6 +89,27 @@ stealTools.build(config, {
 
 @option {Boolean} [watch=false] Actives watch mode which will continuously build as you develop your application.
 
+@option {Boolean} [envify=false] Replace Node-style environment variables with plain strings.
+
+steal-tools uses [loose-envify](https://github.com/zertosh/loose-envify) under the hood, this option is specially useful when building React.js applications.
+
+Usage:
+
+First, make sure `NODE_ENV` is set appropiately, then just turn on the envify option;
+if you're using the steal-tools CLI modify your build command to look like:
+
+```
+NODE_ENV=production steal-tools build --envify
+```
+
+or, if you're using the build API just pass the option like this:
+
+```javascript
+stealTools.build({}, {
+	envify: true
+});
+```
+
 @option {Boolean} [splitLoader=false] Writes the optimized loader in its own bundle.
 
 By default the, [steal-tools.optimize] will add the loader code to the main bundle, if `splitLoader` is set to true, a bundle called `loader.js` will be created; in order to load the application the loader has to be loaded
