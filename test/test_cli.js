@@ -5,6 +5,7 @@ var spawn = require("child_process").spawn;
 var asap = require("pdenodeify");
 var fs = require("fs-extra");
 var treeKill = require("tree-kill");
+var fileExists = require("./file_exists");
 
 require("steal");
 
@@ -364,5 +365,38 @@ describe("steal-tools cli", function () {
 				}, close);
 			}, done);
 		}
+	});
+
+	describe("optimize", function() {
+		this.timeout(10000);
+
+		it("works", function() {
+			var cwd = process.cwd();
+			var base = path.join(__dirname, "slim", "worker", "single");
+
+			process.chdir(base);
+
+			return asap(rmdir)(path.join(base, "dist"))
+				.then(function() {
+					return stealTools([
+						"optimize",
+						"--config", "stealconfig.js",
+						"--main", "main",
+						"--no-minify",
+						"--target", "web", "worker"
+					]);
+				})
+				.then(function() {
+					var bundles = path.join(base, "dist", "bundles");
+
+					return Promise.all([
+						fileExists(path.join(bundles, "worker", "main.js")),
+						fileExists(path.join(bundles, "web", "main.js"))
+					]);
+				})
+				.then(function() {
+					process.chdir(cwd);
+				});
+		});
 	});
 });

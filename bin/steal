@@ -3,6 +3,7 @@
 var cmdBuild = require("../lib/cli/cmd_build");
 var cmdBundle = require("../lib/cli/cmd_bundle");
 var cmdExport = require("../lib/cli/cmd_export");
+var cmdOptimize = require("../lib/cli/cmd_optimize");
 var cmdTransform = require("../lib/cli/cmd_transform");
 var cmdLiveReload = require("../lib/cli/cmd_live_reload");
 
@@ -12,6 +13,7 @@ var argv = require("yargs")
 	.command(cmdTransform)
 	.command(cmdLiveReload)
 	.command(cmdExport)
+	.command(cmdOptimize)
 	.version(function() {
 		return require("../package.json").version;
 	})
