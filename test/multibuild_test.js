@@ -323,22 +323,22 @@ describe("multi build", function(){
 
 	});
 
-	it("supports bundling steal", function(done){
+	it("supports bundling steal", function(done) {
+		var base = path.join(__dirname, "bundle");
 
-		rmdir(__dirname+"/bundle/bundles", function(error){
-			if(error){
-				done(error);
-			}
-
-			multiBuild({
-				config: __dirname+"/bundle/stealconfig.js",
-				main: "bundle"
-			},{
-				bundleSteal: true,
-				quiet: true,
-				minify: false
-			}).then(function(){
-
+		asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "bundle",
+					config: path.join(base, "stealconfig.js")
+				}, {
+					quiet: true,
+					minify: false,
+					bundleSteal: true,
+					dest: path.join(base, "dist")
+				});
+			})
+			.then(function(){
 				open("test/bundle/packaged_steal.html#a",function(browser, close){
 					find(browser,"appA", function(appA){
 						var loader = browser.window.System;
@@ -348,22 +348,16 @@ describe("multi build", function(){
 						assert.equal(appA.ab.name, "a_b", "a got ab");
 
 						// environment is set to production
-						assert.equal(loader.env, 'window-production', "bundle steal is always production");
-
+						assert.equal(
+							loader.env,
+							"window-production",
+							"bundle steal is always production"
+						);
 						close();
 					}, close);
 				}, done);
-
-
-			}).catch(function(e){
-				done(e);
-			});
-
-
-
-		});
-
-
+			})
+			.catch(done);
 	});
 
 	it("allows bundling steal and loading from alternate locations", function(done){
@@ -2254,6 +2248,57 @@ describe("multi build", function(){
 					quiet: true,
 					dest: path.join(base, "dist")
 				});
+			});
+	});
+
+	it("promise polyfill can be excluded from StealJS core", function() {
+		var base = path.join(__dirname, "bundle");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "bundle",
+					config: path.join(__dirname, "bundle", "stealconfig.js")
+				}, {
+					quiet: true,
+					minify: false,
+					bundlePromisePolyfill: false,
+					dest: path.join(base, "dist")
+				});
+			})
+			.then(function() {
+				return fileExists(
+					path.join(base, "dist", "steal-sans-promises.production.js")
+				);
+			});
+	});
+
+	it("supports bundling StealJS without promise polyfill", function() {
+		var base = path.join(__dirname, "bundle");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "bundle",
+					config: path.join(base, "stealconfig.js")
+				}, {
+					quiet: true,
+					minify: false,
+					bundleSteal: true,
+					bundlePromisePolyfill: false,
+					dest: path.join(base, "dist")
+				});
+			})
+			.then(function() {
+				return asap(fs.readFile)(
+					path.join(base, "dist", "bundles", "bundle.js")
+				);
+			})
+			.then(function(mainBundle) {
+				assert(
+					!/ES6 global Promise shim/.test(mainBundle.toString()),
+					"Promise shim should not be bundled with steal"
+				);
 			});
 	});
 });

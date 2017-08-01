@@ -191,3 +191,34 @@ The top-level objects correspond to _entry level bundles_; these are the bundles
 The nested objects are _shared bundles_, these are created by `steal-tools` to minimize the number of HTTP requests needed to load the application code. 
 
 Each _shared bundle_ has two properties, `type`, an string that indicates whether the bundle contains script code or styles and `weight`, a number indicating loading priority; a bundle with lower weight should be loaded before other bundles, e.g: style bundles have `weight` of `1` and should be loaded before script bundles.
+
+@option {Boolean} [bundlePromisePolyfill=true] Bundles a Promise polyfill with StealJS core
+
+By default, [steal-tools.build] will add a Promise polyfill as part of the StealJS core. If Promises are supported natively in the target environment of your application
+you can turn this flag off to prevent the polyfill to be included, like this:
+
+```js
+stealTools.build(config, {
+	bundlePromisePolyfill: false
+});
+```
+
+steal-tools will write a file called `steal.sans-promises.production.js` to the bundles folder, make sure the script tag in your main html page loads the correct file, e.g:
+
+
+```html
+<script src="./dist/steal.sans-promises.production.js"></script>
+```
+
+The `bundlePromisePolyfill` also changes the default behavior of [bundleSteal], meaning that
+the Promise polyfill will be excluded from StealJS core regardless of whether it is part of the main bundle or not.
+
+To bundle StealJS without the Promise polyfill just pass the following options to [steal-tools.build]:
+
+
+```js
+stealTools.build(config, {
+	bundleSteal: true,
+	bundlePromisePolyfill: false
+});
+```
