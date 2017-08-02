@@ -911,6 +911,33 @@ describe("multi build", function(){
 		});
 	});
 
+	it("circular refs using default imports work with Babel (#802)", function(done) {
+		var base = path.join(__dirname, "circular_default");
+
+		asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(base, "stealconfig.js"),
+				}, {
+					quiet: true,
+					minify: false,
+					dest: path.join(base, "dist")
+				});
+			})
+			.then(function() {
+				open("test/circular_default/prod.html", function(browser, close) {
+					find(browser, "circular", function(circular) {
+						assert.equal(
+							circular.foo,
+							circular.bar,
+							"circular refs worked"
+						);
+						close();
+					}, close);
+				}, done);
+			}, done);
+	});
+
 	describe("with plugins", function(){
 		this.timeout(60000);
 

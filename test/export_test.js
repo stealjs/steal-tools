@@ -58,7 +58,7 @@ describe("export", function(){
 		}, done);
 	});
 
-	it("works with multiple mains", function(done){
+	it("works with multiple mains", function(done) {
 		stealExport({
 			steal: {
 				main: [
