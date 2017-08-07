@@ -54,8 +54,6 @@ Run `npm install` to install all the application dependencies.
 
 ### Make an optimize build script
 
-Currently, there is no CLI option to use the `stealTools.optimize` function, so a NodeJS script is required.
-
 Create _optimize.js_:
 
 ```js
@@ -64,6 +62,8 @@ var stealTools = require("steal-tools");
 // use the defaults
 stealTools.optimize();
 ```
+
+> The [steal-tools.cmd.optimize] CLI can be used instead of NPM scripts.
 
 Run the build script with:
 
@@ -118,3 +118,174 @@ If you reload your browser, you'd notice that there are two extra requests and t
 Navigate to the puppies page and see it for yourself!
 
 ![async](https://user-images.githubusercontent.com/724877/27697431-75927fc2-5cb1-11e7-9642-1a496a5c8cd3.png)
+
+## iOS builds using Apache Cordova
+
+In this part of the guide we will turn the `myhub` application into an iOS application that can be tested in the iOS simulator using [Apache Cordova](https://cordova.apache.org/).
+
+> This guide is targeted to macOS users, please download and install Xcode from the [AppStore](https://developer.apple.com/xcode/) before moving forward.
+
+To set up the Cordova build, we have to install a couple of packages, run:
+
+```
+npm install --save-dev steal-cordova
+npm install --global ios-sim
+```
+
+### Update the optimize build script
+
+Once `steal-cordova` is installed and saved in your `package.json` file, update _optimize.js_ with the following code:
+
+```js
+var path = require("path");
+var stealTools = require("steal-tools");
+
+var stealCordova = require("steal-cordova")({
+  buildDir: "./build/cordova",
+  id: "com.myhub",
+  name: "MyHub",
+  platforms: ["ios"],
+  index: path.join(__dirname, "index.html")
+});
+
+stealTools
+  .optimize()
+  .then(stealCordova.build)
+  .then(function() {
+    // launch the iOS simulator automatically
+    stealCordova.ios.emulate();
+  });
+```
+
+> Read [steal-cordova](https://github.com/stealjs/steal-cordova) documentation to get familiar with all the available options.
+
+Run the build script with:
+
+```
+> node optimize.js
+```
+
+![screen shot 2017-08-04 at 15 30 42](https://user-images.githubusercontent.com/724877/28987781-fc5b731c-7929-11e7-89b4-10f9a3551b0b.png)
+
+Congrats! you just created an iOS application!
+
+> If you receive the error "Error: Cannot read property 'replace' of undefined", you can work around it by running `cd build/cordova/platforms/ios/cordova/ && npm install ios-sim@6` then cd back into the `myhub` root folder and run the optimize build script again.
+
+### Optimized build targets and Cordova builds
+
+The `optimize` API can be passed a [target](steal-tools.BuildOptions) option to generate code specific to certain platforms, you can read more about it in the [steal-tools](https://stealjs.com/docs/steal-tools.BuildOptions.html) documentation.
+
+The Cordova build requires the web target output to be passed in, first, make sure your `target` array includes the "web" option.
+
+Assuming you're creating a build to load on Web Workers as a second target, _optimize.js_ should look like this:
+
+```js
+// The code up to this point remains the same
+stealTools
+  .optimize({}, { target: ["web", "worker"] })
+  .then(function(buildResult) {
+    return stealCordova.build(buildResult.web);
+  })
+  .then(function() {
+    stealCordova.ios.emulate();
+  });
+```
+
+and that's it!
+
+### Desktop builds using Electron
+
+In the last part of this guide we will make a desktop build of our `myhub` application using [Electron](https://electron.atom.io/).
+
+To set up the desktop build, we have to install `steal-electron` by running:
+
+```
+npm install --save-dev steal-electron
+```
+
+### Electron main module
+
+We will need a different entry point for our Electron application, this module will take care of creating windows and handling system events.
+
+Create _electron-main.js_ with the following code:
+
+```js
+const url = require("url");
+const path = require("path");
+const { app, BrowserWindow } = require("electron");
+
+let win;
+
+function createWindow() {
+  win = new BrowserWindow({ width: 800, height: 600 });
+
+  win.loadURL(
+    url.format({
+      pathname: path.join(__dirname, "index.html"),
+      protocol: "file:",
+      slashes: true
+    })
+  );
+
+  win.on("closed", () => {
+    win = null;
+  });
+}
+
+app.on("ready", createWindow);
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});
+
+app.on("activate", () => {
+  if (win === null) {
+    createWindow();
+  }
+});
+```
+
+> This code was taken from Electron's [quick start guide](https://electron.atom.io/docs/tutorial/quick-start/), read their documentation to get familiar with the available APIs and options.
+
+### Update the optimize build script
+
+Once `steal-electron` is installed and saved in your `package.json` file, update _optimize.js_ with the following code:
+
+```js
+var stealTools = require("steal-tools");
+var stealElectron = require("steal-electron");
+
+var electronOptions = {
+  buildDir: "./build",
+  platforms: ["darwin"],
+  main: "electron-main.js",
+  electronVersion: "1.6.11",
+  files: ["dist/**/*", "index.html"]
+};
+
+stealTools
+  .optimize()
+  .then(function(buildResult) {
+    return stealElectron(electronOptions, buildResult);
+  });
+```
+
+> Read [steal-electron](https://github.com/stealjs/steal-electron) documentation to get familiar with all the available options.
+
+Run the build script with:
+
+```
+> node optimize.js
+```
+
+Then open the generated application file by running the following command:
+
+```
+open build/myhub-darwin-x64/myhub.app
+```
+
+![screen shot 2017-08-04 at 16 05 41](https://user-images.githubusercontent.com/724877/28988817-feca7fe4-792e-11e7-845c-53d9964ded09.png)
+
+Congrats, you just created a desktop application!
