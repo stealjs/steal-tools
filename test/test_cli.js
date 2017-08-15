@@ -398,5 +398,60 @@ describe("steal-tools cli", function () {
 					process.chdir(cwd);
 				});
 		});
+
+		it("'target' should be optional", function() {
+			var cwd = process.cwd();
+			var base = path.join(__dirname, "slim", "worker", "single");
+
+			process.chdir(base);
+
+			return asap(rmdir)(path.join(base, "dist"))
+				.then(function() {
+					return stealTools([
+						"optimize",
+						"--config", "stealconfig.js",
+						"--main", "main",
+						"--no-minify"
+					]);
+				})
+				.then(function() {
+					var bundles = path.join(base, "dist", "bundles");
+					return fileExists(path.join(bundles, "main.js"));
+				})
+				.then(function() {
+					process.chdir(cwd);
+				});
+		});
+	});
+
+	it("throws if an unknown 'target' is passed in", function(done) {
+		var cwd = process.cwd();
+		var base = path.join(__dirname, "slim", "worker", "single");
+
+		process.chdir(base);
+
+		asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return stealTools([
+					"optimize",
+					"--config", "stealconfig.js",
+					"--main", "main",
+					"--no-minify",
+					"--target", "foo"
+				]);
+			})
+			.then(
+				function() {
+					assert(false, "command should not succeed");
+				},
+				function(error) {
+					process.chdir(cwd);
+					assert(
+						/Cannot create slim build, target/.test(error.message),
+						"should throw a descriptive error message"
+					);
+				}
+			)
+			.then(done, done);
 	});
 });
