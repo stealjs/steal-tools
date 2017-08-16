@@ -182,6 +182,10 @@ describe("slim builds", function() {
 						}
 					},
 					baz: {
+						"dist/bundles/main.js": {
+							weight: 2,
+							type: "script"
+						},
 						"dist/bundles/baz.js": {
 							weight: 2,
 							type: "script"
