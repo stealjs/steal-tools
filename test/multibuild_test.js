@@ -2042,7 +2042,7 @@ describe("multi build", function(){
 			});
 	});
 
-	it("can build apps using steal-clone", function() {
+	it("can build apps using steal-clone", function(done) {
 		var base = path.join(__dirname, "steal_clone");
 
 		return asap(rmdir)(path.join(base, "dist"))
@@ -2057,7 +2057,15 @@ describe("multi build", function(){
 				});
 			})
 			.then(function() {
-				assert.ok(true, "it works!");
+				var page = path.join("test", "steal_clone", "prod.html");
+
+				open(page, function(browser, close) {
+					find(browser, "clone", function(clone) {
+						assert.ok(!!clone, "it loaded");
+						done();
+					}, close);
+				}, done);
+
 			});
 	});
 
