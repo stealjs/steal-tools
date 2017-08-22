@@ -1,11 +1,15 @@
-import {prefix} from 'plugin-dep';
+var prefix = require("plugin-dep").prefix;
 
-export function translate(load) {
-	
-	return "define(function(){"+
-		"return function(){"+
-			"return '"+prefix()+"-"+load.source+"'"+
-		"}"+
-	"})";
-	
+module.exports = {
+	get something() {
+		throw new Error("This should not be called!");
+	},
+
+	translate: function(load) {
+		return "define(function(){"+
+			"return function(){"+
+				"return '"+prefix()+"-"+load.source+"'"+
+			"}"+
+		"})";
+	}
 };

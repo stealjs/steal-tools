@@ -966,7 +966,8 @@ describe("multi build", function(){
 					config: __dirname+"/plugins/config.js",
 					main: "main"
 				}, {
-					quiet: true
+					quiet: true,
+					minify: false
 				}).then(function(){
 					// open the prod page and make sure
 					// the plugin processed the input correctly
