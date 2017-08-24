@@ -571,4 +571,15 @@ describe("slim builds", function() {
 				);
 			});
 	});
+
+	it("has the correct buildType in buildResult", function (done) {
+		var base = path.join(__dirname, "slim", "basics");
+		var config = {config: path.join(base, "stealconfig.js")};
+
+		optimize(config, {quiet: true, minify: false})
+			.then(function (buildResult) {
+				assert.equal(buildResult.buildType, "optimize");
+				done()
+			}).catch(done);
+	});
 });

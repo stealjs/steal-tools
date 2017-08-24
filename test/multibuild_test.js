@@ -2329,4 +2329,17 @@ describe("multi build", function(){
 				);
 			});
 	});
+
+	it("has the correct buildType in buildResult", function (done) {
+		multiBuild({
+			config: __dirname + "/bundle/stealconfig.js",
+			main: "bundle"
+		}, {
+			minify: false,
+			quiet: true
+		}).then(function (buildResult) {
+			assert.equal(buildResult.buildType, "build");
+			done();
+		}, done).catch(done);
+	})
 });
