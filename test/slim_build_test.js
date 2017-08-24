@@ -571,4 +571,41 @@ describe("slim builds", function() {
 				);
 			});
 	});
+
+	it("put the loader in each main", function () {
+		var base = path.join(__dirname, "slim", "multimain");
+		var config = {
+			main: ["main1", "main2"],
+			config: path.join(base, "package.json!npm")
+		};
+
+		return rmdir(path.join(base, "dist"))
+			.then(function () {
+				return optimize(config, {quiet: true, minify: false});
+			})
+			.then(function () {
+				return Promise.all(
+					[
+						open(path.join("test", "slim", "multimain", "main1.html")),
+						open(path.join("test", "slim", "multimain", "main2.html"))
+					]
+				);
+			})
+			.then(function (args) {
+				var main1 = args[0];
+				var main2 = args[1];
+
+				return Promise.all([
+					args.close,
+					find(main1.browser, "foo"),
+					find(main1.browser, "bar"),
+					find(main2.browser, "bar")
+				]);
+			})
+			.then(function (data) {
+				assert.equal(data[1], "foo");
+				assert.equal(data[2], "bar");
+				assert.equal(data[3], "bar");
+			});
+	})
 });
