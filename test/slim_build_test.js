@@ -197,27 +197,6 @@ describe("slim builds", function() {
 			});
 	});
 
-	it("errors out with apps using steal-conditional", function(done) {
-		var copy = denodeify(fs.copy);
-		var base = path.join(__dirname, "slim", "conditionals");
-		var config = { config: path.join(base, "package.json!npm") };
-
-		rmdir(path.join(base, "dist"))
-			.then(function() {
-				return copy(
-					path.join(__dirname, "..", "node_modules", "steal-conditional"),
-					path.join(base, "node_modules", "steal-conditional")
-				);
-			})
-			.then(function() {
-				return optimize(config, { minify: false, quiet: true });
-			})
-			.then(null, function(err) {
-				assert(/Cannot create slim build/.test(err.message));
-				done();
-			});
-	});
-
 	it("loader code can be put in its own bundle", function() {
 		this.timeout(1000);
 
