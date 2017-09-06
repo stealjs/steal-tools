@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
-    "steal-conditional": "^0.3.4"
+    "steal-conditional": "^0.4.0"
   },
   "system": {
     "configDependencies": [
