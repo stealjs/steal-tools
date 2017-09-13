@@ -42,7 +42,7 @@
   "devDependencies": {
     "babel-plugin-steal-test": "0.0.2",
     "babel-preset-steal-test": "0.0.1",
-    "bower": "1.8.0",
+    "bower": "1.8.2",
     "browserify": "~14.3.0",
     "comparify": "git://github.com/bitovi/comparify#master",
     "connect": "^3.5.0",
