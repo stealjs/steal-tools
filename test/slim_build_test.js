@@ -551,14 +551,78 @@ describe("slim builds", function() {
 			});
 	});
 
-	it("has the correct buildType in buildResult", function (done) {
+	it("has the correct buildType in buildResult", function() {
 		var base = path.join(__dirname, "slim", "basics");
 		var config = {config: path.join(base, "stealconfig.js")};
 
-		optimize(config, {quiet: true, minify: false})
+		return optimize(config, {quiet: true, minify: false})
 			.then(function (buildResult) {
 				assert.equal(buildResult.buildType, "optimize");
-				done()
-			}).catch(done);
+			});
+	});
+
+	it("works with multi main apps", function() {
+		var base = path.join(__dirname, "multi-main");
+		var mains = ["app_a", "app_b", "app_c", "app_d"];
+
+		var ab = { name: "a_b" };
+		var cd = { name: "c_d" };
+		var all = { name: "all" };
+		var expected = {
+			app_a: {
+				name: "a", ab: ab, all: all
+			},
+			app_b: {
+				name: "b", ab: ab, all: all
+			},
+			app_c: {
+				name: "c", cd: cd, all: all
+			},
+			app_d: {
+				name: "d", cd: cd, all: all
+			}
+		};
+
+		function waterfall(mains, cb) {
+			return mains.reduce(
+				function(promise, main) {
+					return promise.then(function() {
+						return cb(main);
+					});
+				},
+				Promise.resolve()
+			);
+		}
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize({
+					config: path.join(__dirname, "multi-main", "config.js"),
+					main: mains.slice()
+				}, {
+					quiet: true,
+					minify: false
+				});
+			})
+			.then(function() {
+				return waterfall(mains, function(main) {
+					var close;
+					var page = `slim_${main}.html`;
+
+					return open(path.join("test", "multi-main", page))
+						.then(function(args) {
+							close = args.close;
+							return find(args.browser, "app");
+						})
+						.then(function(app) {
+							assert.deepEqual(
+								expected[main],
+								app,
+								`should get the global exposed by ${main}`
+							);
+							close();
+						});
+				});
+			});
 	});
 });

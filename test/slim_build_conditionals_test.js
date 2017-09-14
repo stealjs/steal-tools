@@ -7,7 +7,7 @@ var testHelpers = require("./helpers");
 var fileExists = require("./file_exists");
 var optimize = require("../lib/build/slim");
 
-describe("build app using steal-conditional", function() {
+describe("using steal-conditional and slim builds", function() {
     this.timeout(30000);
 
 	var find = testHelpers.find;
