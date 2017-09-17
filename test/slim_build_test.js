@@ -378,6 +378,7 @@ describe("slim builds", function() {
 			});
 	});
 
+
 	it("rejects build promise if unknown target passed in", function(done) {
 		var base = path.join(__dirname, "slim", "basics");
 		var config = { config: path.join(base, "stealconfig.js") };
@@ -390,6 +391,23 @@ describe("slim builds", function() {
 				assert(/Cannot create slim build/.test(error.message));
 				done();
 			});
+	});
+
+	it("config argument is optional", function(done) {
+		// passing options to force the rejection due to unknown target
+		optimize(undefined, { quiet: true, target: "electron" })
+			.then(
+				function() {
+					done(new Error("build promise should not resolve"));
+				},
+				function(error) {
+					assert(
+						/Cannot create slim build/.test(error.message),
+						"Incorrect error message: " + error.message
+					);
+					done();
+			})
+			.catch(done);
 	});
 
 	it("writes targets in folders matching the target name", function() {
