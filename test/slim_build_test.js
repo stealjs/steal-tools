@@ -197,27 +197,6 @@ describe("slim builds", function() {
 			});
 	});
 
-	it("errors out with apps using steal-conditional", function(done) {
-		var copy = denodeify(fs.copy);
-		var base = path.join(__dirname, "slim", "conditionals");
-		var config = { config: path.join(base, "package.json!npm") };
-
-		rmdir(path.join(base, "dist"))
-			.then(function() {
-				return copy(
-					path.join(__dirname, "..", "node_modules", "steal-conditional"),
-					path.join(base, "node_modules", "steal-conditional")
-				);
-			})
-			.then(function() {
-				return optimize(config, { minify: false, quiet: true });
-			})
-			.then(null, function(err) {
-				assert(/Cannot create slim build/.test(err.message));
-				done();
-			});
-	});
-
 	it("loader code can be put in its own bundle", function() {
 		this.timeout(1000);
 
@@ -399,6 +378,7 @@ describe("slim builds", function() {
 			});
 	});
 
+
 	it("rejects build promise if unknown target passed in", function(done) {
 		var base = path.join(__dirname, "slim", "basics");
 		var config = { config: path.join(base, "stealconfig.js") };
@@ -411,6 +391,23 @@ describe("slim builds", function() {
 				assert(/Cannot create slim build/.test(error.message));
 				done();
 			});
+	});
+
+	it("config argument is optional", function(done) {
+		// passing options to force the rejection due to unknown target
+		optimize(undefined, { quiet: true, target: "electron" })
+			.then(
+				function() {
+					done(new Error("build promise should not resolve"));
+				},
+				function(error) {
+					assert(
+						/Cannot create slim build/.test(error.message),
+						"Incorrect error message: " + error.message
+					);
+					done();
+			})
+			.catch(done);
 	});
 
 	it("writes targets in folders matching the target name", function() {
@@ -572,14 +569,78 @@ describe("slim builds", function() {
 			});
 	});
 
-	it("has the correct buildType in buildResult", function (done) {
+	it("has the correct buildType in buildResult", function() {
 		var base = path.join(__dirname, "slim", "basics");
 		var config = {config: path.join(base, "stealconfig.js")};
 
-		optimize(config, {quiet: true, minify: false})
+		return optimize(config, {quiet: true, minify: false})
 			.then(function (buildResult) {
 				assert.equal(buildResult.buildType, "optimize");
-				done()
-			}).catch(done);
+			});
+	});
+
+	it("works with multi main apps", function() {
+		var base = path.join(__dirname, "multi-main");
+		var mains = ["app_a", "app_b", "app_c", "app_d"];
+
+		var ab = { name: "a_b" };
+		var cd = { name: "c_d" };
+		var all = { name: "all" };
+		var expected = {
+			app_a: {
+				name: "a", ab: ab, all: all
+			},
+			app_b: {
+				name: "b", ab: ab, all: all
+			},
+			app_c: {
+				name: "c", cd: cd, all: all
+			},
+			app_d: {
+				name: "d", cd: cd, all: all
+			}
+		};
+
+		function waterfall(mains, cb) {
+			return mains.reduce(
+				function(promise, main) {
+					return promise.then(function() {
+						return cb(main);
+					});
+				},
+				Promise.resolve()
+			);
+		}
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize({
+					config: path.join(__dirname, "multi-main", "config.js"),
+					main: mains.slice()
+				}, {
+					quiet: true,
+					minify: false
+				});
+			})
+			.then(function() {
+				return waterfall(mains, function(main) {
+					var close;
+					var page = `slim_${main}.html`;
+
+					return open(path.join("test", "multi-main", page))
+						.then(function(args) {
+							close = args.close;
+							return find(args.browser, "app");
+						})
+						.then(function(app) {
+							assert.deepEqual(
+								expected[main],
+								app,
+								`should get the global exposed by ${main}`
+							);
+							close();
+						});
+				});
+			});
 	});
 });
