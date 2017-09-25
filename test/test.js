@@ -14,7 +14,6 @@ require("./cli/make_outputs_test");
 require("./cli/cmd_live_test");
 require("./get_es_module_imports_test");
 require("./cli/make_build_options_test");
-require("./slim_support_checks_test");
 require("./slim_build_conditionals_test");
 
 // Integration tests
