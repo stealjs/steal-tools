@@ -378,7 +378,6 @@ describe("slim builds", function() {
 			});
 	});
 
-
 	it("rejects build promise if unknown target passed in", function(done) {
 		var base = path.join(__dirname, "slim", "basics");
 		var config = { config: path.join(base, "stealconfig.js") };
@@ -641,6 +640,39 @@ describe("slim builds", function() {
 							close();
 						});
 				});
+			});
+	});
+
+	it("has partial support for @steal usage", function() {
+		var base = path.join(__dirname, "slim", "at_steal");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { minify: false, quiet: true });
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "at_steal", "index.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "atSteal")]);
+			})
+			.then(function(data) {
+				var close = data[0];
+				var atSteal = data[1];
+
+				assert.ok(
+					typeof steal.done === "function",
+					"should include a .done function"
+				);
+
+				assert.equal(
+					atSteal.loader.serviceBaseURL,
+					"/api/production",
+					"should include @loader properties"
+				);
+
+				close();
 			});
 	});
 });
