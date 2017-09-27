@@ -32,7 +32,7 @@
     "through2": "^2.0.0",
     "tmp": "0.0.33",
     "traceur": "0.0.111",
-    "transpile": "^2.5.3",
+    "transpile": "^2.5.5",
     "uglify-es": "^3.0.26",
     "urix": "^0.1.0",
     "winston": "^2.2.0",
@@ -88,7 +88,7 @@
     "coverage": "istanbul cover _mocha -- test/test --timeout 600000",
     "coverage:upload": "istanbul cover _mocha --report lcovonly -- test/test --timeout 600000 && cat ./coverage/lcov.info | ./node_modules/coveralls-send/bin/coveralls.js",
     "test:slim-worker-single": "node test/slim/worker/single/build.js && testee test/slim/worker/single/worker.html --browsers firefox --reporter Spec",
-    "test:slim-worker-progressive":  "node test/slim/worker/progressive/build.js && testee test/slim/worker/progressive/worker.html --browsers firefox --reporter Spec",
+    "test:slim-worker-progressive": "node test/slim/worker/progressive/build.js && testee test/slim/worker/progressive/worker.html --browsers firefox --reporter Spec",
     "test:exports-worker": "node test/exports_worker/exports.js && testee test/exports_worker/worker.html --browsers firefox --reporter Spec"
   },
   "engines": {
