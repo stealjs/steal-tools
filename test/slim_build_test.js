@@ -675,4 +675,27 @@ describe("slim builds", function() {
 				close();
 			});
 	});
+
+	it("supports 'module' imports in AMD modules", function() {
+		var base = path.join(__dirname, "slim", "module");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { minify: false, quiet: true });
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "module", "index.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "moduleId")]);
+			})
+			.then(function(data) {
+				var close = data[0];
+				var moduleId = data[1];
+
+				assert.equal(moduleId, "main", "should set module.id");
+				close();
+			});
+	});
 });
