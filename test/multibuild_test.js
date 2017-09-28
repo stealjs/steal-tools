@@ -1682,14 +1682,20 @@ describe("multi build", function(){
 					var amdSource = data.graph[module].activeSource.code;
 
 					assert.equal(source, amdSource, "jquery is not transpiled into AMD");
-					assert.notEqual(amdSource.substr(0, 10+module.length), "define('"+module+"',");
+					assert.notEqual(
+						amdSource.substr(0, 10+module.length),
+						`define("${module}","`
+					);
 
 					module = 'src/dep';
 					source = data.graph[module].load.source;
 					amdSource = data.graph[module].activeSource.code;
 
 					assert.notEqual(source, amdSource, "src/dep is transpiled into AMD");
-					assert.equal(amdSource.substr(0, 10+module.length), "define('"+module+"',");
+					assert.equal(
+						amdSource.substr(0, 10+module.length),
+						`define("${module}",`
+					);
 
 					done();
 				}).catch(done);
