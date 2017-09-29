@@ -37,7 +37,7 @@
     "urix": "^0.1.0",
     "winston": "^2.2.0",
     "ws": "^3.0.0",
-    "yargs": "^8.0.1"
+    "yargs": "^9.0.1"
   },
   "devDependencies": {
     "babel-plugin-steal-test": "0.0.2",
