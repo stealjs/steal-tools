@@ -698,4 +698,26 @@ describe("slim builds", function() {
 				close();
 			});
 	});
+
+	it("keeps @loader in the graph when using the npm plugin", function() {
+		var base = path.join(__dirname, "slim", "at_loader");
+		var config = { config: path.join(base, "package.json!npm") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { minify: false, quiet: true });
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "at_loader", "npm.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "window")]);
+			})
+			.then(function(data) {
+				var w = data[1];
+				var close = data[0];
+				assert.equal(w.serviceBaseUrl, "/api/production", "should work");
+				close();
+			});
+	});
 });
