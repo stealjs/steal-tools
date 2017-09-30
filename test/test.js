@@ -14,18 +14,11 @@ require("./cli/make_outputs_test");
 require("./cli/cmd_live_test");
 require("./get_es_module_imports_test");
 require("./cli/make_build_options_test");
-require("./slim_support_checks_test");
 require("./slim_build_conditionals_test");
 
 // Integration tests
 require("./test_cli");
-
-// Node 0.10 doesn't support Symbols so the live-reload tests will
-// not pass on it.
-if(typeof Symbol !== "undefined") {
-	require("./test_live");
-}
-
+require("./test_live");
 require("./bundle_name_test");
 require("./dependencygraph_test");
 require("./bundle_test");

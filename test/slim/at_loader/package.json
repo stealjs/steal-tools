@@ -1,0 +1,8 @@
+{
+  "name": "at_loader",
+  "version": "0.0.1",
+  "main": "main.js",
+  "steal": {
+    "serviceBaseURL": "/api/production"
+  }
+}
