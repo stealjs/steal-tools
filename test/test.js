@@ -42,3 +42,7 @@ require("./babel_presets_test");
 require("./babel_plugins_test");
 require("./slim_build_test");
 require("./slim_loader_size_test");
+
+// external steal-tools plugins
+require("./bundle_assets_test");
+//require("./serviceworker_test"); skip for now
