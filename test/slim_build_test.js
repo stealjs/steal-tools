@@ -720,4 +720,26 @@ describe("slim builds", function() {
 				close();
 			});
 	});
+
+	it("supports UMD/AMD that depend on 'exports'", function() {
+		var base = path.join(__dirname, "slim", "rollup_umd");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { minify: false, quiet: true });
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "rollup_umd", "index.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "bar")]);
+			})
+			.then(function(data) {
+				var bar = data[1];
+				var close = data[0];
+				assert.equal(bar, "bar", "should work");
+				close();
+			});
+	});
 });

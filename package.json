@@ -32,7 +32,7 @@
     "through2": "^2.0.0",
     "tmp": "0.0.33",
     "traceur": "0.0.111",
-    "transpile": "^2.5.5",
+    "transpile": "^2.5.6",
     "uglify-es": "^3.1.2",
     "urix": "^0.1.0",
     "winston": "^2.2.0",
