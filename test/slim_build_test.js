@@ -742,4 +742,26 @@ describe("slim builds", function() {
 				close();
 			});
 	});
+
+	it("supports webpack UMD flagged as global", function() {
+		var base = path.join(__dirname, "slim", "webpack_umd");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { minify: false, quiet: true });
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "webpack_umd", "index.html"));
+			})
+			.then(function(args) {
+				return Promise.all([args.close, find(args.browser, "window")]);
+			})
+			.then(function(data) {
+				var w = data[1];
+				var close = data[0];
+				assert.equal(w.dep, "io", "should export the global correctly");
+				close();
+			});
+	});
 });
