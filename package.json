@@ -27,7 +27,7 @@
     "prettier": "^1.7.0",
     "pump": "^1.0.2",
     "steal": "^1.5.13",
-    "steal-bundler": "^0.3.0",
+    "steal-bundler": "^0.3.5",
     "steal-parse-amd": "^1.0.0",
     "through2": "^2.0.0",
     "tmp": "0.0.33",
