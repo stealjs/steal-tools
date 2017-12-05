@@ -24,7 +24,7 @@
     "multimatch": "^2.1.0",
     "normalize-path": "^2.1.1",
     "pdenodeify": "^0.1.0",
-    "prettier": "1.8.2",
+    "prettier": "1.9.1",
     "pump": "^1.0.2",
     "steal": "^1.5.13",
     "steal-bundler": "^0.3.5",
