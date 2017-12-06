@@ -7,6 +7,7 @@ var testHelpers = require("./helpers");
 var devBundleBuild = require("../lib/build/bundle");
 
 var open = testHelpers.popen;
+var find = testHelpers.pfind;
 var readFile = denodeify(fs.readFile);
 var rmdir = denodeify(require("rimraf"));
 
@@ -204,5 +205,26 @@ describe("dev bundle build", function() {
 				return rmdir(devBundlePath);
 			});
 	});
-});
 
+	it("Does not remove development code", function() {
+		var config = {
+			config: path.join(__dirname, "dev_bundle_app", "package.json!npm")
+		};
+
+		var devBundlePath = path.join(__dirname, "dev_bundle_app", "dev-bundle.js");
+
+		return devBundleBuild(config, baseOptions)
+			.then(function() {
+				return readFile(devBundlePath);
+			})
+			.then(function(contents) {
+				var nodeName = "it worked";
+				var regexp = new RegExp(_.escapeRegExp(nodeName));
+
+				assert(regexp.test(contents), "bundle should dev code");
+			})
+			.then(function() {
+				return rmdir(devBundlePath);
+			});
+	});
+});

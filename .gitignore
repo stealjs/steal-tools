@@ -3,6 +3,7 @@
 .idea
 dist
 coverage
+package-lock.json
 test/myapp/production.js
 test/css_paths/bundles/
 node_modules
@@ -38,4 +39,4 @@ test/live_reload/out.js
 test/transform_export/out.js
 test/exports_basics/out.js
 test/circular/export/
-/test/serviceworker/service-worker.js
+test/serviceworker/service-worker.js
