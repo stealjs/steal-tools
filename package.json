@@ -92,7 +92,7 @@
     "test:exports-worker": "node test/exports_worker/exports.js && testee test/exports_worker/worker.html --browsers firefox --reporter Spec"
   },
   "engines": {
-    "node": "4.x - 8.x"
+    "node": "4.x - 10.x"
   },
   "system": {
     "npmDependencies": [
