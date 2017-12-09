@@ -1,13 +1,14 @@
-var _ = require("lodash");
 var path = require("path");
 var fs = require("fs-extra");
 var assert = require("assert");
+var assign = require("lodash/assign");
 var denodeify = require("pdenodeify");
 var testHelpers = require("./helpers");
+var isUndefined = require("lodash/isUndefined");
+var escapeRegExp = require("lodash/escapeRegExp");
 var devBundleBuild = require("../lib/build/bundle");
 
 var open = testHelpers.popen;
-var find = testHelpers.pfind;
 var readFile = denodeify(fs.readFile);
 var rmdir = denodeify(require("rimraf"));
 
@@ -15,9 +16,33 @@ describe("dev bundle build", function() {
 	this.timeout(5000);
 
 	var baseOptions =  {
-		quiet: true,
-		minify: false
+		quiet: true
 	};
+
+	it("should not be minified by default", function() {
+		var config = {
+			main: "bundle",
+			config: path.join(__dirname, "bundle", "stealconfig.js"),
+		};
+
+		var bundlePath = path.join(__dirname, "bundle", "dev-bundle.js");
+
+		return devBundleBuild(config, baseOptions)
+			.then(function() {
+				return readFile(bundlePath);
+			})
+			.then(function(contents) {
+				// comments are removed during minification
+				var rx = new RegExp(escapeRegExp("/*[system-bundles-config]*/"));
+				var rx2 = new RegExp(escapeRegExp("/*stealconfig.js*/"));
+
+				assert(rx.test(contents), "bundle should not be minified");
+				assert(rx2.test(contents), "bundle should not be minified");
+			})
+			.then(function() {
+				return rmdir(bundlePath);
+			});
+	});
 
 	it("should work with defaults", function() {
 		var config = {
@@ -52,7 +77,7 @@ describe("dev bundle build", function() {
 			config: path.join(__dirname, "bundle", "stealconfig.js"),
 		};
 
-		var options = _.assign({}, baseOptions, {
+		var options = assign({}, baseOptions, {
 			filter: "**/*"
 		});
 
@@ -74,7 +99,7 @@ describe("dev bundle build", function() {
 			config: path.join(__dirname, "bundle", "stealconfig.js"),
 		};
 
-		var options = _.assign({}, baseOptions, {
+		var options = assign({}, baseOptions, {
 			filter: [
 				"**/*.js",
 				"!dep_a_b.js",
@@ -88,8 +113,8 @@ describe("dev bundle build", function() {
 			.then(function(buildResult) {
 				var graph = buildResult.graph;
 
-				assert(_.isUndefined(graph['dep_a_b']), "should not be in the graph");
-				assert(_.isUndefined(graph['dep_all']), "should not be in the graph");
+				assert(isUndefined(graph['dep_a_b']), "should not be in the graph");
+				assert(isUndefined(graph['dep_all']), "should not be in the graph");
 			})
 			.then(function() {
 				return rmdir(bundlePath);
@@ -102,7 +127,7 @@ describe("dev bundle build", function() {
 			config: path.join(__dirname, "bundle", "stealconfig.js"),
 		};
 
-		var options = _.assign({}, baseOptions, {
+		var options = assign({}, baseOptions, {
 			filter: "**/*",
 			dest: "folder/"
 		});
@@ -125,7 +150,7 @@ describe("dev bundle build", function() {
 			config: path.join(__dirname, "plugins", "config.js")
 		};
 
-		var options = _.assign({}, baseOptions, {
+		var options = assign({}, baseOptions, {
 			filter: "**/*"
 		});
 
@@ -137,7 +162,7 @@ describe("dev bundle build", function() {
 			})
 			.then(function(contents) {
 				var empty = "define('plug', [], function(){ return {}; });";
-				var regexp = new RegExp(_.escapeRegExp(empty));
+				var regexp = new RegExp(escapeRegExp(empty));
 
 				assert(!regexp.test(contents), "plugin code should be included");
 			})
@@ -151,7 +176,7 @@ describe("dev bundle build", function() {
 			config: path.join(__dirname, "npm", "package.json!npm")
 		};
 
-		var options = _.assign({}, baseOptions, {
+		var options = assign({}, baseOptions, {
 			filter: "node_modules/**/*" // only bundle npm deps
 		});
 
@@ -167,7 +192,7 @@ describe("dev bundle build", function() {
 			})
 			.then(function(contents) {
 				var nodeName = "[steal-add-npm-packages]";
-				var regexp = new RegExp(_.escapeRegExp(nodeName));
+				var regexp = new RegExp(escapeRegExp(nodeName));
 
 				assert(regexp.test(contents), "bundle should include npm node");
 			})
@@ -181,7 +206,7 @@ describe("dev bundle build", function() {
 			config: path.join(__dirname, "npm", "package.json!npm")
 		};
 
-		var options = _.assign({}, baseOptions, {
+		var options = assign({}, baseOptions, {
 			filter: [ "node_modules/**/*", "package.json" ]
 		});
 
@@ -197,7 +222,7 @@ describe("dev bundle build", function() {
 			})
 			.then(function(contents) {
 				var nodeName = "[steal-add-npm-packages]";
-				var regexp = new RegExp(_.escapeRegExp(nodeName));
+				var regexp = new RegExp(escapeRegExp(nodeName));
 
 				assert(!regexp.test(contents), "bundle should include npm node");
 			})
@@ -219,7 +244,7 @@ describe("dev bundle build", function() {
 			})
 			.then(function(contents) {
 				var nodeName = "it worked";
-				var regexp = new RegExp(_.escapeRegExp(nodeName));
+				var regexp = new RegExp(escapeRegExp(nodeName));
 
 				assert(regexp.test(contents), "bundle should dev code");
 			})
