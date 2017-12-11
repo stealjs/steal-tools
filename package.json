@@ -14,7 +14,7 @@
     "clean-css": "^4.1.9",
     "colors": "^1.1.2",
     "find-line-column": "^0.5.2",
-    "fs-extra": "~4.0.2",
+    "fs-extra": "~5.0.0",
     "glob": "^7.1.1",
     "gzip-size": "4.0.0",
     "is-appveyor": "^1.0.0",
