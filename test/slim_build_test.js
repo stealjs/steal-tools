@@ -87,6 +87,27 @@ describe("slim builds", function() {
 			});
 	});
 
+	it("flags main bundle as loaded", function() {
+		var base = path.join(__dirname, "slim", "progressive");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { quiet: true, minify: false });
+			})
+			.then(function() {
+				return readFile(path.join(base, "dist", "bundles", "main.js"));
+			})
+			.then(function(mainBundle) {
+				var loadedBundlesRegEx = /loadedBundles = { \d+: LOADED\ }/;
+
+				assert.ok(
+					loadedBundlesRegEx.test(mainBundle),
+					"should preload loadedBundles with main bundle id"
+				);
+			});
+	});
+
 	it("works with progressively loaded bundles", function() {
 		var base = path.join(__dirname, "slim", "progressive");
 		var config = { config: path.join(base, "stealconfig.js") };
