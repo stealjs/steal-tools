@@ -14,9 +14,7 @@ var argv = require("yargs")
 	.command(cmdLiveReload)
 	.command(cmdExport)
 	.command(cmdOptimize)
-	.version(function() {
-		return require("../package.json").version;
-	})
+	.version()
 	.help("h")
 	.alias("h", "help")
 	.argv;
