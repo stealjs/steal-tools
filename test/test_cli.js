@@ -247,6 +247,9 @@ describe("steal-tools cli", function () {
 			});
 
 			it("only outputs +cjs", function() {
+				assert(fs.existsSync(path.join(distPath, "cjs")),
+					"it should output cjs build");
+
 				assert(!fs.existsSync(path.join(distPath, "amd")),
 					"it should not output amd");
 
@@ -306,64 +309,23 @@ describe("steal-tools cli", function () {
 					);
 				})
 				.then(function() {
+					return pcopy(
+						path.join(srcModulesPath, "steal-less"),
+						path.join(destModulesPath, "steal-less")
+					);
+				})
+				.then(function() {
+					return pcopy(
+						path.join(srcModulesPath, "steal-css"),
+						path.join(destModulesPath, "steal-css")
+					);
+				})
+				.then(function() {
 					done();
 				})
 				.catch(function(error) {
 					done(error);
 				});
-		}
-
-		function testCJS(done) {
-			var browserify = require("browserify")();
-
-			browserify.add(path.join(
-				__dirname,
-				"pluginifier_builder_helpers/browserify.js"
-			));
-
-			var out = fs.createWriteStream(path.join(
-				__dirname,
-				"pluginifier_builder_helpers/browserify-out.js"
-			));
-
-			browserify.bundle()
-				.on("error", done)
-				.pipe(out);
-
-			out.on("error", done);
-
-			out.on("finish", function() {
-				var page = "test/pluginifier_builder_helpers/browserify.html";
-
-				open(page,  function(browser, close) {
-					find(browser,"WIDTH", function(width) {
-						assert.equal(width, 200, "with of element");
-						close();
-					},  close);
-				}, done);
-			});
-		}
-
-		function testAMD(done) {
-			var page = "test/pluginifier_builder_helpers/amd.html";
-
-			open(page, function(browser, close) {
-				find(browser, "WIDTH", function(width) {
-					assert.equal(width, 200, "with of element");
-					close();
-				}, close);
-			}, done);
-		}
-
-		function testGlobal(done) {
-			var page = "test/pluginifier_builder_helpers/global.html";
-
-			open(page, function(browser, close) {
-				find(browser,"WIDTH", function() {
-					assert.ok(browser.window.TABS, "got tabs");
-					close();
-				}, close);
-			}, done);
 		}
 	});
 
