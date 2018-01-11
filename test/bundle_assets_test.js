@@ -1,6 +1,5 @@
 var asap = require("pdenodeify"),
     assert = require("assert"),
-    comparify = require("comparify"),
     fs = require("fs-extra"),
     multiBuild = require("../index").build,
     optimize = require("../index").optimize,
@@ -36,7 +35,7 @@ describe("bundleAssets", function(){
             }
         }).then(function(){
             open("test/bundle_assets/prod.html", function(browser, close){
-                find(browser, "MODULE", function(module){
+                find(browser, "MODULE", function(){
                     const logo = path.join(__dirname, "bundle_assets", "dist", "images", "logo.png");
                     assert(fs.pathExistsSync(logo), "image was copied");
 
@@ -49,6 +48,52 @@ describe("bundleAssets", function(){
             }, done);
         });
     });
+
+	it("assets should be put in [BuildOptions.dest] folder", function() {
+		var dest = "foo/bar";
+		var root = path.join(__dirname, "bundle_assets");
+
+		var config = {
+			main: "main",
+			config: path.join(root, "stealconfig.js")
+		};
+
+		var options = {
+			quiet: true,
+			minify: false,
+			dest: dest,
+			bundleAssets: {
+				infer: true,
+				glob: [path.join(root, "assets", "*")]
+			}
+		};
+
+		return multiBuild(config, options)
+			.then(function() {
+				var logo = path.join(root, dest, "images", "logo.png");
+				assert(fs.pathExistsSync(logo), "should bundle image");
+
+				var json = path.join(root, dest, "assets", "some.json");
+				assert(fs.pathExistsSync(json), "should bundle json file");
+			})
+			.then(function() {
+				return asap(fs.readFile)(
+					path.join(root, dest, "bundles", "main.css")
+				)
+				.then(function(buff) {
+					return buff.toString();
+				});
+			})
+			.then(function(cssBundle) {
+				//url(../images/logo.png)
+				assert(
+					/url\(\.\.\/images\/logo\.png\)/.test(cssBundle),
+					"rewrites paths properly"
+
+				);
+				return asap(rmdir)(path.join(root, "foo"));
+			});
+	});
 
     it("works with steal-tools optimize", function (done) {
         optimize({
@@ -65,7 +110,7 @@ describe("bundleAssets", function(){
             }
         }).then(function() {
             open("test/bundle_assets/prod-slim.html", function(browser, close){
-                find(browser, "MODULE", function(module){
+                find(browser, "MODULE", function(){
                     const logo = path.join(__dirname, "bundle_assets", "dist", "images", "logo.png");
                     assert(fs.pathExistsSync(logo), "image was copied");
 
@@ -77,5 +122,5 @@ describe("bundleAssets", function(){
                 }, close);
             }, done);
         });
-    })
+    });
 });
