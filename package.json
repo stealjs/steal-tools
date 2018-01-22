@@ -25,7 +25,7 @@
     "normalize-path": "^2.1.1",
     "pdenodeify": "^0.1.0",
     "prettier": "1.9.2",
-    "pump": "^1.0.2",
+    "pump": "^2.0.1",
     "steal": "^1.6.4",
     "steal-bundler": "^0.3.6",
     "steal-parse-amd": "^1.0.0",
