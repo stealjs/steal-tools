@@ -785,4 +785,23 @@ describe("slim builds", function() {
 				close();
 			});
 	});
+
+	it("adds dynamic loading if config flag set", function() {
+		var base = path.join(__dirname, "slim", "dynamic");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { quiet: true, minify: false });
+			})
+			.then(function() {
+				return readFile(path.join(base, "dist", "bundles", "main.js"));
+			})
+			.then(function(buffer) {
+				assert.ok(
+					/stealRequire\.dynamic = function/.test(buffer.toString()),
+					"slim loader should support dynamic imports"
+				);
+			});
+	});
 });
