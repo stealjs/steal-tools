@@ -182,6 +182,29 @@ describe("slim builds", function() {
 			});
 	});
 
+	it("progressive loaded plugin bundles", function() {
+		var options = { quiet: true, minify: false };
+		var base = path.join(__dirname, "slim", "progressive_plugins");
+		var config = { config: path.join(base, "package.json!npm") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, options);
+			})
+			.then(function() {
+				return open(
+					path.join("test", "slim", "progressive_plugins", "index.html")
+				);
+			})
+			.then(function(args) {
+				var browser = args.browser;
+				var close = args.close;
+
+				browser.assert.elements(".foo", 2);
+				close();
+			});
+	});
+
 	it("writes bundle manifest when option is passed in", function() {
 		var base = path.join(__dirname, "slim", "progressive");
 		var config = { config: path.join(base, "stealconfig.js") };

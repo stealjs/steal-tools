@@ -1,0 +1,11 @@
+{
+  "name": "plugins",
+  "main": "main",
+  "version": "0.0.1",
+  "dependencies": {},
+  "steal": {
+    "paths": {
+      "css": "steal-css.js"
+    }
+  }
+}
