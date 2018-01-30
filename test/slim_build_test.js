@@ -827,4 +827,58 @@ describe("slim builds", function() {
 				);
 			});
 	});
+
+	it("loads shared bundles in the browser", function() {
+		var base = path.join(__dirname, "slim", "shared_bundles");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { quiet: true, minify: false });
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "shared_bundles", "index.html"));
+			})
+			.then(function (res) {
+				var browser = res.browser;
+				var close = res.close;
+
+				var m = browser.window.appA;
+				assert.equal(m.name, "a");
+				assert.equal(m.ab.name, "a_b");
+				assert.equal(m.all, "all");
+
+				close();
+			});
+	});
+
+	it("loads shared bundles in node.js", function () {
+		var base = path.join(__dirname, "slim", "shared_bundles");
+
+		var config = {
+			config: path.join(base, "stealconfig.js"),
+			main: "node"
+		};
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, {
+					quiet: true,
+					minify: false,
+					target: "node"
+				});
+			})
+			.then(function() {
+				return require(
+					path.join(base, "dist", "bundles", "node", "node")
+				);
+			})
+			.then(function(appA) {
+				assert.deepEqual(appA, {
+					name: "a",
+					all: "all",
+					ab: { name: "a_b" }
+				});
+			});
+	});
 });
