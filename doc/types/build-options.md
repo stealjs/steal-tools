@@ -127,7 +127,7 @@ like any other bundle.
 Usage:
 
 ```js
-stealTools.build({}, { 
+stealTools.optimize({}, { 
   target: "node"
 });
 ```
@@ -137,7 +137,7 @@ Setting target to `node` makes the loader suitable to run on Node.js environment
 Multiple targets can be set by passing an array of supported targets, e.g:
 
 ```js
-stealTools.build({}, { 
+stealTools.optimize({}, { 
   target: ["node", "web"]
 });
 ```
