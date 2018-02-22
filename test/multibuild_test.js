@@ -16,38 +16,46 @@ describe("multi build", function(){
 	this.timeout(5000);
 
 	it("should work", function(done){
-		rmdir(__dirname+"/bundle/dist", function(error){
-			if(error){
-				done(error);
-				return;
-			}
+		asap(rmdir)(path.join(__dirname, "bundle", "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(__dirname, "bundle", "stealconfig.js"),
+					main: "bundle"
+				}, {
+					minify: false,
+					quiet: true
+				});
+			})
+			.then(function() {
+				var exists = fs.existsSync(
+					path.join(__dirname,"bundle/dist/bundles/bundle.js")
+				);
 
-			multiBuild({
-				config: __dirname+"/bundle/stealconfig.js",
-				main: "bundle"
-			}, {
-				minify: false,
-				quiet: true
-			}).then(function(){
-				var exists = fs.existsSync(  path.join(__dirname,"bundle/dist/bundles/bundle.js")  );
 				if(!exists) {
 					done(new Error("no bundle info"));
 					return;
 				}
 
-				open("test/bundle/bundle.html#a",function(browser, close){
-					find(browser,"appA", function(appA){
-						assert(true, "got A");
-						assert.equal(appA.name, "a", "got the module");
-						assert.equal(appA.ab.name, "a_b", "a got ab");
-						assert.equal(appA.clean, undefined, "removed dev code");
-						close();
-					}, close);
-				}, done);
-
-
+				open(
+					"test/bundle/bundle.html#a",
+					function(browser, close) {
+						find(
+							browser,
+							"appA",
+							function(appA) {
+								assert(true, "got A");
+								assert.equal(appA.name, "a", "got the module");
+								assert.equal(appA.ab.name, "a_b", "a got ab");
+								assert.equal(appA.clean, undefined, "removed dev code");
+								assert.equal(appA.dirty, undefined, "removed dev code");
+								close();
+							},
+							close
+						);
+					},
+					done
+				);
 			}, done);
-		});
 	});
 
 	it("should work with CommonJS", function(done){
