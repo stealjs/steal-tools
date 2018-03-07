@@ -62,4 +62,32 @@ describe("+standalone", function(){
 			}, done);
 		});
 	});
+
+	it("Can be used for node.js projects", function(done){
+		this.timeout(10000);
+
+		var outPath = __dirname + "/exports_basics/out.js";
+
+		stealExport({
+			steal: {
+				config: __dirname + "/exports_basics/package.json!npm"
+			},
+			options: { quiet: true },
+			outputs: {
+				"+standalone": {
+					exports: { "foo": "FOO.foo" },
+					dest: function(){
+						return outPath;
+					}
+				}
+			}
+		})
+		.then(function(){
+			require(outPath);
+			assert.ok(true, "Was able to require the created module");
+			done();
+		})
+		.catch(done);
+
+	});
 });
