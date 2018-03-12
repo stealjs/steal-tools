@@ -12,7 +12,7 @@
     "bitovi-source-map": "0.4.2-bitovi.2",
     "chokidar": "^2.0.0",
     "clean-css": "^4.1.9",
-    "colors": "^1.1.2",
+    "colors": "^1.2.1",
     "find-line-column": "^0.5.2",
     "fs-extra": "~5.0.0",
     "glob": "^7.1.1",
