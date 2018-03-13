@@ -26,7 +26,8 @@ describe("live-reload", function(){
 
 	var fooPath = __dirname + "/live_reload/foo.js";
 
-	before(function(done){
+	beforeEach(function(done){
+		this.undoSuppressErrors = testHelpers.preventErrors();
 		live = require(liveModPath);
 		var self = this;
 		asap(fs.readFile)(fooPath, "utf8").then(function(content){
@@ -34,7 +35,8 @@ describe("live-reload", function(){
 		}).then(done, done);
 	});
 
-	after(function(done){
+	afterEach(function(done){
+		this.undoSuppressErrors();
 		asap(fs.writeFile)(fooPath, this._fooModule, "utf8").then(function(){
 			done();
 		});
@@ -73,8 +75,31 @@ describe("live-reload", function(){
 		});
 	});
 
+	it("Can recover from a broken initial state", function(done){
+		var brokenSource = "require('./not-exists');";
+		asap(fs.writeFile)(fooPath, brokenSource, "utf8")
+		.then(function(){
+			var liveStream = live({
+				config: __dirname + "/live_reload/package.json!npm"
+			}, {});
+
+			liveStream.on("watch-added", function(){
+				var newSource = "module.exports = 'foo';";
+				asap(fs.writeFile)(fooPath, newSource, "utf8").then(function(){
+					liveStream.once("data", function(data){
+						assert(/foo/.test(data.graph["live-app@1.0.0#foo"].load.source),
+							"New source contains 'foo'");
+
+						liveStream.end();
+						done();
+					});
+				});
+			});
+		});
+	});
+
 	describe("includedDeps", function(){
-		var nestedPath = __dirname + "/live_reload/nested_dep.txt"; 
+		var nestedPath = __dirname + "/live_reload/nested_dep.txt";
 		var send;
 
 		before(function(done){
@@ -159,9 +184,9 @@ describe("build with live-reload", function(){
 		var options = {
 			quiet: true
 		};
-		
+
 		rmdir(__dirname + "/live_reload/dist").then(function(){
-			
+
 			var buildStream = s.graph(system, options)
 			.pipe(s.transpile())
 			.pipe(s.minify())
