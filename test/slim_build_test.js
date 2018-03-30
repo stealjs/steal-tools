@@ -87,6 +87,32 @@ describe("slim builds", function() {
 			});
 	});
 
+	it("envify option works", function() {
+		var base = path.join(__dirname, "slim", "basics");
+		var config = { 
+			config: path.join(base, "stealconfig.js"),
+			main: "envify"
+		};
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				process.env.NODE_ENV = "slim";
+				return optimize(config, { quiet: true, envify: true, minify: false });
+			})
+			.then(function() {
+				return readFile(path.join(base, "dist", "bundles", "envify.js"));
+			})
+			.then(function(data) {
+				delete process.env.NODE_ENV;
+				var rx = new RegExp(escapeRegExp("process.env.NODE_ENV"));
+
+				assert(
+					!rx.test(data.toString()),
+					"envify test code should have been removed"
+				);
+			});
+	});
+
 	it("flags main bundle as loaded", function() {
 		var base = path.join(__dirname, "slim", "progressive");
 		var config = { config: path.join(base, "stealconfig.js") };
