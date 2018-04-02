@@ -87,6 +87,32 @@ describe("slim builds", function() {
 			});
 	});
 
+	it("envify option works", function() {
+		var base = path.join(__dirname, "slim", "basics");
+		var config = { 
+			config: path.join(base, "stealconfig.js"),
+			main: "envify"
+		};
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				process.env.NODE_ENV = "slim";
+				return optimize(config, { quiet: true, envify: true, minify: false });
+			})
+			.then(function() {
+				return readFile(path.join(base, "dist", "bundles", "envify.js"));
+			})
+			.then(function(data) {
+				delete process.env.NODE_ENV;
+				var rx = new RegExp(escapeRegExp("process.env.NODE_ENV"));
+
+				assert(
+					!rx.test(data.toString()),
+					"envify test code should have been removed"
+				);
+			});
+	});
+
 	it("flags main bundle as loaded", function() {
 		var base = path.join(__dirname, "slim", "progressive");
 		var config = { config: path.join(base, "stealconfig.js") };
@@ -179,6 +205,29 @@ describe("slim builds", function() {
 					result[1].split(path.sep).join("/"), // normalize windows path
 					"dist/bundles/plugins/main.css"
 				);
+			});
+	});
+
+	it("progressive loaded plugin bundles", function() {
+		var options = { quiet: true, minify: false };
+		var base = path.join(__dirname, "slim", "progressive_plugins");
+		var config = { config: path.join(base, "package.json!npm") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, options);
+			})
+			.then(function() {
+				return open(
+					path.join("test", "slim", "progressive_plugins", "index.html")
+				);
+			})
+			.then(function(args) {
+				var browser = args.browser;
+				var close = args.close;
+
+				browser.assert.elements(".foo", 2);
+				close();
 			});
 	});
 
@@ -802,6 +851,60 @@ describe("slim builds", function() {
 					/stealRequire\.dynamic = function/.test(buffer.toString()),
 					"slim loader should support dynamic imports"
 				);
+			});
+	});
+
+	it("loads shared bundles in the browser", function() {
+		var base = path.join(__dirname, "slim", "shared_bundles");
+		var config = { config: path.join(base, "stealconfig.js") };
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, { quiet: true, minify: false });
+			})
+			.then(function() {
+				return open(path.join("test", "slim", "shared_bundles", "index.html"));
+			})
+			.then(function (res) {
+				var browser = res.browser;
+				var close = res.close;
+
+				var m = browser.window.appA;
+				assert.equal(m.name, "a");
+				assert.equal(m.ab.name, "a_b");
+				assert.equal(m.all, "all");
+
+				close();
+			});
+	});
+
+	it("loads shared bundles in node.js", function () {
+		var base = path.join(__dirname, "slim", "shared_bundles");
+
+		var config = {
+			config: path.join(base, "stealconfig.js"),
+			main: "node"
+		};
+
+		return rmdir(path.join(base, "dist"))
+			.then(function() {
+				return optimize(config, {
+					quiet: true,
+					minify: false,
+					target: "node"
+				});
+			})
+			.then(function() {
+				return require(
+					path.join(base, "dist", "bundles", "node", "node")
+				);
+			})
+			.then(function(appA) {
+				assert.deepEqual(appA, {
+					name: "a",
+					all: "all",
+					ab: { name: "a_b" }
+				});
 			});
 	});
 });
