@@ -99,3 +99,16 @@ exports.pfind = function(browser, property) {
 		check();
 	});
 };
+
+exports.preventErrors = function(){
+	var messages = [];
+	var consoleError = console.error;
+	console.error = function(){
+		messages.push([].slice.call(arguments));
+	};
+
+	return function(){
+		console.error = consoleError;
+		return messages;
+	};
+};
