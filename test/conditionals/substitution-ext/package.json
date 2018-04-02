@@ -6,7 +6,7 @@
   "scripts": {
   },
   "dependencies": {
-    "steal-conditional": "^0.4.0"
+    "steal-conditional": "^1.0.0"
   },
   "steal": {
     "paths": {
