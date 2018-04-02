@@ -16,38 +16,46 @@ describe("multi build", function(){
 	this.timeout(5000);
 
 	it("should work", function(done){
-		rmdir(__dirname+"/bundle/dist", function(error){
-			if(error){
-				done(error);
-				return;
-			}
+		asap(rmdir)(path.join(__dirname, "bundle", "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(__dirname, "bundle", "stealconfig.js"),
+					main: "bundle"
+				}, {
+					minify: false,
+					quiet: true
+				});
+			})
+			.then(function() {
+				var exists = fs.existsSync(
+					path.join(__dirname,"bundle/dist/bundles/bundle.js")
+				);
 
-			multiBuild({
-				config: __dirname+"/bundle/stealconfig.js",
-				main: "bundle"
-			}, {
-				minify: false,
-				quiet: true
-			}).then(function(){
-				var exists = fs.existsSync(  path.join(__dirname,"bundle/dist/bundles/bundle.js")  );
 				if(!exists) {
 					done(new Error("no bundle info"));
 					return;
 				}
 
-				open("test/bundle/bundle.html#a",function(browser, close){
-					find(browser,"appA", function(appA){
-						assert(true, "got A");
-						assert.equal(appA.name, "a", "got the module");
-						assert.equal(appA.ab.name, "a_b", "a got ab");
-						assert.equal(appA.clean, undefined, "removed dev code");
-						close();
-					}, close);
-				}, done);
-
-
+				open(
+					"test/bundle/bundle.html#a",
+					function(browser, close) {
+						find(
+							browser,
+							"appA",
+							function(appA) {
+								assert(true, "got A");
+								assert.equal(appA.name, "a", "got the module");
+								assert.equal(appA.ab.name, "a_b", "a got ab");
+								assert.equal(appA.clean, undefined, "removed dev code");
+								assert.equal(appA.dirty, undefined, "removed dev code");
+								close();
+							},
+							close
+						);
+					},
+					done
+				);
 			}, done);
-		});
 	});
 
 	it("should work with CommonJS", function(done){
@@ -153,41 +161,7 @@ describe("multi build", function(){
 				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
 			});
 	});
-
-	it("should allow turning envify on", function() {
-		var config = {
-			config: path.join(__dirname, "minify", "config.js"),
-			main: "minify"
-		};
-
-		var options = {
-			quiet: true,
-			envify: true
-		};
-
-		return asap(rmdir)(path.join(__dirname, "minify", "dist"))
-			.then(function() {
-				process.env.ENVIFY_VAR = "test_value";
-				return multiBuild(config, options);
-			})
-			.then(function() {
-				delete process.env.ENVIFY_VAR;
-
-				var main = path.join(__dirname, "minify", "dist", "bundles", "minify.js");
-				var actualJS = fs.readFileSync(main, "utf8");
-
-				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
-				var hasGlobalLongVariable = actualJS.indexOf("anotherVeryLongName") !== -1;
-				var hasDevCode = actualJS.indexOf("remove this") !== -1;
-				var hasEnvifyCode = actualJS.indexOf("when envify is turned on this should be removed") !== -1;
-
-				assert(!hasEnvifyCode, "Minified source has kept envify test code.");
-				assert(!hasDevCode, "Minified source has dev code removed.");
-				assert(!hasLongVariable, "Minified source renamed long variable.");
-				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
-			});
-	});
-
+	
 	it("should allow minification to be turned off", function() {
 		var config = {
 			config: path.join(__dirname, "minify", "config.js"),
@@ -209,6 +183,61 @@ describe("multi build", function(){
 
 				var hasLongVariable = actualJS.indexOf("thisObjectHasABigName") !== -1;
 				assert(hasLongVariable, "Source includes long variable name.");
+			});
+	});
+
+	it("should allow turning envify on when minification is off", function() {
+		var config = {
+			config: path.join(__dirname, "minify", "config.js"),
+			main: "minify"
+		};
+
+		var options = {
+			quiet: true,
+			envify: true,
+			minify: false
+		};
+
+		return asap(rmdir)(path.join(__dirname, "minify", "dist"))
+			.then(function() {
+				process.env.ENVIFY_VAR = "test_value";
+				return multiBuild(config, options);
+			})
+			.then(function() {
+				delete process.env.ENVIFY_VAR;
+
+				var main = path.join(__dirname, "minify", "dist", "bundles", "minify.js");
+				var actualJS = fs.readFileSync(main, "utf8");
+
+				var hasEnvVariable = actualJS.indexOf("process.env.ENVIFY_VAR") !== -1;
+				assert(!hasEnvVariable, "Node env variable should have been inlined");
+			});
+	});
+
+	it("by default envify is not applied", function() {
+		var config = {
+			config: path.join(__dirname, "minify", "config.js"),
+			main: "minify"
+		};
+
+		var options = {
+			quiet: true,
+			minify: false
+		};
+
+		return asap(rmdir)(path.join(__dirname, "minify", "dist"))
+			.then(function() {
+				process.env.ENVIFY_VAR = "test_value";
+				return multiBuild(config, options);
+			})
+			.then(function() {
+				delete process.env.ENVIFY_VAR;
+
+				var main = path.join(__dirname, "minify", "dist", "bundles", "minify.js");
+				var actualJS = fs.readFileSync(main, "utf8");
+
+				var hasEnvVariable = actualJS.indexOf("process.env.ENVIFY_VAR") !== -1;
+				assert(hasEnvVariable, "source should have node environment variable");
 			});
 	});
 

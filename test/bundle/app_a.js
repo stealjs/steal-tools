@@ -9,6 +9,10 @@ define(['dep_a_b', 'dep_all'], function(ab){
 	mod.clean = false;
 	//!steal-remove-end
 
+	//! steal-remove-start
+	mod.dirty = true;
+	//! steal-remove-end
+
 	steal.dev.assert(true);
 	steal.dev.log("foo bar");
 	steal.dev.warn("a warning!");
