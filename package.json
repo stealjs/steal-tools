@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "babel-standalone": "^6.23.1",
+    "babylon": "^6.18.0",
     "bitovi-source-map": "0.4.2-bitovi.2",
     "chokidar": "^2.0.0",
     "clean-css": "^4.1.9",
