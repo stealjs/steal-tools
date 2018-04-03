@@ -53,6 +53,11 @@ describe("Tree-shaking", function(){
 				it.skip("An unused export is removed", function(){
 
 				});
+
+				it.skip("Uses multiple shakes to remove all unused exports", function(){
+					// dep4Other
+					// dep4AndAnother
+				});
 			});
 
 			describe("import default", function(){
