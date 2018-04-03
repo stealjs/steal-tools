@@ -5,7 +5,8 @@
   "dependencies": {
     "dep": "1.0.0",
     "dep2": "1.0.0",
-    "dep3": "1.0.0"
+    "dep3": "1.0.0",
+    "dep4": "1.0.0"
   },
   "steal": {
     "bundle": ["treeshake/bundle-a"]
