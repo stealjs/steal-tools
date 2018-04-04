@@ -14,6 +14,7 @@ var rmdir = denodeify(rimraf);
 var readFile = denodeify(fs.readFile);
 
 describe("Tree-shaking", function(){
+	var app;
 	var open = testHelpers.popen;
 	var find = testHelpers.pfind;
 
@@ -45,13 +46,14 @@ describe("Tree-shaking", function(){
 	}
 
 	describe("Defaults", function(){
-		var app;
 		before(buildAndOpen);
 
 		describe("Import/Export syntaxes", function(){
 			describe("import {}", function(){
-				it.skip("An unused export is removed", function(){
-
+				it.only("An unused export is removed", function(){
+					let dep = app.dep;
+					assert.equal(typeof dep.one, "function", "The 'one' export is used");
+					assert.equal(typeof dep.two, "undefined", "The 'two' export was treeshaken");
 				});
 
 				it.skip("Uses multiple shakes to remove all unused exports", function(){
