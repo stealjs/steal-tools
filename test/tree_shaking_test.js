@@ -73,13 +73,16 @@ describe("Tree-shaking", function(){
 
 			describe("import 'mod'", function(){
 				it("Includes modules imported for side-effects", function(){
-					assert.equal(browser.window.DEP3_SIDE_EFFECT, true, "Includes a module with needed side effects.");
+					assert.equal(browser.window.DEP3_SIDE_EFFECT, true,
+						"Includes a module with needed side effects.");
 				});
 			})
 
 			describe("export *", function(){
-				it.skip("Includes the exports that are used", function(){
-
+				it.only("Includes the exports that are used", function(){
+					let m = app.fromExports;
+					assert.equal(m.rexpOne, "one", "Included the used export");
+					assert.equal(m.rexpTwo, undefined, "Doesn\'t include unused export.");
 				});
 
 				it.skip("Tree-shakes exports that are not used", function(){
