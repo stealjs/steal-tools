@@ -40,6 +40,7 @@ export default function(){
 		fromExports
 	]) => {
 		return {
+			anon,
 			bundleA,
 			dep,
 			depTwo,

@@ -14,11 +14,12 @@ var rmdir = denodeify(rimraf);
 var readFile = denodeify(fs.readFile);
 
 describe("Tree-shaking", function(){
-	var app;
+	var app, browser;
 	var open = testHelpers.popen;
 	var find = testHelpers.pfind;
 
 	function buildAndOpen(done){
+		this.timeout(20000);
 		var base = path.join(__dirname, "treeshake", "basics");
 		var config = { config: path.join(base, "package.json!npm") };
 		var page = `prod.html`;
@@ -31,10 +32,12 @@ describe("Tree-shaking", function(){
 				});
 			})
 			.then(function() {
+				var close;
 				return open(path.join("test", "treeshake", "basics", page))
 					.then(function(args) {
 						close = args.close;
-						return find(args.browser, "app");
+						browser = args.browser;
+						return find(browser, "app");
 					})
 					.then(function(mod) {
 						app = mod;
@@ -50,7 +53,7 @@ describe("Tree-shaking", function(){
 
 		describe("Import/Export syntaxes", function(){
 			describe("import {}", function(){
-				it.only("An unused export is removed", function(){
+				it("An unused export is removed", function(){
 					let dep = app.dep;
 					assert.equal(typeof dep.one, "function", "The 'one' export is used");
 					assert.equal(typeof dep.two, "undefined", "The 'two' export was treeshaken");
@@ -63,14 +66,14 @@ describe("Tree-shaking", function(){
 			});
 
 			describe("import default", function(){
-				it.skip("Includes the binding", function(){
-
+				it("Includes the binding", function(){
+					assert.equal(app.anon(), "default export", "Includes default exports");
 				});
 			});
 
 			describe("import 'mod'", function(){
-				it.skip("Includes modules imported for side-effects", function(){
-
+				it("Includes modules imported for side-effects", function(){
+					assert.equal(browser.window.DEP3_SIDE_EFFECT, true, "Includes a module with needed side effects.");
 				});
 			})
 
