@@ -79,15 +79,12 @@ describe("Tree-shaking", function(){
 			})
 
 			describe("export *", function(){
-				it.only("Includes the exports that are used", function(){
-					let m = app.fromExports;
-					console.log(m.rexpOne, m.rexpTwo);
-					assert.equal(m.rexpOne, "one", "Included the used export");
-					assert.equal(m.rexpTwo, undefined, "Doesn\'t include unused export.");
+				it("Includes the exports that are used", function(){
+					assert.equal(app.fromExports.rexpOne, "one", "Included the used export");
 				});
 
-				it.skip("Tree-shakes exports that are not used", function(){
-
+				it("Tree-shakes exports that are not used", function(){
+					assert.equal(app.fromExports.rexpTwo, undefined, "Doesn\'t include unused export.");
 				});
 			})
 		});
