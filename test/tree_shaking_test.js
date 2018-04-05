@@ -79,7 +79,7 @@ describe("Tree-shaking", function(){
 			})
 
 			describe("export *", function(){
-				it.only("Includes the exports that are used", function(){
+				it.skip("Includes the exports that are used", function(){
 					let m = app.fromExports;
 					assert.equal(m.rexpOne, "one", "Included the used export");
 					assert.equal(m.rexpTwo, undefined, "Doesn\'t include unused export.");
