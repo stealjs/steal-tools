@@ -122,6 +122,13 @@ describe("Tree-shaking", function(){
 	});
 
 	describe("treeShakingForce: true", function(){
+		before(buildAndOpen({
+			treeShakingForce: true
+		}));
 
+		it("Tree-shakes modules without sideEffects: false", function(){
+			let two = app.depTwo.two;
+			assert.equal(typeof two, "undefined", "Was tree-shaken");
+		});
 	});
 });
