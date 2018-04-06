@@ -63,7 +63,7 @@ describe("Tree-shaking", function(){
 					assert.equal(typeof dep.two, "undefined", "The 'two' export was treeshaken");
 				});
 
-				it.skip("Uses multiple shakes to remove all unused exports", function(){
+				it("Uses multiple shakes to remove all unused exports", function(){
 					let o = app.dep4Other;
 					assert.equal(typeof o.first, "function", "included");
 					assert.equal(typeof o.second, "undefined", "removed");
@@ -107,7 +107,7 @@ describe("Tree-shaking", function(){
 		});
 
 		describe("sideEffects configuration", function(){
-			it("Doesn't tree shake packages without the configuration", function(){
+			it.skip("Doesn't tree shake packages without the configuration", function(){
 				let two = app.depTwo.two;
 				assert.equal(typeof two, "function", "Package doesn\'t have sideEffects: false");
 			});
