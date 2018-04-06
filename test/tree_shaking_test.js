@@ -90,8 +90,10 @@ describe("Tree-shaking", function(){
 		});
 
 		describe("Bundles", function(){
-			it.skip("Are not tree-shaken", function(){
-
+			it("Are not tree-shaken", function(){
+				let b = app.bundleA;
+				assert.equal(b.one(), 1, "This export is still there");
+				assert.equal(b.two(), 2, "This one too");
 			});
 		});
 
