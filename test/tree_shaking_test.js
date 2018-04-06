@@ -98,8 +98,9 @@ describe("Tree-shaking", function(){
 		});
 
 		describe("sideEffects configuration", function(){
-			it.skip("Doesn't tree shake packages without the configuration", function(){
-
+			it("Doesn't tree shake packages without the configuration", function(){
+				let two = app.depTwo.two;
+				assert.equal(typeof two, "function", "Package doesn\'t have sideEffects: false");
 			});
 		});
 	});
