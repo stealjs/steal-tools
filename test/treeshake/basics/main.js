@@ -14,12 +14,21 @@ import steal from "@steal";
 import "dep3";
 
 // Importing a module that itself should be tree-shaken
-import "dep4";
+import {default as dep4} from "dep4";
 
 // Importing a module that re-exports another
 import { rexpOne } from "./reexports";
 
 export default function(){
+	window.globals = {
+		one,
+		anon,
+		twoOne,
+		steal,
+		rexpOne,
+		dep4
+	};
+
 	// return all of the exports so the tests can assert things.
 	let p = Promise.all([
 		steal.import("~/bundle-a"),
