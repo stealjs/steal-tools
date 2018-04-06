@@ -64,8 +64,13 @@ describe("Tree-shaking", function(){
 				});
 
 				it.skip("Uses multiple shakes to remove all unused exports", function(){
-					// dep4Other
-					// dep4AndAnother
+					let o = app.dep4Other;
+					assert.equal(typeof o.first, "function", "included");
+					assert.equal(typeof o.second, "undefined", "removed");
+
+					let a = app.dep4AndAnother;
+					assert.equal(typeof a.anotherOne, "function", "included");
+					assert.equal(typeof a.anotherTwo, "undefined", "removed");
 				});
 			});
 
