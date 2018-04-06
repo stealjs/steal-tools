@@ -18,38 +18,42 @@ describe("Tree-shaking", function(){
 	var open = testHelpers.popen;
 	var find = testHelpers.pfind;
 
-	function buildAndOpen(done){
-		this.timeout(20000);
-		var base = path.join(__dirname, "treeshake", "basics");
-		var config = { config: path.join(base, "package.json!npm") };
-		var page = `prod.html`;
+	function buildAndOpen(opts = {}){
+		var options = Object.assign(opts, {
+			quiet: true,
+			minify: false
+		});
 
-		rmdir(path.join(base, "dist"))
-			.then(function() {
-				return build(config, {
-					quiet: true,
-					minify: false
-				});
-			})
-			.then(function() {
-				var close;
-				return open(path.join("test", "treeshake", "basics", page))
-					.then(function(args) {
-						close = args.close;
-						browser = args.browser;
-						return find(browser, "app");
-					})
-					.then(function(mod) {
-						app = mod;
-						close();
-						done();
-					});
-			})
-			.catch(done);
+		return function(done){
+			this.timeout(20000);
+			var base = path.join(__dirname, "treeshake", "basics");
+			var config = { config: path.join(base, "package.json!npm") };
+			var page = `prod.html`;
+
+			rmdir(path.join(base, "dist"))
+				.then(function() {
+					return build(config, options);
+				})
+				.then(function() {
+					var close;
+					return open(path.join("test", "treeshake", "basics", page))
+						.then(function(args) {
+							close = args.close;
+							browser = args.browser;
+							return find(browser, "app");
+						})
+						.then(function(mod) {
+							app = mod;
+							close();
+							done();
+						});
+				})
+				.catch(done);
+		}
 	}
 
 	describe("Defaults", function(){
-		before(buildAndOpen);
+		before(buildAndOpen());
 
 		describe("Import/Export syntaxes", function(){
 			describe("import {}", function(){
@@ -105,7 +109,19 @@ describe("Tree-shaking", function(){
 		});
 	});
 
-	describe("treeShake: false", function(){
+	describe("treeShaking: false", function(){
+		before(buildAndOpen({
+			treeShaking: false
+		}));
 
-	})
+		it("Doesn\'t tree shake modules", function(){
+			let dep = app.dep;
+			assert.equal(typeof dep.one, "function", "Included");
+			assert.equal(typeof dep.two, "function", "Included");
+		});
+	});
+
+	describe("treeShakingForce: true", function(){
+
+	});
 });
