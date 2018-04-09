@@ -78,6 +78,10 @@ describe("Tree-shaking", function(){
 				it("Includes the binding", function(){
 					assert.equal(app.anon(), "default export", "Includes default exports");
 				});
+
+				it("Includes CommonJS modules", function(){
+					assert.equal(app.dep5.doStuff(), "worked", "CommonJS module left alone.");
+				});
 			});
 
 			describe("import 'mod'", function(){
@@ -110,6 +114,14 @@ describe("Tree-shaking", function(){
 			it.skip("Doesn't tree shake packages without the configuration", function(){
 				let two = app.depTwo.two;
 				assert.equal(typeof two, "function", "Package doesn\'t have sideEffects: false");
+			});
+		});
+
+		describe("Unused packages", function(){
+			it.skip("Get pruned from the build", function(){
+				let connect = app.canConnect;
+				assert.ok(connect instanceof Error, "Got an error, not a module");
+				assert.equal(connect.didFail, true, "marked as failed");
 			});
 		});
 	});
