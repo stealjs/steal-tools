@@ -161,7 +161,7 @@ describe("multi build", function(){
 				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
 			});
 	});
-	
+
 	it("should allow minification to be turned off", function() {
 		var config = {
 			config: path.join(__dirname, "minify", "config.js"),
