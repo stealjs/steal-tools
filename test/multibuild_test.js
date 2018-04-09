@@ -15,7 +15,7 @@ var open = testHelpers.open;
 describe("multi build", function(){
 	this.timeout(5000);
 
-	it("should work", function(done){
+	it.only("should work", function(done){
 		asap(rmdir)(path.join(__dirname, "bundle", "dist"))
 			.then(function() {
 				return multiBuild({
