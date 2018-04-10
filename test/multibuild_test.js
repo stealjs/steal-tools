@@ -109,7 +109,8 @@ describe("multi build", function(){
 					assert.ok(hasRequire, "converted the way my transpile does");
 					done();
 				});
-			});
+			})
+			.catch(done);
 		});
 	});
 
