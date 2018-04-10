@@ -15,7 +15,7 @@ var open = testHelpers.open;
 describe("multi build", function(){
 	this.timeout(5000);
 
-	it.only("should work", function(done){
+	it("should work", function(done){
 		asap(rmdir)(path.join(__dirname, "bundle", "dist"))
 			.then(function() {
 				return multiBuild({
@@ -2057,7 +2057,8 @@ describe("multi build", function(){
 				return multiBuild({
 					config: path.join(base, "package.json!npm")
 				}, {
-					quiet: true
+					quiet: true,
+					minify: false
 				});
 			})
 			.then(function() {
