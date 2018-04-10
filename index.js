@@ -24,6 +24,7 @@ module.exports = {
 			.createBundleGraphStream,
 
 		transpile: require("./lib/stream/transpile"),
+		treeshake: require("./lib/stream/treeshake"),
 		minify: require("./lib/stream/minify"),
 		bundle: require("./lib/stream/bundle"),
 		concat: require("./lib/bundle/concat_stream"),
