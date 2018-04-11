@@ -14,12 +14,34 @@ import steal from "@steal";
 import "dep3";
 
 // Importing a module that itself should be tree-shaken
-import "dep4";
+import {default as dep4} from "dep4";
 
 // Importing a module that re-exports another
 import { rexpOne } from "./reexports";
 
+// Import a CommonJS module
+import dep5 from "dep5";
+
+// Import a package but only use some subpackages
+import { DefineMap } from "can";
+
 export default function(){
+	window.globals = {
+		one,
+		anon,
+		twoOne,
+		steal,
+		rexpOne,
+		dep4,
+		dep5,
+		DefineMap
+	};
+
+	let shouldFail = steal.import("can-connect@1.0.0#main").then(null, function(err){
+		err.didFail = true;
+		return err;
+	});
+
 	// return all of the exports so the tests can assert things.
 	let p = Promise.all([
 		steal.import("~/bundle-a"),
@@ -27,7 +49,8 @@ export default function(){
 		steal.import("dep2"),
 		steal.import("dep4/other"),
 		steal.import("dep4/and-another"),
-		steal.import("~/from-exports")
+		steal.import("~/from-exports"),
+		shouldFail
 	]);
 
 	return p
@@ -37,7 +60,8 @@ export default function(){
 		depTwo,
 		dep4Other,
 		dep4AndAnother,
-		fromExports
+		fromExports,
+		canConnect
 	]) => {
 		return {
 			anon,
@@ -46,7 +70,9 @@ export default function(){
 			depTwo,
 			dep4Other,
 			dep4AndAnother,
-			fromExports
+			fromExports,
+			dep5,
+			canConnect
 		};
 	});
 };
