@@ -118,9 +118,8 @@ describe("Tree-shaking", function(){
 		});
 
 		describe("Unused packages", function(){
-			it.skip("Get pruned from the build", function(){
+			it("Get pruned from the build", function(){
 				let connect = app.canConnect;
-				assert.ok(connect instanceof Error, "Got an error, not a module");
 				assert.equal(connect.didFail, true, "marked as failed");
 			});
 		});
