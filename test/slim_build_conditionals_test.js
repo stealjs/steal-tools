@@ -19,6 +19,11 @@ describe("using steal-conditional and slim builds", function() {
 		return copyDependencies();
 	});
 
+	process.on('unhandledRejection', err => {
+		console.log("unhandled", err);
+		process.exit();
+	});
+
 	it("simple substitution works", function(done) {
 		var bundles = path.join(basePath, "substitution", "dist", "bundles");
 
