@@ -30,7 +30,7 @@
     "steal": "^1.11.4",
     "steal-bundler": "^0.3.6",
     "steal-parse-amd": "^1.0.0",
-    "steal-rollup": "^0.58.0",
+    "steal-rollup": "^0.58.1",
     "through2": "^2.0.0",
     "tmp": "0.0.33",
     "traceur": "0.0.111",
