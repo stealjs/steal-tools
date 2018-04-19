@@ -89,7 +89,7 @@ describe("slim builds", function() {
 
 	it("envify option works", function() {
 		var base = path.join(__dirname, "slim", "basics");
-		var config = { 
+		var config = {
 			config: path.join(base, "stealconfig.js"),
 			main: "envify"
 		};
