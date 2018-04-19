@@ -18,8 +18,8 @@ describe("Tree-shaking", function(){
 	var open = testHelpers.popen;
 	var find = testHelpers.pfind;
 
-	function buildAndOpen(opts = {}){
-		var options = Object.assign(opts, {
+	function buildAndOpen(opts){
+		var options = Object.assign(opts || {}, {
 			quiet: true,
 			minify: false
 		});
