@@ -1,3 +1,5 @@
+"use strict";
+
 var path = require("path");
 var assert = require("assert");
 var keys = require("lodash/keys");
