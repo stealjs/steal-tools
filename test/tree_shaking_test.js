@@ -112,13 +112,6 @@ describe("Tree-shaking", function(){
 			});
 		});
 
-		describe("sideEffects configuration", function(){
-			it.skip("Doesn't tree shake packages without the configuration", function(){
-				let two = app.depTwo.two;
-				assert.equal(typeof two, "function", "Package doesn\'t have sideEffects: false");
-			});
-		});
-
 		describe("Unused packages", function(){
 			it("Get pruned from the build", function(){
 				let connect = app.canConnect;
@@ -136,17 +129,6 @@ describe("Tree-shaking", function(){
 			let dep = app.dep;
 			assert.equal(typeof dep.one, "function", "Included");
 			assert.equal(typeof dep.two, "function", "Included");
-		});
-	});
-
-	describe("treeShakingForce: true", function(){
-		before(buildAndOpen({
-			treeShakingForce: true
-		}));
-
-		it("Tree-shakes modules without sideEffects: false", function(){
-			let two = app.depTwo.two;
-			assert.equal(typeof two, "undefined", "Was tree-shaken");
 		});
 	});
 });
