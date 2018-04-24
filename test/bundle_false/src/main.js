@@ -1,5 +1,5 @@
 import $ from "jqueryt";
-import dep from "src/dep";
+import dep from "./dep";
 
 window.app = {
   name: "main"
