@@ -137,7 +137,7 @@ describe("multi build", function(){
 		});
 	});
 
-	it("should minify by default", function() {
+	it("should minify and envify by default", function() {
 		var config = {
 			config: path.join(__dirname, "minify", "config.js"),
 			main: "minify"
@@ -145,9 +145,12 @@ describe("multi build", function(){
 
 		return asap(rmdir)(path.join(__dirname, "minify", "dist"))
 			.then(function() {
+				process.env.ENVIFY_VAR = "test_value";
 				return multiBuild(config, { quiet: true });
 			})
 			.then(function() {
+				delete process.env.ENVIFY_VAR;
+
 				var main = path.join(__dirname, "minify", "dist", "bundles", "minify.js");
 				var actualJS = fs.readFileSync(main, "utf8");
 
@@ -156,7 +159,7 @@ describe("multi build", function(){
 				var hasDevCode = actualJS.indexOf("remove this") !== -1;
 				var hasEnvifyCode = actualJS.indexOf("when envify is turned on this should be removed") !== -1;
 
-				assert(hasEnvifyCode, "Minified source has envify test code removed.");
+				assert(!hasEnvifyCode, "should not include envify test code.");
 				assert(!hasDevCode, "Minified source has dev code removed.");
 				assert(!hasLongVariable, "Minified source renamed long variable.");
 				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
@@ -187,7 +190,7 @@ describe("multi build", function(){
 			});
 	});
 
-	it("should allow turning envify on when minification is off", function() {
+	it("should apply envify when minification is off", function() {
 		var config = {
 			config: path.join(__dirname, "minify", "config.js"),
 			main: "minify"
@@ -195,7 +198,6 @@ describe("multi build", function(){
 
 		var options = {
 			quiet: true,
-			envify: true,
 			minify: false
 		};
 
@@ -215,7 +217,7 @@ describe("multi build", function(){
 			});
 	});
 
-	it("by default envify is not applied", function() {
+	it("should allow to turn envify off", function() {
 		var config = {
 			config: path.join(__dirname, "minify", "config.js"),
 			main: "minify"
@@ -223,7 +225,8 @@ describe("multi build", function(){
 
 		var options = {
 			quiet: true,
-			minify: false
+			minify: false,
+			envify: false
 		};
 
 		return asap(rmdir)(path.join(__dirname, "minify", "dist"))
