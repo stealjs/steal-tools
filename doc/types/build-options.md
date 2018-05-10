@@ -89,24 +89,30 @@ stealTools.build(config, {
 
 @option {Boolean} [watch=false] Actives watch mode which will continuously build as you develop your application.
 
-@option {Boolean} [envify=false] Replace Node-style environment variables with plain strings.
+@option {Boolean} [envify=true] Replace Node-style environment variables with plain strings.
 
 steal-tools uses [loose-envify](https://github.com/zertosh/loose-envify) under the hood, this option is specially useful when building React.js applications.
 
 Usage:
 
-First, make sure `NODE_ENV` is set appropiately, then just turn on the envify option;
-if you're using the steal-tools CLI modify your build command to look like:
+First, make sure `NODE_ENV` is set appropiately; by default the build command will
+turn `envify` on, just run:
 
 ```
-NODE_ENV=production steal-tools build --envify
+NODE_ENV=production steal-tools build
 ```
 
-or, if you're using the build API just pass the option like this:
+If you want to turn off this behavior, just pass the following flag to the CLI:
+
+```
+NODE_ENV=production steal-tools build --no-envify
+```
+
+or, set the flag to false when using the build API, like this:
 
 ```javascript
 stealTools.build({}, {
-	envify: true
+	envify: false
 });
 ```
 

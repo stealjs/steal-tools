@@ -63,4 +63,20 @@ describe("makeBuildConfig", function() {
 			"cannot be true if verbose output is set"
 		);
 	});
+
+	it("sets 'envify' value appropiately", function() {
+		assert.equal(makeBuildOptions({}).envify, true, "defaults to true");
+
+		assert.equal(
+			makeBuildOptions({ envify: false }).envify,
+			false,
+			"should not be mutated if set explicitly to false"
+		);
+
+		assert.equal(
+			makeBuildOptions({ noEnvify: true }).envify,
+			false,
+			"cannot be true if 'no-envify' is true"
+		);
+	});
 });
