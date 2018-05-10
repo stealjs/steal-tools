@@ -2293,7 +2293,7 @@ describe("multi build", function(){
 			});
 	});
 
-	it("promise polyfill can be excluded from StealJS core", function() {
+	it("promise polyfill can be included in StealJS core", function() {
 		var base = path.join(__dirname, "bundle");
 
 		return asap(rmdir)(path.join(base, "dist"))
@@ -2304,13 +2304,42 @@ describe("multi build", function(){
 				}, {
 					quiet: true,
 					minify: false,
-					bundlePromisePolyfill: false,
+					bundlePromisePolyfill: true,
 					dest: path.join(base, "dist")
 				});
 			})
 			.then(function() {
 				return fileExists(
-					path.join(base, "dist", "steal-sans-promises.production.js")
+					path.join(base, "dist", "steal-with-promises.production.js")
+				);
+			});
+	});
+
+	it("supports bundling StealJS with promise polyfill", function() {
+		var base = path.join(__dirname, "bundle");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "bundle",
+					config: path.join(base, "stealconfig.js")
+				}, {
+					quiet: true,
+					minify: false,
+					bundleSteal: true,
+					bundlePromisePolyfill: true,
+					dest: path.join(base, "dist")
+				});
+			})
+			.then(function() {
+				return asap(fs.readFile)(
+					path.join(base, "dist", "bundles", "bundle.js")
+				);
+			})
+			.then(function(mainBundle) {
+				assert(
+					/ES6 global Promise shim/.test(mainBundle.toString()),
+					"Promise shim should not be bundled with steal"
 				);
 			});
 	});
@@ -2327,7 +2356,6 @@ describe("multi build", function(){
 					quiet: true,
 					minify: false,
 					bundleSteal: true,
-					bundlePromisePolyfill: false,
 					dest: path.join(base, "dist")
 				});
 			})
@@ -2355,5 +2383,5 @@ describe("multi build", function(){
 			assert.equal(buildResult.buildType, "build");
 			done();
 		}, done).catch(done);
-	})
+	});
 });
