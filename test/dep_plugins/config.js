@@ -7,5 +7,5 @@ System.buildConfig = {
 };
 
 
-System.paths.less ="../../bower_components/less/dist/less-1.7.0.js";
+System.paths.less ="../../node_modules/less/dist/less-1.7.0.js";
 

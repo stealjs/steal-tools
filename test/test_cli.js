@@ -96,12 +96,12 @@ describe("steal-tools cli", function () {
 						return rmdir(path.join(__dirname, "npm", "dist"));
 					})
 					.then(function () {
-						return copy(path.join(__dirname, "..", "node_modules", "jquery"),
-									path.join(__dirname, "npm", "node_modules", "jquery"));
-					}).then(function () {
-						return copy(path.join(__dirname, "..", "bower_components", "steal"),
-									path.join(__dirname, "npm", "node_modules", "steal"));
-					}).then(done, done);
+						return copy(
+							path.join(__dirname, "..", "node_modules", "jquery"),
+							path.join(__dirname, "npm", "node_modules", "jquery")
+						);
+					})
+					.then(done, done);
 			});
 
 			afterEach(function () {

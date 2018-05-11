@@ -9,7 +9,6 @@ test/css_paths/bundles/
 node_modules
 !test/bundle_false/node_modules
 !test/bundle_false_cdn/node_modules
-bower_components
 /packages/
 test/out/
 test/bundle/bundles/

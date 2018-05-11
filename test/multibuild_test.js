@@ -566,83 +566,6 @@ describe("multi build", function(){
 		});
 	});
 
-	it("works with the bower plugin", function(done){
-		rmdir(__dirname + "/bower/dist", function(error){
-			if(error) return done(error);
-
-			multiBuild({
-				config: __dirname + "/bower/config.js",
-				main: "main"
-			}, {
-				quiet: true,
-				minify: false
-			}).then(function(){
-				open("test/bower/prod.html",function(browser, close){
-					find(browser,"MODULE", function(module){
-						assert(true, "module");
-						assert(module.jquerty, "has jquerty");
-						assert(module.jquerty(), "hello jquerty", "correct function loaded");
-						close();
-					}, close);
-				}, done);
-			}, done);
-		});
-	});
-
-	it("works with the bower plugin when using as the config", function(done){
-		// this test seems broken.
-		rmdir(__dirname + "/bower/dist", function(error){
-			if(error) return done(error);
-
-			multiBuild({
-				config: __dirname + "/bower/bower.json!bower",
-				main: "main"
-			}, {
-				quiet: true,
-				minify: false
-			}).then(function(){
-				open("test/bower/prod.html",function(browser, close){
-					find(browser,"MODULE", function(module){
-						assert(true, "module");
-						assert(module.jquerty, "has jquerty");
-						assert(module.jquerty(), "hello jquerty", "correct function loaded");
-						close();
-					}, close);
-				}, done);
-			}, done);
-		});
-	});
-
-	it("works with babel", function(done){
-        this.timeout(5000);
-
-		// this test seems broken.
-		rmdir(__dirname + "/babel/dist", function(error){
-			if(error) return done(error);
-
-			multiBuild({
-				config: __dirname + "/babel/config.js",
-				main: "main"
-			}, {
-				quiet: true,
-				minify: false
-			}).then(function(){
-				var code = fs.readFileSync(__dirname+"/babel/dist/bundles/main.js",
-										   "utf8");
-				assert(!/\*babel\*/.test(code), "babel not included in the code");
-
-				open("test/babel/prod.html",function(browser, close){
-					find(browser,"MODULE", function(module){
-						assert(true, "module");
-						assert(module.dep, "has jquerty");
-						assert(module.dep(), "hello jquerty", "correct function loaded");
-						close();
-					}, close);
-				}, done);
-			}, done);
-		});
-	});
-
 	it("works with an unnormalized main", function(done){
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
@@ -1332,39 +1255,24 @@ describe("multi build", function(){
 
 		});
 
-
 		var setup = function(done){
-			rmdir(path.join(__dirname, "npm", "node_modules"), function(error){
-				if(error){ return done(error); }
-
-				rmdir(path.join(__dirname, "npm", "dist"), function(error){
-					if(error){ return done(error); }
-
-					fs.copy(path.join(__dirname, "..", "node_modules","jquery"),
-						path.join(__dirname, "npm", "node_modules", "jquery"), function(error){
-
-						if(error){ return done(error); }
-
-						fs.copy(
-							path.join(__dirname, "..", "bower_components","steal"),
-							path.join(__dirname, "npm", "node_modules", "steal"), function(error){
-
-							if(error){ return done(error); }
-
-							fs.copy(
-								path.join(__dirname, "..", "bower_components","steal"),
-								__dirname+"/npm/node_modules/steal", function(error){
-
-								if(error){ return done(error); }
-
-								done();
-
-							});
-
-						});
-					});
-				});
-			});
+			asap(rmdir)(path.join(__dirname, "npm", "node_modules"))
+				.then(function() {
+					return asap(rmdir)(path.join(__dirname, "npm", "dist"));
+				})
+				.then(function() {
+					return asap(fs.copy)(
+						path.join(__dirname, "..", "node_modules", "jquery"),
+						path.join(__dirname, "npm", "node_modules", "jquery")
+					);
+				})
+				.then(function() {
+					return asap(fs.copy)(
+						path.join(__dirname, "..", "node_modules", "steal"),
+						path.join(__dirname, "npm", "node_modules", "steal")
+					);
+				})
+				.then(done, done);
 		};
 
 		it("only needs a config", function(done){
