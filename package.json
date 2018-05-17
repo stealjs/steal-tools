@@ -27,7 +27,7 @@
     "pdenodeify": "^0.1.0",
     "prettier": "1.12.0",
     "pump": "^3.0.0",
-    "steal": "^2.0.0-pre.3",
+    "steal": "stealjs/steal#tree-shake",
     "steal-bundler": "^0.3.6",
     "steal-parse-amd": "^1.0.0",
     "steal-rollup": "^0.58.1",
