@@ -13,7 +13,7 @@ var readFile = denodeify(fs.readFile);
 var rmdir = denodeify(require("rimraf"));
 
 describe("dev bundle build", function() {
-	this.timeout(5000);
+	this.timeout(10000);
 
 	var baseOptions =  {
 		quiet: true
