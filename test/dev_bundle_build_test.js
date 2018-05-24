@@ -15,7 +15,7 @@ var rmdir = denodeify(require("rimraf"));
 describe("dev bundle build", function() {
 	this.timeout(5000);
 
-	var baseOptions =  {
+	var baseOptions = {
 		quiet: true
 	};
 
@@ -250,6 +250,36 @@ describe("dev bundle build", function() {
 			})
 			.then(function() {
 				return rmdir(devBundlePath);
+			});
+	});
+
+	it("loads css from custom destination", function() {
+		var base = path.join(__dirname, "dev_bundle_css");
+		var devBundleDest = path.join(base, "custom_dest");
+
+		var config = {
+			main: "main",
+			config: path.join(base, "package.json!npm")
+		};
+
+		var options = assign({}, baseOptions, {
+			filter: "**/*",
+			dest: "custom_dest/"
+		});
+
+		return rmdir(devBundleDest)
+			.then(function() {
+				return devBundleBuild(config, options);
+			})
+			.then(function () {
+				return open(base, "dev.html");
+			})
+			.then(function(p) {
+				p.browser.assert.success();
+				p.close();
+			})
+			.then(function() {
+				return rmdir(devBundleDest);
 			});
 	});
 });
