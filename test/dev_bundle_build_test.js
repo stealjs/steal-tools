@@ -316,10 +316,13 @@ describe("dev bundle build", function() {
 					);
 				})
 				.then(function () {
-					return pcopy(
-						path.join(src, "less"),
-						path.join(dest, "less")
-					);
+					// node v4 nests deps, "less" will be inside steal-less
+					if (fs.existsSync(path.join(src, "less"))) {
+						return pcopy(
+							path.join(src, "less"),
+							path.join(dest, "less")
+						);
+					}
 				});
 		}
 
