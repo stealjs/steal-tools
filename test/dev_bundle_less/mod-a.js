@@ -1,0 +1,1 @@
+window.modA = "mod-a";
