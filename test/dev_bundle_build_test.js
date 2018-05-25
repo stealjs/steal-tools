@@ -13,7 +13,7 @@ var readFile = denodeify(fs.readFile);
 var rmdir = denodeify(require("rimraf"));
 
 describe("dev bundle build", function() {
-	this.timeout(5000);
+	this.timeout(10000);
 
 	var baseOptions = {
 		quiet: true
@@ -280,6 +280,68 @@ describe("dev bundle build", function() {
 			})
 			.then(function() {
 				return rmdir(devBundleDest);
+			});
+	});
+
+	it("works with plugins using metadata.useLocalDeps", function() {
+		var pcopy = denodeify(fs.copy);
+		var base = path.join(__dirname, "dev_bundle_less");
+		var devBundlePath = path.join(base, "custom_dest");
+
+		var config = {
+			main: "main",
+			config: path.join(base, "package.json!npm")
+		};
+
+		var options = assign({}, baseOptions, {
+			filter: "node_modules/**/*",
+			dest: "custom_dest/"
+		});
+
+		function copyDependencies() {
+			var src = path.join(__dirname, "..", "node_modules");
+			var dest = path.join(base, "node_modules");
+
+			return rmdir(dest)
+				.then(function () {
+					return pcopy(
+						path.join(src, "steal-less"),
+						path.join(dest, "steal-less")
+					);
+				})
+				.then(function() {
+					return pcopy(
+						path.join(src, "steal-css"),
+						path.join(dest, "steal-css")
+					);
+				})
+				.then(function () {
+					// node v4 nests deps, "less" will be inside steal-less
+					if (fs.existsSync(path.join(src, "less"))) {
+						return pcopy(
+							path.join(src, "less"),
+							path.join(dest, "less")
+						);
+					}
+				});
+		}
+
+		return copyDependencies()
+			.then(function() {
+				return rmdir(devBundlePath);
+			})
+			.then(function() {
+				return devBundleBuild(config, options);
+			})
+			.then(function () {
+				return open(base, "dev.html");
+			})
+			.then(function(p) {
+				p.browser.assert.success();
+				p.close();
+			})
+			.then(function() {
+				return rmdir(devBundlePath);
 			});
 	});
 });
