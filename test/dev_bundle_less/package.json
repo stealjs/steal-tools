@@ -1,0 +1,12 @@
+{
+  "name": "dev_bundle_less",
+  "version": "1.0.0",
+  "main": "main",
+  "dependencies": {
+    "steal-less": "^1.2.2"
+  },
+  "steal": {
+    "plugins": ["steal-less"],
+    "bundle": ["~/mod-a"]
+  }
+}

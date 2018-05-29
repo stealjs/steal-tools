@@ -28,10 +28,10 @@ exports.open = function(url, callback, done){
 
 	server = connect()
 		.use(serveStatic(path.join(__dirname, "..")))
-		.listen(8081);
+		.listen(8888);
 
 	var browser = new Browser();
-	browser.visit("http://localhost:8081/"+url)
+	browser.visit("http://localhost:8888/"+url)
 		.then(function(){
 			callback(browser, function(err){
 				server.close(function(){
