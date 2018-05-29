@@ -1,0 +1,15 @@
+{
+  "name": "babel_child",
+  "main": "main.js",
+  "version": "1.0.0",
+  "dependencies": {
+    "child": "1.0.0"
+  },
+  "steal": {
+    "babelOptions": {
+      "plugins": [
+        "transform-class-properties"
+      ]
+    }
+  }
+}

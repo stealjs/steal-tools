@@ -88,6 +88,31 @@ describe("build app using babel plugins", function() {
 				}, done);
 			});
 	});
+
+	it("child babelOptions do not override the parent project's", function(done){
+		var base = path.join(__dirname, "babel_child");
+
+		rmdir(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					config: path.join(base, "package.json!npm")
+				}, {
+					minify: false,
+					quiet: true
+				});
+			})
+			.then(function() {
+				var page = path.join("test", "babel_child", "prod.html");
+
+				open(page, function(browser, close) {
+					find(browser, "search", function(search) {
+						var val = search.child.value;
+						assert.equal(val, "worked", "built without exploding");
+						done();
+					}, close);
+				}, done);
+			}, done);
+	});
 });
 
 function copyDependencies() {

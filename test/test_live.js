@@ -169,7 +169,7 @@ describe("live-reload", function(){
 					assert.equal(dep.load.metadata.includedDeps[0],
 								 "file:" + nestedPath);
 
-					fs.writeFile(nestedPath, "bar", "utf8");
+					fs.writeFile(nestedPath, "bar", "utf8", Function.prototype);
 				});
 			});
 		});
