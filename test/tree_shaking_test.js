@@ -132,7 +132,7 @@ describe("Tree-shaking", function(){
 		});
 	});
 
-	describe.only("Bundles", function() {
+	describe("Bundles", function() {
 		before(function(done){
 			this.timeout(20000);
 			var base = path.join(__dirname, "treeshake", "bundle");
