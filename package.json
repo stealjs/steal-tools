@@ -25,6 +25,7 @@
     "moment": "^2.10.2",
     "multimatch": "^2.1.0",
     "normalize-path": "^2.1.1",
+    "object.entries": "^1.0.4",
     "pdenodeify": "^0.1.0",
     "prettier": "1.12.0",
     "pump": "^3.0.0",
