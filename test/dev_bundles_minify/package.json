@@ -1,0 +1,8 @@
+{
+	"name": "app",
+	"main": "main.js",
+	"version": "1.0.0",
+	"dependencies": {
+		"dummy": "1.0.0"
+	}
+}
