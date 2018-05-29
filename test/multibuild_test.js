@@ -802,8 +802,7 @@ describe("multi build", function(){
 				minify: false,
 				quiet: true
 			}).then(function(){
-				open("test/progressive_package/prod.html",
-					 function(browser, close){
+				open("test/progressive_package/prod.html", function(browser, close){
 					find(browser, "MODULE", function(module){
 						var a = module.a;
 						var b = module.b;
@@ -817,7 +816,8 @@ describe("multi build", function(){
 						close();
 					}, close);
 				}, done);
-			});
+			})
+			.catch(done);
 		});
 	});
 

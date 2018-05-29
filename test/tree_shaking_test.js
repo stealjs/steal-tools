@@ -131,4 +131,41 @@ describe("Tree-shaking", function(){
 			assert.equal(typeof dep.two, "function", "Included");
 		});
 	});
+
+	describe("Bundles", function() {
+		before(function(done){
+			this.timeout(20000);
+			var base = path.join(__dirname, "treeshake", "bundle");
+			var config = { config: path.join(base, "package.json!npm") };
+			var page = `prod.html`;
+
+			rmdir(path.join(base, "dist"))
+				.then(function() {
+					return build(config, {
+						quiet: true,
+						minify: false
+					});
+				})
+				.then(function() {
+					var close;
+					return open(path.join("test", "treeshake", "bundle", page))
+						.then(function(args) {
+							close = args.close;
+							browser = args.browser;
+							return find(browser, "APP");
+						})
+						.then(function(mod) {
+							app = mod;
+							close();
+							done();
+						});
+				})
+				.catch(done);
+		})
+
+		it("Items from both are included in the build", function(){
+			assert.equal(app.a, "a", "main bundle loaded");
+			assert.equal(app.b, "b", "this bundle loaded");
+		});
+	})
 });
