@@ -9,6 +9,7 @@ var escapeRegExp = require("lodash/escapeRegExp");
 var devBundleBuild = require("../lib/build/bundle");
 
 var open = testHelpers.popen;
+var find = testHelpers.pfind;
 var readFile = denodeify(fs.readFile);
 var rmdir = denodeify(require("rimraf"));
 
@@ -374,6 +375,42 @@ describe("dev bundle build", function() {
 			.then(function(p) {
 				p.close();
 				p.browser.assert.element("h1");
+			})
+			.then(clean)
+			.catch(clean);
+	});
+
+	it.only("works in a project using the folder/index convention", function(done) {
+		var dir = path.join(__dirname, "dev_bundle_forward");
+		var devBundlePath = path.join(dir, "dev-bundle.js");
+
+		var config = {
+			config: path.join(dir, "package.json!npm")
+		};
+
+		var options = assign({}, baseOptions, {
+			minify: false,
+			filter: ["node_modules/**/*", "package.json"] // only bundle npm deps
+		});
+
+		console.log("OPTIONS", options,config);
+
+		var clean = function(err) {
+			console.log("ERR",err);
+			//rmdir(devBundlePath).then(function() {
+				done(err);
+			//});
+		};
+
+		devBundleBuild(config, options)
+			.then(function() {
+				return open("test/dev_bundle_forward/dev.html");
+			})
+			.then(function(p) {
+				return find(p.browser, "APP");
+			})
+			.then(function(app){
+				assert.equal(app.folder, "works");
 			})
 			.then(clean)
 			.catch(clean);
