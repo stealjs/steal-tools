@@ -380,7 +380,7 @@ describe("dev bundle build", function() {
 			.catch(clean);
 	});
 
-	it.only("works in a project using the folder/index convention", function(done) {
+	it("works in a project using the folder/index convention", function(done) {
 		var dir = path.join(__dirname, "dev_bundle_forward");
 		var devBundlePath = path.join(dir, "dev-bundle.js");
 
@@ -393,13 +393,10 @@ describe("dev bundle build", function() {
 			filter: ["node_modules/**/*", "package.json"] // only bundle npm deps
 		});
 
-		console.log("OPTIONS", options,config);
-
 		var clean = function(err) {
-			console.log("ERR",err);
-			//rmdir(devBundlePath).then(function() {
+			rmdir(devBundlePath).then(function() {
 				done(err);
-			//});
+			});
 		};
 
 		devBundleBuild(config, options)
