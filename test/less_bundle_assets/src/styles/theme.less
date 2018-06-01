@@ -1,0 +1,22 @@
+/*------------------
+       Theme
+-------------------*/
+
+@theme: @@element;
+
+/*------------------
+       Fonts
+-------------------*/
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,600i,700,700i');
+
+/* Default */
+@import "@{themesFolder}/default/@{type}s/@{element}.variables";
+
+/*------------------
+     Overrides
+-------------------*/
+
+.loadUIOverrides() {
+  @import "@{themesFolder}/@{theme}/@{type}s/@{element}.overrides";
+}

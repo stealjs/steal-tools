@@ -9,6 +9,8 @@ var asap = require("pdenodeify"),
 
 var find = testHelpers.find;
 var open = testHelpers.open;
+var pcopy = asap(fs.copy);
+var prmdir = asap(rmdir);
 
 describe("bundleAssets", function(){
     this.timeout(50000);
@@ -123,4 +125,55 @@ describe("bundleAssets", function(){
             }, done);
         });
     });
+
+	it("Able to build project using Less rootpath on Windows", function(done) {
+		var base = path.join(__dirname, "less_bundle_assets");
+
+		var config = {
+			config: path.join(base, "package.json!npm")
+		};
+
+		var options = {
+			quiet: true,
+			minify: false,
+			bundleAssets: true
+		};
+
+		function copyDependencies() {
+			var src = path.join(__dirname, "..", "node_modules");
+			var dest = path.join(base, "node_modules");
+
+			return prmdir(dest)
+				.then(function () {
+					return pcopy(
+						path.join(src, "steal-less"),
+						path.join(dest, "steal-less")
+					);
+				})
+				.then(function() {
+					return pcopy(
+						path.join(src, "steal-css"),
+						path.join(dest, "steal-css")
+					);
+				})
+				.then(function () {
+					// node v4 nests deps, "less" will be inside steal-less
+					if (fs.existsSync(path.join(src, "less"))) {
+						return pcopy(
+							path.join(src, "less"),
+							path.join(dest, "less")
+						);
+					}
+				});
+		}
+
+		copyDependencies()
+		.then(function(){
+			return multiBuild(config, options);
+		})
+		.then(function(){
+			done();
+		})
+		.catch(done);
+	})
 });

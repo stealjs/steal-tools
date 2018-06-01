@@ -1,0 +1,10 @@
+/*--------------
+   Font Files
+---------------*/
+
+@fontPath : '../../../themes/default/assets/fonts';
+
+@fontName: 'icons';
+@src:
+  url("@{fontPath}/@{fontName}.eot?#iefix") format('embedded-opentype')
+;

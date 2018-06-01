@@ -1,0 +1,14 @@
+{
+  "name": "less_bundle_assets",
+  "main": "app.js",
+  "version": "1.0.0",
+  "dependencies": {
+    "steal-less": "^1.2.2"
+  },
+  "steal": {
+    "directories": {
+      "lib": "src"
+    },
+    "plugins": ["steal-less"]
+  }
+}
