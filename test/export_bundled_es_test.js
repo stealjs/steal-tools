@@ -1,0 +1,30 @@
+var assert = require("assert");
+var stealExport = require("../lib/build/export");
+var rmdir = require("rimraf");
+var testHelpers = require("./helpers");
+
+var find = testHelpers.find;
+var open = testHelpers.open;
+
+
+describe("+bundled-es", function(){
+	it("Works with a basic app with npm dependencies", function(done){
+		this.timeout(10000);
+		stealExport({
+			steal: {
+				config: __dirname+"/exports_basics/package.json!npm",
+				main: "app/index_es"
+			},
+			options: { quiet: true },
+			"outputs": {
+				"+bundled-es": {
+					dest: __dirname + "/exports_basics/dist/es.js"
+				}
+			}
+		})
+		.then(function() {
+			assert.ok(true, "it built");
+			done();
+		}, done);
+	});
+});
