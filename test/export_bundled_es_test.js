@@ -27,4 +27,28 @@ describe("+bundled-es", function(){
 			done();
 		}, done);
 	});
+
+	it("Works when also doing a global build", function(done){
+		this.timeout(10000);
+		stealExport({
+			steal: {
+				config: __dirname+"/exports_basics/package.json!npm",
+				main: "app/index_es"
+			},
+			options: { quiet: true },
+			"outputs": {
+				"+standalone": {
+					dest: __dirname + "/exports_basics/dist/global.js"
+				},
+				"+bundled-es": {
+					addProcessShim: true,
+					dest: __dirname + "/exports_basics/dist/es.js"
+				}
+			}
+		})
+		.then(function() {
+			assert.ok(true, "it built");
+			done();
+		}, done);
+	})
 });
