@@ -33,6 +33,7 @@ require("./export_test");
 require("./export_global_js_test");
 require("./export_global_css_test");
 require("./export_standalone_test");
+require("./export_bundled_es_test");
 require("./continuous_test");
 require("./concat_test");
 require("./graph_stream_test");

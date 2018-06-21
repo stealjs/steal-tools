@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - 6.0
   - 8.0
-  - node
+  - 10.2.1
 before_script:
   - npm dedupe
 before_install:
