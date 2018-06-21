@@ -21,9 +21,9 @@ describe("transformImport", function(){
 			},
 			quiet: true
 		}).then(function(transform){
-
-
-			fs.writeFile(__dirname+"/pluginify/out.js", transform().code, function(err) {
+			return transform();
+		}).then(function(source){
+			fs.writeFile(__dirname+"/pluginify/out.js", source.code, function(err) {
 			    // open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/pluginify/index.html", function(browser, close){
@@ -45,8 +45,6 @@ describe("transformImport", function(){
 		}).catch(function(e){
 			console.log(e.stack)
 		});
-
-
 	});
 
 	it("ignores files told to ignore", function(done){
@@ -57,11 +55,13 @@ describe("transformImport", function(){
 			exports: {},
 			quiet: true
 		}).then(function(transform){
+			return transform(null, {
+				ignore: ["basics/amdmodule"]
+			});
+		}).then(function(source){
 
 			// Get the resulting string, ignoring amdmodule
-			var result = transform(null, {
-				ignore: ["basics/amdmodule"]
-			}).code;
+			var result = source.code;
 
 			// Regex test to see if the basics/amdmodule is included
 			var includesIgnoredThings = new RegExp("\\*basics\\/amdmodule\\*").test(result);
@@ -72,7 +72,6 @@ describe("transformImport", function(){
 	});
 
 	it("makes plugins that depend on other made plugins",function(done){
-
 		transformImport({
 			config: __dirname+"/pluginify_deps/config.js",
 			main: "plugin"
@@ -80,17 +79,22 @@ describe("transformImport", function(){
 			exports: {},
 			quiet: true
 		}).then(function(transform){
-			var pluginOut = transform("plugin",{
-				ignore: ["util"],
-				minify: false
-			}).code;
-			var utilOut = transform("util",{
-				ignore: ["lib"],
-				minify: false,
-				exports: {
-					"lib" : "lib"
-				}
-			}).code;
+			return Promise.all([
+				transform("plugin",{
+					ignore: ["util"],
+					minify: false
+				}),
+				transform("util",{
+					ignore: ["lib"],
+					minify: false,
+					exports: {
+						"lib" : "lib"
+					}
+				})
+			]);
+		}).then(function([pluginSource, utilSource]) {
+			var pluginOut = pluginSource.code;
+			var utilOut = utilSource.code;
 
 			fs.mkdirs(__dirname+"/pluginify_deps/out", function(err) {
 
@@ -128,7 +132,9 @@ describe("transformImport", function(){
 			exports: {},
 			quiet: true
 		}).then(function(transform) {
-			fs.writeFile(__dirname+"/nocallback/out.js", transform().code, function(err) {
+			return transform();
+		}).then(function({code}) {
+			fs.writeFile(__dirname+"/nocallback/out.js", code, function(err) {
 			    // open the prod page and make sure
 				// the plugin processed the input correctly
 				open("test/nocallback/index.html", function(browser, close){
@@ -149,11 +155,11 @@ describe("transformImport", function(){
 			exports: {},
 			quiet: true
 		}).then(function(transform){
-			var pluginOut = transform(null, {
+			return transform(null, {
 				minify: false
-			}).code;
-
-			assert.equal(/System\.set/.test(pluginOut), false,
+			});
+		}).then(function({code}) {
+			assert.equal(/System\.set/.test(code), false,
 						 "No System.set in the output");
 		}).then(done);
 	});
@@ -173,11 +179,11 @@ describe("transformImport", function(){
 				},
 				quiet: true
 			}).then(function(transform){
-				var pluginOut = transform(null, {
+				return transform(null, {
 					minify: false
-				}).code;
-
-				fs.writeFile(__dirname + "/pluginify_global/out.js", pluginOut, function(error) {
+				});
+			}).then(function({code}) {
+				fs.writeFile(__dirname + "/pluginify_global/out.js", code, function(error) {
 					if(error) {
 						return done(error);
 					}
@@ -207,9 +213,9 @@ describe("transformImport", function(){
 			}, {
 				quiet: true
 			}).then(function(transform){
-				var out = transform(null, { minify: false }).code;
-
-				fs.writeFile(__dirname + "/pluginify_define/out.js", out, function(error){
+				return transform(null, { minify: false })
+			}).then(function({code}){
+				fs.writeFile(__dirname + "/pluginify_define/out.js", code, function(error){
 					if(error) {
 						return done(error);
 					}
@@ -235,11 +241,12 @@ describe("transformImport", function(){
 				});
 			})
 			.then(function(transform) {
-				var out = transform(null, { minify: false }).code;
-
+				return transform(null, { minify: false });
+			})
+			.then(function({code}) {
 				return asap(fs.writeFile)(
 					path.join(__dirname, "live_reload", "out.js"),
-					out
+					code
 				);
 			})
 			.then(function() {
@@ -268,10 +275,10 @@ describe("transformImport", function(){
 				});
 			})
 			.then(function(transform){
-				var out = transform(null, { minify: false }).code;
-
+				return transform(null, { minify: false });
+			}).then(function({code}){
 				return asap(fs.writeFile)(__dirname + "/transform_export/out.js",
-										  out);
+										  code);
 			})
 			.then(function(){
 				open("test/transform_export/site.html", function(browser, close){
@@ -285,4 +292,3 @@ describe("transformImport", function(){
 		});
 	});
 });
-

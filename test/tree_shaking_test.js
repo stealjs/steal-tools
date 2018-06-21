@@ -50,7 +50,10 @@ describe("Tree-shaking", function(){
 							done();
 						});
 				})
-				.catch(done);
+				.catch(err => {
+					console.error(err);
+					done(err);
+				});
 		}
 	}
 
