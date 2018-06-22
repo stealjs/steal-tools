@@ -8,6 +8,7 @@
     "web": "http://bitovi.com/"
   },
   "dependencies": {
+    "babel-minify": "^0.4.3",
     "babel-standalone": "^6.23.1",
     "bitovi-source-map": "0.4.2-bitovi.2",
     "chokidar": "^2.0.0",
