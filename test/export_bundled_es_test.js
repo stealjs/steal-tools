@@ -50,5 +50,26 @@ describe("+bundled-es", function(){
 			assert.ok(true, "it built");
 			done();
 		}, done);
-	})
+	});
+
+	it("Can be minified", function(done){
+		this.timeout(10000);
+		stealExport({
+			steal: {
+				config: __dirname+"/exports_basics/package.json!npm",
+				main: "app/index_es"
+			},
+			options: { quiet: true },
+			"outputs": {
+				"+bundled-es": {
+					minify: true,
+					dest: __dirname + "/exports_basics/dist/es.js"
+				}
+			}
+		})
+		.then(function() {
+			assert.ok(true, "it built");
+			done();
+		}, done);
+	});
 });
