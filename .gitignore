@@ -39,3 +39,4 @@ test/transform_export/out.js
 test/exports_basics/out.js
 test/circular/export/
 test/serviceworker/service-worker.js
+!test/dev_bundles_minify/node_modules

@@ -63,19 +63,21 @@ describe("+standalone", function(){
 		});
 	});
 
-	it("Can be used for node.js projects", function(done){
+	it("Can be used for node.js projects with process and defaults to not prod", function(done){
 		this.timeout(10000);
 
 		var outPath = __dirname + "/exports_basics/out.js";
 
 		stealExport({
 			steal: {
+				main: "app/uses-process",
 				config: __dirname + "/exports_basics/package.json!npm"
 			},
 			options: { quiet: true },
 			outputs: {
 				"+standalone": {
-					exports: { "foo": "FOO.foo" },
+					modules: ["app/uses-process"],
+					exports: { "app/uses-process": "EXP_PROCESS" },
 					dest: function(){
 						return outPath;
 					}
@@ -83,9 +85,49 @@ describe("+standalone", function(){
 			}
 		})
 		.then(function(){
-			require(outPath);
-			assert.ok(true, "Was able to require the created module");
-			done();
+			open("test/exports_basics/global.html",
+				 function(browser, close) {
+				find(browser,"EXP_PROCESS", function(expProcess){
+					assert.equal(expProcess.env, "NOT-PROD", "not in prod by default");
+					close();
+				}, close);
+			}, done);
+		})
+		.catch(done);
+
+	});
+
+	it.only("Can be used for node.js projects with process and can be set to production", function(done){
+		this.timeout(10000);
+
+		var outPath = __dirname + "/exports_basics/out.js";
+
+		stealExport({
+			steal: {
+				main: "app/uses-process",
+				config: __dirname + "/exports_basics/package.json!npm"
+			},
+			options: { quiet: true },
+			outputs: {
+				"+standalone": {
+					modules: ["app/uses-process"],
+					exports: { "app/uses-process": "EXP_PROCESS" },
+					dest: function(){
+						return outPath;
+					},
+					// sets to production
+					env: "production"
+				}
+			}
+		})
+		.then(function(){
+			open("test/exports_basics/global.html",
+				 function(browser, close) {
+				find(browser,"EXP_PROCESS", function(expProcess){
+					assert.equal(expProcess.env, "PROD", "not in prod by default");
+					close();
+				}, close);
+			}, done);
 		})
 		.catch(done);
 

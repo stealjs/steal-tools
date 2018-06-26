@@ -9,6 +9,7 @@ var escapeRegExp = require("lodash/escapeRegExp");
 var devBundleBuild = require("../lib/build/bundle");
 
 var open = testHelpers.popen;
+var find = testHelpers.pfind;
 var readFile = denodeify(fs.readFile);
 var rmdir = denodeify(require("rimraf"));
 
@@ -343,5 +344,72 @@ describe("dev bundle build", function() {
 			.then(function() {
 				return rmdir(devBundlePath);
 			});
+	});
+
+	it("minified dev bundles work", function(done) {
+		var dir = path.join(__dirname, "dev_bundles_minify");
+		var devBundlePath = path.join(dir, "dev-bundle.js");
+
+		var config = {
+			config: path.join(dir, "package.json!npm")
+		};
+
+		var options = assign({}, baseOptions, {
+			minify: true,
+			filter: "node_modules/**/*" // only bundle npm deps
+		});
+
+		var clean = function(err) {
+			rmdir(devBundlePath).then(function() {
+				done(err);
+			});
+		};
+		devBundleBuild(config, options)
+			.then(function() {
+				var exists = fs.existsSync(devBundlePath);
+				assert(exists, "dev bundle should be created");
+			})
+			.then(function() {
+				return open("test/dev_bundles_minify/dev.html");
+			})
+			.then(function(p) {
+				p.close();
+				p.browser.assert.element("h1");
+			})
+			.then(clean)
+			.catch(clean);
+	});
+
+	it("works in a project using the folder/index convention", function(done) {
+		var dir = path.join(__dirname, "dev_bundle_forward");
+		var devBundlePath = path.join(dir, "dev-bundle.js");
+
+		var config = {
+			config: path.join(dir, "package.json!npm")
+		};
+
+		var options = assign({}, baseOptions, {
+			minify: false,
+			filter: ["node_modules/**/*", "package.json"] // only bundle npm deps
+		});
+
+		var clean = function(err) {
+			rmdir(devBundlePath).then(function() {
+				done(err);
+			});
+		};
+
+		devBundleBuild(config, options)
+			.then(function() {
+				return open("test/dev_bundle_forward/dev.html");
+			})
+			.then(function(p) {
+				return find(p.browser, "APP");
+			})
+			.then(function(app){
+				assert.equal(app.folder, "works");
+			})
+			.then(clean)
+			.catch(clean);
 	});
 });
