@@ -27,7 +27,7 @@
     "pdenodeify": "^0.1.0",
     "prettier": "1.11.1",
     "pump": "^3.0.0",
-    "steal": "^1.11.7",
+    "steal": "^1.12.4",
     "steal-bundler": "^0.3.6",
     "steal-parse-amd": "^1.0.0",
     "through2": "^2.0.0",
