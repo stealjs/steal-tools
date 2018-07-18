@@ -124,14 +124,55 @@ describe("Tree-shaking", function(){
 	});
 
 	describe("treeShaking: false", function(){
-		before(buildAndOpen({
-			treeShaking: false
-		}));
+		describe("as a BuildOption", function(){
+			before(buildAndOpen({
+				treeShaking: false
+			}));
 
-		it("Doesn\'t tree shake modules", function(){
-			let dep = app.dep;
-			assert.equal(typeof dep.one, "function", "Included");
-			assert.equal(typeof dep.two, "function", "Included");
+			it("Doesn\'t tree shake modules", function(){
+				let dep = app.dep;
+				assert.equal(typeof dep.one, "function", "Included");
+				assert.equal(typeof dep.two, "function", "Included");
+			});
+		});
+
+		describe("in the package.json", function(){
+			var app;
+			before(function(done){
+				this.timeout(20000);
+				var base = path.join(__dirname, "treeshake", "disabled");
+				var config = { config: path.join(base, "package.json!npm") };
+				var page = `prod.html`;
+
+				rmdir(path.join(base, "dist"))
+					.then(function() {
+						return build(config, {
+							quiet: true,
+							minify: false
+						});
+					})
+					.then(function() {
+						var close;
+						return open(path.join("test", "treeshake", "disabled", page))
+							.then(function(args) {
+								close = args.close;
+								browser = args.browser;
+								return find(browser, "app");
+							})
+							.then(function(mod) {
+								app = mod;
+								close();
+								done();
+							});
+					})
+					.catch(done);
+			});
+
+			it("Doesn\'t tree shake modules", function(){
+				let dep = app.dep;
+				assert.equal(typeof dep.one, "function", "Included");
+				assert.equal(typeof dep.two, "function", "Included");
+			});
 		});
 	});
 
@@ -164,7 +205,7 @@ describe("Tree-shaking", function(){
 						});
 				})
 				.catch(done);
-		})
+		});
 
 		it("Items from both are included in the build", function(){
 			assert.equal(app.a, "a", "main bundle loaded");
