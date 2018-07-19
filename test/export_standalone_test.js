@@ -97,7 +97,7 @@ describe("+standalone", function(){
 
 	});
 
-	it.only("Can be used for node.js projects with process and can be set to production", function(done){
+	it("Can be used for node.js projects with process and can be set to production", function(done){
 		this.timeout(10000);
 
 		var outPath = __dirname + "/exports_basics/out.js";

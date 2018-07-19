@@ -102,9 +102,13 @@ describe("export", function(){
 		}, done);
 	});
 
-	it("passes the load objects to normalize and dest", function(done){
-		var destCalls = 0;
+	process.on('unhandledRejection', function(){
+		debugger;
+	})
 
+	it("passes the load objects to normalize and dest", function(done){
+		var ignoreCalls = 0;
+		var destCalls = 0;
 		stealExport({
 
 			steal: {
@@ -128,11 +132,11 @@ describe("export", function(){
 						return name;
 					},
 					ignore: function(moduleName, load){
-						switch(destCalls++) {
+						switch(ignoreCalls++) {
 							case 0:
 								assert.equal(load.name, "pluginifier_builder_load/main");
 								break;
-							case 2:
+							case 1:
 								assert.equal(load.name, "pluginifier_builder_load/bar");
 								return true;
 								break;
@@ -143,7 +147,7 @@ describe("export", function(){
 					},
 					dest: function(moduleName, moduleData, load){
 						switch(destCalls++) {
-							case 1:
+							case 0:
 								assert.equal(load.name, "pluginifier_builder_load/main");
 								break;
 							default:
@@ -155,18 +159,15 @@ describe("export", function(){
 					minify: false
 				}
 			}
-		}).then(function(err){
-
-			done();
-
-		}, done);
+		}).then(() => done())
+		.catch(done);
 	});
 
 	it("passes the load objects to normalize and dest (+cjs)", function(done) {
+		var ignoreCalls = 0;
 		var destCalls = 0;
 
 		stealExport({
-
 			steal: {
 				main: "pluginifier_builder_load/main",
 				config: __dirname + "/stealconfig.js"
@@ -188,11 +189,11 @@ describe("export", function(){
 						return name;
 					},
 					ignore: function(moduleName, load){
-						switch(destCalls++) {
+						switch(ignoreCalls++) {
 							case 0:
 								assert.equal(load.name, "pluginifier_builder_load/main");
 								break;
-							case 2:
+							case 1:
 								assert.equal(load.name, "pluginifier_builder_load/bar");
 								return true;
 								break;
@@ -203,7 +204,7 @@ describe("export", function(){
 					},
 					dest: function(moduleName, moduleData, load){
 						switch(destCalls++) {
-							case 1:
+							case 0:
 								assert.equal(load.name, "pluginifier_builder_load/main");
 								break;
 							default:
@@ -215,11 +216,9 @@ describe("export", function(){
 					minify: false
 				}
 			}
-		}).then(function(err){
-
-			done();
-
-		}, done);
+		})
+		.then(() => done())
+		.catch(done);
 	});
 
 	it("evaled globals do not have exports in their scope (#440)", function(done){

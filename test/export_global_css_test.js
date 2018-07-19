@@ -34,7 +34,8 @@ describe("+global-css", function(){
 						close();
 					}, close);
 				}, done);
-			});
+			})
+			.catch(done);
 		});
 	});
 });

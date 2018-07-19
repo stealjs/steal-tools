@@ -20,7 +20,7 @@ will also specify `baseURL`, and sometimes `main`. This sets [config.configPath]
 @option {String} [baseURL] If a configuration file is not used, 
 the [config.baseURL baseURL] value must be set.
  
-@option {Array<moduleName>} [bundle] An array of <moduleNames> that should be progressively loaded.
+@option {Array<moduleName>} [bundle] An array of <moduleNames> that should be progressively loaded. See steal's [bundle](https://stealjs.com/docs/config.bundle.html) property for more information.
   
 @option {Object<config.jsonOptions>} [jsonOptions] Provides options that can be applied to JSON loading.
   Using the `transform` method will run through all JSON files while building, also the `package.json`'s of loaded modules

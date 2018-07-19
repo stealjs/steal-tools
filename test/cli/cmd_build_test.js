@@ -79,4 +79,9 @@ describe("cmd build module", function() {
 		});
 		assert.equal(buildArgs.options.minify, true);
 	});
+
+	it("--no-tree-shaking flag", function() {
+		cmdBuild.handler({ config: "/stealconfig.js", noTreeShaking: true });
+		assert.equal(buildArgs.options.treeShaking, false);
+	});
 });

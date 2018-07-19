@@ -22,7 +22,7 @@
       "window-production": {
         "map": {
           "jqueryt": "@empty",
-          "src/dep": "@empty"
+          "bundle-false/dep": "@empty"
         }
       }
     }

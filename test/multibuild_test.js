@@ -109,7 +109,8 @@ describe("multi build", function(){
 					assert.ok(hasRequire, "converted the way my transpile does");
 					done();
 				});
-			});
+			})
+			.catch(done);
 		});
 	});
 
@@ -136,7 +137,7 @@ describe("multi build", function(){
 		});
 	});
 
-	it("should minify by default", function() {
+	it("should minify and envify by default", function() {
 		var config = {
 			config: path.join(__dirname, "minify", "config.js"),
 			main: "minify"
@@ -144,9 +145,12 @@ describe("multi build", function(){
 
 		return asap(rmdir)(path.join(__dirname, "minify", "dist"))
 			.then(function() {
+				process.env.ENVIFY_VAR = "test_value";
 				return multiBuild(config, { quiet: true });
 			})
 			.then(function() {
+				delete process.env.ENVIFY_VAR;
+
 				var main = path.join(__dirname, "minify", "dist", "bundles", "minify.js");
 				var actualJS = fs.readFileSync(main, "utf8");
 
@@ -155,7 +159,7 @@ describe("multi build", function(){
 				var hasDevCode = actualJS.indexOf("remove this") !== -1;
 				var hasEnvifyCode = actualJS.indexOf("when envify is turned on this should be removed") !== -1;
 
-				assert(hasEnvifyCode, "Minified source has envify test code removed.");
+				assert(!hasEnvifyCode, "should not include envify test code.");
 				assert(!hasDevCode, "Minified source has dev code removed.");
 				assert(!hasLongVariable, "Minified source renamed long variable.");
 				assert(!hasGlobalLongVariable, "Minified source includes a global that was minified.");
@@ -186,7 +190,7 @@ describe("multi build", function(){
 			});
 	});
 
-	it("should allow turning envify on when minification is off", function() {
+	it("should apply envify when minification is off", function() {
 		var config = {
 			config: path.join(__dirname, "minify", "config.js"),
 			main: "minify"
@@ -194,7 +198,6 @@ describe("multi build", function(){
 
 		var options = {
 			quiet: true,
-			envify: true,
 			minify: false
 		};
 
@@ -214,7 +217,7 @@ describe("multi build", function(){
 			});
 	});
 
-	it("by default envify is not applied", function() {
+	it("should allow to turn envify off", function() {
 		var config = {
 			config: path.join(__dirname, "minify", "config.js"),
 			main: "minify"
@@ -222,7 +225,8 @@ describe("multi build", function(){
 
 		var options = {
 			quiet: true,
-			minify: false
+			minify: false,
+			envify: false
 		};
 
 		return asap(rmdir)(path.join(__dirname, "minify", "dist"))
@@ -562,83 +566,6 @@ describe("multi build", function(){
 		});
 	});
 
-	it("works with the bower plugin", function(done){
-		rmdir(__dirname + "/bower/dist", function(error){
-			if(error) return done(error);
-
-			multiBuild({
-				config: __dirname + "/bower/config.js",
-				main: "main"
-			}, {
-				quiet: true,
-				minify: false
-			}).then(function(){
-				open("test/bower/prod.html",function(browser, close){
-					find(browser,"MODULE", function(module){
-						assert(true, "module");
-						assert(module.jquerty, "has jquerty");
-						assert(module.jquerty(), "hello jquerty", "correct function loaded");
-						close();
-					}, close);
-				}, done);
-			}, done);
-		});
-	});
-
-	it("works with the bower plugin when using as the config", function(done){
-		// this test seems broken.
-		rmdir(__dirname + "/bower/dist", function(error){
-			if(error) return done(error);
-
-			multiBuild({
-				config: __dirname + "/bower/bower.json!bower",
-				main: "main"
-			}, {
-				quiet: true,
-				minify: false
-			}).then(function(){
-				open("test/bower/prod.html",function(browser, close){
-					find(browser,"MODULE", function(module){
-						assert(true, "module");
-						assert(module.jquerty, "has jquerty");
-						assert(module.jquerty(), "hello jquerty", "correct function loaded");
-						close();
-					}, close);
-				}, done);
-			}, done);
-		});
-	});
-
-	it("works with babel", function(done){
-        this.timeout(5000);
-
-		// this test seems broken.
-		rmdir(__dirname + "/babel/dist", function(error){
-			if(error) return done(error);
-
-			multiBuild({
-				config: __dirname + "/babel/config.js",
-				main: "main"
-			}, {
-				quiet: true,
-				minify: false
-			}).then(function(){
-				var code = fs.readFileSync(__dirname+"/babel/dist/bundles/main.js",
-										   "utf8");
-				assert(!/\*babel\*/.test(code), "babel not included in the code");
-
-				open("test/babel/prod.html",function(browser, close){
-					find(browser,"MODULE", function(module){
-						assert(true, "module");
-						assert(module.dep, "has jquerty");
-						assert(module.dep(), "hello jquerty", "correct function loaded");
-						close();
-					}, close);
-				}, done);
-			}, done);
-		});
-	});
-
 	it("works with an unnormalized main", function(done){
 		rmdir(__dirname+"/dist", function(error){
 			if(error){
@@ -875,8 +802,7 @@ describe("multi build", function(){
 				minify: false,
 				quiet: true
 			}).then(function(){
-				open("test/progressive_package/prod.html",
-					 function(browser, close){
+				open("test/progressive_package/prod.html", function(browser, close){
 					find(browser, "MODULE", function(module){
 						var a = module.a;
 						var b = module.b;
@@ -890,7 +816,8 @@ describe("multi build", function(){
 						close();
 					}, close);
 				}, done);
-			});
+			})
+			.catch(done);
 		});
 	});
 
@@ -1328,39 +1255,24 @@ describe("multi build", function(){
 
 		});
 
-
 		var setup = function(done){
-			rmdir(path.join(__dirname, "npm", "node_modules"), function(error){
-				if(error){ return done(error); }
-
-				rmdir(path.join(__dirname, "npm", "dist"), function(error){
-					if(error){ return done(error); }
-
-					fs.copy(path.join(__dirname, "..", "node_modules","jquery"),
-						path.join(__dirname, "npm", "node_modules", "jquery"), function(error){
-
-						if(error){ return done(error); }
-
-						fs.copy(
-							path.join(__dirname, "..", "bower_components","steal"),
-							path.join(__dirname, "npm", "node_modules", "steal"), function(error){
-
-							if(error){ return done(error); }
-
-							fs.copy(
-								path.join(__dirname, "..", "bower_components","steal"),
-								__dirname+"/npm/node_modules/steal", function(error){
-
-								if(error){ return done(error); }
-
-								done();
-
-							});
-
-						});
-					});
-				});
-			});
+			asap(rmdir)(path.join(__dirname, "npm", "node_modules"))
+				.then(function() {
+					return asap(rmdir)(path.join(__dirname, "npm", "dist"));
+				})
+				.then(function() {
+					return asap(fs.copy)(
+						path.join(__dirname, "..", "node_modules", "jquery"),
+						path.join(__dirname, "npm", "node_modules", "jquery")
+					);
+				})
+				.then(function() {
+					return asap(fs.copy)(
+						path.join(__dirname, "..", "node_modules", "steal"),
+						path.join(__dirname, "npm", "node_modules", "steal")
+					);
+				})
+				.then(done, done);
 		};
 
 		it("only needs a config", function(done){
@@ -1602,13 +1514,13 @@ describe("multi build", function(){
 
 				multiBuild({
 					config: __dirname + "/bundle_false/package.json!npm",
-					main: "src/main"
+					main: "bundle-false/main"
 				}, {
 					quiet: true,
 					minify: false,
 					ignore: [
 						'jqueryt',
-						'src/dep'
+						'bundle-false/dep'
 					]
 				}).then(function(data){
 
@@ -1616,18 +1528,10 @@ describe("multi build", function(){
 					// a feature can be, steal set automaticly @empty if the module is set with bundles:false in package.json
 					assert.equal(data.loader.envs['window-production'].map.jqueryt, '@empty', 'ignore modules must declare as @empty');
 
-					// bundle exists
-					assert.ok(fs.existsSync(__dirname + "/bundle_false/dist/bundles/src/main.js"), "bundle main");
-
-					var code = fs.readFileSync(__dirname+"/bundle_false/dist/bundles/src/main.js",
-						"utf8");
-					assert.ok(!/\*src\/dep\*/.test(code), "src/dep module is not inside");
-					assert.ok(!/\*jqueryt@2.2.0#dist\/jqueryt\*/.test(code), "jqueryt module is not inside");
-
 					open("test/bundle_false/prod.html",function(browser, close){
 
 						find(browser,"MODULE", function(module){
-							assert.ok(module);
+							//assert.ok(module);
 							assert.equal(typeof module.name, "undefined", "depending Module shouldn't have been loaded");
 						}, close);
 
@@ -1657,7 +1561,7 @@ describe("multi build", function(){
 
 				multiBuild({
 					config: __dirname + "/bundle_false_cdn/package.json!npm",
-					main: "src/main"
+					main: "bundle-false-cdn/main"
 				}, {
 					quiet: true,
 					minify: false,
@@ -1665,18 +1569,9 @@ describe("multi build", function(){
 						"jqueryt"
 					]
 				}).then(function(data){
-
 					assert.equal(data.loader.envs['window-production'].paths.jqueryt, '//code.jquery.com/jquery-2.2.0.js', 'CDN is set');
 
-					// bundle exists
-					assert.ok(fs.existsSync(__dirname + "/bundle_false_cdn/dist/bundles/src/main.js"), "bundle main");
-
-					var code = fs.readFileSync(__dirname+"/bundle_false_cdn/dist/bundles/src/main.js",
-						"utf8");
-					assert.ok(!/\*jqueryt@2.2.0#dist\/jqueryt\*/.test(code), "jqueryt module is not inside");
-
 					open("test/bundle_false_cdn/prod.html", function(browser, close){
-
 						browser.assert.text('h1', 'Hello World');
 						close();
 					}, done);
@@ -1693,7 +1588,7 @@ describe("multi build", function(){
 
 				multiBuild({
 					config: __dirname + "/bundle_false/package.json!npm",
-					main: "src/main"
+					main: "bundle-false/main"
 				}, {
 					quiet: true,
 					minify: false,
@@ -1713,11 +1608,11 @@ describe("multi build", function(){
 					assert.equal(source, amdSource, "jquery is not transpiled into AMD");
 					assert.notEqual(amdSource.substr(0, 10+module.length), "define('"+module+"',");
 
-					module = 'src/dep';
+					module = 'bundle-false@1.0.0#dep';
 					source = data.graph[module].load.source;
 					amdSource = data.graph[module].activeSource.code;
 
-					assert.notEqual(source, amdSource, "src/dep is transpiled into AMD");
+					assert.notEqual(source, amdSource, "bundle_false/dep is transpiled into AMD");
 					assert.equal(amdSource.substr(0, 10+module.length), "define('"+module+"',");
 
 					done();
@@ -2057,7 +1952,8 @@ describe("multi build", function(){
 				return multiBuild({
 					config: path.join(base, "package.json!npm")
 				}, {
-					quiet: true
+					quiet: true,
+					minify: false
 				});
 			})
 			.then(function() {
@@ -2308,7 +2204,7 @@ describe("multi build", function(){
 			});
 	});
 
-	it("promise polyfill can be excluded from StealJS core", function() {
+	it("promise polyfill can be included in StealJS core", function() {
 		var base = path.join(__dirname, "bundle");
 
 		return asap(rmdir)(path.join(base, "dist"))
@@ -2319,13 +2215,42 @@ describe("multi build", function(){
 				}, {
 					quiet: true,
 					minify: false,
-					bundlePromisePolyfill: false,
+					bundlePromisePolyfill: true,
 					dest: path.join(base, "dist")
 				});
 			})
 			.then(function() {
 				return fileExists(
-					path.join(base, "dist", "steal-sans-promises.production.js")
+					path.join(base, "dist", "steal-with-promises.production.js")
+				);
+			});
+	});
+
+	it("supports bundling StealJS with promise polyfill", function() {
+		var base = path.join(__dirname, "bundle");
+
+		return asap(rmdir)(path.join(base, "dist"))
+			.then(function() {
+				return multiBuild({
+					main: "bundle",
+					config: path.join(base, "stealconfig.js")
+				}, {
+					quiet: true,
+					minify: false,
+					bundleSteal: true,
+					bundlePromisePolyfill: true,
+					dest: path.join(base, "dist")
+				});
+			})
+			.then(function() {
+				return asap(fs.readFile)(
+					path.join(base, "dist", "bundles", "bundle.js")
+				);
+			})
+			.then(function(mainBundle) {
+				assert(
+					/ES6 global Promise shim/.test(mainBundle.toString()),
+					"Promise shim should not be bundled with steal"
 				);
 			});
 	});
@@ -2342,7 +2267,6 @@ describe("multi build", function(){
 					quiet: true,
 					minify: false,
 					bundleSteal: true,
-					bundlePromisePolyfill: false,
 					dest: path.join(base, "dist")
 				});
 			})
@@ -2370,5 +2294,5 @@ describe("multi build", function(){
 			assert.equal(buildResult.buildType, "build");
 			done();
 		}, done).catch(done);
-	})
+	});
 });

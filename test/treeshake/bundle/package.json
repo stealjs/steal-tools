@@ -1,0 +1,8 @@
+{
+  "name": "treeshake",
+  "main": "main.js",
+  "version": "1.0.0",
+  "steal": {
+    "bundle": ["treeshake/bundle"]
+  }
+}
