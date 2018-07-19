@@ -1,0 +1,13 @@
+<script src="./dist/steal.production.js">
+	steal.import("treeshake")
+	.then(function(mod){
+		var start = mod.default;
+		return start();
+	})
+	.then(function(app){
+		window.app = app;
+	})
+	.catch(function(err){
+		console.error(err);
+	});
+</script>
