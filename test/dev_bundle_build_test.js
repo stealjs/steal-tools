@@ -412,4 +412,41 @@ describe("dev bundle build", function() {
 			.then(clean)
 			.catch(clean);
 	});
+
+	it("Doesn't tree shake dependencies", function(done) {
+		var dir = path.join(__dirname, "treeshake", "basics");
+		var devBundlePath = path.join(dir, "dev-bundle.js");
+
+		var config = {
+			config: path.join(dir, "package.json!npm")
+		};
+
+		var options = assign({}, baseOptions, {
+			minify: false,
+			filter: ["node_modules/**/*", "package.json"] // only bundle npm deps
+		});
+
+		var clean = function(err) {
+			rmdir(devBundlePath).then(function() {
+				done(err);
+			});
+		};
+
+		devBundleBuild(config, options)
+			.then(function() {
+				return open("test/treeshake/basics/dev.html");
+			})
+			.then(function(p) {
+				return find(p.browser, "APP").then(function(){
+					return p.browser.window;
+				})
+			})
+			.then(function(window){
+				var steal = window.steal;
+				var canConnect = steal.loader.get("can-connect@1.0.0#main");
+				assert.ok(canConnect, "Not tree shaken");
+			})
+			.then(clean)
+			.catch(clean);
+	});
 });
