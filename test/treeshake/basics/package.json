@@ -11,7 +11,10 @@
     "dep5": "1.0.0"
   },
   "steal": {
-    "bundle": ["treeshake/bundle-a"]
+    "bundle": ["treeshake/bundle-a"],
+    "ext": {
+      "css": "treeshake/css"
+    }
   },
   "sideEffects": false
 }

@@ -13,6 +13,9 @@ import steal from "@steal";
 // Importing a module for its side effects
 import "dep3";
 
+// CSS
+import "./styles.css";
+
 // Importing a module that itself should be tree-shaken
 import {default as dep4} from "dep4";
 

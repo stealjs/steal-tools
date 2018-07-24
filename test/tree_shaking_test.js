@@ -94,6 +94,11 @@ describe("Tree-shaking", function(){
 					assert.equal(browser.window.DEP3_SIDE_EFFECT, true,
 						"Includes a module with needed side effects.");
 				});
+
+				it("Works when the dependency is CSS", function(){
+					var mod = browser.window.steal.loader.get("treeshake@1.0.0#styles.css!treeshake@1.0.0#css");
+					assert.ok(mod, true, "Includes a CSS module");
+				});
 			})
 
 			describe("export *", function(){
