@@ -179,6 +179,51 @@ describe("Tree-shaking", function(){
 				assert.equal(typeof dep.two, "function", "Included");
 			});
 		});
+
+		describe("With a multi-main project", function(){
+			var app;
+			before(function(done){
+				this.timeout(20000);
+				var base = path.join(__dirname, "treeshake", "multimain");
+				var config = {
+					config: path.join(base, "package.json!npm"),
+					main: [
+						"~/main1",
+						"~/main2"
+					]
+				};
+				var page = `prod1.html`;
+
+				rmdir(path.join(base, "dist"))
+					.then(function() {
+						return optimize(config, {
+							quiet: true,
+							minify: false,
+							treeShaking: false
+						});
+					})
+					.then(function() {
+						var close;
+						return open(path.join("test", "treeshake", "multimain", page))
+							.then(function(args) {
+								close = args.close;
+								browser = args.browser;
+								return find(browser, "globals");
+							})
+							.then(function(mod) {
+								app = mod;
+								close();
+								done();
+							});
+					})
+					.catch(done);
+			});
+
+			it("Doesn\'t tree shake modules", function(){
+				let Component = app.Component;
+				assert.equal(typeof Component, "function", "was not tree-shaken");
+			});
+		});
 	});
 
 	describe("Bundles", function() {
