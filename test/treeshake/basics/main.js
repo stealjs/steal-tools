@@ -53,7 +53,8 @@ export default function(){
 		steal.import("dep4/other"),
 		steal.import("dep4/and-another"),
 		steal.import("~/from-exports"),
-		shouldFail
+		shouldFail,
+		steal.import("dep5/another-es-module")
 	]);
 
 	return p
@@ -64,7 +65,8 @@ export default function(){
 		dep4Other,
 		dep4AndAnother,
 		fromExports,
-		canConnect
+		canConnect,
+		dep5dep5AnotherESModule
 	]) => {
 		return {
 			anon,
@@ -75,7 +77,8 @@ export default function(){
 			dep4AndAnother,
 			fromExports,
 			dep5,
-			canConnect
+			canConnect,
+			dep5dep5AnotherESModule
 		};
 	});
 };
