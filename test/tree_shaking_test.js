@@ -127,7 +127,7 @@ describe("Tree-shaking", function(){
 			});
 		});
 
-		describe.only("ES modules imported by CommonJS modules", function() {
+		describe("ES modules imported by CommonJS modules", function() {
 			it("Tree-shakes their ES module dependencies", function() {
 				let mod = app.dep5dep5AnotherESModule;
 				assert.equal(typeof mod.mainThing, "function", "Kept the used export");
