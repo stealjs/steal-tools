@@ -126,6 +126,14 @@ describe("Tree-shaking", function(){
 				assert.equal(connect.didFail, true, "marked as failed");
 			});
 		});
+
+		describe.only("ES modules imported by CommonJS modules", function() {
+			it("Tree-shakes their ES module dependencies", function() {
+				let mod = app.dep5dep5AnotherESModule;
+				assert.equal(typeof mod.mainThing, "function", "Kept the used export");
+				assert.equal(typeof mod.another, "undefined", "Removed the unused export");
+			});
+		});
 	});
 
 	describe("treeShaking: false", function(){
