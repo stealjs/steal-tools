@@ -92,7 +92,9 @@ describe("Tree-shaking", function(){
 			describe("import 'mod'", function(){
 				it("Includes modules imported for side-effects", function(){
 					assert.equal(browser.window.DEP3_SIDE_EFFECT, true,
-						"Includes a module with needed side effects.");
+						"Includes an ES module with needed side effects.");
+					assert.equal(browser.window.DEP3_SIDE_EFFECT2, true,
+						"Includes a global module with needed side effects.");
 				});
 
 				it("Works when the dependency is CSS", function(){
