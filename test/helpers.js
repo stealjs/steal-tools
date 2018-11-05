@@ -12,7 +12,7 @@ exports.find = function(browser, property, callback, done){
 		} else if(new Date() - start < 2000){
 			setTimeout(check, 20);
 		} else {
-			done("failed to find "+property+" in "+browser.window.location.href);
+			done(new Error("failed to find "+property+" in "+browser.window.location.href));
 		}
 	};
 	check();

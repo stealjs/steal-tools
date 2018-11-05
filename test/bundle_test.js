@@ -26,6 +26,31 @@ describe("find bundle", function () {
 			'app_d'
 		], bundles);
 	});
+
+	it("wildcard with extension", function() {
+		fakeLoader["bundle"] = ["pages/*.component"];
+		var bundles = findbundle(fakeLoader);
+		assert.deepEqual([
+			'pages/cart.component',
+		], bundles);
+	});
+
+	it("the steal convention trailing slash", function() {
+		fakeLoader["bundle"] = ["pages/**/"];
+		var bundles = findbundle(fakeLoader);
+		assert.deepEqual([
+			'pages/home/home',
+		], bundles);
+	});
+
+	it("trailing slash and wildcard extension", function() {
+		fakeLoader["bundle"] = ["pages/**/", "pages/*.component"];
+		var bundles = findbundle(fakeLoader);
+		assert.deepEqual([
+			'pages/home/home',
+			'pages/cart.component'
+		], bundles);
+	});
 });
 
 describe("bundle", function () {
@@ -139,7 +164,3 @@ describe("bundle", function () {
 	});
 
 });
-
-
-
-

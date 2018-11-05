@@ -1507,6 +1507,7 @@ describe("multi build", function(){
 
 
 		it("should not include src/dep and jqueryt into the bundled file", function(done){
+			this.timeout(15000);
 			setup(function(error) {
 				if (error) {
 					return done(error);
@@ -1529,11 +1530,18 @@ describe("multi build", function(){
 					assert.equal(data.loader.envs['window-production'].map.jqueryt, '@empty', 'ignore modules must declare as @empty');
 
 					open("test/bundle_false/prod.html",function(browser, close){
+						var complete = 0;
+						var findDone = function() {
+							complete++;
+							if(complete === 2) {
+								close();
+							}
+						};
 
 						find(browser,"MODULE", function(module){
-							//assert.ok(module);
 							assert.equal(typeof module.name, "undefined", "depending Module shouldn't have been loaded");
-						}, close);
+							findDone();
+						}, findDone);
 
 						find(browser,"$", function(jqueryt){
 							// jqueryt is mapped to @empty
@@ -1541,10 +1549,11 @@ describe("multi build", function(){
 								var jversion = false;
 							try{
 								jversion = jqueryt.fn.version;
-							}catch(e){}
+							} catch(e) {}
+
 							assert.strictEqual(jversion, false, "jqueryt Module shouldn't have been loaded");
-							close();
-						}, close);
+							findDone();
+						}, findDone);
 
 					}, done);
 				}).catch(done);
