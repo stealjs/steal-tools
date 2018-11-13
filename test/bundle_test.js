@@ -40,15 +40,18 @@ describe("find bundle", function () {
 		var bundles = findbundle(fakeLoader);
 		assert.deepEqual([
 			'pages/home/home',
+			'pages/restaurant/list/list'
 		], bundles);
 	});
 
 	it("trailing slash and wildcard extension", function() {
-		fakeLoader["bundle"] = ["pages/**/", "pages/*.component"];
+		fakeLoader["bundle"] = ["pages/**/", "pages/**/*.component"];
 		var bundles = findbundle(fakeLoader);
 		assert.deepEqual([
 			'pages/home/home',
-			'pages/cart.component'
+			'pages/restaurant/list/list',
+			'pages/cart.component',
+			'pages/order/history.component'
 		], bundles);
 	});
 });
