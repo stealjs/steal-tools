@@ -68,7 +68,7 @@
     "steal-qunit": "^1.0.0",
     "testee": "^0.8.0",
     "tree-kill": "^1.2.0",
-    "zombie": "^5.0.6"
+    "zombie": "^6.1.4"
   },
   "bin": {
     "steal-tools": "bin/steal"
