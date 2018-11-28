@@ -274,6 +274,7 @@ describe("Tree-shaking", function(){
 	});
 
 	describe("import { dep } from 'cjs'", function() {
+		var app;
 		before(function(done){
 			this.timeout(20000);
 			var base = path.join(__dirname, "treeshake", "cjs");
