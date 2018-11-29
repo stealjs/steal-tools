@@ -95,6 +95,8 @@ describe("Tree-shaking", function(){
 						"Includes an ES module with needed side effects.");
 					assert.equal(browser.window.DEP3_SIDE_EFFECT2, true,
 						"Includes a global module with needed side effects.");
+					assert.equal(browser.window.DEP3_SIDE_EFFECT3, true,
+						"Includes a CJS module with needed side effects.");
 				});
 
 				it("Works when the dependency is CSS", function(){

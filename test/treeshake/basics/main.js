@@ -13,6 +13,7 @@ import steal from "@steal";
 // Importing a module for its side effects
 import "dep3";
 import "dep3/global";
+import "dep3/cjs";
 
 // CSS
 import "./styles.css";
