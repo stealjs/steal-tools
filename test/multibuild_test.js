@@ -2304,4 +2304,30 @@ describe("multi build", function(){
 			done();
 		}, done).catch(done);
 	});
+
+	it("skips ES2015 transpilation if data.loader.forceES5 is false", function() {
+		var config = {
+			config: path.join(__dirname, "keep_es2015", "config.js"),
+			main: "main"
+		};
+
+		var options = {
+			minify: false,
+			quiet: true
+		};
+
+		return asap(rmdir)(path.join(__dirname, "keep_es2015", "dist"))
+			.then(function() {
+				return multiBuild(config, options);
+			})
+			.then(function() {
+				var main = path.join(__dirname, "keep_es2015", "dist", "bundles", "main.js");
+				var actualJS = fs.readFileSync(main, "utf8");
+
+				assert(
+					actualJS.includes("async function callMe()"),
+					"source should include async function untranspiled"
+				);
+			});
+	});
 });
