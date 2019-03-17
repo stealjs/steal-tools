@@ -245,7 +245,7 @@ describe("multi build", function(){
 			});
 	});
 
-	it("should allow setting uglify-js options", function() {
+	it("should allow setting terser-js options", function() {
 		var config = {
 			config: path.join(__dirname, "minify", "config.js"),
 			main: "minify"
