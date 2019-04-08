@@ -93,7 +93,7 @@
     "jshint": "jshint lib/**/*.js Gruntfile.js --config",
     "coverage": "istanbul cover _mocha -- test/test --timeout 600000",
     "coverage:upload": "istanbul cover _mocha --report lcovonly -- test/test --timeout 600000 && cat ./coverage/lcov.info | ./node_modules/coveralls-send/bin/coveralls.js",
-    "preversion": "npm test",
+    "preversion": "npm run jshint && npm run test:browser",
     "postpublish": "git push --tags && git push",
     "release:pre": "npm version prerelease && npm publish --tag pre",
     "release:patch": "npm version patch && npm publish",
