@@ -30,7 +30,7 @@
     "pdenodeify": "^0.1.0",
     "prettier": "1.12.0",
     "pump": "^3.0.0",
-    "rollup-plugin-commonjs": "<=9.3.2",
+    "rollup-plugin-commonjs": "^9.3.4",
     "steal": "^2.2.0",
     "steal-bundler": "^0.3.6",
     "steal-parse-amd": "^1.0.0",
