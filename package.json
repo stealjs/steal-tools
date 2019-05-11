@@ -16,7 +16,7 @@
     "colors": "^1.2.1",
     "common-tags": "^1.7.2",
     "find-line-column": "^0.5.2",
-    "fs-extra": "~7.0.0",
+    "fs-extra": "~8.0.0",
     "glob": "^7.1.1",
     "globby": "^8.0.1",
     "gzip-size": "4.0.0",
