@@ -2330,4 +2330,37 @@ describe("multi build", function(){
 				);
 			});
 	});
+
+	it("should build ES2015 when data.loader.forceES5 is false", function() {
+		var config = {
+			config: path.join(__dirname, "es2015_literals", "config.js"),
+			main: "main"
+		};
+
+		var options = {
+			minify: false,
+			quiet: true,
+			sourceMaps: false
+		};
+
+		return asap(rmdir)(path.join(__dirname, "es2015_literals", "dist"))
+			.then(function() {
+				return multiBuild(config, options);
+			})
+			.then(function() {
+				var main = path.join(
+					__dirname,
+					"es2015_literals",
+					"dist",
+					"bundles",
+					"main.js"
+				);
+				var actualJS = fs.readFileSync(main, "utf8");
+
+				assert(
+					actualJS.includes("`Hello ${ name }, how are you ${ time }?`"),
+					"source should include ES2015 string literals"
+				);
+			});
+	});
 });

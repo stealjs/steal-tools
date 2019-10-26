@@ -39,7 +39,7 @@
     "through2": "^3.0.0",
     "tmp": "0.0.33",
     "traceur": "0.0.111",
-    "transpile": "^2.7.0",
+    "transpile": "^2.7.2",
     "urix": "^0.1.0",
     "winston": "^2.2.0",
     "ws": "^5.1.1",
@@ -105,7 +105,7 @@
     "test:exports-worker": "node test/exports_worker/exports.js && testee test/exports_worker/worker.html --browsers firefox --reporter Spec"
   },
   "engines": {
-    "node": "4.x - 10.x"
+    "node": "8.x - 10.x"
   },
   "system": {
     "npmDependencies": [
