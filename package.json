@@ -11,7 +11,7 @@
     "babel-minify": "^0.5.0",
     "babel-standalone": "^6.23.1",
     "bitovi-source-map": "0.4.2-bitovi.2",
-    "chokidar": "^2.0.0",
+    "chokidar": "^3.2.3",
     "clean-css": "^4.1.9",
     "colors": "^1.2.1",
     "common-tags": "^1.7.2",
