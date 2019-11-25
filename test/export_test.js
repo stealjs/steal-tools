@@ -55,7 +55,8 @@ describe("export", function(){
 
 			}, done);
 
-		}, done);
+		}, done)
+		.catch(done);
 	});
 
 	it("works with multiple mains", function(done) {
@@ -336,6 +337,50 @@ describe("export", function(){
 					"should fail with a nice error");
 				done();
 			});
+	});
+
+	it("does not override previous outputs #1139", function(done) {
+		let exportOptions = {
+			steal: {
+				main: "pluginifier_builder/pluginify",
+				config: __dirname + "/stealconfig.js"
+			},
+			options: {
+				quiet: true
+			},
+			outputs: {
+				"+cjs": {},
+				"+amd": {}
+			}
+		};
+
+		stealExport(exportOptions)
+			.then(function() {
+				let distPath = format =>
+					path.join(
+						__dirname,
+						"dist",
+						format,
+						"pluginifier_builder",
+						"pluginify.js"
+					);
+
+				// check cjs module was written out correctly
+				assert(fs.pathExistsSync(distPath("cjs")));
+
+				let cjs = fs.readFileSync(distPath("cjs")).toString();
+				assert(/require\(/.test(cjs), "code should be valid cjs");
+				assert(!/define/.test(cjs), "code should be valid cjs");
+
+				// check amd module was written out correctly
+				assert(fs.pathExistsSync(distPath("amd")));
+
+				let amd = fs.readFileSync(distPath("amd")).toString();
+				assert(/define/.test(amd), "code should be valid amd");
+				assert(!/require\(/.test(amd), "code should be valid amd");
+			})
+			.then(done)
+			.catch(done);
 	});
 
 	describe("eachModule", function(){
