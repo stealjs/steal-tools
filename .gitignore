@@ -1,6 +1,7 @@
 .DS_Store
 .tmp*
 .idea
+.git
 dist
 coverage
 package-lock.json
