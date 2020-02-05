@@ -99,10 +99,10 @@
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
-    "test:slim-worker-single": "node test/slim/worker/single/build.js && testee test/slim/worker/single/worker.html --browsers firefox --reporter Spec",
-    "test:slim-worker-progressive": "node test/slim/worker/progressive/build.js && testee test/slim/worker/progressive/worker.html --browsers firefox --reporter Spec",
-    "test:slim-worker-shared": "node test/slim/shared_bundles/build.js && testee test/slim/shared_bundles/worker.html --browsers firefox --reporter Spec",
-    "test:exports-worker": "node test/exports_worker/exports.js && testee test/exports_worker/worker.html --browsers firefox --reporter Spec"
+    "test:slim-worker-single": "node test/slim/worker/single/build.js && testee test/slim/worker/single/worker.html --browsers chrome --reporter Spec",
+    "test:slim-worker-progressive": "node test/slim/worker/progressive/build.js && testee test/slim/worker/progressive/worker.html --browsers chrome --reporter Spec",
+    "test:slim-worker-shared": "node test/slim/shared_bundles/build.js && testee test/slim/shared_bundles/worker.html --browsers chrome --reporter Spec",
+    "test:exports-worker": "node test/exports_worker/exports.js && testee test/exports_worker/worker.html --browsers chrome --reporter Spec"
   },
   "engines": {
     "node": "8.x - 13.x"
