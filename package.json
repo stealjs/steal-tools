@@ -87,7 +87,7 @@
   ],
   "scripts": {
     "test": "npm run jshint && npm run mocha && npm run test:browser && npm run test:slim-worker-single && npm run test:slim-worker-progressive && npm run test:exports-worker",
-    "test:browser": "npm run worker-test-build && testee test/browser/test.html --browsers firefox --reporter Spec",
+    "test:browser": "npm run worker-test-build && testee test/browser/test.html --browsers chrome --reporter Spec",
     "worker-test-build": "node bin/steal build --main worker --config test/browser/webworker/stealconfig.js --bundle-steal --quiet",
     "mocha": "mocha test/test.js",
     "jshint": "jshint lib/ Gruntfile.js --config",
