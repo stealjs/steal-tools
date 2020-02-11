@@ -58,7 +58,7 @@
     "jshint": "~2.9.1",
     "mocha": "^3.5.3",
     "mocha-lcov-reporter": "^1.2.0",
-    "mock-fs": "4.4.1",
+    "mock-fs": "4.10.4",
     "mockery": "^2.0.0",
     "rimraf": "^2.6.2",
     "serve-static": "^1.12.6",
@@ -87,7 +87,7 @@
   ],
   "scripts": {
     "test": "npm run jshint && npm run mocha && npm run test:browser && npm run test:slim-worker-single && npm run test:slim-worker-progressive && npm run test:exports-worker",
-    "test:browser": "npm run worker-test-build && testee test/browser/test.html --browsers firefox --reporter Spec",
+    "test:browser": "npm run worker-test-build && testee test/browser/test.html --browsers chrome --reporter Spec",
     "worker-test-build": "node bin/steal build --main worker --config test/browser/webworker/stealconfig.js --bundle-steal --quiet",
     "mocha": "mocha test/test.js",
     "jshint": "jshint lib/ Gruntfile.js --config",
@@ -99,13 +99,13 @@
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
-    "test:slim-worker-single": "node test/slim/worker/single/build.js && testee test/slim/worker/single/worker.html --browsers firefox --reporter Spec",
-    "test:slim-worker-progressive": "node test/slim/worker/progressive/build.js && testee test/slim/worker/progressive/worker.html --browsers firefox --reporter Spec",
-    "test:slim-worker-shared": "node test/slim/shared_bundles/build.js && testee test/slim/shared_bundles/worker.html --browsers firefox --reporter Spec",
-    "test:exports-worker": "node test/exports_worker/exports.js && testee test/exports_worker/worker.html --browsers firefox --reporter Spec"
+    "test:slim-worker-single": "node test/slim/worker/single/build.js && testee test/slim/worker/single/worker.html --browsers chrome --reporter Spec",
+    "test:slim-worker-progressive": "node test/slim/worker/progressive/build.js && testee test/slim/worker/progressive/worker.html --browsers chrome --reporter Spec",
+    "test:slim-worker-shared": "node test/slim/shared_bundles/build.js && testee test/slim/shared_bundles/worker.html --browsers chrome --reporter Spec",
+    "test:exports-worker": "node test/exports_worker/exports.js && testee test/exports_worker/worker.html --browsers chrome --reporter Spec"
   },
   "engines": {
-    "node": "8.x - 10.x"
+    "node": "8.x - 13.x"
   },
   "system": {
     "npmDependencies": [
