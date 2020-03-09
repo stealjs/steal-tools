@@ -42,7 +42,7 @@
     "transpile": "^2.7.2",
     "urix": "^0.1.0",
     "winston": "^2.2.0",
-    "ws": "^5.1.1",
+    "ws": "^7.2.3",
     "yargs": "^11.0.0"
   },
   "devDependencies": {
