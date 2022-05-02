@@ -49,7 +49,7 @@
     "babel-plugin-steal-test": "0.0.2",
     "babel-preset-steal-test": "0.0.1",
     "browserify": "~16.1.1",
-    "comparify": "git://github.com/bitovi/comparify.git#master",
+    "comparify": "https://github.com/bitovi/comparify.git#master",
     "connect": "^3.6.5",
     "coveralls-send": "0.0.2",
     "cssify": "^1.0.3",
