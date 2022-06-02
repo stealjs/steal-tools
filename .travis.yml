@@ -3,7 +3,8 @@ node_js:
   - 10
   - 12
   - 14
-  - system
+  - 16
+  - 18
 before_script:
   - npm dedupe
 sudo: false
