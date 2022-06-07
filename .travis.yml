@@ -1,7 +1,8 @@
 language: node_js
 node_js:
-  - 8
-  - 14.4.0
+  - 10
+  - 12
+  - 14
 before_script:
   - npm dedupe
 sudo: false
@@ -9,6 +10,6 @@ script:
   - npm run jshint
   - 'npm run test:browser'
   - 'npm run coverage:upload'
-dist: xenial
+dist: focal
 services:
   - xvfb
