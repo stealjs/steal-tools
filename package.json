@@ -31,7 +31,7 @@
     "prettier": "1.12.0",
     "pump": "^3.0.0",
     "rollup-plugin-commonjs": "^9.3.4",
-    "steal": "^2.3.0-pre.0",
+    "steal": "^2.3.0",
     "steal-bundler": "^0.3.6",
     "steal-parse-amd": "^1.0.0",
     "steal-rollup": "^0.58.4",
@@ -66,7 +66,7 @@
     "steal-css": "^1.3.1",
     "steal-less": "^1.3.1",
     "steal-qunit": "^1.0.0",
-    "testee": "^0.10.0",
+    "testee": "^0.10.2",
     "tree-kill": "^1.2.0",
     "zombie": "^5.0.8"
   },
